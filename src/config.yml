@@ -1,0 +1,29 @@
+#
+#  Configuration for NPCManager plugin.
+#
+
+# Show debug messages
+show-debug-messages: true
+
+# The range at which NPCs will start looking towards the player
+npc-headrotation-range: 6
+
+# Reset head rotation when further than the range set in the above field.
+reset-headrotation: true
+
+# The save method to use.
+# Suitable Values:
+# YAML (default) - Saving to a .yml file.
+# MYSQL - Saving to a MYSQL database.
+save-method: YAML
+
+# Database Settings. Only applies if using a MYSQL database for storage.
+sql:
+  host: localhost
+  port: 3306
+  database: database
+  username: root
+  password: ""
+  useSSL: false
+  table-name: npcdata
+  

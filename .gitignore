@@ -1,0 +1,7 @@
+# Project Files
+.settings/
+.classpath
+.project
+
+# Build Files
+bin/

@@ -1,0 +1,30 @@
+author: Scroojalix
+version: 1.0.0
+main: me.scroojalix.npcmanager.NPCMain
+name: NPCManager
+description: Lightweight NPC manager plugin.
+api-version: 1.13
+permission-message: &noperms "\u00A7cYou do not have permission to use this command."
+
+commands:
+  npc:
+    aliases: [npcmanager]
+    permission: npcmanager.commands.npc
+    permission-message: *noperms
+    description: NPC commands
+    usage: "\u00A7cUnkown argument. /npc help"
+    
+permissions:
+  npcmanager.*:
+    default: op
+    description: Implies all NPCManager permissions
+    children:
+      npcmanager.commands.*: true
+  npcmanager.commands.*:
+    default: false
+    description: Allows use of all NPCManager commands
+    children:
+      npcmanager.commands.npc: true
+  npcmanager.commands.npc:
+    default: false
+    description: Allows use of NPCManager npc command
