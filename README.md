@@ -13,6 +13,6 @@ This plugin provides support for spawning NPC's, and has many customisation opti
  - /npc reload - <i>reloads the plugin.</i>
 
 ### Supported Versions
-This plugin currently works on spigot versions of 1.12 up to 1.16.
+This plugin currently works on spigot versions of 1.11 up to 1.16.
 
 <i>NOTE: More versions will be supported in the future.</i>
