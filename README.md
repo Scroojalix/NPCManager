@@ -15,4 +15,8 @@ This plugin provides support for spawning NPC's, and has many customisation opti
 ### Supported Versions
 This plugin currently works on spigot versions of 1.12 up to 1.16.
 
+<<<<<<< HEAD
 <i>NOTE: More versions will be supported in the future.</i>
+=======
+<i>NOTE: The plugin is not completely stable on 1.12, and more versions will be supported in the future.</i>
+>>>>>>> 54a3de8aa1f7a4601e222b5c918b831b9a80fccf
