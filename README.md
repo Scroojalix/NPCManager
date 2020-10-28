@@ -11,7 +11,8 @@ This plugin provides support for spawning NPC's, and has many customisation opti
  - /npc list - <i>lists all of the NPC's on the server.</i>
  - /npc clear - <i>removes all NPC's.</i>
  - /npc reload - <i>reloads the plugin.</i>
- 
- ### Supported Versions
- This plugin currently works on spigot versions of 1.12 up to 1.16.
- <i>NOTE: The plugin is not completely stable on 1.12, and more versions will be supported in the future.</i>
+
+### Supported Versions
+This plugin currently works on spigot versions of 1.12 up to 1.16.
+
+<i>NOTE: The plugin is not completely stable on 1.12, and more versions will be supported in the future.</i>
