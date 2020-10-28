@@ -55,6 +55,7 @@ public class NPCCommands implements CommandExecutor {
 						sender.sendMessage(main.format("&6Skin: &F"+data.getSkin()));
 						sender.sendMessage(main.format("&6Range: &F"+data.getRange()));
 						sender.sendMessage(main.format("&6Head Rotation: &F"+data.hasHeadRotation()));
+						sender.sendMessage(main.format("&b&M&L                                                       "));
 						return true;
 					} else {
 						sender.sendMessage(ChatColor.RED+"An NPC with that name does not exist.");

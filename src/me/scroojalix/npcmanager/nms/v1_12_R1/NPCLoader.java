@@ -23,7 +23,7 @@ import net.minecraft.server.v1_12_R1.PacketPlayOutEntityMetadata;
 import net.minecraft.server.v1_12_R1.PacketPlayOutNamedEntitySpawn;
 import net.minecraft.server.v1_12_R1.PacketPlayOutPlayerInfo;
 import net.minecraft.server.v1_12_R1.PacketPlayOutScoreboardTeam;
-import net.minecraft.server.v1_12_R1.PacketPlayOutSpawnEntityLiving;
+import net.minecraft.server.v1_12_R1.PacketPlayOutSpawnEntity;
 import net.minecraft.server.v1_12_R1.PlayerConnection;
 
 public class NPCLoader extends INPCLoader implements Runnable {
@@ -54,13 +54,13 @@ public class NPCLoader extends INPCLoader implements Runnable {
 		EntityArmorStand holo;
 		if (data.getNameHolo() != null) {
 			holo = (EntityArmorStand) data.getNameHolo().getEntity();
-			packets.add(new PacketPlayOutSpawnEntityLiving(holo));
+			packets.add(new PacketPlayOutSpawnEntity(holo, 78));
 			packets.add(new PacketPlayOutEntityMetadata(holo.getId(), holo.getDataWatcher(), true));
 		}
 		
 		if (data.getSubtitleHolo() != null) {
 			holo = (EntityArmorStand) data.getSubtitleHolo().getEntity();
-			packets.add(new PacketPlayOutSpawnEntityLiving(holo));
+			packets.add(new PacketPlayOutSpawnEntity(holo, 78));
 			packets.add(new PacketPlayOutEntityMetadata(holo.getId(), holo.getDataWatcher(), true));
 		}						
 	}

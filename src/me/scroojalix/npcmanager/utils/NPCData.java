@@ -123,7 +123,7 @@ public class NPCData {
 	 * @param loc - new Location
 	 */
 	public void setLoc(Location loc) {
-		DecimalFormat df = new DecimalFormat("#.###");
+		DecimalFormat df = new DecimalFormat("#.##");
 		Map<String, Object> newLoc = loc.serialize();
 		newLoc.put("x", Double.valueOf(df.format((double)newLoc.get("x"))));
 		newLoc.put("y", Double.valueOf(df.format((double)newLoc.get("y"))));

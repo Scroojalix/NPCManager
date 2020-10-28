@@ -2,7 +2,6 @@ package me.scroojalix.npcmanager.nms.v1_12_R1;
 
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_12_R1.util.CraftChatMessage;
 
 import me.scroojalix.npcmanager.nms.interfaces.NMSHologram;
 import net.minecraft.server.v1_12_R1.EntityArmorStand;
@@ -11,7 +10,7 @@ public class EntityNMSHologram extends EntityArmorStand implements NMSHologram {
 
 	public EntityNMSHologram(Location loc, String text) {
 		super(((CraftWorld)loc.getWorld()).getHandle());
-		setCustomName(CraftChatMessage.fromString(text).toString());
+		setCustomName(text);
 		setCustomNameVisible(getCustomName() != null && !getCustomName().isEmpty());
 	    setInvisible(true);
 	    setSmall(true);

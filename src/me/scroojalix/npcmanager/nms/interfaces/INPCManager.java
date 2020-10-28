@@ -161,6 +161,7 @@ public abstract class INPCManager {
 					if (main.npcFile.getConfig().contains("npc")) {
 						main.log(Level.INFO, "Restoring NPCs...");
 						restoreYAMLNPCs(main.npcFile);
+						main.log(Level.INFO, "Done");
 					}
 					break;
 				case MYSQL:
@@ -168,6 +169,7 @@ public abstract class INPCManager {
 						main.log(Level.INFO, "Restoring NPCs...");
 						main.sql.getGetter().restoreDataEntries();
 						main.sql.getGetter().emptyTable();
+						main.log(Level.INFO, "Done");
 					}
 					File file = new File(main.getDataFolder(), "temp.yml");
 					if (file.exists()) {
