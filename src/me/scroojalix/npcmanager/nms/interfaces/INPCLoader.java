@@ -27,8 +27,8 @@ public abstract class INPCLoader {
 	public INPCLoader(NPCMain main, NPCData data) {
 		this.main = main;
 		this.data = data;
-		this.range = data.getRange();
-		this.hasHeadRotation = data.hasHeadRotation();
+		this.range = data.getTraits().getRange();
+		this.hasHeadRotation = data.getTraits().hasHeadRotation();
 		this.headRotationRange = main.getConfig().getDouble("npc-headrotation-range");
 		this.resetRotation = main.getConfig().getBoolean("reset-headrotation");
 	}

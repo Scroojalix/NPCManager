@@ -14,6 +14,7 @@ import me.scroojalix.npcmanager.NPCMain;
 import me.scroojalix.npcmanager.api.InteractionsManager;
 import me.scroojalix.npcmanager.commands.tab.NPCCommandTab;
 import me.scroojalix.npcmanager.utils.NPCData;
+import me.scroojalix.npcmanager.utils.NPCTrait;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -47,14 +48,15 @@ public class NPCCommands implements CommandExecutor {
 				if (args.length == 2) {
 					if (main.npc.getNPCs().containsKey(args[1])) {
 						NPCData data = main.npc.getNPCs().get(args[1]);
+						NPCTrait traits = data.getTraits();
 						sender.sendMessage(main.format("&b&M&L                      &6 NPC Info &b&M&L                      "));
 						sender.sendMessage(main.format("&6Name: &F"+data.getName()));
-						sender.sendMessage(main.format("&6Display Name: &F"+data.getDisplayName()));
-						sender.sendMessage(main.format("&6Subtitle: &F"+data.getSubtitle()));
+						sender.sendMessage(main.format("&6Display Name: &F"+traits.getDisplayName()));
+						sender.sendMessage(main.format("&6Subtitle: &F"+traits.getSubtitle()));
 						sender.spigot().sendMessage(getLocationComponents(args[1], data.getLoc()));
-						sender.sendMessage(main.format("&6Skin: &F"+data.getSkin()));
-						sender.sendMessage(main.format("&6Range: &F"+data.getRange()));
-						sender.sendMessage(main.format("&6Head Rotation: &F"+data.hasHeadRotation()));
+						sender.sendMessage(main.format("&6Skin: &F"+traits.getSkin()));
+						sender.sendMessage(main.format("&6Range: &F"+traits.getRange()));
+						sender.sendMessage(main.format("&6Head Rotation: &F"+traits.hasHeadRotation()));
 						sender.sendMessage(main.format("&b&M&L                                                       "));
 						return true;
 					} else {
@@ -114,6 +116,7 @@ public class NPCCommands implements CommandExecutor {
 					String name = args[1];
 					if (main.npc.getNPCs().containsKey(name)) {
 						NPCData modifying = main.npc.getNPCs().get(name);
+						NPCTrait traits = modifying.getTraits();
 						switch(args[2]) {
 						case "displayName":
 							if (args.length > 3) {
@@ -122,7 +125,7 @@ public class NPCCommands implements CommandExecutor {
 									displayName.append(" ").append(args[arg]);
 								}
 								boolean isEmpty = ChatColor.stripColor(main.format(displayName.toString())).isEmpty();
-								modifying.setDisplayName(isEmpty?null:displayName.toString());
+								traits.setDisplayName(isEmpty?null:displayName.toString());
 								main.npc.updateNPC(modifying);
 								if (isEmpty) {
 									sender.sendMessage(main.format("&CThat string is empty. The display name will not be visible."));
@@ -130,7 +133,7 @@ public class NPCCommands implements CommandExecutor {
 									sender.sendMessage(main.format("&6Set the display name of &F")+name+main.format("&6 to &F"+displayName));
 								}
 							} else {
-								modifying.setDisplayName(null);
+								traits.setDisplayName(null);
 								main.npc.updateNPC(modifying);
 								sender.sendMessage(main.format("&CThat string is empty. The display name will not be visible."));
 							}
@@ -142,7 +145,7 @@ public class NPCCommands implements CommandExecutor {
 									subtitle.append(" ").append(args[arg]);
 								}
 								boolean isEmpty = ChatColor.stripColor(main.format(subtitle.toString())).isEmpty();
-								modifying.setSubtitle(isEmpty?null:subtitle.toString());
+								traits.setSubtitle(isEmpty?null:subtitle.toString());
 								main.npc.updateNPC(modifying);
 								if (isEmpty) {
 									sender.sendMessage(main.format("&CThat string is empty. The subtitle will not be visible."));
@@ -150,7 +153,7 @@ public class NPCCommands implements CommandExecutor {
 									sender.sendMessage(main.format("&6Set the subtitle of &F")+name+main.format("&6 to &F"+subtitle));
 								}
 							} else {
-								modifying.setSubtitle(null);
+								traits.setSubtitle(null);
 								main.npc.updateNPC(modifying);
 								sender.sendMessage(main.format("&CThat string is empty. The subtitle will not be visible."));
 							}
@@ -160,9 +163,9 @@ public class NPCCommands implements CommandExecutor {
 								sender.sendMessage(ChatColor.RED+"Usage: /npc modify <name> <key> <value>");
 							}
 							else {
-								modifying.setHasHeadRotation(args[3].equalsIgnoreCase("true"));
+								traits.setHeadRotation(args[3].equalsIgnoreCase("true"));
 								main.npc.updateNPC(modifying);
-								sender.sendMessage(main.format("&6Set the head rotation of &F")+name+main.format("&6 to &F"+String.valueOf(modifying.hasHeadRotation())));
+								sender.sendMessage(main.format("&6Set the head rotation of &F")+name+main.format("&6 to &F"+String.valueOf(traits.hasHeadRotation())));
 							}
 							return true;
 						case "range":
@@ -176,7 +179,7 @@ public class NPCCommands implements CommandExecutor {
 										sender.sendMessage(ChatColor.RED+"Range cannot be set to 0 or below!");
 										return true;
 									}
-									modifying.setRange(range);
+									traits.setRange(range);
 									main.npc.updateNPC(modifying);
 									sender.sendMessage(main.format("&6Set the range of &F")+name+main.format("&6 to &F"+range));
 								} catch(Exception e) {

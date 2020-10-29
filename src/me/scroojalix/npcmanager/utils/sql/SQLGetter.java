@@ -25,7 +25,7 @@ public class SQLGetter {
 	public void createTable() {
 		try {
 			PreparedStatement ps = main.sql.getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS "+tableName+
-					" (NAME VARCHAR(16) BINARY,DATA VARCHAR(400) BINARY,PRIMARY KEY (NAME))");
+					" (NAME VARCHAR(16) BINARY,DATA TEXT BINARY,PRIMARY KEY (NAME))");
 			ps.executeUpdate();
 		} catch(SQLException e) {
 			e.printStackTrace();
@@ -79,7 +79,7 @@ public class SQLGetter {
 		try {
 			PreparedStatement ps = main.sql.getConnection().prepareStatement("TRUNCATE "+tableName);
 			ps.executeUpdate();
-		} catch(SQLException e) {
+		} catch(SQLException | NullPointerException e) {
 			e.printStackTrace();
 		}
 	}
@@ -112,8 +112,8 @@ public class SQLGetter {
 			while(rs.next()) {
 				NPCData data = g.fromJson(rs.getString(1), NPCData.class);
 				if (!data.isWorldNull()) {
-					if (data.getInteractEventName() != null) {
-						String interactEvent = data.getInteractEventName();
+					if (data.getTraits().getInteractEvent() != null) {
+						String interactEvent = data.getTraits().getInteractEvent();
 						if (InteractionsManager.getInteractEvents().containsKey(interactEvent)) {
 							data.setInteractEvent(InteractionsManager.getInteractEvents().get(interactEvent));
 						} else {
@@ -125,7 +125,7 @@ public class SQLGetter {
 					main.log(Level.WARNING, "Error whilst restoring NPCs: Unknown World");
 				}
 			}
-		} catch(SQLException e) {
+		} catch(SQLException | NullPointerException e) {
 			e.printStackTrace();
 		}
 	}

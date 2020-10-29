@@ -18,6 +18,7 @@ import me.scroojalix.npcmanager.NPCMain;
 import me.scroojalix.npcmanager.nms.interfaces.INPCManager;
 import me.scroojalix.npcmanager.nms.interfaces.NMSHologram;
 import me.scroojalix.npcmanager.utils.NPCData;
+import me.scroojalix.npcmanager.utils.NPCTrait;
 import net.minecraft.server.v1_11_R1.DataWatcherRegistry;
 import net.minecraft.server.v1_11_R1.EntityPlayer;
 import net.minecraft.server.v1_11_R1.EnumChatFormat;
@@ -77,8 +78,9 @@ public class NPCManager extends INPCManager {
 	
 	public void getNMSEntity(NPCData data) {
 		GameProfile profile;
-		if (data.getSkin() != null && main.skinManager.values().contains(data.getSkin())) {
-			String[] profileData = main.skinManager.getSkinData(data.getSkin());
+		NPCTrait traits = data.getTraits();
+		if (traits.getSkin() != null && main.skinManager.values().contains(traits.getSkin())) {
+			String[] profileData = main.skinManager.getSkinData(traits.getSkin());
 			profile = new GameProfile(UUID.fromString(profileData[0]), data.getName());
 			profile.getProperties().put("textures", new Property("textures", profileData[1], profileData[2]));
 		} else if(data.getUUID() != null) {
@@ -98,22 +100,24 @@ public class NPCManager extends INPCManager {
 	
 	public void restoreNPC(NPCData data) {
 		getNMSEntity(data);
+		String displayName = data.getTraits().getDisplayName();
+		String subtitle = data.getTraits().getSubtitle();
 		
 		//Holograms
-		boolean hasDisplayName = data.getDisplayName() != null;
-		boolean hasSubtitle = data.getSubtitle() != null;
+		boolean hasDisplayName = displayName != null;
+		boolean hasSubtitle = subtitle != null;
 		Location loc = data.getLoc();
 		Location upperLoc = new Location(loc.getWorld(), loc.getX(), loc.getY()+1.95, loc.getZ());
 		Location lowerLoc = new Location(loc.getWorld(), loc.getX(), loc.getY()+1.7, loc.getZ());
 		if (hasDisplayName && hasSubtitle) {
-			data.setNameHolo(new EntityNMSHologram(upperLoc, main.format(data.getDisplayName())));
-			data.setSubtitleHolo(new EntityNMSHologram(lowerLoc, main.format(data.getSubtitle())));
+			data.setNameHolo(new EntityNMSHologram(upperLoc, main.format(displayName)));
+			data.setSubtitleHolo(new EntityNMSHologram(lowerLoc, main.format(subtitle)));
 		} else if (hasDisplayName && !hasSubtitle){
-			data.setNameHolo(new EntityNMSHologram(lowerLoc, main.format(data.getDisplayName())));
+			data.setNameHolo(new EntityNMSHologram(lowerLoc, main.format(displayName)));
 			data.setSubtitleHolo(null);
 		} else if (!hasDisplayName && hasSubtitle) {
 			data.setNameHolo(null);
-			data.setSubtitleHolo(new EntityNMSHologram(lowerLoc, main.format(data.getSubtitle())));
+			data.setSubtitleHolo(new EntityNMSHologram(lowerLoc, main.format(subtitle)));
 		} else {
 			data.setNameHolo(null);
 			data.setSubtitleHolo(null);

@@ -17,22 +17,13 @@ public class NPCData {
 	@Expose
 	private String name;
 	@Expose
-	private String displayName;
-	@Expose
-	private String subtitle;
-	@Expose
 	private Map<String, Object> loc;
-	@Expose
-	private int range;
-	@Expose
-	private boolean headRotation;
 	@Expose
 	private String uuid;
 	@Expose
-	private String skin;
-	@Expose
-	private String interactEventName;
+	private NPCTrait traits;
 	
+	//Holograms
 	private NMSHologram nameHolo;
 	private NMSHologram subtitleHolo;
 	
@@ -41,17 +32,28 @@ public class NPCData {
 	private int headRotationTask;
 	private int loaderTask;
 
-	public NPCData(String name, String displayName, Object npc, Location loc, int range, boolean headRotation) {
+	public NPCData(String name, String displayName, Location loc) {
 		this.name = name;
-		this.displayName = displayName;
+		this.traits = new NPCTrait(displayName, null, 60, true);
+		setLoc(loc);
+	}
+
+	public NPCData(String name, String displayName, String subtitle, Object npc, Location loc, int range, boolean headRotation) {
+		this.name = name;
+		this.traits = new NPCTrait(displayName, subtitle, range, headRotation);
 		this.npc = npc;
 		setLoc(loc);
-		this.range = range;
-		this.headRotation = headRotation;
 	}
 	
 	public String toJson() {
 		return new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create().toJson(this);
+	}
+
+	/**
+	 * @return The traits of this NPC.
+	 */
+	public NPCTrait getTraits() {
+		return traits;
 	}
 	
 	/** 
@@ -60,37 +62,7 @@ public class NPCData {
 	public String getName() {
 		return name;
 	}
-	
-	/**
-	 * @return Display Name of this NPC
-	 */
-	public String getDisplayName() {
-		return displayName;
-	}
-	
-	/**
-	 * Sets the Display Name of this NPC.
-	 * @param displayName - new Display Name
-	 */
-	public void setDisplayName(String displayName) {
-		this.displayName = displayName;
-	}
-	
-	/**
-	 * @return Subtitle of this NPC.
-	 */
-	public String getSubtitle() {
-		return subtitle;
-	}
-	
-	/**
-	 * Sets the subtitle of this NPC.
-	 * @param subtitle - new Subtitle
-	 */
-	public void setSubtitle(String subtitle) {
-		this.subtitle = subtitle;
-	}
-	
+
 	/**
 	 * @return EntityPlayer instance
 	 */
@@ -134,38 +106,6 @@ public class NPCData {
 	}
 	
 	/**
-	 * Range is the distance a player must be to this NPC for it to be visible.
-	 * @return The range of this NPC.
-	 */
-	public int getRange() {
-		return range;
-	}
-	
-	/**
-	 * Sets the range of this NPC.
-	 * @param range - new Range
-	 */
-	public void setRange(int range) {
-		this.range = range;
-	}
-	
-	/**
-	 * Returns whether or not this NPC has Head Rotation.
-	 * @return True/False
-	 */
-	public boolean hasHeadRotation() {
-		return headRotation;
-	}
-	
-	/**
-	 * Sets whether or not this NPC has Head Rotation.
-	 * @param headRotation - True/False
-	 */
-	public void setHasHeadRotation(boolean headRotation) {
-		this.headRotation = headRotation;
-	}
-	
-	/**
 	 * @return UUID of NPC
 	 */
 	public String getUUID() {
@@ -177,21 +117,6 @@ public class NPCData {
 	 */
 	public void setUUID(String uuid) {
 		this.uuid = uuid;
-	}
-	
-	/**
-	 * @return The name of the skin on this NPC.
-	 */
-	public String getSkin() {
-		return skin;
-	}
-	
-	/**
-	 * Sets this NPC's skin.
-	 * @param skin - new Skin
-	 */
-	public void setSkin(String skin) {
-		this.skin = skin;
 	}
 	
 	/**
@@ -261,9 +186,9 @@ public class NPCData {
 	public void setInteractEvent(InteractEvent interactEvent) {
 		this.interactEvent = interactEvent;
 		if (interactEvent != null) {
-			this.interactEventName = interactEvent.getInteractionName().replace(" ", "-");
+			traits.setInteractEvent(interactEvent.getInteractionName().replace(" ", "-"));
 		} else {
-			this.interactEventName = null;
+			traits.setInteractEvent(null);
 		}
 	}
 	
@@ -272,13 +197,6 @@ public class NPCData {
 	 */
 	public InteractEvent getInteractEvent() {
 		return interactEvent;
-	}
-	
-	/**
-	 * @return The name of this NPC's interact event.
-	 */
-	public String getInteractEventName() {
-		return interactEventName;
 	}
 	
 	/**
