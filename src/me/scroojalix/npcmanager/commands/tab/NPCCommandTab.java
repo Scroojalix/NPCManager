@@ -62,14 +62,21 @@ public class NPCCommandTab implements TabCompleter {
 			result.clear();
 			if (args[0].equalsIgnoreCase("modify")) {
 				List<String> arg3 = new ArrayList<String>();
-				if (args[2].equalsIgnoreCase("hasHeadRotation")) {
+				if (args[2].equalsIgnoreCase("displayName") || args[2].equalsIgnoreCase("subtitle")) {
+					arg3.add("null");
+					for (String a : arg3) {
+						if (a.toLowerCase().startsWith(args[3].toLowerCase())) result.add(a);
+					}
+					return result;
+				}
+				else if (args[2].equalsIgnoreCase("hasHeadRotation")) {
 					arg3.add("true"); arg3.add("false");
 					for (String a : arg3) {
 						if (a.toLowerCase().startsWith(args[3].toLowerCase())) result.add(a);
 					}
 					return result;
 				}
-				if (args[2].equalsIgnoreCase("skin")) {
+				else if (args[2].equalsIgnoreCase("skin")) {
 					for (String skin : main.skinManager.values()) {
 						arg3.add(skin);
 					}
@@ -79,7 +86,7 @@ public class NPCCommandTab implements TabCompleter {
 					}
 					return result;
 				}
-				if (args[2].equalsIgnoreCase("interactEvent")) {
+				else if (args[2].equalsIgnoreCase("interactEvent")) {
 					for (String interaction : InteractionsManager.getInteractEvents().keySet()) {
 						arg3.add(interaction);
 					}

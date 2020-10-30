@@ -38,15 +38,17 @@ public class NPCMain extends JavaPlugin {
 	
 	@Override
 	public void onEnable() {
-		new Initialise().initialise(this);
 		if (!validVersion()) {
 			getLogger().severe("This plugin is not compatible with that server version!");
 			getLogger().severe("Disabling the plugin.");
 			validVersion = false;
 			this.setEnabled(false);
-		} else if (!Bukkit.getOnlinePlayers().isEmpty()) {
-			for (Player player : Bukkit.getOnlinePlayers()) {
-				reader.inject(player);
+		} else {
+			Initialise.initialise(this);
+			if (!Bukkit.getOnlinePlayers().isEmpty()) {
+				for (Player player : Bukkit.getOnlinePlayers()) {
+					reader.inject(player);
+				}
 			}
 		}
 	}

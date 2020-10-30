@@ -1,9 +1,7 @@
 package me.scroojalix.npcmanager.commands;
 
-import java.text.DecimalFormat;
 import java.util.logging.Level;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -15,6 +13,7 @@ import me.scroojalix.npcmanager.api.InteractionsManager;
 import me.scroojalix.npcmanager.commands.tab.NPCCommandTab;
 import me.scroojalix.npcmanager.utils.NPCData;
 import me.scroojalix.npcmanager.utils.NPCTrait;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -53,7 +52,7 @@ public class NPCCommands implements CommandExecutor {
 						sender.sendMessage(main.format("&6Name: &F"+data.getName()));
 						sender.sendMessage(main.format("&6Display Name: &F"+traits.getDisplayName()));
 						sender.sendMessage(main.format("&6Subtitle: &F"+traits.getSubtitle()));
-						sender.spigot().sendMessage(getLocationComponents(args[1], data.getLoc()));
+						sendJSONMessage(sender, getLocationComponents(args[1], data.getLoc()));
 						sender.sendMessage(main.format("&6Skin: &F"+traits.getSkin()));
 						sender.sendMessage(main.format("&6Range: &F"+traits.getRange()));
 						sender.sendMessage(main.format("&6Head Rotation: &F"+traits.hasHeadRotation()));
@@ -120,17 +119,23 @@ public class NPCCommands implements CommandExecutor {
 						switch(args[2]) {
 						case "displayName":
 							if (args.length > 3) {
-								StringBuilder displayName = new StringBuilder(args[3]);
-								for (int arg = 4; arg < args.length; arg++) {
-									displayName.append(" ").append(args[arg]);
-								}
-								boolean isEmpty = ChatColor.stripColor(main.format(displayName.toString())).isEmpty();
-								traits.setDisplayName(isEmpty?null:displayName.toString());
-								main.npc.updateNPC(modifying);
-								if (isEmpty) {
-									sender.sendMessage(main.format("&CThat string is empty. The display name will not be visible."));
+								if (args[3].equalsIgnoreCase("null")) {
+									traits.setDisplayName(null);
+									main.npc.updateNPC(modifying);
+									sender.sendMessage(main.format("&CSet the display name to null. It will not be visible."));
 								} else {
-									sender.sendMessage(main.format("&6Set the display name of &F")+name+main.format("&6 to &F"+displayName));
+									StringBuilder displayName = new StringBuilder(args[3]);
+									for (int arg = 4; arg < args.length; arg++) {
+										displayName.append(" ").append(args[arg]);
+									}
+									boolean isEmpty = ChatColor.stripColor(main.format(displayName.toString())).isEmpty();
+									traits.setDisplayName(isEmpty?null:displayName.toString());
+									main.npc.updateNPC(modifying);
+									if (isEmpty) {
+										sender.sendMessage(main.format("&CThat string is empty. The display name will not be visible."));
+									} else {
+										sender.sendMessage(main.format("&6Set the display name of &F")+name+main.format("&6 to &F"+displayName));
+									}
 								}
 							} else {
 								traits.setDisplayName(null);
@@ -140,17 +145,23 @@ public class NPCCommands implements CommandExecutor {
 							return true;
 						case "subtitle":
 							if (args.length > 3) {
-								StringBuilder subtitle = new StringBuilder(args[3]);
-								for (int arg = 4; arg < args.length; arg++) {
-									subtitle.append(" ").append(args[arg]);
-								}
-								boolean isEmpty = ChatColor.stripColor(main.format(subtitle.toString())).isEmpty();
-								traits.setSubtitle(isEmpty?null:subtitle.toString());
-								main.npc.updateNPC(modifying);
-								if (isEmpty) {
-									sender.sendMessage(main.format("&CThat string is empty. The subtitle will not be visible."));
+								if (args[3].equalsIgnoreCase("null")) {
+									traits.setSubtitle(null);
+									main.npc.updateNPC(modifying);
+									sender.sendMessage(main.format("&CSet the subtitle to null. It will not be visible."));
 								} else {
-									sender.sendMessage(main.format("&6Set the subtitle of &F")+name+main.format("&6 to &F"+subtitle));
+									StringBuilder subtitle = new StringBuilder(args[3]);
+									for (int arg = 4; arg < args.length; arg++) {
+										subtitle.append(" ").append(args[arg]);
+									}
+									boolean isEmpty = ChatColor.stripColor(main.format(subtitle.toString())).isEmpty();
+									traits.setSubtitle(isEmpty?null:subtitle.toString());
+									main.npc.updateNPC(modifying);
+									if (isEmpty) {
+										sender.sendMessage(main.format("&CThat string is empty. The subtitle will not be visible."));
+									} else {
+										sender.sendMessage(main.format("&6Set the subtitle of &F")+name+main.format("&6 to &F"+subtitle));
+									}
 								}
 							} else {
 								traits.setSubtitle(null);
@@ -283,9 +294,9 @@ public class NPCCommands implements CommandExecutor {
 				if (!main.npc.getNPCs().isEmpty()) {
 					sender.sendMessage(main.format("&6List of all NPC's &7&o(Click to Remove)"));
 					TextComponent spacer = new TextComponent(" - ");
-					spacer.setColor(net.md_5.bungee.api.ChatColor.AQUA);
+					spacer.setColor(ChatColor.AQUA);
 					for (String npc : main.npc.getNPCs().keySet()) {
-						sender.spigot().sendMessage(spacer, getListComponent(npc));
+						sendJSONMessage(sender, getListComponents(npc));
 					}
 				} else {
 					sender.sendMessage(main.format("&CThere are no NPC's!"));
@@ -319,23 +330,36 @@ public class NPCCommands implements CommandExecutor {
 
 	
 	@SuppressWarnings("deprecation")
-	private TextComponent getListComponent(String npc) {
-		TextComponent component = new TextComponent(npc);
-		component.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/npc remove "+npc));
-		component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(main.format("&7&oClick to remove this NPC.")).create()));
-		component.setColor(net.md_5.bungee.api.ChatColor.GREEN);
-		return component;
+	private TextComponent[] getListComponents(String npc) {
+		TextComponent component0 = new TextComponent(" - ");
+		component0.setColor(ChatColor.GOLD);
+		TextComponent component1 = new TextComponent(npc);
+		component1.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/npc remove "+npc));
+		component1.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(main.format("&7&oClick to remove this NPC.")).create()));
+		component1.setColor(ChatColor.AQUA);
+		return new TextComponent[] {component0, component1};
 	}
 	
 	@SuppressWarnings("deprecation")
 	private TextComponent[] getLocationComponents(String npc, Location loc) {
 		TextComponent component0 = new TextComponent("Location: ");
-		component0.setColor(net.md_5.bungee.api.ChatColor.GOLD);
-		DecimalFormat df = new DecimalFormat("##.##");
-		TextComponent component1 = new TextComponent("[World: "+loc.getWorld().getName()+" , X: "+df.format(loc.getX())+" , Y: "+df.format(loc.getY())+" , Z: "+df.format(loc.getZ())+"]");
+		component0.setColor(ChatColor.GOLD);
+		TextComponent component1 = new TextComponent("[World: "+loc.getWorld().getName()+" , X: "+loc.getX()+" , Y: "+loc.getY()+" , Z: "+loc.getZ()+"]");
 		component1.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/npc tpto "+npc));
 		component1.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(main.format("&7&oClick to teleport to this NPC.")).create()));
-		component1.setColor(net.md_5.bungee.api.ChatColor.YELLOW);
+		component1.setColor(ChatColor.YELLOW);
 		return new TextComponent[]{component0, component1};
+	}
+
+	private void sendJSONMessage(CommandSender sender, TextComponent...components) {
+		if (sender instanceof Player) {
+			((Player)sender).spigot().sendMessage(components);
+		} else {
+			String message = "";
+			for (TextComponent component : components) {
+				message += component.getText();
+			}
+			sender.sendMessage(message);
+		}
 	}
 }

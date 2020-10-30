@@ -6,7 +6,7 @@ import me.scroojalix.npcmanager.events.NPCEvents;
 
 public class Initialise {
 	
-	public void initialise(NPCMain main) {
+	public static void initialise(NPCMain main) {
 		NPCMain.instance = main;
 		main.saveDefaultConfig();
 		main.showDebugMessages = main.getConfig().getBoolean("show-debug-messages");
