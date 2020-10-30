@@ -49,4 +49,9 @@ public class InteractAtNPCEvent extends Event implements Cancellable{
 	public void setCancelled(boolean arg0) {
 		isCancelled = arg0;
 	}
+
+	public enum NPCAction {
+		LEFT_CLICK,
+		RIGHT_CLICK;
+	}
 }

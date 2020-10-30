@@ -111,128 +111,87 @@ public class NPCCommands implements CommandExecutor {
 				}
 			}
 			if (args[0].equalsIgnoreCase("modify")) {
-				if (args.length >= 3) {
+				if (args.length > 3) {
 					String name = args[1];
 					if (main.npc.getNPCs().containsKey(name)) {
 						NPCData modifying = main.npc.getNPCs().get(name);
 						NPCTrait traits = modifying.getTraits();
 						switch(args[2]) {
 						case "displayName":
-							if (args.length > 3) {
-								if (args[3].equalsIgnoreCase("null")) {
-									traits.setDisplayName(null);
-									main.npc.updateNPC(modifying);
-									sender.sendMessage(main.format("&CSet the display name to null. It will not be visible."));
-								} else {
-									StringBuilder displayName = new StringBuilder(args[3]);
-									for (int arg = 4; arg < args.length; arg++) {
-										displayName.append(" ").append(args[arg]);
-									}
-									boolean isEmpty = ChatColor.stripColor(main.format(displayName.toString())).isEmpty();
-									traits.setDisplayName(isEmpty?null:displayName.toString());
-									main.npc.updateNPC(modifying);
-									if (isEmpty) {
-										sender.sendMessage(main.format("&CThat string is empty. The display name will not be visible."));
-									} else {
-										sender.sendMessage(main.format("&6Set the display name of &F")+name+main.format("&6 to &F"+displayName));
-									}
-								}
-							} else {
+							if (args[3].equalsIgnoreCase("null")) {
 								traits.setDisplayName(null);
 								main.npc.updateNPC(modifying);
-								sender.sendMessage(main.format("&CThat string is empty. The display name will not be visible."));
+								sender.sendMessage(main.format("&CSet the display name to null. It will not be visible."));
+							} else {
+								StringBuilder displayName = new StringBuilder(args[3]);
+								for (int arg = 4; arg < args.length; arg++) {
+									displayName.append(" ").append(args[arg]);
+								}
+								traits.setDisplayName(displayName.toString());
+								main.npc.updateNPC(modifying);
+								sender.sendMessage(main.format("&6Set the display name of &F")+name+main.format("&6 to &F"+displayName));
 							}
 							return true;
 						case "subtitle":
-							if (args.length > 3) {
-								if (args[3].equalsIgnoreCase("null")) {
-									traits.setSubtitle(null);
-									main.npc.updateNPC(modifying);
-									sender.sendMessage(main.format("&CSet the subtitle to null. It will not be visible."));
-								} else {
-									StringBuilder subtitle = new StringBuilder(args[3]);
-									for (int arg = 4; arg < args.length; arg++) {
-										subtitle.append(" ").append(args[arg]);
-									}
-									boolean isEmpty = ChatColor.stripColor(main.format(subtitle.toString())).isEmpty();
-									traits.setSubtitle(isEmpty?null:subtitle.toString());
-									main.npc.updateNPC(modifying);
-									if (isEmpty) {
-										sender.sendMessage(main.format("&CThat string is empty. The subtitle will not be visible."));
-									} else {
-										sender.sendMessage(main.format("&6Set the subtitle of &F")+name+main.format("&6 to &F"+subtitle));
-									}
-								}
-							} else {
+							if (args[3].equalsIgnoreCase("null")) {
 								traits.setSubtitle(null);
 								main.npc.updateNPC(modifying);
-								sender.sendMessage(main.format("&CThat string is empty. The subtitle will not be visible."));
+								sender.sendMessage(main.format("&CSet the subtitle to null. It will not be visible."));
+							} else {
+								//TODO redo this to make it require quotation marks.
+								StringBuilder subtitle = new StringBuilder(args[3]);
+								for (int arg = 4; arg < args.length; arg++) {
+									subtitle.append(" ").append(args[arg]);
+								}
+								traits.setSubtitle(subtitle.toString());
+								main.npc.updateNPC(modifying);
+								sender.sendMessage(main.format("&6Set the subtitle of &F")+name+main.format("&6 to &F"+subtitle));
 							}
 							return true;
 						case "hasHeadRotation":
-							if (args.length == 3) {
-								sender.sendMessage(ChatColor.RED+"Usage: /npc modify <name> <key> <value>");
-							}
-							else {
-								traits.setHeadRotation(args[3].equalsIgnoreCase("true"));
-								main.npc.updateNPC(modifying);
-								sender.sendMessage(main.format("&6Set the head rotation of &F")+name+main.format("&6 to &F"+String.valueOf(traits.hasHeadRotation())));
-							}
+							traits.setHeadRotation(args[3].equalsIgnoreCase("true"));
+							main.npc.updateNPC(modifying);
+							sender.sendMessage(main.format("&6Set the head rotation of &F")+name+main.format("&6 to &F"+traits.hasHeadRotation()));
 							return true;
 						case "range":
-							if (args.length == 3) {
-								sender.sendMessage(ChatColor.RED+"Usage: /npc modify <name> <key> <value>");
-							}
-							else {
-								try {
-									Integer range = Integer.parseInt(args[3]);
-									if (range <= 0) {
-										sender.sendMessage(ChatColor.RED+"Range cannot be set to 0 or below!");
-										return true;
-									}
-									traits.setRange(range);
-									main.npc.updateNPC(modifying);
-									sender.sendMessage(main.format("&6Set the range of &F")+name+main.format("&6 to &F"+range));
-								} catch(Exception e) {
-									sender.sendMessage(ChatColor.RED+"'"+args[3]+"' is not a number");
+							try {
+								Integer range = Integer.parseInt(args[3]);
+								if (range <= 0) {
+									sender.sendMessage(ChatColor.RED+"Range cannot be set to 0 or below!");
+									return true;
 								}
+								traits.setRange(range);
+								main.npc.updateNPC(modifying);
+								sender.sendMessage(main.format("&6Set the range of &F")+name+main.format("&6 to &F"+range));
+							} catch(NumberFormatException e) {
+								sender.sendMessage(ChatColor.RED+"'"+args[3]+"' is not a number");
 							}
 							return true;
 						case "skin":
-							if (args.length == 3) {
-								sender.sendMessage(ChatColor.RED+"Usage: /npc modify <name> <key> <value>");
-							}
-							else {
-								if (args[3].equalsIgnoreCase("Default")) {
-									main.npc.setSkin(modifying, null);
-									sender.sendMessage(main.format("&6Set the skin of &F")+name+main.format("&6 to &FDefault"));
-								} else if (main.skinManager.values().contains(args[3])) {
-									main.npc.setSkin(modifying, args[3]);
-									sender.sendMessage(main.format("&6Set the skin of &F")+name+main.format("&6 to &F"+args[3]));
-								} else {
-									sender.sendMessage(ChatColor.RED+"'"+args[3]+"' is not a valid skin.");
-								}
+							if (args[3].equalsIgnoreCase("Default")) {
+								main.npc.setSkin(modifying, null);
+								sender.sendMessage(main.format("&6Set the skin of &F")+name+main.format("&6 to &FDefault"));
+							} else if (main.skinManager.values().contains(args[3])) {
+								main.npc.setSkin(modifying, args[3]);
+								sender.sendMessage(main.format("&6Set the skin of &F")+name+main.format("&6 to &F"+args[3]));
+							} else {
+								sender.sendMessage(ChatColor.RED+"'"+args[3]+"' is not a valid skin.");
 							}
 							return true;
 						case "interactEvent":
-							if (args.length == 3) {
-								sender.sendMessage(ChatColor.RED+"Usage: /npc modify <name> <key> <value>");
-							}
-							else {
-								String interaction = args[3];
-								if (!interaction.equalsIgnoreCase("None")) {
-									if (InteractionsManager.getInteractEvents().containsKey(interaction)) {
-										modifying.setInteractEvent(InteractionsManager.getInteractEvents().get(interaction));
-										sender.sendMessage(main.format("&6Set the interact event of &F")+name+main.format("&6 to &F"+interaction));
-										main.npc.updateNPC(modifying);
-									} else {
-										sender.sendMessage(main.format("&C'"+interaction+"' is not a valid interact event."));
-									}
-								} else {
-									modifying.setInteractEvent(null);
-									sender.sendMessage(main.format("&6Set the interact event of &F")+name+main.format("&6 to &FNone"));
+							String interaction = args[3];
+							if (!interaction.equalsIgnoreCase("None")) {
+								if (InteractionsManager.getInteractEvents().containsKey(interaction)) {
+									modifying.setInteractEvent(InteractionsManager.getInteractEvents().get(interaction));
+									sender.sendMessage(main.format("&6Set the interact event of &F")+name+main.format("&6 to &F"+interaction));
 									main.npc.updateNPC(modifying);
+								} else {
+									sender.sendMessage(main.format("&C'"+interaction+"' is not a valid interact event."));
 								}
+							} else {
+								modifying.setInteractEvent(null);
+								sender.sendMessage(main.format("&6Set the interact event of &F")+name+main.format("&6 to &FNone"));
+								main.npc.updateNPC(modifying);
 							}
 							return true;
 						default:
@@ -244,8 +203,7 @@ public class NPCCommands implements CommandExecutor {
 						return true;
 					}
 				} else {
-					sender.sendMessage(ChatColor.RED+"Usage: /npc modify <name> <key> <value>");
-					return true;
+					sender.sendMessage(main.format("&CUsage: /npc modify <name> <key> <value>"));
 				}
 			}
 			if (args[0].equalsIgnoreCase("move")) {

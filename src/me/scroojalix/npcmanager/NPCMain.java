@@ -10,11 +10,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import me.scroojalix.npcmanager.api.InteractionsManager;
+import me.scroojalix.npcmanager.commands.NPCCommands;
+import me.scroojalix.npcmanager.events.NPCEvents;
 import me.scroojalix.npcmanager.nms.interfaces.INPCManager;
 import me.scroojalix.npcmanager.nms.interfaces.IPacketReader;
 import me.scroojalix.npcmanager.utils.FileManager;
-import me.scroojalix.npcmanager.utils.Initialise;
-import me.scroojalix.npcmanager.utils.SaveMethod;
 import me.scroojalix.npcmanager.utils.SkinManager;
 import me.scroojalix.npcmanager.utils.sql.MySQL;
 import net.md_5.bungee.api.ChatColor;
@@ -44,13 +44,24 @@ public class NPCMain extends JavaPlugin {
 			validVersion = false;
 			this.setEnabled(false);
 		} else {
-			Initialise.initialise(this);
+			initialise();
 			if (!Bukkit.getOnlinePlayers().isEmpty()) {
 				for (Player player : Bukkit.getOnlinePlayers()) {
 					reader.inject(player);
 				}
 			}
 		}
+	}
+
+	public void initialise() {
+		NPCMain.instance = this;
+		this.saveDefaultConfig();
+		this.showDebugMessages = this.getConfig().getBoolean("show-debug-messages");
+		this.setSaveMethod();
+		this.skinFile = new FileManager(this, "skins.yml");
+		this.skinManager = new SkinManager(this);
+		this.getCommand("npc").setExecutor(new NPCCommands(this));
+		this.getServer().getPluginManager().registerEvents(new NPCEvents(this), this);
 	}
 
 	@Override
@@ -148,5 +159,9 @@ public class NPCMain extends JavaPlugin {
 			}
 			break;
 		}
+	}
+
+	public enum SaveMethod {
+		YAML, MYSQL;
 	}
 }

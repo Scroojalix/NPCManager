@@ -12,7 +12,7 @@ import io.netty.handler.codec.MessageToMessageDecoder;
 import me.scroojalix.npcmanager.NPCMain;
 import me.scroojalix.npcmanager.nms.interfaces.IPacketReader;
 import me.scroojalix.npcmanager.utils.InteractAtNPCEvent;
-import me.scroojalix.npcmanager.utils.NPCAction;
+import me.scroojalix.npcmanager.utils.InteractAtNPCEvent.NPCAction;
 import me.scroojalix.npcmanager.utils.NPCData;
 import net.minecraft.server.v1_16_R1.EntityPlayer;
 import net.minecraft.server.v1_16_R1.Packet;
