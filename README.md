@@ -27,6 +27,6 @@ The accepted values for `<key>` are:
 * `interactEvent`
 
 ### Supported Versions
-This plugin currently works on spigot versions of 1.10 up to 1.16.
+This plugin currently works on spigot versions of 1.9 up to 1.16.
 
-<i>NOTE: More versions will be supported in the future.</i>
+<i>NOTE: Support for 1.8 versions will be added soon.</i>
