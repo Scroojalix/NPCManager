@@ -33,6 +33,7 @@ public class NPCMain extends JavaPlugin {
 	public FileManager npcFile;
 	public MySQL sql;
 	public boolean showDebugMessages;
+	public ServerVersion serverVersion;
 	
 	private boolean validVersion = true;
 	
@@ -77,8 +78,13 @@ public class NPCMain extends JavaPlugin {
 		instance = null;
 	}
 	
+	/**
+	 * Translate colour codes and hex codes into a coloured string.
+	 * @param msg The message to translate.
+	 * @return The translated string.
+	 */
 	public String format(String msg) {
-		if (Bukkit.getVersion().contains("1.16")) {
+		if (serverVersion.hasHexSupport) {
 			Matcher match = pattern.matcher(msg);
 			while (match.find()) {
 				String colour = msg.substring(match.start(), match.end());
@@ -102,6 +108,7 @@ public class NPCMain extends JavaPlugin {
         try {
 	        npc = (INPCManager) Class.forName(pack + ".NPCManager").getConstructors()[0].newInstance(this);
 			reader = (IPacketReader) Class.forName(pack + ".PacketReader").getConstructors()[0].newInstance(this);
+			serverVersion = ServerVersion.valueOf(version);
         } catch (Exception e) {
 			return false;
 		}
@@ -163,5 +170,17 @@ public class NPCMain extends JavaPlugin {
 
 	public enum SaveMethod {
 		YAML, MYSQL;
+	}
+
+	public enum ServerVersion {
+		v1_8_R2(false), v1_8_R3(false), v1_9_R1(false), v1_9_R2(false), v1_10_R1(false),
+		v1_11_R1(false), v1_12_R1(false), v1_13_R1(false), v1_13_R2(false), v1_14_R1(false),
+		v1_15_R1(false), v1_16_R1(true), v1_16_R2(true);
+
+		public final boolean hasHexSupport; 
+
+		private ServerVersion(boolean hexSupport) {
+			this.hasHexSupport = hexSupport;
+		}
 	}
 }
