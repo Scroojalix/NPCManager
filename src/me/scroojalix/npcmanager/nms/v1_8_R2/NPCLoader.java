@@ -117,7 +117,4 @@ public class NPCLoader extends INPCLoader implements Runnable {
 		loadedForPlayers.remove(player);
 	}
 
-	protected void removeNPC() {
-		npcClass.removeNPC(data.getName());
-	}
 }

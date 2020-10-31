@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.logging.Level;
 
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -21,6 +20,9 @@ public class SkinManager {
 		generateSkins();
 	}
 	
+	/**
+	 * Generate skin data from skins.yml
+	 */
 	public void generateSkins() {
 		skins.clear();
 		FileConfiguration data = main.skinFile.getConfig();
@@ -30,7 +32,7 @@ public class SkinManager {
 				try {
 					UUID.fromString(id);
 				} catch(IllegalArgumentException e) {
-					main.log(Level.SEVERE, "'"+id+"' in skins.yml is not a valid UUID!");
+					main.getLogger().severe("'"+id+"' in skins.yml is not a valid UUID!");
 					return;
 				}
 				String Texture = data.getString("skins."+name+".Texture");

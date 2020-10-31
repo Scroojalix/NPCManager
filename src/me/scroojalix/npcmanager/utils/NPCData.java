@@ -12,6 +12,10 @@ import com.google.gson.annotations.Expose;
 import me.scroojalix.npcmanager.api.InteractEvent;
 import me.scroojalix.npcmanager.nms.interfaces.NMSHologram;
 
+/**
+ * Class that stores all of an NPC's data.
+ * @author Scroojalix
+ */
 public class NPCData {
 	
 	@Expose
@@ -45,6 +49,10 @@ public class NPCData {
 		setLoc(loc);
 	}
 	
+	/**
+	 * Converts this NPCData object to a JSON string.
+	 * @return The JSON string.
+	 */
 	public String toJson() {
 		return new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create().toJson(this);
 	}

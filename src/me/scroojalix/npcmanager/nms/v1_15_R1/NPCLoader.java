@@ -116,8 +116,4 @@ public class NPCLoader extends INPCLoader implements Runnable {
 		Bukkit.getScheduler().cancelTask(loadedForPlayers.get(player));
 		loadedForPlayers.remove(player);
 	}
-
-	protected void removeNPC() {
-		npcClass.removeNPC(data.getName());
-	}
 }

@@ -19,14 +19,25 @@ public class InteractAtNPCEvent extends Event implements Cancellable{
 		this.action = action;
 	}
 	
+	/**
+	 * @return The player that interacted with the NPC in this event.
+	 */
 	public Player getPlayer() {
 		return player;
 	}
 	
+	/**
+	 * @return The data of the NPC involved in this event.
+	 */
 	public NPCData getNPCData() {
 		return data;
 	}
 	
+	/**
+	 * @return The type of interaction involved in this event. 
+	 * <p>
+	 * Can be <b>LEFT_CLICK</b> or <b>RIGHT_CLICK</b>.
+	 */
 	public NPCAction getAction() {
 		return action;
 	}
@@ -50,6 +61,9 @@ public class InteractAtNPCEvent extends Event implements Cancellable{
 		isCancelled = arg0;
 	}
 
+	/**
+	 * Enum containing the types of interactions involved in an {@link InteractAtNPCEvent}
+	 */
 	public enum NPCAction {
 		LEFT_CLICK,
 		RIGHT_CLICK;

@@ -33,8 +33,14 @@ public abstract class INPCLoader {
 		this.resetRotation = main.getConfig().getBoolean("reset-headrotation");
 	}
 	
+	/**
+	 * Generate all packets required to spawn an NPC, and store them in a LinkedHashSet.
+	 */
 	protected abstract void generatePackets();
 	
+	/**
+	 * Method that loops to update NPC's.
+	 */
 	public void run() {
 		if (data.getLoc() != null) {
 			for (Player player : Bukkit.getOnlinePlayers()) {
@@ -64,20 +70,40 @@ public abstract class INPCLoader {
 					}
 				} else if (loadedForPlayers.containsKey(player)) loadedForPlayers.remove(player);
 			}
-		} else removeNPC();
+		} else main.npc.removeNPC(data.getName());
 	}
 	
+	/**
+	 * Makes an NPC look towards a player.
+	 * @param player The player to look at.
+	 */
 	protected abstract void lookInDirection(Player player);
 	
+	/**
+	 * Reset an NPC's head rotation for a player.
+	 * @param player The player to reset head rotation for.
+	 */
 	protected abstract void resetLookDirection(Player player);
 	
+	/**
+	 * Send packets that spawn the NPC to a player.
+	 * @param player The player to send packets to.
+	 */
 	protected abstract void sendLoadPackets(Player player);
-	
+
+	/**
+	 * Send packets to a player to delete/hide an NPC.
+	 * @param player
+	 */
 	protected abstract void sendDeletePackets(Player player);
 	
-	protected abstract void removeNPC();
-	
-	protected double calculateDistance(Location loc1, Location loc2) {
+	/**
+	 * Calculate the distance between two locations.
+	 * @param loc1 Location of NPC.
+	 * @param loc2 Location of Player.
+	 * @return The distance between an NPC and a Player.
+	 */
+	private double calculateDistance(Location loc1, Location loc2) {
         return Math.sqrt(Math.pow(loc1.getX() - loc2.getX(), 2) + Math.pow(loc1.getY() - loc2.getY(), 2) + Math.pow(loc1.getZ() - loc2.getZ(), 2));
     }
 }
