@@ -146,6 +146,7 @@ public class NPCTrait {
      * Returns the name of this NPC's skin.
      * <p>
      * The skins are configured in the skins.yml file in the plugin folder.
+     * @return The name of this NPC's skin.
      */
     public String getSkin() {
         return this.skin;
@@ -153,7 +154,7 @@ public class NPCTrait {
 
     /**
      * Sets the skin of this NPC.
-     * @param skin
+     * @param skin The name of the new skin for the NPC, defined in skins.yml.
      */
     public void setSkin(String skin) {
         this.skin = skin;

@@ -80,7 +80,8 @@ public class NPCData {
 	
 	/**
 	 * Sets the EntityPlayer instance of this NPC.
-	 * @param npc - The instance of EntityPlayer
+	 * @param npc The instance of EntityPlayer
+	 * @param uuid
 	 */
 	public void setNPC(Object npc, String uuid) {
 		this.npc = npc;
@@ -100,7 +101,7 @@ public class NPCData {
 	
 	/**
 	 * Sets the location of this NPC.
-	 * @param loc - new Location
+	 * @param loc New Location
 	 */
 	public void setLoc(Location loc) {
 		DecimalFormat df = new DecimalFormat("#.##");
@@ -122,6 +123,7 @@ public class NPCData {
 	
 	/**
 	 * Sets the UUID string of this NPC. (Used during restoring)
+	 * @param The UUID to be used when restoring this NPC.
 	 */
 	public void setUUID(String uuid) {
 		this.uuid = uuid;
@@ -129,7 +131,7 @@ public class NPCData {
 	
 	/**
 	 * Sets the name hologram of this NPC.
-	 * @param hologram - The new name Hologram
+	 * @param hologram The new name Hologram
 	 */
 	public void setNameHolo(NMSHologram hologram) {
 		this.nameHolo = hologram;
@@ -144,7 +146,7 @@ public class NPCData {
 	
 	/**
 	 * Sets the subtitle hologram of this NPC.
-	 * @param hologram - The new name Hologram
+	 * @param hologram The new name Hologram
 	 */
 	public void setSubtitleHolo(NMSHologram hologram) {
 		this.subtitleHolo = hologram;
@@ -159,7 +161,7 @@ public class NPCData {
 	
 	/**
 	 * Sets the Integer assigned to the head rotation task of this NPC.
-	 * @param task - Integer assigned to Head Rotation task.
+	 * @param task Integer assigned to Head Rotation task.
 	 */
 	public void setHeadRotationTask(int task) {
 		this.headRotationTask = task;
@@ -174,7 +176,7 @@ public class NPCData {
 	
 	/**
 	 * Sets the Integer assigned to the loader task of this NPC.
-	 * @param task - Integer assigned to Loader task.
+	 * @param task Integer assigned to Loader task.
 	 */
 	public void setLoaderTask(int task) {
 		this.loaderTask = task;
@@ -189,7 +191,7 @@ public class NPCData {
 	
 	/**
 	 * Sets the Interact Event of this NPC.
-	 * @param interactEvent - new InteractEvent
+	 * @param interactEvent New InteractEvent
 	 */
 	public void setInteractEvent(InteractEvent interactEvent) {
 		this.interactEvent = interactEvent;
@@ -208,7 +210,7 @@ public class NPCData {
 	}
 	
 	/**
-	 * @return is the world that this NPC is in null?
+	 * @return Is the world that this NPC in null?
 	 */
 	public boolean isWorldNull() {
 		return Bukkit.getWorld(loc.get("world").toString()) == null;

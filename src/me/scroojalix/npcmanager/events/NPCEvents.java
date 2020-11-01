@@ -28,6 +28,6 @@ public class NPCEvents implements Listener {
 	
 	@EventHandler
 	public void onNPCInteract(InteractAtNPCEvent event) {
-		if (event.getNPCData().getInteractEvent() != null) event.getNPCData().getInteractEvent().entryPoint(event);
+		if (event.getNPCData().getInteractEvent() != null) event.getNPCData().getInteractEvent().onInteract(event);
 	}
 }

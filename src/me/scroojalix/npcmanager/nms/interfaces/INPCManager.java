@@ -29,6 +29,7 @@ public abstract class INPCManager {
 	
 	/**
 	 * Returns the Hash Map containing all NPC's
+	 * @return The Hash Map which stores the NPC's in memory.
 	 */
 	public Map<String, NPCData> getNPCs() {
 		return NPCs;
@@ -123,6 +124,7 @@ public abstract class INPCManager {
 	
 	/**
 	 * Saves all NPC's to the file npcs.yml
+	 * @param file The file to save to.
 	 */
 	public void saveYAMLNPCs(FileManager file) {
 		FileConfiguration data = file.getConfig();
@@ -187,6 +189,7 @@ public abstract class INPCManager {
 	
 	/**
 	 * Restores all NPC's from npcs.yml
+	 * @param The file to restore from.
 	 */
 	public void restoreYAMLNPCs(FileManager file) {
 		FileConfiguration data = file.getConfig();
@@ -233,6 +236,7 @@ public abstract class INPCManager {
 	
 	/**
 	 * Creates a new NMS EntityPlayer for the NPCData object.
+	 * @param data The {@link NPCData} to create an NMS NPC from.
 	 */
 	public abstract void getNMSEntity(NPCData data);
 	

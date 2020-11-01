@@ -14,14 +14,11 @@ public interface InteractEvent {
 	 */
 	public String getInteractionName();
 
-	//TODO put right link in.
 	/**
 	 * This method will be called when a player interacts with an NPC with this
 	 * Interact Event. It can be used to customise your NPC's however you wish.
-	 * <p>
-	 * Examples and use cases can be found on the <a href="http://google.com">wiki</a>.
 	 * @param event Contains information on the event that is called when an NPC is interacted with.
 	 */
-	public void entryPoint(InteractAtNPCEvent event);
+	public void onInteract(InteractAtNPCEvent event);
 	
 }

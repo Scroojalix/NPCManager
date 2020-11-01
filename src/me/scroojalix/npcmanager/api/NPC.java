@@ -4,6 +4,7 @@ import org.bukkit.Location;
 
 import me.scroojalix.npcmanager.NPCMain;
 import me.scroojalix.npcmanager.utils.NPCData;
+import me.scroojalix.npcmanager.utils.NPCTrait;
 
 public class NPC {
 
@@ -22,7 +23,9 @@ public class NPC {
 	
 	/**
 	 * Modifies an NPC.
-	 * @param name The name
+	 * @param name The name of the NPC to modify.
+	 * @param key The {@link NPCTrait} to modify.
+	 * @param value The new value of the key
 	 */
 	public static void modifyNPC(String name, String key, String value) {
 		if (NPCMain.instance.npc.getNPCs().containsKey(name)) {

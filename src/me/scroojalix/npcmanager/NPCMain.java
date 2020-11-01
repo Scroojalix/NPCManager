@@ -19,6 +19,11 @@ import me.scroojalix.npcmanager.utils.SkinManager;
 import me.scroojalix.npcmanager.utils.sql.MySQL;
 import net.md_5.bungee.api.ChatColor;
 
+/**
+ * Main class for the NPCManager plugin.
+ * @author Scroojalix.
+ * @see <a href="https://github.com/Scroojalix/NPCManager">GitHub Repository</a>
+ */
 public class NPCMain extends JavaPlugin {
 	
 	public static NPCMain instance;
@@ -54,7 +59,10 @@ public class NPCMain extends JavaPlugin {
 		}
 	}
 
-	public void initialise() {
+	/**
+	 * Initialises the plugin.
+	 */
+	private void initialise() {
 		NPCMain.instance = this;
 		this.saveDefaultConfig();
 		this.showDebugMessages = this.getConfig().getBoolean("show-debug-messages");
@@ -131,7 +139,7 @@ public class NPCMain extends JavaPlugin {
 		showDebugMessages = getConfig().getBoolean("show-debug-messages");
 	}
 	
-	public void setSaveMethod() {
+	private void setSaveMethod() {
 		String save = getConfig().getString("save-method");
 		switch(save) {
 		case "YAML":
@@ -168,10 +176,18 @@ public class NPCMain extends JavaPlugin {
 		}
 	}
 
+	/**
+	 * Save method for the plugin. 
+	 * @author Scroojalix
+	 */
 	public enum SaveMethod {
 		YAML, MYSQL;
 	}
 
+	/**
+	 * Version that the server is running.
+	 * @author Scroojalix
+	 */
 	public enum ServerVersion {
 		v1_8_R2(false), v1_8_R3(false), v1_9_R1(false), v1_9_R2(false), v1_10_R1(false),
 		v1_11_R1(false), v1_12_R1(false), v1_13_R1(false), v1_13_R2(false), v1_14_R1(false),
