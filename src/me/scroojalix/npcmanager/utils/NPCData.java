@@ -81,7 +81,7 @@ public class NPCData {
 	/**
 	 * Sets the EntityPlayer instance of this NPC.
 	 * @param npc The instance of EntityPlayer
-	 * @param uuid
+	 * @param uuid The UUID of the NPC.
 	 */
 	public void setNPC(Object npc, String uuid) {
 		this.npc = npc;
@@ -123,7 +123,7 @@ public class NPCData {
 	
 	/**
 	 * Sets the UUID string of this NPC. (Used during restoring)
-	 * @param The UUID to be used when restoring this NPC.
+	 * @param uuid The UUID to be used when restoring this NPC.
 	 */
 	public void setUUID(String uuid) {
 		this.uuid = uuid;

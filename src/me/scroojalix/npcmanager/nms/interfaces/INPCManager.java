@@ -189,7 +189,7 @@ public abstract class INPCManager {
 	
 	/**
 	 * Restores all NPC's from npcs.yml
-	 * @param The file to restore from.
+	 * @param file The file to restore from.
 	 */
 	public void restoreYAMLNPCs(FileManager file) {
 		FileConfiguration data = file.getConfig();
