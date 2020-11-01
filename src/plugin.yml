@@ -1,5 +1,5 @@
 author: Scroojalix
-version: 1.0.0
+version: 1.0.1
 main: me.scroojalix.npcmanager.NPCMain
 name: NPCManager
 description: Lightweight NPC manager plugin.
