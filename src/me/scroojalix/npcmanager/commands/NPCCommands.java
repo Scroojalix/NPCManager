@@ -1,7 +1,5 @@
 package me.scroojalix.npcmanager.commands;
 
-import java.util.logging.Level;
-
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -9,7 +7,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.scroojalix.npcmanager.NPCMain;
-import me.scroojalix.npcmanager.api.InteractionsManager;
 import me.scroojalix.npcmanager.commands.tab.NPCCommandTab;
 import me.scroojalix.npcmanager.utils.NPCData;
 import me.scroojalix.npcmanager.utils.NPCTrait;
@@ -116,88 +113,20 @@ public class NPCCommands implements CommandExecutor {
 					if (main.npc.getNPCs().containsKey(name)) {
 						NPCData modifying = main.npc.getNPCs().get(name);
 						NPCTrait traits = modifying.getTraits();
-						switch(args[2]) {
-						case "displayName":
-							if (args[3].equalsIgnoreCase("null")) {
-								traits.setDisplayName(null);
-								main.npc.updateNPC(modifying);
-								sender.sendMessage(main.format("&CSet the display name to null. It will not be visible."));
-							} else {
-								StringBuilder displayName = new StringBuilder(args[3]);
-								for (int arg = 4; arg < args.length; arg++) {
-									displayName.append(" ").append(args[arg]);
-								}
-								traits.setDisplayName(displayName.toString());
-								main.npc.updateNPC(modifying);
-								sender.sendMessage(main.format("&6Set the display name of &F")+name+main.format("&6 to &F"+displayName));
-							}
-							return true;
-						case "subtitle":
-							if (args[3].equalsIgnoreCase("null")) {
-								traits.setSubtitle(null);
-								main.npc.updateNPC(modifying);
-								sender.sendMessage(main.format("&CSet the subtitle to null. It will not be visible."));
-							} else {
-								//TODO redo this to make it require quotation marks.
-								StringBuilder subtitle = new StringBuilder(args[3]);
-								for (int arg = 4; arg < args.length; arg++) {
-									subtitle.append(" ").append(args[arg]);
-								}
-								traits.setSubtitle(subtitle.toString());
-								main.npc.updateNPC(modifying);
-								sender.sendMessage(main.format("&6Set the subtitle of &F")+name+main.format("&6 to &F"+subtitle));
-							}
-							return true;
-						case "hasHeadRotation":
-							traits.setHeadRotation(args[3].equalsIgnoreCase("true"));
-							main.npc.updateNPC(modifying);
-							sender.sendMessage(main.format("&6Set the head rotation of &F")+name+main.format("&6 to &F"+traits.hasHeadRotation()));
-							return true;
-						case "range":
-							try {
-								Integer range = Integer.parseInt(args[3]);
-								if (range <= 0) {
-									sender.sendMessage(ChatColor.RED+"Range cannot be set to 0 or below!");
-									return true;
-								}
-								traits.setRange(range);
-								main.npc.updateNPC(modifying);
-								sender.sendMessage(main.format("&6Set the range of &F")+name+main.format("&6 to &F"+range));
-							} catch(NumberFormatException e) {
-								sender.sendMessage(ChatColor.RED+"'"+args[3]+"' is not a number");
-							}
-							return true;
-						case "skin":
-							if (args[3].equalsIgnoreCase("Default")) {
-								main.npc.setSkin(modifying, null);
-								sender.sendMessage(main.format("&6Set the skin of &F")+name+main.format("&6 to &FDefault"));
-							} else if (main.skinManager.values().contains(args[3])) {
-								main.npc.setSkin(modifying, args[3]);
-								sender.sendMessage(main.format("&6Set the skin of &F")+name+main.format("&6 to &F"+args[3]));
-							} else {
-								sender.sendMessage(ChatColor.RED+"'"+args[3]+"' is not a valid skin.");
-							}
-							return true;
-						case "interactEvent":
-							String interaction = args[3];
-							if (!interaction.equalsIgnoreCase("None")) {
-								if (InteractionsManager.getInteractEvents().containsKey(interaction)) {
-									modifying.setInteractEvent(InteractionsManager.getInteractEvents().get(interaction));
-									sender.sendMessage(main.format("&6Set the interact event of &F")+name+main.format("&6 to &F"+interaction));
-									main.npc.updateNPC(modifying);
-								} else {
-									sender.sendMessage(main.format("&C'"+interaction+"' is not a valid interact event."));
-								}
-							} else {
-								modifying.setInteractEvent(null);
-								sender.sendMessage(main.format("&6Set the interact event of &F")+name+main.format("&6 to &FNone"));
-								main.npc.updateNPC(modifying);
-							}
-							return true;
-						default:
-							sender.sendMessage(ChatColor.RED+"That is not a valid key to modify.");
-							return true;
+						String value = args[3];
+						for (int arg = 4; arg < args.length; arg++) {
+							value += " "+args[arg];
 						}
+						try {
+							traits.modify(modifying, args[2], value);
+						} catch(IllegalArgumentException e) {
+							sender.sendMessage(ChatColor.RED + e.getMessage());
+						} catch (Throwable t) {
+							sender.sendMessage(main.format(t.getMessage()));
+						}
+						main.npc.saveNPC(modifying);
+						main.npc.updateNPC(modifying);
+						return true;
 					} else {
 						sender.sendMessage(main.format("&CAn NPC with that name does not exist!"));
 						return true;
@@ -234,7 +163,7 @@ public class NPCCommands implements CommandExecutor {
 				if (args.length == 2) {
 					String name = args[1];
 					if (main.npc.getNPCs().containsKey(name)) {
-						main.npc.removeNPC(name);
+						main.npc.removeNPC(name, true);
 						main.npc.getNPCs().remove(name);
 						sender.sendMessage(main.format("&6Removed the NPC named &F")+name);
 						return true;
@@ -264,7 +193,7 @@ public class NPCCommands implements CommandExecutor {
 			if (args[0].equalsIgnoreCase("clear")) {
 				if (!main.npc.getNPCs().isEmpty()) {
 					for (String npc : main.npc.getNPCs().keySet()) {
-						main.npc.removeNPC(npc);
+						main.npc.removeNPC(npc, true);
 					}
 					main.npc.getNPCs().clear();
 					sender.sendMessage(main.format("&6Removed all NPC's."));
@@ -274,12 +203,8 @@ public class NPCCommands implements CommandExecutor {
 				return true;
 			}
 			if (args[0].equalsIgnoreCase("reload")) {
+				sender.sendMessage(ChatColor.GOLD+"The plugin was reloaded.");
 				main.reloadPlugin();
-				if (sender instanceof Player) {
-					sender.sendMessage(ChatColor.GOLD+"The plugin was reloaded.");
-				} else {
-					main.log(Level.INFO, "The plugin was reloaded.");
-				}
 				return true;
 			}
 		}

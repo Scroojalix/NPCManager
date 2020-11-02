@@ -70,7 +70,7 @@ public abstract class INPCLoader {
 					}
 				} else if (loadedForPlayers.containsKey(player)) loadedForPlayers.remove(player);
 			}
-		} else main.npc.removeNPC(data.getName());
+		} else main.npc.removeNPC(data.getName(), true);
 	}
 	
 	/**

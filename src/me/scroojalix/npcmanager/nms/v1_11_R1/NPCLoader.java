@@ -46,7 +46,7 @@ public class NPCLoader extends INPCLoader implements Runnable {
 		packets.add(new PacketPlayOutEntityHeadRotation(npc, (byte) (npc.yaw * 256 / 360)));
 		
 		packets.add(new PacketPlayOutScoreboardTeam(npcClass.getNPCTeam(), 0));
-		packets.add(new PacketPlayOutScoreboardTeam(npcClass.getNPCTeam(), npcClass.getHiddenNPCs(), 3));
+		packets.add(new PacketPlayOutScoreboardTeam(npcClass.getNPCTeam(), npcClass.getNPCs().keySet(), 3));
 		
 		packets.add(new PacketPlayOutAnimation(npc, 0));
 		

@@ -50,30 +50,12 @@ public class NPCManager extends INPCManager {
 	public ScoreboardTeam getNPCTeam() {
 		return npcTeam;
 	}
-	
-	public void moveNPC(NPCData data, Location loc) {
-		data.setLoc(loc);
-		((EntityPlayer)data.getNPC()).setLocation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
-		updateNPC(data);
-	}
-	
-	public void removeNPC(String npc) {
-		NPCData data = NPCs.get(npc);
-		Bukkit.getScheduler().cancelTask(data.getHeadRotationTask());
-		Bukkit.getScheduler().cancelTask(data.getLoaderTask());
-		hiddenNPCs.remove(data.getName());
+		
+	public void sendRemoveNPCPackets(Player p, NPCData data) {
 		EntityPlayer npcEntity = (EntityPlayer) data.getNPC();
-		for (Player p : Bukkit.getOnlinePlayers()) {
-			PlayerConnection connection = ((CraftPlayer)p).getHandle().playerConnection;
-			connection.sendPacket(new PacketPlayOutEntityDestroy(npcEntity.getId()));
-			connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, npcEntity));
-			if (data.getNameHolo() != null) {
-				removeHologramForPlayer(p, data.getNameHolo());
-			}
-			if (data.getSubtitleHolo() != null) {
-				removeHologramForPlayer(p, data.getSubtitleHolo());
-			}
-		}
+		PlayerConnection connection = ((CraftPlayer)p).getHandle().playerConnection;
+		connection.sendPacket(new PacketPlayOutEntityDestroy(npcEntity.getId()));
+		connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, npcEntity));
 	}
 	
 	public void getNMSEntity(NPCData data) {
@@ -95,7 +77,6 @@ public class NPCManager extends INPCManager {
 		npc.getDataWatcher().set(DataWatcherRegistry.a.a(13), (byte)127);
 		data.setNPC(npc, npc.getProfile().getId().toString());
 		server.getPlayerList().players.remove(data.getNPC());
-		hiddenNPCs.add(((EntityPlayer)data.getNPC()).getName());
 	}
 	
 	public void restoreNPC(NPCData data) {
@@ -123,9 +104,8 @@ public class NPCManager extends INPCManager {
 			data.setSubtitleHolo(null);
 		}
 		
-		data.setLoaderTask(Bukkit.getScheduler().scheduleSyncRepeatingTask(main, new NPCLoader(main, data, this), 0l, 1l));
-		
 		NPCs.put(data.getName(), data);
+		data.setLoaderTask(Bukkit.getScheduler().scheduleSyncRepeatingTask(main, new NPCLoader(main, data, this), 0l, 1l));
 	}
 
 	public void removeHologramForPlayer(Player player, NMSHologram hologram) {

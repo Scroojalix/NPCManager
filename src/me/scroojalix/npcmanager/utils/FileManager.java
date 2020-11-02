@@ -22,6 +22,10 @@ public class FileManager {
 		this.name = name;
 		saveDefaultConfig();
 	}
+
+	public String getName() {
+		return name;
+	}
 	
 	public void reloadConfig() {
 		if (this.configFile == null)

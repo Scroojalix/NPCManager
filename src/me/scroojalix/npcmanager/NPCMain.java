@@ -76,12 +76,17 @@ public class NPCMain extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		if (validVersion) {
-			npc.saveNPCs();
+			if (!npc.getNPCs().isEmpty()) {
+				npc.removeAllNPCs();
+			}
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				player.closeInventory();
 				reader.uninject(player);
 			}
 			InteractionsManager.getInteractEvents().clear();
+			if (saveMethod == SaveMethod.MYSQL) {
+				sql.disconnect();
+			}
 		}
 		instance = null;
 	}
@@ -130,13 +135,13 @@ public class NPCMain extends JavaPlugin {
 	}
 	
 	public void reloadPlugin() {
-		npc.saveNPCs();
+		npc.removeAllNPCs();
 		reloadConfig();
+		showDebugMessages = getConfig().getBoolean("show-debug-messages");
 		skinFile.reloadConfig();
 		skinManager.generateSkins();
 		setSaveMethod();
 		npc.restoreNPCs();
-		showDebugMessages = getConfig().getBoolean("show-debug-messages");
 	}
 	
 	private void setSaveMethod() {

@@ -2,8 +2,6 @@ package me.scroojalix.npcmanager.utils;
 
 import com.google.gson.annotations.Expose;
 
-import org.bukkit.ChatColor;
-
 import me.scroojalix.npcmanager.NPCMain;
 import me.scroojalix.npcmanager.api.InteractionsManager;
 
@@ -38,17 +36,19 @@ public class NPCTrait {
      * @param key The modification to be made.
      * @param value The new value.
      * @throws IllegalArgumentException If any of the arguments are not valid.
+     * @throws Throwable When a modification is successful, contains a message for player.
      */
-    public void modify(NPCData data, String key, String value) throws IllegalArgumentException {
+    public void modify(NPCData data, String key, String value) throws IllegalArgumentException, Throwable {
     switch(key) {
         case "displayName":
-            setDisplayName(ChatColor.stripColor(NPCMain.instance.format(value)).isEmpty()?null:value);
-            NPCMain.instance.npc.updateNPC(data);
-            break;
+            setDisplayName(value.equalsIgnoreCase("null")?null:value);
+            throw new Throwable("&6Set the display name of &F"+data.getName()+"&6 to &F"+value);
+        case "subtitle":
+            setSubtitle(value.equalsIgnoreCase("null")?null:value);
+            throw new Throwable("&6Set the subtitle of &F"+data.getName()+"&6 to &F"+value);
         case "hasHeadRotation":
             setHeadRotation(value.equalsIgnoreCase("true"));
-            NPCMain.instance.npc.updateNPC(data);
-            break;
+            throw new Throwable("&6Set the head rotation of &F"+data.getName()+"&6 to &F"+headRotation);
         case "range":
             try {
                 Integer range = Integer.parseInt(value);
@@ -56,27 +56,24 @@ public class NPCTrait {
                     throw new IllegalArgumentException("Range cannot be set to 0");
                 }
                 setRange(range);
-                NPCMain.instance.npc.updateNPC(data);
+                throw new Throwable("&6Set the range of &F"+data.getName()+"&6 to &F"+range);
             } catch(NumberFormatException e) {
                 throw new IllegalArgumentException("'"+value+"' is not a number.");
             }
-            break;
         case "skin":
-            NPCMain.instance.npc.setSkin(data, value);
-            break;
-        case "interactEvent":
-            if (!value.equalsIgnoreCase("None")) {
-                if (InteractionsManager.getInteractEvents().containsKey(value)) {
-                    data.setInteractEvent(InteractionsManager.getInteractEvents().get(value));
-                    NPCMain.instance.npc.updateNPC(data);
-                } else {
-                    throw new IllegalArgumentException("'"+value+"' is not a valid Interact Event.");
-                }
+            if (value.equalsIgnoreCase("Default") || NPCMain.instance.skinManager.values().contains(value)) {
+                data.getTraits().setSkin(value);
+                throw new Throwable("&6Set the skin of &F"+data.getName()+"&6 to &F"+value);
             } else {
-                data.setInteractEvent(null);
-                NPCMain.instance.npc.updateNPC(data);
+                throw new IllegalArgumentException("'"+value+"' is not a valid skin.");
             }
-            break;
+        case "interactEvent":
+            if (InteractionsManager.getInteractEvents().containsKey(value) || value.equalsIgnoreCase("None")) {
+                data.setInteractEvent(value.equalsIgnoreCase("None")?null:InteractionsManager.getInteractEvents().get(value));
+                throw new Throwable("&6Set the interact event of &F"+data.getName()+"&6 to &F"+value);
+            } else {
+                throw new IllegalArgumentException("'"+value+"' is not a valid Interact Event.");
+            }
         default:
             throw new IllegalArgumentException("Unknown key '"+key+"'.");
         }

@@ -5,9 +5,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import me.scroojalix.npcmanager.NPCMain;
 import me.scroojalix.npcmanager.api.InteractionsManager;
 import me.scroojalix.npcmanager.utils.NPCData;
@@ -36,21 +33,22 @@ public class SQLGetter {
 		try {
 			String name = data.getName();
 			String json = data.toJson();
-			if (!exists(json)) {
-				PreparedStatement ps = main.sql.getConnection().prepareStatement("INSERT IGNORE INTO "+tableName+" (NAME,DATA) VALUES (?,?)");
-				ps.setString(1, name);
-				ps.setString(2, json);
-				ps.executeUpdate();
+			if (exists(name)) {
+				remove(name);
 			}
+			PreparedStatement ps = main.sql.getConnection().prepareStatement("INSERT IGNORE INTO "+tableName+" (NAME,DATA) VALUES (?,?)");
+			ps.setString(1, name);
+			ps.setString(2, json);
+			ps.executeUpdate();
 		} catch(SQLException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public boolean exists(String data) {
+	public boolean exists(String name) {
 		try {
-			PreparedStatement ps = main.sql.getConnection().prepareStatement("SELECT * FROM "+tableName+" WHERE DATA=?");
-			ps.setString(1, data);
+			PreparedStatement ps = main.sql.getConnection().prepareStatement("SELECT * FROM "+tableName+" WHERE NAME=?");
+			ps.setString(1, name);
 			ResultSet results = ps.executeQuery();
 			return results.next();
 		} catch(NullPointerException | SQLException e) {
@@ -108,21 +106,24 @@ public class SQLGetter {
 		try {
 			PreparedStatement ps = main.sql.getConnection().prepareStatement("SELECT DATA FROM "+tableName);
 			ResultSet rs = ps.executeQuery();
-			Gson g = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
 			while(rs.next()) {
-				NPCData data = g.fromJson(rs.getString(1), NPCData.class);
-				if (!data.isWorldNull()) {
-					if (data.getTraits().getInteractEvent() != null) {
-						String interactEvent = data.getTraits().getInteractEvent();
-						if (InteractionsManager.getInteractEvents().containsKey(interactEvent)) {
-							data.setInteractEvent(InteractionsManager.getInteractEvents().get(interactEvent));
-						} else {
-							main.log(Level.WARNING, "Error whilst restoring NPCs: Unknown interact event '"+interactEvent+"'");
+				NPCData data = NPCData.fromJson(rs.getString(1));
+				if (data != null) {
+					if (!data.isWorldNull()) {
+						if (data.getTraits().getInteractEvent() != null) {
+							String interactEvent = data.getTraits().getInteractEvent();
+							if (InteractionsManager.getInteractEvents().containsKey(interactEvent)) {
+								data.setInteractEvent(InteractionsManager.getInteractEvents().get(interactEvent));
+							} else {
+								main.log(Level.WARNING, "Error whilst restoring NPCs: Unknown interact event '"+interactEvent+"'");
+							}
 						}
+						main.npc.restoreNPC(data);
+					} else {
+						main.log(Level.WARNING, "Could not reload NPC: Unknown World");
 					}
-					main.npc.restoreNPC(data);
 				} else {
-					main.log(Level.WARNING, "Error whilst restoring NPCs: Unknown World");
+					main.log(Level.WARNING, "Could not reload NPC: Invalid JSON");
 				}
 			}
 		} catch(SQLException | NullPointerException e) {

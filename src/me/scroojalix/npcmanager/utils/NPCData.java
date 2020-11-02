@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.annotations.Expose;
 
 import me.scroojalix.npcmanager.api.InteractEvent;
@@ -33,7 +34,6 @@ public class NPCData {
 	
 	private InteractEvent interactEvent;
 	private Object npc;
-	private int headRotationTask;
 	private int loaderTask;
 
 	public NPCData(String name, String displayName, Location loc) {
@@ -55,6 +55,20 @@ public class NPCData {
 	 */
 	public String toJson() {
 		return new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create().toJson(this);
+	}
+
+	/**
+	 * Creates an NPCData object from a JSON string.
+	 * @param json The JSON string to convert from.
+	 * @return An NPCData object.
+	 */
+	public static NPCData fromJson(String json) {
+		try {
+			return new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create().fromJson(json, NPCData.class);
+		} catch (JsonSyntaxException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	/**
@@ -157,21 +171,6 @@ public class NPCData {
 	 */
 	public NMSHologram getSubtitleHolo() {
 		return subtitleHolo;
-	}
-	
-	/**
-	 * Sets the Integer assigned to the head rotation task of this NPC.
-	 * @param task Integer assigned to Head Rotation task.
-	 */
-	public void setHeadRotationTask(int task) {
-		this.headRotationTask = task;
-	}
-	
-	/**
-	 * @return Integer assigned to Head Rotation task of this NPC.
-	 */
-	public int getHeadRotationTask() {
-		return headRotationTask;
 	}
 	
 	/**

@@ -34,7 +34,8 @@ public class NPC {
 				data.getTraits().modify(data, key, value);
 			} catch (IllegalArgumentException e) {
 				e.printStackTrace();
-			}
+			} catch (Throwable t) {}
+			NPCMain.instance.npc.updateNPC(data);
 		} else {
 			NPCMain.instance.getLogger().warning("Could not modify NPC '"+name+"'. That NPC does not exist.");
 		}
@@ -60,7 +61,7 @@ public class NPC {
 	 */
 	public static void removeNPC(String name) {
 		if (NPCMain.instance.npc.getNPCs().containsKey(name)) {
-			NPCMain.instance.npc.removeNPC(name);
+			NPCMain.instance.npc.removeNPC(name, true);
 		} else {
 			NPCMain.instance.getLogger().warning("Could not remove NPC '"+name+"'. That NPC does not exist.");
 		}
@@ -71,7 +72,7 @@ public class NPC {
 	 */
 	public static void removeAllNPCs() {
 		for (String npc : NPCMain.instance.npc.getNPCs().keySet()) {
-			NPCMain.instance.npc.removeNPC(npc);
+			NPCMain.instance.npc.removeNPC(npc, true);
 		}
 		NPCMain.instance.npc.getNPCs().clear();
 	}
