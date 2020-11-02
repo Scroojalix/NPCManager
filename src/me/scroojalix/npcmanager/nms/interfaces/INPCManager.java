@@ -74,8 +74,9 @@ public abstract class INPCManager {
 	}
 
 	/**
-	 * Deletes an NPC with the name {@code name}
-	 * @param name The name of the NPC to be deleted
+	 * Deletes an NPC. Set {@code fromStorage} to true to also remove the NPC from storage.
+	 * @param npc The name of the NPC to be deleted
+	 * @param fromStorage Whether or not to remove the NPC from storage.
 	 */
 	public void removeNPC(String npc, boolean fromStorage) {
 		NPCData data = NPCs.get(npc);
@@ -115,7 +116,7 @@ public abstract class INPCManager {
 
 	/**
 	 * Saves an NPC.
-	 * @param data
+	 * @param data The data to save.
 	 */
 	public void saveNPC(NPCData data) {
 		switch(main.saveMethod) {
