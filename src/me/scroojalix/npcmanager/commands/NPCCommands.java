@@ -165,6 +165,8 @@ public class NPCCommands implements CommandExecutor {
 					if (main.npc.getNPCs().containsKey(name)) {
 						main.npc.removeNPC(name, true);
 						main.npc.getNPCs().remove(name);
+						if (main.npc.getNPCs().isEmpty())
+							main.npcFile.getConfig().set("npc", null);
 						sender.sendMessage(main.format("&6Removed the NPC named &F")+name);
 						return true;
 					} else {
@@ -193,8 +195,10 @@ public class NPCCommands implements CommandExecutor {
 			if (args[0].equalsIgnoreCase("clear")) {
 				if (!main.npc.getNPCs().isEmpty()) {
 					for (String npc : main.npc.getNPCs().keySet()) {
-						main.npc.removeNPC(npc, true);
+						main.npc.removeNPC(npc, false);
 					}
+					main.npcFile.getConfig().set("npc", null);
+					main.npcFile.saveConfig();
 					main.npc.getNPCs().clear();
 					sender.sendMessage(main.format("&6Removed all NPC's."));
 				} else {

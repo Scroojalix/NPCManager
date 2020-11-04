@@ -38,6 +38,7 @@ public class NPC {
 			} catch (IllegalArgumentException e) {
 				NPCMain.instance.log(Level.SEVERE, e.getMessage());
 			} catch (Throwable t) {}
+			NPCMain.instance.npc.saveNPC(data);
 			NPCMain.instance.npc.updateNPC(data);
 		} else {
 			NPCMain.instance.getLogger().warning("Could not modify NPC '"+name+"'. That NPC does not exist.");
@@ -65,6 +66,7 @@ public class NPC {
 	public static void removeNPC(String name) {
 		if (NPCMain.instance.npc.getNPCs().containsKey(name)) {
 			NPCMain.instance.npc.removeNPC(name, true);
+			NPCMain.instance.npc.getNPCs().remove(name);
 		} else {
 			NPCMain.instance.getLogger().warning("Could not remove NPC '"+name+"'. That NPC does not exist.");
 		}

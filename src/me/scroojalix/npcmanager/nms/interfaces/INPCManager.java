@@ -64,6 +64,7 @@ public abstract class INPCManager {
 	 */
 	public void moveNPC(NPCData data, Location loc) {
 		data.setLoc(loc);
+		saveNPC(data);
 		updateNPC(data);
 	}
 	
@@ -124,10 +125,10 @@ public abstract class INPCManager {
 	 */
 	public void saveNPC(NPCData data) {
 		if (data.isStored()) {
+			main.log(Level.INFO, "Saving an NPC.");
 			switch(main.saveMethod) {
 			case YAML:
-				main.npcFile.getConfig().set("npc."+data.getName(), data.toJson());
-				main.npcFile.saveConfig();
+				saveYAMLNPC(data, main.npcFile);
 				break;
 			case MYSQL:
 				SQLGetter getter = main.sql.getGetter();
