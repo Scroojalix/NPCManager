@@ -38,8 +38,12 @@ public abstract class INPCManager {
 	 * @param loc The location of the NPC
 	 */
 	public void createNPC(String name, Location loc) {
+		createNPC(name, loc, true);
+	}
+
+	public void createNPC(String name, Location loc, boolean store) {
 		String displayName = ChatColor.stripColor(main.format(name)).isEmpty()?"Default":name;
-		NPCData data = new NPCData(name, displayName, null, null, loc, 60, true);
+		NPCData data = new NPCData(name, displayName, loc, store);
 		restoreNPC(data);
 		saveNPC(data);
 	}
@@ -119,25 +123,27 @@ public abstract class INPCManager {
 	 * @param data The data to save.
 	 */
 	public void saveNPC(NPCData data) {
-		switch(main.saveMethod) {
-		case YAML:
-			main.npcFile.getConfig().set("npc."+data.getName(), data.toJson());
-			main.npcFile.saveConfig();
-			break;
-		case MYSQL:
-			SQLGetter getter = main.sql.getGetter();
-			if (getter.testConnection()) {
-				if (!data.isWorldNull()) {
-					getter.addNPC(data);
+		if (data.isStored()) {
+			switch(main.saveMethod) {
+			case YAML:
+				main.npcFile.getConfig().set("npc."+data.getName(), data.toJson());
+				main.npcFile.saveConfig();
+				break;
+			case MYSQL:
+				SQLGetter getter = main.sql.getGetter();
+				if (getter.testConnection()) {
+					if (!data.isWorldNull()) {
+						getter.addNPC(data);
+					} else {
+						main.log(Level.WARNING, "Could not save NPC '"+data.getName()+"'. That world does not exist.");
+					}
 				} else {
-					main.log(Level.WARNING, "Could not save NPC '"+data.getName()+"'. That world does not exist.");
+					main.log(Level.SEVERE, "Could not save NPC to database.");
+					main.log(Level.SEVERE, "Saving NPC to temp.yml instead.");
+					saveYAMLNPC(data, new FileManager(main, "temp.yml"));
 				}
-			} else {
-				main.log(Level.SEVERE, "Could not save NPC to database.");
-				main.log(Level.SEVERE, "Saving NPC to temp.yml instead.");
-				saveYAMLNPC(data, new FileManager(main, "temp.yml"));
+				break;
 			}
-			break;
 		}
 	}
 	

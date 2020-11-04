@@ -35,17 +35,17 @@ public class NPCData {
 	private InteractEvent interactEvent;
 	private Object npc;
 	private int loaderTask;
+	private boolean store;
 
-	public NPCData(String name, String displayName, Location loc) {
-		this.name = name;
-		this.traits = new NPCTrait(displayName, null, 60, true);
-		setLoc(loc);
+	public NPCData(String name, String displayName, Location loc, boolean store) {
+		this(name, displayName, null, null, loc, 60, true, store);
 	}
 
-	public NPCData(String name, String displayName, String subtitle, Object npc, Location loc, int range, boolean headRotation) {
+	public NPCData(String name, String displayName, String subtitle, Object npc, Location loc, int range, boolean headRotation, boolean store) {
 		this.name = name;
 		this.traits = new NPCTrait(displayName, subtitle, range, headRotation);
 		this.npc = npc;
+		this.store = store;
 		setLoc(loc);
 	}
 	
@@ -214,5 +214,8 @@ public class NPCData {
 	public boolean isWorldNull() {
 		return Bukkit.getWorld(loc.get("world").toString()) == null;
 	}
-	
+
+	public boolean isStored() {
+		return store;
+	}	
 }

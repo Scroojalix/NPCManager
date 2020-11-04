@@ -1,5 +1,7 @@
 package me.scroojalix.npcmanager.api;
 
+import java.util.logging.Level;
+
 import org.bukkit.Location;
 
 import me.scroojalix.npcmanager.NPCMain;
@@ -12,10 +14,11 @@ public class NPC {
 	 * Creates an NPC.
 	 * @param name The name used to identify the NPC.
 	 * @param loc The Location to spawn this NPC at.
+	 * @param store Whether or not to store the NPC in a file or database.
 	 */
-	public static void createNPC(String name, Location loc) {
+	public static void createNPC(String name, Location loc, boolean store) {
 		if (!NPCMain.instance.npc.getNPCs().containsKey(name)) {
-			NPCMain.instance.npc.createNPC(name, loc);
+			NPCMain.instance.npc.createNPC(name, loc, store);
 		} else {
 			NPCMain.instance.getLogger().warning("Could not create NPC '"+name+"'. An NPC with that name already exists.");
 		}
@@ -33,7 +36,7 @@ public class NPC {
 			try {
 				data.getTraits().modify(data, key, value);
 			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
+				NPCMain.instance.log(Level.SEVERE, e.getMessage());
 			} catch (Throwable t) {}
 			NPCMain.instance.npc.updateNPC(data);
 		} else {
