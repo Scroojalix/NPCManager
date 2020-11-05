@@ -64,11 +64,13 @@ public class NPCData {
 	 */
 	public static NPCData fromJson(String json) {
 		try {
-			return new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create().fromJson(json, NPCData.class);
+			NPCData data = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create().fromJson(json, NPCData.class);
+			data.setStored(true);
+			return data;
 		} catch (JsonSyntaxException e) {
 			e.printStackTrace();
+			return null;
 		}
-		return null;
 	}
 
 	/**
@@ -217,5 +219,9 @@ public class NPCData {
 
 	public boolean isStored() {
 		return store;
-	}	
+	}
+
+	private void setStored(boolean store) {
+		this.store = store;
+	}
 }

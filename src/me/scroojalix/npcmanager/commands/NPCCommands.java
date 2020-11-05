@@ -40,7 +40,7 @@ public class NPCCommands implements CommandExecutor {
 				sender.sendMessage(main.format("&B/npc reload &F&L-&6 Reloads the plugin."));
 				return true;
 			}
-			if (args[0].equalsIgnoreCase("info")) {
+			else if (args[0].equalsIgnoreCase("info")) {
 				if (args.length == 2) {
 					if (main.npc.getNPCs().containsKey(args[1])) {
 						NPCData data = main.npc.getNPCs().get(args[1]);
@@ -64,7 +64,7 @@ public class NPCCommands implements CommandExecutor {
 					return true;
 				}
 			}
-			if (args[0].equalsIgnoreCase("tpto")) {
+			else if (args[0].equalsIgnoreCase("tpto")) {
 				if (sender instanceof Player) {
 					Player p = (Player)sender;
 					if (args.length == 2) {
@@ -77,7 +77,7 @@ public class NPCCommands implements CommandExecutor {
 					}
 				}
 			}
-			if (args[0].equalsIgnoreCase("create")) {
+			else if (args[0].equalsIgnoreCase("create")) {
 				if (sender instanceof Player) {
 					if (args.length == 2) {
 						String name = args[1];
@@ -107,7 +107,7 @@ public class NPCCommands implements CommandExecutor {
 					return true;
 				}
 			}
-			if (args[0].equalsIgnoreCase("modify")) {
+			else if (args[0].equalsIgnoreCase("modify")) {
 				if (args.length > 3) {
 					String name = args[1];
 					if (main.npc.getNPCs().containsKey(name)) {
@@ -135,7 +135,7 @@ public class NPCCommands implements CommandExecutor {
 					sender.sendMessage(main.format("&CUsage: /npc modify <name> <key> <value>"));
 				}
 			}
-			if (args[0].equalsIgnoreCase("move")) {
+			else if (args[0].equalsIgnoreCase("move")) {
 				if (sender instanceof Player) {
 					Player p = (Player) sender;
 					if (args.length == 2) {
@@ -159,7 +159,7 @@ public class NPCCommands implements CommandExecutor {
 					return true;
 				}
 			}
-			if (args[0].equalsIgnoreCase("remove")) {
+			else if (args[0].equalsIgnoreCase("remove")) {
 				if (args.length == 2) {
 					String name = args[1];
 					if (main.npc.getNPCs().containsKey(name)) {
@@ -179,7 +179,7 @@ public class NPCCommands implements CommandExecutor {
 					return true;
 				}
 			}
-			if (args[0].equalsIgnoreCase("list")) {
+			else if (args[0].equalsIgnoreCase("list")) {
 				if (!main.npc.getNPCs().isEmpty()) {
 					sender.sendMessage(main.format("&6List of all NPC's &7&o(Click to Remove)"));
 					TextComponent spacer = new TextComponent(" - ");
@@ -192,7 +192,7 @@ public class NPCCommands implements CommandExecutor {
 				}
 				return true;
 			}
-			if (args[0].equalsIgnoreCase("clear")) {
+			else if (args[0].equalsIgnoreCase("clear")) {
 				if (!main.npc.getNPCs().isEmpty()) {
 					for (String npc : main.npc.getNPCs().keySet()) {
 						main.npc.removeNPC(npc, false);
@@ -206,7 +206,7 @@ public class NPCCommands implements CommandExecutor {
 				}
 				return true;
 			}
-			if (args[0].equalsIgnoreCase("reload")) {
+			else if (args[0].equalsIgnoreCase("reload")) {
 				sender.sendMessage(ChatColor.GOLD+"The plugin was reloaded.");
 				main.reloadPlugin();
 				return true;
