@@ -74,9 +74,8 @@ public class NPCManager extends INPCManager {
 		WorldServer world = ((CraftWorld) data.getLoc().getWorld()).getHandle();
 		EntityPlayer npc = new EntityPlayer(server,world,profile, new PlayerInteractManager(world));
 		npc.setLocation(data.getLoc().getX(), data.getLoc().getY(), data.getLoc().getZ(), data.getLoc().getYaw(), data.getLoc().getPitch());
-		npc.getDataWatcher().set(DataWatcherRegistry.a.a(16), (byte)127);
+		npc.getDataWatcher().set(DataWatcherRegistry.a.a(16), (byte)126);
 		data.setNPC(npc, npc.getProfile().getId().toString());
-		server.getPlayerList().players.remove(data.getNPC());
 	}
 	
 	public void restoreNPC(NPCData data) {
