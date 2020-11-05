@@ -11,6 +11,15 @@ import me.scroojalix.npcmanager.utils.NPCTrait;
 public class NPC {
 
 	/**
+	 * Creates an NPC. Store parameter is set to true.
+	 * @param name Name of the NPC.
+	 * @param loc Location of the NPC.
+	 */
+	public static void createNPC(String name, Location loc) {
+		createNPC(name, loc, true);
+	}
+
+	/**
 	 * Creates an NPC.
 	 * @param name The name used to identify the NPC.
 	 * @param loc The Location to spawn this NPC at.
