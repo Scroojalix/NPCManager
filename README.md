@@ -1,6 +1,8 @@
 ## Lightweight NPC Manager Plugin
 
-This plugin provides support for spawning NPC's, and has many customisation options, such as modifying the skin, display name, interact event and more. Also has support for using a MySQL database to store NPC data (Configured in the config.yml).
+This plugin provides support for spawning NPC's, and has many customisation options, such as modifying the skin, display name, interact event and more. 
+
+Also has support for using a MySQL database to store NPC data (Configured in the config.yml).
 
 ### Commands
 
