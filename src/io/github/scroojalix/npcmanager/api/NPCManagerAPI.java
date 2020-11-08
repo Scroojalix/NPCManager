@@ -6,9 +6,8 @@ import org.bukkit.Location;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.utils.NPCData;
-import io.github.scroojalix.npcmanager.utils.NPCTrait;
 
-public class NPC {
+public class NPCManagerAPI {
 
 	/**
 	 * Creates an NPC. Store parameter is set to true.
