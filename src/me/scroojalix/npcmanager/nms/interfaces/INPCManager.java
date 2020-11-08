@@ -9,7 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import me.scroojalix.npcmanager.NPCMain;
-import me.scroojalix.npcmanager.api.InteractionsManager;
+import me.scroojalix.npcmanager.utils.InteractionsManager;
 import me.scroojalix.npcmanager.utils.FileManager;
 import me.scroojalix.npcmanager.utils.NPCData;
 import me.scroojalix.npcmanager.utils.sql.SQLGetter;

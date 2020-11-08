@@ -9,12 +9,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import me.scroojalix.npcmanager.api.InteractionsManager;
 import me.scroojalix.npcmanager.commands.NPCCommands;
 import me.scroojalix.npcmanager.events.NPCEvents;
 import me.scroojalix.npcmanager.nms.interfaces.INPCManager;
 import me.scroojalix.npcmanager.nms.interfaces.IPacketReader;
 import me.scroojalix.npcmanager.utils.FileManager;
+import me.scroojalix.npcmanager.utils.InteractionsManager;
 import me.scroojalix.npcmanager.utils.SkinManager;
 import me.scroojalix.npcmanager.utils.sql.MySQL;
 import net.md_5.bungee.api.ChatColor;

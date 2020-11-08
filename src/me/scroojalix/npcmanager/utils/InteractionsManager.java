@@ -1,4 +1,4 @@
-package me.scroojalix.npcmanager.api;
+package me.scroojalix.npcmanager.utils;
 
 import java.util.HashMap;
 import java.util.Map;

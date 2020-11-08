@@ -1,6 +1,4 @@
-package me.scroojalix.npcmanager.api;
-
-import me.scroojalix.npcmanager.utils.InteractAtNPCEvent;
+package me.scroojalix.npcmanager.utils;
 
 public interface InteractEvent {
 	

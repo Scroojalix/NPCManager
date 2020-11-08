@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 
 import me.scroojalix.npcmanager.NPCMain;
-import me.scroojalix.npcmanager.api.InteractionsManager;
+import me.scroojalix.npcmanager.utils.InteractionsManager;
 
 public class NPCCommandTab implements TabCompleter {
 	

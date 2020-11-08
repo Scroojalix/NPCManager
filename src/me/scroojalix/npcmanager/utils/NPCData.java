@@ -10,7 +10,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.annotations.Expose;
 
-import me.scroojalix.npcmanager.api.InteractEvent;
 import me.scroojalix.npcmanager.nms.interfaces.NMSHologram;
 
 /**

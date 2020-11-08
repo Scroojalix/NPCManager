@@ -3,7 +3,6 @@ package me.scroojalix.npcmanager.utils;
 import com.google.gson.annotations.Expose;
 
 import me.scroojalix.npcmanager.NPCMain;
-import me.scroojalix.npcmanager.api.InteractionsManager;
 
 /**
  * Class that stores all of an NPC's traits.
