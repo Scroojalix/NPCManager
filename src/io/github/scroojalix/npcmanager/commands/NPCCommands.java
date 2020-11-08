@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.tab.NPCCommandTab;
 import io.github.scroojalix.npcmanager.utils.NPCData;
-import io.github.scroojalix.npcmanager.utils.NPCTrait;
+import io.github.scroojalix.npcmanager.utils.NPCData.NPCTrait;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;

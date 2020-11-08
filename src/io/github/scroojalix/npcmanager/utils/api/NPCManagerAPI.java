@@ -1,4 +1,4 @@
-package io.github.scroojalix.npcmanager.api;
+package io.github.scroojalix.npcmanager.utils.api;
 
 import java.util.logging.Level;
 

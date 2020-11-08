@@ -18,7 +18,7 @@ import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.nms.interfaces.INPCManager;
 import io.github.scroojalix.npcmanager.nms.interfaces.NMSHologram;
 import io.github.scroojalix.npcmanager.utils.NPCData;
-import io.github.scroojalix.npcmanager.utils.NPCTrait;
+import io.github.scroojalix.npcmanager.utils.NPCData.NPCTrait;
 import net.minecraft.server.v1_16_R3.DataWatcherRegistry;
 import net.minecraft.server.v1_16_R3.EntityPlayer;
 import net.minecraft.server.v1_16_R3.EnumChatFormat;
