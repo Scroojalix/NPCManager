@@ -4,5 +4,6 @@
 .classpath
 .project
 
-# Build Files
-bin/
+# Maven
+target/
+Build/

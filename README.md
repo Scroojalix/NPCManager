@@ -4,6 +4,30 @@ This plugin provides support for spawning NPC's, and has many customisation opti
 
 Also has support for using a MySQL database to store NPC data (Configured in the config.yml).
 
+### How to build
+
+#### Requirements:
+
+> * Maven
+> * Java
+> * Git
+
+Run the following commands in the command-line:
+
+```
+ git clone https://github.com/Scroojalix/NPCManager.git
+ 
+ cd NPCManager
+ 
+ mvn clean install
+```
+
+The .jar file will be found in the `Build` folder.
+
+### Supported Versions
+
+This plugin supports a wide range of Spigot versions, from 1.8.3 to 1.16.4.
+
 ### Commands
 
  * `/npc create <name>`
@@ -27,6 +51,3 @@ The accepted values for `<key>` are:
 * `range`
 * `skin`
 * `interactEvent`
-
-### Supported Versions
-This plugin supports a wide range of Spigot versions, from 1.8.3 to 1.16.4.
