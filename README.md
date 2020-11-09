@@ -8,21 +8,21 @@ Also has support for using a MySQL database to store NPC data (Configured in the
 
 #### Requirements:
 
-> * Maven
-> * Java
-> * Git
+ * Maven
+ * Java
+ * Git
 
 Run the following commands in the command-line:
 
 ```
- git clone https://github.com/Scroojalix/NPCManager.git
- 
- cd NPCManager
- 
- mvn clean install
+git clone https://github.com/Scroojalix/NPCManager.git
+
+cd NPCManager
+
+mvn clean install
 ```
 
-The .jar file will be found in the `Build` folder.
+The .jar file can be found in the `Build` folder.
 
 ### Supported Versions
 
