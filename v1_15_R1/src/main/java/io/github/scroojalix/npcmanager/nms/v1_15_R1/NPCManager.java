@@ -9,6 +9,7 @@ import org.bukkit.craftbukkit.v1_15_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_15_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_15_R1.scoreboard.CraftScoreboard;
+import org.bukkit.craftbukkit.v1_15_R1.util.CraftChatMessage;
 import org.bukkit.entity.Player;
 
 import com.mojang.authlib.GameProfile;
@@ -42,6 +43,7 @@ public class NPCManager extends INPCManager {
 		npcTeam.setCollisionRule(EnumTeamPush.NEVER);
 		npcTeam.setColor(EnumChatFormat.DARK_GRAY);
 		npcTeam.setNameTagVisibility(ScoreboardTeamBase.EnumNameTagVisibility.NEVER);
+		npcTeam.setPrefix(CraftChatMessage.fromStringOrNull(main.format("&8[NPC] ")));
 		NPCs = new HashMap<String, NPCData>();
 
 		restoreNPCs();

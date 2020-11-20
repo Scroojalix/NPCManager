@@ -21,7 +21,6 @@ import io.github.scroojalix.npcmanager.utils.NPCData;
 import io.github.scroojalix.npcmanager.utils.NPCData.NPCTrait;
 import net.minecraft.server.v1_10_R1.DataWatcherRegistry;
 import net.minecraft.server.v1_10_R1.EntityPlayer;
-import net.minecraft.server.v1_10_R1.EnumChatFormat;
 import net.minecraft.server.v1_10_R1.MinecraftServer;
 import net.minecraft.server.v1_10_R1.PacketPlayOutEntityDestroy;
 import net.minecraft.server.v1_10_R1.PacketPlayOutPlayerInfo;
@@ -40,7 +39,7 @@ public class NPCManager extends INPCManager {
 		this.main = main;
 		npcTeam = new ScoreboardTeam(((CraftScoreboard)Bukkit.getScoreboardManager().getNewScoreboard()).getHandle(), "zzzzzzzzzzNMNPCs");
 		npcTeam.setCollisionRule(EnumTeamPush.NEVER);
-		npcTeam.a(EnumChatFormat.DARK_GRAY);
+		npcTeam.setPrefix(main.format("&8[NPC] "));
 		npcTeam.setNameTagVisibility(ScoreboardTeamBase.EnumNameTagVisibility.NEVER);
 		NPCs = new HashMap<String, NPCData>();
 

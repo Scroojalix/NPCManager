@@ -42,6 +42,7 @@ public class NPCManager extends INPCManager {
 		npcTeam.setCollisionRule(EnumTeamPush.NEVER);
 		npcTeam.setColor(EnumChatFormat.DARK_GRAY);
 		npcTeam.setNameTagVisibility(ScoreboardTeamBase.EnumNameTagVisibility.NEVER);
+		npcTeam.setPrefix(main.format("&8[NPC] "));
 		NPCs = new HashMap<String, NPCData>();
 
 		restoreNPCs();
