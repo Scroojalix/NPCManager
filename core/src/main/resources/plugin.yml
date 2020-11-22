@@ -12,7 +12,7 @@ commands:
     permission: npcmanager.commands.npc
     permission-message: *noperms
     description: NPC commands
-    usage: "\u00A7cUnkown argument. /npc help"
+    usage: "\u00A7cUnknown argument."
     
 permissions:
   npcmanager.*:

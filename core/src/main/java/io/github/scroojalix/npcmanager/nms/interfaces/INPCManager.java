@@ -12,6 +12,7 @@ import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.utils.InteractionsManager;
 import io.github.scroojalix.npcmanager.utils.FileManager;
 import io.github.scroojalix.npcmanager.utils.NPCData;
+import io.github.scroojalix.npcmanager.utils.PluginUtils;
 import io.github.scroojalix.npcmanager.utils.sql.SQLGetter;
 import net.md_5.bungee.api.ChatColor;
 
@@ -42,7 +43,7 @@ public abstract class INPCManager {
 	}
 
 	public void createNPC(String name, Location loc, boolean store) {
-		String displayName = ChatColor.stripColor(main.format(name)).isEmpty()?"Default":name;
+		String displayName = ChatColor.stripColor(PluginUtils.format(name)).isEmpty()?"Default":name;
 		NPCData data = new NPCData(name, displayName, loc, store);
 		restoreNPC(data);
 		saveNPC(data);

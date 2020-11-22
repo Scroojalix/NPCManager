@@ -2,22 +2,20 @@ package io.github.scroojalix.npcmanager;
 
 import java.sql.SQLException;
 import java.util.logging.Level;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import io.github.scroojalix.npcmanager.commands.NPCCommands;
+import io.github.scroojalix.npcmanager.commands.CommandManager;
 import io.github.scroojalix.npcmanager.events.NPCEvents;
 import io.github.scroojalix.npcmanager.nms.interfaces.INPCManager;
 import io.github.scroojalix.npcmanager.nms.interfaces.IPacketReader;
 import io.github.scroojalix.npcmanager.utils.FileManager;
-import io.github.scroojalix.npcmanager.utils.InteractionsManager;
 import io.github.scroojalix.npcmanager.utils.SkinManager;
+import io.github.scroojalix.npcmanager.utils.PluginUtils.SaveMethod;
+import io.github.scroojalix.npcmanager.utils.PluginUtils.ServerVersion;
 import io.github.scroojalix.npcmanager.utils.sql.MySQL;
-import net.md_5.bungee.api.ChatColor;
 
 /**
  * Main class for the NPCManager plugin.
@@ -27,8 +25,7 @@ import net.md_5.bungee.api.ChatColor;
 public class NPCMain extends JavaPlugin {
 	
 	public static NPCMain instance;
-	
-	private final Pattern pattern = Pattern.compile("#[a-fA-F0-9]{6}");
+	public static ServerVersion serverVersion;
 	
 	public FileManager skinFile;
 	public INPCManager npc;
@@ -38,7 +35,6 @@ public class NPCMain extends JavaPlugin {
 	public FileManager npcFile;
 	public MySQL sql;
 	public boolean showDebugMessages;
-	public ServerVersion serverVersion;
 	
 	private boolean validVersion = true;
 	
@@ -69,7 +65,7 @@ public class NPCMain extends JavaPlugin {
 		this.initSaveMethod();
 		this.skinFile = new FileManager(this, "skins.yml");
 		this.skinManager = new SkinManager(this);
-		this.getCommand("npc").setExecutor(new NPCCommands(this));
+		this.getCommand("npc").setExecutor(new CommandManager(this));
 		this.getServer().getPluginManager().registerEvents(new NPCEvents(this), this);
 	}
 
@@ -83,29 +79,11 @@ public class NPCMain extends JavaPlugin {
 				player.closeInventory();
 				reader.uninject(player);
 			}
-			InteractionsManager.getInteractEvents().clear();
 			if (saveMethod == SaveMethod.MYSQL) {
 				sql.disconnect();
 			}
 		}
 		instance = null;
-	}
-	
-	/**
-	 * Translate colour codes and hex codes into a coloured string.
-	 * @param msg The message to translate.
-	 * @return The translated string.
-	 */
-	public String format(String msg) {
-		if (serverVersion.hasHexSupport) {
-			Matcher match = pattern.matcher(msg);
-			while (match.find()) {
-				String colour = msg.substring(match.start(), match.end());
-				msg = msg.replace(colour, ChatColor.of(colour) + "");
-				match = pattern.matcher(msg);
-			}
-		}
-		return ChatColor.translateAlternateColorCodes('&', msg);
 	}
 	
 	private boolean validVersion() {
@@ -190,30 +168,6 @@ public class NPCMain extends JavaPlugin {
 				sql.getGetter().createTable();
 			}
 			break;
-		}
-	}
-
-	/**
-	 * Save method for the plugin. 
-	 * @author Scroojalix
-	 */
-	public enum SaveMethod {
-		YAML, MYSQL;
-	}
-
-	/**
-	 * Version that the server is running.
-	 * @author Scroojalix
-	 */
-	public enum ServerVersion {
-		v1_8_R2(false), v1_8_R3(false), v1_9_R1(false), v1_9_R2(false), v1_10_R1(false),
-		v1_11_R1(false), v1_12_R1(false), v1_13_R1(false), v1_13_R2(false), v1_14_R1(false),
-		v1_15_R1(false), v1_16_R1(true), v1_16_R2(true), v1_16_R3(true);
-
-		public final boolean hasHexSupport; 
-
-		private ServerVersion(boolean hexSupport) {
-			this.hasHexSupport = hexSupport;
 		}
 	}
 }

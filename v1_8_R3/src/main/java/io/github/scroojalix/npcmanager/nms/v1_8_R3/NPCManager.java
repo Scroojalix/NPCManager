@@ -18,6 +18,7 @@ import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.nms.interfaces.INPCManager;
 import io.github.scroojalix.npcmanager.nms.interfaces.NMSHologram;
 import io.github.scroojalix.npcmanager.utils.NPCData;
+import io.github.scroojalix.npcmanager.utils.PluginUtils;
 import io.github.scroojalix.npcmanager.utils.NPCData.NPCTrait;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.minecraft.server.v1_8_R3.MinecraftServer;
@@ -36,7 +37,7 @@ public class NPCManager extends INPCManager {
 	public NPCManager(NPCMain main) {
 		this.main = main;
 		npcTeam = new ScoreboardTeam(((CraftScoreboard)Bukkit.getScoreboardManager().getNewScoreboard()).getHandle(), "zzzzzzzzzzNMNPCs");
-		npcTeam.setPrefix(main.format("&8[NPC] "));
+		npcTeam.setPrefix(PluginUtils.format("&8[NPC] "));
 		npcTeam.setNameTagVisibility(ScoreboardTeamBase.EnumNameTagVisibility.NEVER);
 		NPCs = new HashMap<String, NPCData>();
 
@@ -86,14 +87,14 @@ public class NPCManager extends INPCManager {
 		Location upperLoc = new Location(loc.getWorld(), loc.getX(), loc.getY()+2.15, loc.getZ());
 		Location lowerLoc = new Location(loc.getWorld(), loc.getX(), loc.getY()+1.9, loc.getZ());
 		if (hasDisplayName && hasSubtitle) {
-			data.setNameHolo(new EntityNMSHologram(upperLoc, main.format(displayName)));
-			data.setSubtitleHolo(new EntityNMSHologram(lowerLoc, main.format(subtitle)));
+			data.setNameHolo(new EntityNMSHologram(upperLoc, PluginUtils.format(displayName)));
+			data.setSubtitleHolo(new EntityNMSHologram(lowerLoc, PluginUtils.format(subtitle)));
 		} else if (hasDisplayName && !hasSubtitle){
-			data.setNameHolo(new EntityNMSHologram(lowerLoc, main.format(displayName)));
+			data.setNameHolo(new EntityNMSHologram(lowerLoc, PluginUtils.format(displayName)));
 			data.setSubtitleHolo(null);
 		} else if (!hasDisplayName && hasSubtitle) {
 			data.setNameHolo(null);
-			data.setSubtitleHolo(new EntityNMSHologram(lowerLoc, main.format(subtitle)));
+			data.setSubtitleHolo(new EntityNMSHologram(lowerLoc, PluginUtils.format(subtitle)));
 		} else {
 			data.setNameHolo(null);
 			data.setSubtitleHolo(null);
