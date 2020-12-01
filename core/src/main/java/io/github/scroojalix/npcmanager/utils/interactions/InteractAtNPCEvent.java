@@ -1,9 +1,11 @@
-package io.github.scroojalix.npcmanager.utils;
+package io.github.scroojalix.npcmanager.utils.interactions;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+
+import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 
 public class InteractAtNPCEvent extends Event implements Cancellable{
 

@@ -8,9 +8,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import io.github.scroojalix.npcmanager.commands.CommandManager;
+import io.github.scroojalix.npcmanager.events.EquipmentEvents;
 import io.github.scroojalix.npcmanager.events.NPCEvents;
 import io.github.scroojalix.npcmanager.nms.interfaces.INPCManager;
 import io.github.scroojalix.npcmanager.nms.interfaces.IPacketReader;
+import io.github.scroojalix.npcmanager.utils.EmptySlots;
 import io.github.scroojalix.npcmanager.utils.FileManager;
 import io.github.scroojalix.npcmanager.utils.SkinManager;
 import io.github.scroojalix.npcmanager.utils.PluginUtils.SaveMethod;
@@ -62,11 +64,13 @@ public class NPCMain extends JavaPlugin {
 	private void initialise() {
 		NPCMain.instance = this;
 		this.saveDefaultConfig();
+		EmptySlots.generateItems();
 		this.initSaveMethod();
 		this.skinFile = new FileManager(this, "skins.yml");
 		this.skinManager = new SkinManager(this);
 		this.getCommand("npc").setExecutor(new CommandManager(this));
 		this.getServer().getPluginManager().registerEvents(new NPCEvents(this), this);
+		this.getServer().getPluginManager().registerEvents(new EquipmentEvents(this), this);
 	}
 
 	@Override
@@ -87,12 +91,12 @@ public class NPCMain extends JavaPlugin {
 	}
 	
 	private boolean validVersion() {
-        String version;
-        try {
-            version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-        } catch (ArrayIndexOutOfBoundsException whatVersionAreYouUsingException) {
-        	getLogger().severe("Unknown Server Version");
-            return false;
+		String version;
+		try {
+			version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+		} catch (ArrayIndexOutOfBoundsException whatVersionAreYouUsingException) {
+			getLogger().severe("Unknown Server Version");
+			return false;
 		}
 		log(Level.INFO, "Your server is running version "+version);
 
@@ -105,14 +109,14 @@ public class NPCMain extends JavaPlugin {
 
 		initialise();
 
-        String pack = "io.github.scroojalix.npcmanager.nms."+version;
-        try {
-	        npc = (INPCManager) Class.forName(pack + ".NPCManager").getConstructors()[0].newInstance(this);
+		String pack = "io.github.scroojalix.npcmanager.nms."+version;
+		try {
+			npc = (INPCManager) Class.forName(pack + ".NPCManager").getConstructors()[0].newInstance(this);
 			reader = (IPacketReader) Class.forName(pack + ".PacketReader").getConstructors()[0].newInstance(this);
-        } catch (Exception e) {
+		} catch (Exception e) {
 			return false;
 		}
-        return npc != null && reader != null;
+		return npc != null && reader != null;
 	}
 	
 	public void log(Level level, String msg) {

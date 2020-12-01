@@ -3,9 +3,13 @@ package io.github.scroojalix.npcmanager.utils.api;
 import java.util.logging.Level;
 
 import org.bukkit.Location;
+import org.bukkit.inventory.ItemStack;
 
 import io.github.scroojalix.npcmanager.NPCMain;
-import io.github.scroojalix.npcmanager.utils.NPCData;
+import io.github.scroojalix.npcmanager.utils.PluginUtils;
+import io.github.scroojalix.npcmanager.utils.npc.NPCData;
+import io.github.scroojalix.npcmanager.utils.npc.NPCEquipment;
+import io.github.scroojalix.npcmanager.utils.npc.NPCTrait;
 
 public class NPCManagerAPI {
 
@@ -29,6 +33,79 @@ public class NPCManagerAPI {
 			NPCMain.instance.npc.createNPC(name, loc, store);
 		} else {
 			NPCMain.instance.getLogger().warning("Could not create NPC '"+name+"'. An NPC with that name already exists.");
+		}
+	}
+	
+	/**
+	 * Modify an NPC's equipment.
+	 * <p>
+	 * For the slot parameter, use a number between 0 and 5.
+	 * <p>
+	 * 0 - main hand
+	 * <p>
+	 * 1 - off hand
+	 * <p>
+	 * 2 - boots
+	 * <p>
+	 * 3 - leggings
+	 * <p>
+	 * 4 - chestplate
+	 * <p>
+	 * 5 - helmet
+	 * 
+	 * @param name The name of the NPC.
+	 * @param slot The slot to change. 
+	 * @param item The item to put in that slot.
+	 */
+	public static void changeEquipment(String name, int slot, ItemStack item) {
+		if (NPCMain.instance.npc.getNPCs().containsKey(name)) {
+			NPCData data = NPCMain.instance.npc.getNPCs().get(name);
+			NPCEquipment equipment = data.getTraits().getEquipment();
+			boolean update = true;
+			switch (slot) {
+			case 0:
+				if (PluginUtils.isSuitable(item, "item", null)) {
+					equipment.setMainhandItem(item);
+				} else { update = false; }
+				break;
+			case 1:
+				if (PluginUtils.isSuitable(item, "item", null)) {
+					equipment.setOffhandItem(item);
+				} else { update = false; }
+				break;
+			case 2:
+				if (PluginUtils.isSuitable(item, "boots", null)) {
+					equipment.setBoots(item);
+				} else { update = false; }
+				break;
+			case 3:
+				if (PluginUtils.isSuitable(item, "leggings", null)) {
+					equipment.setLeggings(item);
+				} else { update = false; }
+				break;
+			case 4:
+				if (PluginUtils.isSuitable(item, "chestplate", null)) {
+					equipment.setChestplate(item);
+				} else { update = false; }
+				break;
+			case 5:
+				if (PluginUtils.isSuitable(item, "helmet", null)) {
+					equipment.setHelmet(item);
+				} else { update = false; }
+				break;
+			default:
+				update = false;
+				NPCMain.instance.getLogger().warning("Could not modify the equipment of '"+name+"'. The slot '"+slot+"' does not exist.");
+				break;
+			}
+			if (update) {
+				NPCMain.instance.npc.saveNPC(data);
+				NPCMain.instance.npc.updateNPC(data);
+			} else if (slot >= 0 && slot <= 5) {
+				NPCMain.instance.getLogger().warning("Could not modify the equipment of '"+name+"'. That item is not suitable for that slot.");
+			}
+		} else {
+			NPCMain.instance.getLogger().warning("Could not modify the equipment of '"+name+"'. That NPC does not exist.");
 		}
 	}
 	

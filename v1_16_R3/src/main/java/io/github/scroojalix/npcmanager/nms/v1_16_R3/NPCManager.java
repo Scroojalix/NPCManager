@@ -18,9 +18,9 @@ import com.mojang.authlib.properties.Property;
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.nms.interfaces.INPCManager;
 import io.github.scroojalix.npcmanager.nms.interfaces.NMSHologram;
-import io.github.scroojalix.npcmanager.utils.NPCData;
+import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
-import io.github.scroojalix.npcmanager.utils.NPCData.NPCTrait;
+import io.github.scroojalix.npcmanager.utils.npc.NPCTrait;
 import net.minecraft.server.v1_16_R3.DataWatcherRegistry;
 import net.minecraft.server.v1_16_R3.EntityPlayer;
 import net.minecraft.server.v1_16_R3.EnumChatFormat;
@@ -64,6 +64,9 @@ public class NPCManager extends INPCManager {
 	public void getNMSEntity(NPCData data) {
 		GameProfile profile;
 		NPCTrait traits = data.getTraits();
+		//TODO fix issue caused when an npc has the same name as a player.
+		//Player will have [NPC] prefix.
+		//Make npc profile names be a random string of 16 characters.
 		if (traits.getSkin() != null && main.skinManager.values().contains(traits.getSkin())) {
 			String[] profileData = main.skinManager.getSkinData(traits.getSkin());
 			profile = new GameProfile(UUID.fromString(profileData[0]), data.getName());

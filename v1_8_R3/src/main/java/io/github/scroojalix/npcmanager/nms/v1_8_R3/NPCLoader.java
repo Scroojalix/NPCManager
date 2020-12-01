@@ -5,12 +5,14 @@ import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.nms.interfaces.INPCLoader;
-import io.github.scroojalix.npcmanager.utils.NPCData;
+import io.github.scroojalix.npcmanager.utils.npc.NPCData;
+import io.github.scroojalix.npcmanager.utils.npc.NPCEquipment;
 import net.minecraft.server.v1_8_R3.EntityArmorStand;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.minecraft.server.v1_8_R3.MathHelper;
@@ -18,6 +20,7 @@ import net.minecraft.server.v1_8_R3.Packet;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntity;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityDestroy;
+import net.minecraft.server.v1_8_R3.PacketPlayOutEntityEquipment;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityHeadRotation;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityMetadata;
 import net.minecraft.server.v1_8_R3.PacketPlayOutNamedEntitySpawn;
@@ -62,7 +65,25 @@ public class NPCLoader extends INPCLoader implements Runnable {
 			holo = (EntityArmorStand) data.getSubtitleHolo().getEntity();
 			packets.add(new PacketPlayOutSpawnEntity(holo, 78));
 			packets.add(new PacketPlayOutEntityMetadata(holo.getId(), holo.getDataWatcher(), true));
-		}						
+		}
+
+		//Equipment
+		NPCEquipment equipment = data.getTraits().getEquipment();
+		if (equipment.getMainhandItem() != null) {
+			packets.add(new PacketPlayOutEntityEquipment(npc.getId(), 0, CraftItemStack.asNMSCopy(equipment.getMainhandItem())));
+		}
+		if (equipment.getHelmet() != null) {
+			packets.add(new PacketPlayOutEntityEquipment(npc.getId(), 4, CraftItemStack.asNMSCopy(equipment.getHelmet())));
+		}
+		if (equipment.getChestplate() != null) {
+			packets.add(new PacketPlayOutEntityEquipment(npc.getId(), 3, CraftItemStack.asNMSCopy(equipment.getChestplate())));
+		}
+		if (equipment.getLeggings() != null) {
+			packets.add(new PacketPlayOutEntityEquipment(npc.getId(), 2, CraftItemStack.asNMSCopy(equipment.getLeggings())));
+		}
+		if (equipment.getBoots() != null) {
+			packets.add(new PacketPlayOutEntityEquipment(npc.getId(), 1, CraftItemStack.asNMSCopy(equipment.getBoots())));
+		}
 	}
 
 	protected void lookInDirection(Player player) {

@@ -1,13 +1,15 @@
 package io.github.scroojalix.npcmanager.commands.subcommands;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.CommandUtils;
 import io.github.scroojalix.npcmanager.commands.SubCommand;
-import io.github.scroojalix.npcmanager.utils.NPCData;
-import io.github.scroojalix.npcmanager.utils.NPCData.NPCTrait;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
+import io.github.scroojalix.npcmanager.utils.npc.NPCData;
+import io.github.scroojalix.npcmanager.utils.npc.NPCTrait;
 
 public class InfoCommand extends SubCommand {
 
@@ -23,7 +25,7 @@ public class InfoCommand extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/npc info <name>";
+        return "/npc info <name> [page]";
     }
 
     @Override
@@ -31,8 +33,6 @@ public class InfoCommand extends SubCommand {
         return true;
     }
 
-    //TODO hide nulls
-    //TODO Show interact event + other info
     @Override
     public boolean execute(NPCMain main, CommandSender sender, String[] args) {
         if (args.length < 2)
@@ -40,15 +40,34 @@ public class InfoCommand extends SubCommand {
         if (CommandUtils.npcExists(args[1], sender)) {
             NPCData data = main.npc.getNPCs().get(args[1]);
             NPCTrait traits = data.getTraits();
-            sender.sendMessage(PluginUtils.format("&b&M&L                      &6 NPC Info &b&M&L                      "));
-            sender.sendMessage(PluginUtils.format("&6Name: &F"+data.getName()));
-            sender.sendMessage(PluginUtils.format("&6Display Name: &F"+traits.getDisplayName()));
-            sender.sendMessage(PluginUtils.format("&6Subtitle: &F"+traits.getSubtitle()));
-            CommandUtils.sendJSONMessage(sender, CommandUtils.getLocationComponents(args[1], data.getLoc()));
-            sender.sendMessage(PluginUtils.format("&6Skin: &F"+traits.getSkin()));
-            sender.sendMessage(PluginUtils.format("&6Range: &F"+traits.getRange()));
-            sender.sendMessage(PluginUtils.format("&6Head Rotation: &F"+traits.hasHeadRotation()));
-            sender.sendMessage(PluginUtils.format("&b&M&L                                                       "));
+            if (args.length == 2 || args[2].equalsIgnoreCase("1")) {
+                sender.sendMessage(PluginUtils.format("&b&M&L                  &6 NPC Info Page 1 &b&M&L                  "));
+                sender.sendMessage(PluginUtils.format("&6Name: &F"+data.getName()));
+                CommandUtils.sendJSONMessage(sender, CommandUtils.getLocationComponents(data.getName(), data.getLoc()));
+                sender.sendMessage(PluginUtils.format("&6Display Name: &F"+traits.getDisplayName()));
+                sender.sendMessage(PluginUtils.format("&6Subtitle: &F"+traits.getSubtitle()));
+                sender.sendMessage(PluginUtils.format("&6Range: &F"+traits.getRange()));
+                sender.sendMessage(PluginUtils.format("&6Head Rotation: &F"+traits.hasHeadRotation()));
+                sender.sendMessage(PluginUtils.format("&6Skin: &F"+traits.getSkin()));
+                CommandUtils.sendJSONMessage(sender, CommandUtils.getEquipmentComponents(data.getName()));
+                //TODO add info page turner button in message
+                sender.sendMessage(PluginUtils.format("&b&M&L                                                      "));
+            } else if (args[2].equalsIgnoreCase("2")) {
+                sender.sendMessage(PluginUtils.format("&b&M&L                  &6 NPC Info Page 2 &b&M&L                  "));
+                sender.sendMessage(PluginUtils.format("&6Interact Event: &F"+traits.getInteractEvent()));
+                if (sender instanceof Player) {
+                    sender.sendMessage("");
+                    sender.sendMessage("");
+                    sender.sendMessage("");
+                    sender.sendMessage("");
+                    sender.sendMessage("");
+                    sender.sendMessage("");
+                    sender.sendMessage("");
+                }
+                sender.sendMessage(PluginUtils.format("&b&M&L                                                      "));
+            } else {
+                sender.sendMessage(ChatColor.RED+"That is not a valid page number.");
+            }
             return true;
         }
         return false;

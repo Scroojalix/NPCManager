@@ -6,7 +6,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import io.github.scroojalix.npcmanager.NPCMain;
-import io.github.scroojalix.npcmanager.utils.InteractAtNPCEvent;
+import io.github.scroojalix.npcmanager.utils.interactions.InteractAtNPCEvent;
 
 public class NPCEvents implements Listener {
 	

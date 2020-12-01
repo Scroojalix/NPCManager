@@ -6,8 +6,8 @@ import org.bukkit.command.CommandSender;
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.CommandUtils;
 import io.github.scroojalix.npcmanager.commands.SubCommand;
-import io.github.scroojalix.npcmanager.utils.NPCData;
-import io.github.scroojalix.npcmanager.utils.NPCData.NPCTrait;
+import io.github.scroojalix.npcmanager.utils.npc.NPCData;
+import io.github.scroojalix.npcmanager.utils.npc.NPCTrait;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class ModifyCommand extends SubCommand {

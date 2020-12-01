@@ -17,9 +17,9 @@ import com.mojang.authlib.properties.Property;
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.nms.interfaces.INPCManager;
 import io.github.scroojalix.npcmanager.nms.interfaces.NMSHologram;
-import io.github.scroojalix.npcmanager.utils.NPCData;
+import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
-import io.github.scroojalix.npcmanager.utils.NPCData.NPCTrait;
+import io.github.scroojalix.npcmanager.utils.npc.NPCTrait;
 import net.minecraft.server.v1_8_R2.EntityPlayer;
 import net.minecraft.server.v1_8_R2.MinecraftServer;
 import net.minecraft.server.v1_8_R2.PacketPlayOutEntityDestroy;
@@ -84,6 +84,10 @@ public class NPCManager extends INPCManager {
 		boolean hasDisplayName = displayName != null;
 		boolean hasSubtitle = subtitle != null;
 		Location loc = data.getLoc();
+		//TODO raise all holograms on all versions up
+		//upperLoc += 0.5
+		//lowerLoc += 0.3
+		//Test value on one version before implementing on rest.
 		Location upperLoc = new Location(loc.getWorld(), loc.getX(), loc.getY()+2, loc.getZ());
 		Location lowerLoc = new Location(loc.getWorld(), loc.getX(), loc.getY()+1.75, loc.getZ());
 		if (hasDisplayName && hasSubtitle) {

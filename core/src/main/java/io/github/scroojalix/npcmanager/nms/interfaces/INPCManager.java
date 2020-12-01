@@ -9,9 +9,9 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import io.github.scroojalix.npcmanager.NPCMain;
-import io.github.scroojalix.npcmanager.utils.InteractionsManager;
+import io.github.scroojalix.npcmanager.utils.interactions.InteractionsManager;
 import io.github.scroojalix.npcmanager.utils.FileManager;
-import io.github.scroojalix.npcmanager.utils.NPCData;
+import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 import io.github.scroojalix.npcmanager.utils.sql.SQLGetter;
 import net.md_5.bungee.api.ChatColor;
@@ -120,6 +120,7 @@ public abstract class INPCManager {
 	 */
 	public abstract void sendRemoveNPCPackets(Player p, NPCData data);
 
+	//TODO save using JSON instead of YAML
 	/**
 	 * Saves an NPC.
 	 * @param data The data to save.

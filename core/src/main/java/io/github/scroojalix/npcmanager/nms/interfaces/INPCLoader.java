@@ -10,7 +10,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import io.github.scroojalix.npcmanager.NPCMain;
-import io.github.scroojalix.npcmanager.utils.NPCData;
+import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 
 public abstract class INPCLoader {
 	

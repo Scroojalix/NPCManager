@@ -5,19 +5,23 @@ import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_13_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_13_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.nms.interfaces.INPCLoader;
-import io.github.scroojalix.npcmanager.utils.NPCData;
+import io.github.scroojalix.npcmanager.utils.npc.NPCData;
+import io.github.scroojalix.npcmanager.utils.npc.NPCEquipment;
 import net.minecraft.server.v1_13_R1.EntityArmorStand;
 import net.minecraft.server.v1_13_R1.EntityPlayer;
+import net.minecraft.server.v1_13_R1.EnumItemSlot;
 import net.minecraft.server.v1_13_R1.MathHelper;
 import net.minecraft.server.v1_13_R1.Packet;
 import net.minecraft.server.v1_13_R1.PacketPlayOutAnimation;
 import net.minecraft.server.v1_13_R1.PacketPlayOutEntity;
 import net.minecraft.server.v1_13_R1.PacketPlayOutEntityDestroy;
+import net.minecraft.server.v1_13_R1.PacketPlayOutEntityEquipment;
 import net.minecraft.server.v1_13_R1.PacketPlayOutEntityHeadRotation;
 import net.minecraft.server.v1_13_R1.PacketPlayOutEntityMetadata;
 import net.minecraft.server.v1_13_R1.PacketPlayOutNamedEntitySpawn;
@@ -62,7 +66,28 @@ public class NPCLoader extends INPCLoader implements Runnable {
 			holo = (EntityArmorStand) data.getSubtitleHolo().getEntity();
 			packets.add(new PacketPlayOutSpawnEntityLiving(holo));
 			packets.add(new PacketPlayOutEntityMetadata(holo.getId(), holo.getDataWatcher(), true));
-		}						
+		}
+
+		//Equipment
+		NPCEquipment equipment = data.getTraits().getEquipment();
+		if (equipment.getMainhandItem() != null) {
+			packets.add(new PacketPlayOutEntityEquipment(npc.getId(), EnumItemSlot.MAINHAND, CraftItemStack.asNMSCopy(equipment.getMainhandItem())));
+		}
+		if (equipment.getOffhandItem() != null) {
+			packets.add(new PacketPlayOutEntityEquipment(npc.getId(), EnumItemSlot.OFFHAND, CraftItemStack.asNMSCopy(equipment.getOffhandItem())));
+		}
+		if (equipment.getHelmet() != null) {
+			packets.add(new PacketPlayOutEntityEquipment(npc.getId(), EnumItemSlot.HEAD, CraftItemStack.asNMSCopy(equipment.getHelmet())));
+		}
+		if (equipment.getChestplate() != null) {
+			packets.add(new PacketPlayOutEntityEquipment(npc.getId(), EnumItemSlot.CHEST, CraftItemStack.asNMSCopy(equipment.getChestplate())));
+		}
+		if (equipment.getLeggings() != null) {
+			packets.add(new PacketPlayOutEntityEquipment(npc.getId(), EnumItemSlot.LEGS, CraftItemStack.asNMSCopy(equipment.getLeggings())));
+		}
+		if (equipment.getBoots() != null) {
+			packets.add(new PacketPlayOutEntityEquipment(npc.getId(), EnumItemSlot.FEET, CraftItemStack.asNMSCopy(equipment.getBoots())));
+		}
 	}
 
 	protected void lookInDirection(Player player) {

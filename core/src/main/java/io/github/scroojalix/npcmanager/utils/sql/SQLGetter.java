@@ -6,8 +6,8 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 
 import io.github.scroojalix.npcmanager.NPCMain;
-import io.github.scroojalix.npcmanager.utils.InteractionsManager;
-import io.github.scroojalix.npcmanager.utils.NPCData;
+import io.github.scroojalix.npcmanager.utils.interactions.InteractionsManager;
+import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 
 public class SQLGetter {
 	
