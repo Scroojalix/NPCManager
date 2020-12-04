@@ -9,7 +9,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import io.github.scroojalix.npcmanager.NPCMain;
-import io.github.scroojalix.npcmanager.utils.interactions.InteractionsManager;
 import io.github.scroojalix.npcmanager.utils.FileManager;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
@@ -209,7 +208,7 @@ public abstract class INPCManager {
 		if (temp.getConfig().contains("npc"))
 		temp.getConfig().getConfigurationSection("npc").getKeys(false).forEach(current -> {
 			NPCData data = NPCData.fromJson(temp.getConfig().getString("npc."+current));
-			if (suitableData(data)) {
+			if (PluginUtils.suitableData(data)) {
 				if (connected) {
 					if (!main.sql.getGetter().exists(data.getName())) {
 						main.sql.getGetter().addNPC(data);
@@ -223,28 +222,6 @@ public abstract class INPCManager {
 			}
 		});
 	}
-
-	private boolean suitableData(NPCData data) {
-		if (data != null) {
-			if (!data.isWorldNull()) {
-				if (data.getTraits().getInteractEvent() != null) {
-					String interactEvent = data.getTraits().getInteractEvent();
-					if (InteractionsManager.getInteractEvents().containsKey(interactEvent)) {
-						data.setInteractEvent(InteractionsManager.getInteractEvents().get(interactEvent));
-					} else {
-						main.log(Level.WARNING, "Error whilst restoring NPCs: Unknown interact event '"+interactEvent+"'");
-						data.getTraits().setInteractEvent(null);
-					}
-				}
-				return true;
-			} else {
-				main.log(Level.WARNING, "Could not reload NPC: Unknown World");
-			}
-		} else {
-			main.log(Level.WARNING, "Could not reload NPC: Invalid JSON");
-		}
-		return false;
-	}
 	
 	/**
 	 * Restores all NPC's from npcs.yml
@@ -253,7 +230,7 @@ public abstract class INPCManager {
 		if (main.npcFile.getConfig().contains("npc"))
 		main.npcFile.getConfig().getConfigurationSection("npc").getKeys(false).forEach(current -> {
 			NPCData data = NPCData.fromJson(main.npcFile.getConfig().getString("npc."+current));
-			if (suitableData(data))
+			if (PluginUtils.suitableData(data))
 				restoreNPC(data);
 		});
 	}

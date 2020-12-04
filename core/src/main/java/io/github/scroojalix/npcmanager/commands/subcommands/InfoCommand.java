@@ -25,7 +25,7 @@ public class InfoCommand extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/npc info <name> [page]";
+        return "/npc info <npc> [page]";
     }
 
     @Override

@@ -3,10 +3,9 @@ package io.github.scroojalix.npcmanager.utils.sql;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.logging.Level;
 
 import io.github.scroojalix.npcmanager.NPCMain;
-import io.github.scroojalix.npcmanager.utils.interactions.InteractionsManager;
+import io.github.scroojalix.npcmanager.utils.PluginUtils;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 
 public class SQLGetter {
@@ -108,22 +107,8 @@ public class SQLGetter {
 			ResultSet rs = ps.executeQuery();
 			while(rs.next()) {
 				NPCData data = NPCData.fromJson(rs.getString(1));
-				if (data != null) {
-					if (!data.isWorldNull()) {
-						if (data.getTraits().getInteractEvent() != null) {
-							String interactEvent = data.getTraits().getInteractEvent();
-							if (InteractionsManager.getInteractEvents().containsKey(interactEvent)) {
-								data.setInteractEvent(InteractionsManager.getInteractEvents().get(interactEvent));
-							} else {
-								main.log(Level.WARNING, "Error whilst restoring NPCs: Unknown interact event '"+interactEvent+"'");
-							}
-						}
-						main.npc.restoreNPC(data);
-					} else {
-						main.log(Level.WARNING, "Could not reload NPC: Unknown World");
-					}
-				} else {
-					main.log(Level.WARNING, "Could not reload NPC: Invalid JSON");
+				if (PluginUtils.suitableData(data)) {
+					main.npc.restoreNPC(data);
 				}
 			}
 		} catch(SQLException | NullPointerException e) {

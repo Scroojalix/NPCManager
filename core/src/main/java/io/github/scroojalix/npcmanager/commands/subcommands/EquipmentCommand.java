@@ -22,7 +22,7 @@ public class EquipmentCommand extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/npc equipment <name>";
+        return "/npc equipment <npc>";
     }
 
     @Override

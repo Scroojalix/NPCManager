@@ -22,10 +22,13 @@ public class InteractionsManager {
 	 */
 	public static void registerInteraction(InteractEvent interactEvent, Plugin plugin) {
 		if (interactEvent.getInteractionName() == null) {
-			NPCMain.instance.getLogger().warning("Could not register interaction from "+plugin.getName()+" because it's name is null.");
+			NPCMain.instance.getLogger().warning("Could not register interaction from "+plugin.getName()+". It's name is null.");
 			return;
+		} else if (interactEvent.getInteractionName().matches("^[a-zA-Z0-9]*$")) {
+			String name = interactEvent.getInteractionName();
+			interactEvents.put(name, interactEvent);
+		} else {
+			NPCMain.instance.getLogger().warning("Could not register interaction from "+plugin.getName()+".It's name is not alphanumeric.");
 		}
-		String name = interactEvent.getInteractionName().replace(" ", "-");
-		interactEvents.put(name, interactEvent);
 	}
 }

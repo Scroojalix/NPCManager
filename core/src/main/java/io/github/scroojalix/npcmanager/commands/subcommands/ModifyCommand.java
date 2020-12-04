@@ -24,7 +24,7 @@ public class ModifyCommand extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/npc modify <name> <key> <value>";
+        return "/npc modify <npc> <key> <value>";
     }
 
     @Override
@@ -34,7 +34,7 @@ public class ModifyCommand extends SubCommand {
 
     @Override
     public boolean execute(NPCMain main, CommandSender sender, String[] args) {
-        if (args.length < 3)
+        if (args.length < 4)
             return false;
         if (CommandUtils.npcExists(args[1], sender)) {
             NPCData modifying = main.npc.getNPCs().get(args[1]);

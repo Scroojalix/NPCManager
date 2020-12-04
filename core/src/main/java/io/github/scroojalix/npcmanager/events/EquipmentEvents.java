@@ -42,7 +42,7 @@ public class EquipmentEvents implements Listener {
                 switch (e.getRawSlot()) {
                 case 10: //Helmet
                 if (notNull) {
-                    if (PluginUtils.isSuitable(cursor, "helmet", p)) {
+                    if (PluginUtils.isSuitableItem(cursor, "helmet", p)) {
                         e.getClickedInventory().setItem(10, cursor);
                         if (current.isSimilar(EmptySlots.helmetSlot)) {
                             p.setItemOnCursor(null);
@@ -62,7 +62,7 @@ public class EquipmentEvents implements Listener {
                 break;
                 case 12: //Chestplate
                 if (notNull) {
-                    if (PluginUtils.isSuitable(cursor, "chestplate", p)) {
+                    if (PluginUtils.isSuitableItem(cursor, "chestplate", p)) {
                         e.getClickedInventory().setItem(12, cursor);
                         if (current.isSimilar(EmptySlots.chestplateSlot)) {
                             p.setItemOnCursor(null);
@@ -82,7 +82,7 @@ public class EquipmentEvents implements Listener {
                 break;
                 case 14: //Leggings
                 if (notNull) {
-                    if (PluginUtils.isSuitable(cursor, "leggings", p)) {
+                    if (PluginUtils.isSuitableItem(cursor, "leggings", p)) {
                         e.getClickedInventory().setItem(14, cursor);
                         if (current.isSimilar(EmptySlots.leggingsSlot)) {
                             p.setItemOnCursor(null);
@@ -102,7 +102,7 @@ public class EquipmentEvents implements Listener {
                 break;
                 case 16: //Boots
                 if (notNull) {
-                    if (PluginUtils.isSuitable(cursor, "boots", p)) {
+                    if (PluginUtils.isSuitableItem(cursor, "boots", p)) {
                         e.getClickedInventory().setItem(16, cursor);
                         if (current.isSimilar(EmptySlots.bootsSlot)) {
                             p.setItemOnCursor(null);
@@ -122,7 +122,7 @@ public class EquipmentEvents implements Listener {
                 break;
                 case 30: //Main Hand
                 if (notNull) {
-                    if (PluginUtils.isSuitable(cursor, "item", p)) {
+                    if (PluginUtils.isSuitableItem(cursor, "item", p)) {
                         e.getClickedInventory().setItem(30, cursor);
                         if (current.isSimilar(EmptySlots.mainhandSlot)) {
                             p.setItemOnCursor(null);
@@ -143,7 +143,7 @@ public class EquipmentEvents implements Listener {
                 case 32: //Off Hand
                 if (NPCMain.serverVersion.hasOffHand) {
                     if (notNull) {
-                        if (PluginUtils.isSuitable(cursor, "item", p)) {
+                        if (PluginUtils.isSuitableItem(cursor, "item", p)) {
                             e.getClickedInventory().setItem(32, cursor);
                             if (current.isSimilar(EmptySlots.offhandSlot)) {
                                 p.setItemOnCursor(null);

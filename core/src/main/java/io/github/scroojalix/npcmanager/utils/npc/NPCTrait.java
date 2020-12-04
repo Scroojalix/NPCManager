@@ -3,7 +3,6 @@ package io.github.scroojalix.npcmanager.utils.npc;
 import com.google.gson.annotations.Expose;
 
 import io.github.scroojalix.npcmanager.NPCMain;
-import io.github.scroojalix.npcmanager.utils.interactions.InteractionsManager;
 
 /**
  * Class that stores all of an NPC's traits.
@@ -69,13 +68,6 @@ public class NPCTrait {
                 throw new Throwable("&6Set the skin of &F"+data.getName()+"&6 to &F"+value);
             } else {
                 throw new IllegalArgumentException("'"+value+"' is not a valid skin.");
-            }
-        case "interactEvent":
-            if (InteractionsManager.getInteractEvents().containsKey(value) || value.equalsIgnoreCase("None")) {
-                data.setInteractEvent(value.equalsIgnoreCase("None")?null:InteractionsManager.getInteractEvents().get(value));
-                throw new Throwable("&6Set the interact event of &F"+data.getName()+"&6 to &F"+value);
-            } else {
-                throw new IllegalArgumentException("'"+value+"' is not a valid Interact Event.");
             }
         default:
             throw new IllegalArgumentException("Unknown key '"+key+"'.");

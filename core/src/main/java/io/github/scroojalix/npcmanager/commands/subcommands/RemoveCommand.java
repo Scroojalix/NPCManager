@@ -21,7 +21,7 @@ public class RemoveCommand extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/npc remove <name>";
+        return "/npc remove <npc>";
     }
 
     @Override

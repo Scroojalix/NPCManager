@@ -23,7 +23,7 @@ public class TeleportCommand extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/npc tpto <name>";
+        return "/npc tpto <npc>";
     }
 
     @Override

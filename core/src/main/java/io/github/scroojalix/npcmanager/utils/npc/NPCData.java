@@ -2,6 +2,7 @@ package io.github.scroojalix.npcmanager.utils.npc;
 
 import java.text.DecimalFormat;
 import java.util.Map;
+import java.util.logging.Level;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
@@ -10,8 +11,11 @@ import com.google.gson.annotations.Expose;
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
+import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.nms.interfaces.NMSHologram;
+import io.github.scroojalix.npcmanager.utils.interactions.CommandInteraction;
 import io.github.scroojalix.npcmanager.utils.interactions.InteractEvent;
+import io.github.scroojalix.npcmanager.utils.interactions.InteractionsManager;
 import io.github.scroojalix.npcmanager.utils.json.ConfigurationSerializableAdapter;
 
 /**
@@ -32,8 +36,7 @@ public class NPCData {
 	//Holograms
 	private NMSHologram nameHolo;
 	private NMSHologram subtitleHolo;
-	
-	//TODO change to a command
+
 	private InteractEvent interactEvent;
 	private Object npc;
 	private int loaderTask;
@@ -79,6 +82,20 @@ public class NPCData {
 			.registerTypeHierarchyAdapter(ConfigurationSerializable.class, new ConfigurationSerializableAdapter())
 			.create().fromJson(json, NPCData.class);
 			data.setStored(true);
+
+			//Restore Interact Event
+			if (data.getTraits().getInteractEvent() != null) {
+				String interactEvent = data.getTraits().getInteractEvent();
+				if (interactEvent.startsWith("Command:")) {
+					data.setInteractEvent(new CommandInteraction(interactEvent.replaceFirst("Command:", "")));
+				} else if (InteractionsManager.getInteractEvents().containsKey(interactEvent)) {
+					data.setInteractEvent(InteractionsManager.getInteractEvents().get(interactEvent));
+				} else {
+					NPCMain.instance.log(Level.WARNING, "Error whilst restoring NPCs: Unknown interact event '"+interactEvent+"'");
+					data.getTraits().setInteractEvent(null);
+				}
+			}
+
 			return data;
 		} catch (JsonSyntaxException e) {
 			e.printStackTrace();
@@ -206,7 +223,11 @@ public class NPCData {
 	public void setInteractEvent(InteractEvent interactEvent) {
 		this.interactEvent = interactEvent;
 		if (interactEvent != null) {
-			traits.setInteractEvent(interactEvent.getInteractionName().replace(" ", "-"));
+			if (interactEvent instanceof CommandInteraction) {
+				traits.setInteractEvent("Command:"+((CommandInteraction)interactEvent).getCommand());
+			} else {
+				traits.setInteractEvent(interactEvent.getInteractionName());
+			}
 		} else {
 			traits.setInteractEvent(null);
 		}

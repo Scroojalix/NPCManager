@@ -64,32 +64,32 @@ public class NPCManagerAPI {
 			boolean update = true;
 			switch (slot) {
 			case 0:
-				if (PluginUtils.isSuitable(item, "item", null)) {
+				if (PluginUtils.isSuitableItem(item, "item", null)) {
 					equipment.setMainhandItem(item);
 				} else { update = false; }
 				break;
 			case 1:
-				if (PluginUtils.isSuitable(item, "item", null)) {
+				if (PluginUtils.isSuitableItem(item, "item", null)) {
 					equipment.setOffhandItem(item);
 				} else { update = false; }
 				break;
 			case 2:
-				if (PluginUtils.isSuitable(item, "boots", null)) {
+				if (PluginUtils.isSuitableItem(item, "boots", null)) {
 					equipment.setBoots(item);
 				} else { update = false; }
 				break;
 			case 3:
-				if (PluginUtils.isSuitable(item, "leggings", null)) {
+				if (PluginUtils.isSuitableItem(item, "leggings", null)) {
 					equipment.setLeggings(item);
 				} else { update = false; }
 				break;
 			case 4:
-				if (PluginUtils.isSuitable(item, "chestplate", null)) {
+				if (PluginUtils.isSuitableItem(item, "chestplate", null)) {
 					equipment.setChestplate(item);
 				} else { update = false; }
 				break;
 			case 5:
-				if (PluginUtils.isSuitable(item, "helmet", null)) {
+				if (PluginUtils.isSuitableItem(item, "helmet", null)) {
 					equipment.setHelmet(item);
 				} else { update = false; }
 				break;

@@ -23,7 +23,7 @@ public class MoveCommand extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/npc move <name>";
+        return "/npc move <npc>";
     }
 
     @Override
