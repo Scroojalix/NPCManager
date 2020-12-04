@@ -65,6 +65,34 @@ public class CommandUtils {
 		return new TextComponent[]{component0, component1};
 	}
 
+	public static TextComponent[] getPageTurnerMessage(String npc, boolean left, boolean right) {
+		TextComponent line = new TextComponent("                   ");
+		line.setColor(ChatColor.AQUA);
+		line.setBold(true); line.setStrikethrough(true);
+		TextComponent leftArrow;
+		if (left) {
+			leftArrow = new TextComponent(" <<<");
+			leftArrow.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/npc info "+npc+" 1"));
+		} else {
+			leftArrow = new TextComponent("   ");
+			leftArrow.setStrikethrough(true);
+			leftArrow.setBold(true);
+		}
+		leftArrow.setColor(ChatColor.AQUA);
+		TextComponent center = new TextComponent(PluginUtils.format(" &6Page &b"+(left?2:1)+" &6of &b2 "));
+		TextComponent rightArrow;
+		if (right) {
+			rightArrow = new TextComponent(">>> ");
+			rightArrow.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/npc info "+npc+" 2"));
+		} else {
+			rightArrow = new TextComponent("   ");
+			rightArrow.setStrikethrough(true);
+			rightArrow.setBold(true);
+		}
+		rightArrow.setColor(ChatColor.AQUA);
+		return new TextComponent[]{line, leftArrow, center, rightArrow, line};
+	}
+
 	public static void sendJSONMessage(CommandSender sender, TextComponent...components) {
 		if (sender instanceof Player) {
 			((Player)sender).spigot().sendMessage(components);

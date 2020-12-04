@@ -8,6 +8,7 @@ import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.CommandUtils;
 import io.github.scroojalix.npcmanager.commands.SubCommand;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
+import io.github.scroojalix.npcmanager.utils.interactions.CommandInteraction;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.npc.NPCTrait;
 
@@ -41,7 +42,7 @@ public class InfoCommand extends SubCommand {
             NPCData data = main.npc.getNPCs().get(args[1]);
             NPCTrait traits = data.getTraits();
             if (args.length == 2 || args[2].equalsIgnoreCase("1")) {
-                sender.sendMessage(PluginUtils.format("&b&M&L                  &6 NPC Info Page 1 &b&M&L                  "));
+                sender.sendMessage(PluginUtils.format("&b&M&L                        &6 NPC Info &b&M&L                        "));
                 sender.sendMessage(PluginUtils.format("&6Name: &F"+data.getName()));
                 CommandUtils.sendJSONMessage(sender, CommandUtils.getLocationComponents(data.getName(), data.getLoc()));
                 sender.sendMessage(PluginUtils.format("&6Display Name: &F"+traits.getDisplayName()));
@@ -50,11 +51,14 @@ public class InfoCommand extends SubCommand {
                 sender.sendMessage(PluginUtils.format("&6Head Rotation: &F"+traits.hasHeadRotation()));
                 sender.sendMessage(PluginUtils.format("&6Skin: &F"+traits.getSkin()));
                 CommandUtils.sendJSONMessage(sender, CommandUtils.getEquipmentComponents(data.getName()));
-                //TODO add info page turner button in message
-                sender.sendMessage(PluginUtils.format("&b&M&L                                                      "));
+                CommandUtils.sendJSONMessage(sender, CommandUtils.getPageTurnerMessage(data.getName(), false, true));
             } else if (args[2].equalsIgnoreCase("2")) {
-                sender.sendMessage(PluginUtils.format("&b&M&L                  &6 NPC Info Page 2 &b&M&L                  "));
-                sender.sendMessage(PluginUtils.format("&6Interact Event: &F"+traits.getInteractEvent()));
+                sender.sendMessage(PluginUtils.format("&b&M&L                        &6 NPC Info &b&M&L                        "));
+                if (data.getInteractEvent() instanceof CommandInteraction) {
+                    sender.sendMessage(PluginUtils.format("&6Interact Event: &d[Command] /"+traits.getInteractEvent().replaceFirst("Command:", "")));
+                } else {
+                    sender.sendMessage(PluginUtils.format("&6Interact Event: &f"+traits.getInteractEvent()));
+                }
                 if (sender instanceof Player) {
                     sender.sendMessage("");
                     sender.sendMessage("");
@@ -64,7 +68,7 @@ public class InfoCommand extends SubCommand {
                     sender.sendMessage("");
                     sender.sendMessage("");
                 }
-                sender.sendMessage(PluginUtils.format("&b&M&L                                                      "));
+                CommandUtils.sendJSONMessage(sender, CommandUtils.getPageTurnerMessage(data.getName(), true, false));
             } else {
                 sender.sendMessage(ChatColor.RED+"That is not a valid page number.");
             }
