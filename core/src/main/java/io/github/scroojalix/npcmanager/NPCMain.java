@@ -127,6 +127,7 @@ public class NPCMain extends JavaPlugin {
 	
 	public void reloadPlugin() {
 		npc.removeAllNPCs();
+		this.saveDefaultConfig();
 		reloadConfig();
 		showDebugMessages = getConfig().getBoolean("show-debug-messages");
 		skinFile.reloadConfig();
@@ -143,6 +144,10 @@ public class NPCMain extends JavaPlugin {
 			saveMethod = SaveMethod.YAML;
 			log(Level.INFO, "Save method set to YAML");
 			break;
+		case "JSON":
+			saveMethod = SaveMethod.JSON;
+			log(Level.INFO, "Save method set to JSON");
+			break;
 		case "MYSQL":
 			saveMethod = SaveMethod.MYSQL;
 			log(Level.INFO, "Save method set to MYSQL");
@@ -158,6 +163,8 @@ public class NPCMain extends JavaPlugin {
 		switch(saveMethod) {
 		case YAML:
 			npcFile = new FileManager(this, "npcs.yml");
+			break;
+		case JSON:
 			break;
 		case MYSQL:
 			sql = new MySQL(this);

@@ -69,6 +69,7 @@ public class NPCData {
 
 	//TODO fix ItemStack and null not restoring properly (Loses enchantments)
 	//TODO fix error caused by world being null
+	//TODO account for when an item is used that is not availabe in the current server version.
 	/**
 	 * Creates an NPCData object from a JSON string.
 	 * @param json The JSON string to convert from.

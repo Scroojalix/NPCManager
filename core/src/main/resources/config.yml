@@ -2,7 +2,7 @@
 #  Configuration for NPCManager plugin.
 #
 
-# Show debug messages
+# Show debug messages in console
 show-debug-messages: true
 
 # The range at which NPCs will start looking towards the player
@@ -13,8 +13,9 @@ reset-headrotation: true
 
 # The save method to use.
 # Suitable Values:
-# YAML (default) - Saving to a .yml file.
-# MYSQL - Saving to a MYSQL database.
+# YAML (default) - Saves all NPC's to a single .yml file.
+# JSON - Saves each NPC to its own .json file.
+# MYSQL - Saves NPC's to a MYSQL database.
 save-method: YAML
 
 # Database Settings. Only applies if using a MYSQL database for storage.

@@ -20,6 +20,8 @@ public class SkinManager {
 		generateSkins();
 	}
 	
+	//TODO redo the way skins work
+	//allow player to put in any username
 	/**
 	 * Generate skin data from skins.yml
 	 */

@@ -79,7 +79,7 @@ public class PluginUtils {
 	 * @author Scroojalix
 	 */
 	public enum SaveMethod {
-		YAML, MYSQL;
+		YAML, JSON, MYSQL;
 	}
 
 	/**

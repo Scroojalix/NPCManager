@@ -33,10 +33,8 @@ public class ClearCommand extends SubCommand {
     public boolean execute(NPCMain main, CommandSender sender, String[] args) {
         if (!main.npc.getNPCs().isEmpty()) {
             for (String npc : main.npc.getNPCs().keySet()) {
-                main.npc.removeNPC(npc, false);
+                main.npc.removeNPC(npc, true);
             }
-            main.npcFile.getConfig().set("npc", null);
-            main.npcFile.saveConfig();
             main.npc.getNPCs().clear();
             sender.sendMessage(PluginUtils.format("&6Removed all NPC's."));
         } else {

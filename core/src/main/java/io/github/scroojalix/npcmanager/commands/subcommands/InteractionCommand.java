@@ -10,6 +10,7 @@ import io.github.scroojalix.npcmanager.utils.interactions.CommandInteraction;
 import io.github.scroojalix.npcmanager.utils.interactions.InteractionsManager;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 
+//TODO make this a subcommand of the modify command.
 public class InteractionCommand extends SubCommand {
 
     @Override

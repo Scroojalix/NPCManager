@@ -37,8 +37,6 @@ public class RemoveCommand extends SubCommand {
         if (CommandUtils.npcExists(name, sender)) {
             main.npc.removeNPC(name, true);
             main.npc.getNPCs().remove(name);
-            if (main.npc.getNPCs().isEmpty())
-                main.npcFile.getConfig().set("npc", null);
             sender.sendMessage(Messages.REMOVE_NPC+name);
             return true;
         }

@@ -17,6 +17,7 @@ public class CommandInteraction implements InteractEvent {
         return null;
     }
 
+    //TODO add config option to allow running the command without permission.
     @Override
     public void onInteract(InteractAtNPCEvent event) {
         event.getPlayer().performCommand(command);

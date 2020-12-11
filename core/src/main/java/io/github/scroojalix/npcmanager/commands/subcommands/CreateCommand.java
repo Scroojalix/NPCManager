@@ -36,11 +36,11 @@ public class CreateCommand extends SubCommand {
             return false;
 
         String name = args[1];
+        //TODO check that name is alphanumerical
         if (name.length() > 16) {
             sender.sendMessage(Messages.LONG_NAME);
             return true;
-        }
-        if (!main.npc.getNPCs().containsKey(name)) {
+        } else if (!main.npc.getNPCs().containsKey(name)) {
             main.npc.createNPC(name, ((Player)sender).getLocation());
             sender.sendMessage(PluginUtils.format("&6Created an NPC named &F")+name);
             return true;

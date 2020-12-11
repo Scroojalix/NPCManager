@@ -8,6 +8,7 @@ import io.github.scroojalix.npcmanager.commands.CommandUtils;
 import io.github.scroojalix.npcmanager.commands.SubCommand;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 
+//TODO make this a subcommand of the modify command
 public class EquipmentCommand extends SubCommand {
 
     @Override
