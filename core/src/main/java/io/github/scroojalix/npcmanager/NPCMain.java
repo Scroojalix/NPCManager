@@ -56,13 +56,11 @@ public class NPCMain extends JavaPlugin {
 			@Override
 			public void run() {
 				if (checkForUpdate()) {
-					getLogger().info("");
-					getLogger().info("-------------------------------------------------");
+					getLogger().info("--------------------------------------------------------");
 					getLogger().info("A new version of the plugin is available!");
 					getLogger().info("It can be downloaded at:");
-					getLogger().info("https://github.com/Scroojalix/NPCManager/releases");
-					getLogger().info("-------------------------------------------------");
-					getLogger().info("");
+					getLogger().info("https://github.com/Scroojalix/NPCManager/releases/latest");
+					getLogger().info("--------------------------------------------------------");
 				} else {
 					log(Level.INFO, "You have the latest version of the plugin.");
 				}
@@ -91,6 +89,7 @@ public class NPCMain extends JavaPlugin {
 	 *         <code>false</code> otherwise.
 	 */
 	private boolean checkForUpdate() {
+		log(Level.INFO, "Checking you have the latest version of the plugin...");
 		String current = this.getDescription().getVersion();
 		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
 		try {
@@ -100,8 +99,6 @@ public class NPCMain extends JavaPlugin {
 			XPath xpath = XPathFactory.newInstance().newXPath();
 			Node node = (Node) xpath.evaluate("project/properties/revision", doc, XPathConstants.NODE);
 			String latest = node.getTextContent();
-			log(Level.INFO, "Current Version: "+current);
-			log(Level.INFO, "Latest Version: "+latest);
 			return !latest.equalsIgnoreCase(current);
 		} catch (Exception e) {
 			e.printStackTrace();
