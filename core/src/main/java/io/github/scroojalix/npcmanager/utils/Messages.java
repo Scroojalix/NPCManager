@@ -13,4 +13,7 @@ public class Messages {
     //Command Messages
     public static String REMOVE_NPC = ChatColor.GOLD+"Removed an NPC named "+ChatColor.WHITE;
 
+    //Other
+    public static String RESTORE_NPCS = "Restoring NPC's...";
+
 }

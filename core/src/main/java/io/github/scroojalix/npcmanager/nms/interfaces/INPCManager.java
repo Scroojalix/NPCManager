@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.utils.FileManager;
+import io.github.scroojalix.npcmanager.utils.Messages;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.sql.SQLGetter;
@@ -219,24 +220,21 @@ public abstract class INPCManager {
 					switch (main.saveMethod) {
 						case YAML:
 							if (main.npcFile.getConfig().contains("npc")) {
-								main.log(Level.INFO, "Restoring NPCs...");
+								main.log(Level.INFO, Messages.RESTORE_NPCS);
 								restoreYAMLNPCs();
-								main.log(Level.INFO, "Done");
 							}
 							break;
 						case JSON:
 							if (new File(main.getDataFolder()+"/json-storage").exists()) {
-								main.log(Level.INFO, "Restoring NPCs...");
+								main.log(Level.INFO, Messages.RESTORE_NPCS);
 								restoreJSONNPCs();
-								main.log(Level.INFO, "Done");
 							}
 							break;
 						case MYSQL:
 							boolean connected = main.sql.getGetter().testConnection();
 							if (connected) {
-								main.log(Level.INFO, "Restoring NPCs...");
+								main.log(Level.INFO, Messages.RESTORE_NPCS);
 								main.sql.getGetter().restoreDataEntries();
-								main.log(Level.INFO, "Done");
 							}
 							File file = new File(main.getDataFolder(), "temp.yml");
 							if (file.exists()) {
@@ -246,7 +244,6 @@ public abstract class INPCManager {
 								if (connected) {
 									file.delete();
 								}
-								main.log(Level.INFO, "Done");
 							}
 							break;
 					}

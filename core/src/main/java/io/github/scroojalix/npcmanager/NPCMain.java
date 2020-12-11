@@ -1,11 +1,20 @@
 package io.github.scroojalix.npcmanager;
 
+import java.net.URL;
 import java.sql.SQLException;
 import java.util.logging.Level;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 import io.github.scroojalix.npcmanager.commands.CommandManager;
 import io.github.scroojalix.npcmanager.events.EquipmentEvents;
@@ -14,21 +23,22 @@ import io.github.scroojalix.npcmanager.nms.interfaces.INPCManager;
 import io.github.scroojalix.npcmanager.nms.interfaces.IPacketReader;
 import io.github.scroojalix.npcmanager.utils.EmptySlots;
 import io.github.scroojalix.npcmanager.utils.FileManager;
-import io.github.scroojalix.npcmanager.utils.SkinManager;
 import io.github.scroojalix.npcmanager.utils.PluginUtils.SaveMethod;
 import io.github.scroojalix.npcmanager.utils.PluginUtils.ServerVersion;
+import io.github.scroojalix.npcmanager.utils.SkinManager;
 import io.github.scroojalix.npcmanager.utils.sql.MySQL;
 
 /**
  * Main class for the NPCManager plugin.
+ * 
  * @author Scroojalix.
  * @see <a href="https://github.com/Scroojalix/NPCManager">Github Repository</a>
  */
 public class NPCMain extends JavaPlugin {
-	
+
 	public static NPCMain instance;
 	public static ServerVersion serverVersion;
-	
+
 	public FileManager skinFile;
 	public INPCManager npc;
 	public IPacketReader reader;
@@ -37,11 +47,27 @@ public class NPCMain extends JavaPlugin {
 	public FileManager npcFile;
 	public MySQL sql;
 	public boolean showDebugMessages;
-	
+
 	private boolean validVersion = true;
-	
+
 	@Override
 	public void onEnable() {
+		Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
+			@Override
+			public void run() {
+				if (checkForUpdate()) {
+					getLogger().info("");
+					getLogger().info("-------------------------------------------------");
+					getLogger().info("A new version of the plugin is available!");
+					getLogger().info("It can be downloaded at:");
+					getLogger().info("https://github.com/Scroojalix/NPCManager/releases");
+					getLogger().info("-------------------------------------------------");
+					getLogger().info("");
+				} else {
+					log(Level.INFO, "You have the latest version of the plugin.");
+				}
+			}
+		});
 		this.showDebugMessages = this.getConfig().getBoolean("show-debug-messages");
 		this.setSaveMethod();
 		if (!validVersion()) {
@@ -56,6 +82,29 @@ public class NPCMain extends JavaPlugin {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Check if an update is available on the github.
+	 * 
+	 * @return <code>true</code> if an update is available on the github repo.
+	 *         <code>false</code> otherwise.
+	 */
+	private boolean checkForUpdate() {
+		String current = this.getDescription().getVersion();
+		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+		try {
+			DocumentBuilder builder = domFactory.newDocumentBuilder();
+			URL url = new URL("https://raw.githubusercontent.com/Scroojalix/NPCManager/master/pom.xml");
+			Document doc = builder.parse(url.openStream());
+			XPath xpath = XPathFactory.newInstance().newXPath();
+			Node node = (Node) xpath.evaluate("project/properties/revision", doc, XPathConstants.NODE);
+			String newest = node.getTextContent();
+			return !newest.equalsIgnoreCase(current);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 	/**
@@ -98,7 +147,6 @@ public class NPCMain extends JavaPlugin {
 			getLogger().severe("Unknown Server Version");
 			return false;
 		}
-		log(Level.INFO, "Your server is running version "+version);
 
 		try {
 			serverVersion = ServerVersion.valueOf(version);
