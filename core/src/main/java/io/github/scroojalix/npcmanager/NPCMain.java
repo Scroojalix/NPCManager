@@ -99,8 +99,10 @@ public class NPCMain extends JavaPlugin {
 			Document doc = builder.parse(url.openStream());
 			XPath xpath = XPathFactory.newInstance().newXPath();
 			Node node = (Node) xpath.evaluate("project/properties/revision", doc, XPathConstants.NODE);
-			String newest = node.getTextContent();
-			return !newest.equalsIgnoreCase(current);
+			String latest = node.getTextContent();
+			log(Level.INFO, "Current Version: "+current);
+			log(Level.INFO, "Latest Version: "+latest);
+			return !latest.equalsIgnoreCase(current);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
