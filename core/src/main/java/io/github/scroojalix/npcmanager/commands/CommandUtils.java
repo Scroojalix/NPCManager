@@ -65,25 +65,27 @@ public class CommandUtils {
 		return new TextComponent[]{component0, component1};
 	}
 
-	public static TextComponent[] getPageTurnerMessage(String npc, boolean left, boolean right) {
+	public static TextComponent[] getPageTurnerMessage(String command, int pages, int current) {
+		boolean left = current > 1;
+		boolean right = pages > current;
 		TextComponent line = new TextComponent("                   ");
 		line.setColor(ChatColor.AQUA);
 		line.setBold(true); line.setStrikethrough(true);
 		TextComponent leftArrow;
 		if (left) {
 			leftArrow = new TextComponent(" <<<");
-			leftArrow.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/npc info "+npc+" 1"));
+			leftArrow.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command + " " + (current-1)));
 		} else {
 			leftArrow = new TextComponent("   ");
 			leftArrow.setStrikethrough(true);
 			leftArrow.setBold(true);
 		}
 		leftArrow.setColor(ChatColor.AQUA);
-		TextComponent center = new TextComponent(PluginUtils.format(" &6Page &b"+(left?2:1)+" &6of &b2 "));
+		TextComponent center = new TextComponent(PluginUtils.format(" &6Page &b"+current+" &6of &b"+pages+" "));
 		TextComponent rightArrow;
 		if (right) {
 			rightArrow = new TextComponent(">>> ");
-			rightArrow.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/npc info "+npc+" 2"));
+			rightArrow.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command + " " + (current+1)));
 		} else {
 			rightArrow = new TextComponent("   ");
 			rightArrow.setStrikethrough(true);
@@ -99,9 +101,9 @@ public class CommandUtils {
 		} else {
 			String message = "";
 			for (TextComponent component : components) {
-				message += component.getText();
+				message += component.getColor() + component.getText();
 			}
-			sender.sendMessage(ChatColor.GOLD+message);
+			sender.sendMessage(message);
 		}
 	}
 	

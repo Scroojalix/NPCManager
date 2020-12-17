@@ -8,6 +8,7 @@ public class Messages {
     public static String UNKNOWN_NPC = ChatColor.RED+"An NPC with that name does not exist!";
     public static String NPC_EXISTS = ChatColor.RED+"An NPC with that name already exists!";
     public static String LONG_NAME = ChatColor.RED+"An NPC's name cannot be longer than 16 characters.";
+    public static String NOT_ALPHANUMERIC = ChatColor.RED+"That name is not alphanumeric!";
     public static String NO_NPCS = ChatColor.RED+"There are no NPC's!";
 
     //Command Messages

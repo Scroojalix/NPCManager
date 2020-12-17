@@ -1,13 +1,13 @@
 package io.github.scroojalix.npcmanager.utils.npc;
 
-import java.text.DecimalFormat;
-import java.util.Map;
 import java.util.logging.Level;
 
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.annotations.Expose;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
@@ -57,31 +57,45 @@ public class NPCData {
 	 * Converts this NPCData object to a JSON string.
 	 * @return The JSON string.
 	 */
-	public String toJson() {
-		return new GsonBuilder()
-		.setPrettyPrinting()
+	public String toJson(boolean prettyPrinting) {
+		GsonBuilder builder = new GsonBuilder()
 		.disableHtmlEscaping()
 		.excludeFieldsWithoutExposeAnnotation()
-		.registerTypeHierarchyAdapter(ConfigurationSerializable.class, new ConfigurationSerializableAdapter())
-		.create().toJson(this);
+		.registerTypeHierarchyAdapter(ConfigurationSerializable.class, new ConfigurationSerializableAdapter());
+		if (prettyPrinting) {
+			builder.setPrettyPrinting();
+		}
+		return builder.create().toJson(this);
 	}
 
 
 	//TODO fix ItemStack and null not restoring properly (Loses enchantments)
-	//TODO fix error caused by world being null
 	//TODO account for when an item is used that is not availabe in the current server version.
 	/**
 	 * Creates an NPCData object from a JSON string.
 	 * @param json The JSON string to convert from.
 	 * @return An NPCData object.
 	 */
-	public static NPCData fromJson(String json) {
+	public static NPCData fromJson(String json, boolean prettyPrinting) {
 		try {
-			NPCData data = new GsonBuilder()
-			.setPrettyPrinting()
+			GsonBuilder builder = new GsonBuilder()
 			.disableHtmlEscaping()
-			.registerTypeHierarchyAdapter(ConfigurationSerializable.class, new ConfigurationSerializableAdapter())
-			.create().fromJson(json, NPCData.class);
+			.registerTypeHierarchyAdapter(ConfigurationSerializable.class, new ConfigurationSerializableAdapter());
+
+			if (prettyPrinting) {
+				builder.setPrettyPrinting();
+			}
+			
+			String world = new JsonParser().parse(json).getAsJsonObject()
+					.get("loc").getAsJsonObject().get("world").getAsString();
+			
+			if (Bukkit.getWorld(world) == null) {
+				//TODO remove NPC from storage if world is null
+				NPCMain.instance.log(Level.SEVERE, "Error restoring an NPC: The world it's in does not exist.");
+				return null;
+			}
+
+			NPCData data = builder.create().fromJson(json, NPCData.class);
 			data.setStored(true);
 
 			//Restore Interact Event
@@ -92,14 +106,14 @@ public class NPCData {
 				} else if (InteractionsManager.getInteractEvents().containsKey(interactEvent)) {
 					data.setInteractEvent(InteractionsManager.getInteractEvents().get(interactEvent));
 				} else {
-					NPCMain.instance.log(Level.WARNING, "Error whilst restoring NPCs: Unknown interact event '"+interactEvent+"'");
+					NPCMain.instance.log(Level.WARNING, "Error restoring an NPC: Unknown interact event '"+interactEvent+"'");
 					data.getTraits().setInteractEvent(null);
 				}
 			}
 
 			return data;
 		} catch (JsonSyntaxException e) {
-			e.printStackTrace();
+			NPCMain.instance.log(Level.SEVERE, "Error restoring an NPC: Invalid JSON");
 			return null;
 		}
 	}
@@ -147,14 +161,7 @@ public class NPCData {
 	 * @param loc New Location
 	 */
 	public void setLoc(Location loc) {
-		DecimalFormat df = new DecimalFormat("#.##");
-		Map<String, Object> newLoc = loc.serialize();
-		newLoc.put("x", Double.valueOf(df.format((double)newLoc.get("x"))));
-		newLoc.put("y", Double.valueOf(df.format((double)newLoc.get("y"))));
-		newLoc.put("z", Double.valueOf(df.format((double)newLoc.get("z"))));
-		newLoc.put("pitch", Float.valueOf(df.format((float)newLoc.get("pitch"))));
-		newLoc.put("yaw", Float.valueOf(df.format((float)newLoc.get("yaw"))));
-		this.loc = Location.deserialize(newLoc);
+		this.loc = loc;
 	}
 	
 	/**

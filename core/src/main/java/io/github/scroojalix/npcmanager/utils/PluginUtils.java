@@ -1,6 +1,5 @@
 package io.github.scroojalix.npcmanager.utils;
 
-import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,7 +9,6 @@ import org.bukkit.inventory.ItemStack;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.CommandUtils;
-import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import net.md_5.bungee.api.ChatColor;
 
 public class PluginUtils {
@@ -34,17 +32,12 @@ public class PluginUtils {
 		return ChatColor.translateAlternateColorCodes('&', msg);
 	}
 
-	public static boolean suitableData(NPCData data) {
-		if (data != null) {
-			if (!data.isWorldNull()) {
-				return true;
-			} else {
-				NPCMain.instance.log(Level.WARNING, "Could not reload NPC: Unknown World");
-			}
-		} else {
-			NPCMain.instance.log(Level.WARNING, "Could not reload NPC: Invalid JSON");
-		}
-		return false;
+	public static boolean npcExists(String name) {
+		return NPCMain.instance.npc.getNPCs().containsKey(name);
+	}
+
+	public static boolean isAlphaNumeric(String s) {
+        return s != null && s.matches("^[a-zA-Z0-9]*$");
 	}
 
 	public static boolean isSuitableItem(ItemStack item, String type, Player p) {

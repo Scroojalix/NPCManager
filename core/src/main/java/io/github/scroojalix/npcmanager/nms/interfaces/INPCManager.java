@@ -107,25 +107,30 @@ public abstract class INPCManager {
 			}
 		}
 		if (fromStorage) {
-			switch (main.saveMethod) {
-				case YAML:
-					main.npcFile.getConfig().set("npc." + data.getName(), null);
-					main.npcFile.saveConfig();
-					break;
-				case JSON:
-					File jsonFile = new File(main.getDataFolder()+"/json-storage", data.getName()+".json");
-					if (jsonFile.exists()) {
-						jsonFile.delete();
+			Bukkit.getScheduler().runTaskAsynchronously(main, new Runnable() {
+				@Override
+				public void run() {
+					switch (main.saveMethod) {
+						case YAML:
+							main.npcFile.getConfig().set("npc." + data.getName(), null);
+							main.npcFile.saveConfig();
+							break;
+						case JSON:
+							File jsonFile = new File(main.getDataFolder()+"/json-storage", data.getName()+".json");
+							if (jsonFile.exists()) {
+								jsonFile.delete();
+							}
+							break;
+						case MYSQL:
+							if (main.sql.getGetter().testConnection()) {
+								main.sql.getGetter().remove(data.getName());
+							} else {
+								main.log(Level.WARNING, "Could not remove an NPC from the database, because it is offline.");
+							}
+							break;
 					}
-					break;
-				case MYSQL:
-					if (main.sql.getGetter().testConnection()) {
-						main.sql.getGetter().remove(data.getName());
-					} else {
-						main.log(Level.WARNING, "Could not remove an NPC from the database, because it is offline.");
-					}
-					break;
-			}
+				}
+			});
 		}
 	}
 
@@ -144,33 +149,38 @@ public abstract class INPCManager {
 	 */
 	public void saveNPC(NPCData data) {
 		if (data.isStored()) {
-			switch (main.saveMethod) {
-				case YAML:
-					saveYAMLNPC(data, main.npcFile);
-					break;
-				case JSON:
-					saveJSONNPC(data);
-					break;
-				case MYSQL:
-					SQLGetter getter = main.sql.getGetter();
-					if (getter.testConnection()) {
-						if (!data.isWorldNull()) {
-							getter.addNPC(data);
+			Bukkit.getScheduler().runTaskAsynchronously(main, new Runnable() {
+				@Override
+				public void run() {
+					switch (main.saveMethod) {
+					case YAML:
+						saveYAMLNPC(data, main.npcFile);
+						break;
+					case JSON:
+						saveJSONNPC(data);
+						break;
+					case MYSQL:
+						SQLGetter getter = main.sql.getGetter();
+						if (getter.testConnection()) {
+							if (!data.isWorldNull()) {
+								getter.addNPC(data);
+							} else {
+								main.getLogger().log(Level.WARNING,
+										"Could not save NPC '" + data.getName() + "'. That world does not exist.");
+							}
 						} else {
-							main.getLogger().log(Level.WARNING,
-									"Could not save NPC '" + data.getName() + "'. That world does not exist.");
+							main.log(Level.WARNING, "Could not save NPC to database.");
+							main.log(Level.WARNING, "Saving NPC to temp.yml instead.");
+							saveYAMLNPC(data, new FileManager(main, "temp.yml"));
 						}
-					} else {
-						main.log(Level.SEVERE, "Could not save NPC to database.");
-						main.log(Level.SEVERE, "Saving NPC to temp.yml instead.");
-						saveYAMLNPC(data, new FileManager(main, "temp.yml"));
+						break;
 					}
-					break;
-			}
+				}
+			});
 		}
 	}
 
-	// TODO redo YAML saving to be the normal syntax.
+	//TODO remove YAML saving and auto update current users to use JSON instead.
 	/**
 	 * Saves an NPC to a .yml file.
 	 * 
@@ -178,11 +188,7 @@ public abstract class INPCManager {
 	 * @param file The file to save to.
 	 */
 	private void saveYAMLNPC(NPCData data, FileManager file) {
-		if (data.getLoc() != null) {
-			file.getConfig().set("npc." + data.getName(), data.toJson());
-		} else {
-			main.getLogger().log(Level.WARNING, "Could not save '" + data.getName() + "' NPC: Unknown world");
-		}
+		file.getConfig().set("npc." + data.getName(), data.toJson(true));
 		file.saveConfig();
 	}
 
@@ -202,7 +208,7 @@ public abstract class INPCManager {
 
 		try {
 			FileWriter writer = new FileWriter(jsonFile);
-			writer.write(data.toJson());
+			writer.write(data.toJson(true));
 			writer.close();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -259,8 +265,8 @@ public abstract class INPCManager {
 	private void restoreTempNPCs(FileManager temp, boolean connected) {
 		if (temp.getConfig().contains("npc"))
 			temp.getConfig().getConfigurationSection("npc").getKeys(false).forEach(current -> {
-				NPCData data = NPCData.fromJson(temp.getConfig().getString("npc." + current));
-				if (PluginUtils.suitableData(data)) {
+				NPCData data = NPCData.fromJson(temp.getConfig().getString("npc." + current), true);
+				if (data != null) {
 					if (connected) {
 						if (!main.sql.getGetter().exists(data.getName())) {
 							main.sql.getGetter().addNPC(data);
@@ -282,8 +288,8 @@ public abstract class INPCManager {
 	private void restoreYAMLNPCs() {
 		if (main.npcFile.getConfig().contains("npc"))
 			main.npcFile.getConfig().getConfigurationSection("npc").getKeys(false).forEach(current -> {
-				NPCData data = NPCData.fromJson(main.npcFile.getConfig().getString("npc." + current));
-				if (PluginUtils.suitableData(data))
+				NPCData data = NPCData.fromJson(main.npcFile.getConfig().getString("npc." + current), true);
+				if (data != null)
 					restoreNPC(data);
 			});
 	}
@@ -297,8 +303,8 @@ public abstract class INPCManager {
 				if (current.isFile() && current.getName().endsWith(".json")) {
 					try {
 						String json = FileUtils.readFileToString(current, "utf-8");
-						NPCData data = NPCData.fromJson(json);
-						if (PluginUtils.suitableData(data))
+						NPCData data = NPCData.fromJson(json, true);
+						if (data != null)
 							restoreNPC(data);
 					} catch (IOException e) {
 						e.printStackTrace();

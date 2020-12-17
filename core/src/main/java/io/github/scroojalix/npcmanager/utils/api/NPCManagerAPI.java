@@ -13,6 +13,8 @@ import io.github.scroojalix.npcmanager.utils.npc.NPCTrait;
 
 public class NPCManagerAPI {
 
+	//TODO update API with new features / changes
+
 	/**
 	 * Creates an NPC. Store parameter is set to true.
 	 * @param name Name of the NPC.
@@ -29,8 +31,16 @@ public class NPCManagerAPI {
 	 * @param store Whether or not to store the NPC in a file or database.
 	 */
 	public static void createNPC(String name, Location loc, boolean store) {
-		if (!NPCMain.instance.npc.getNPCs().containsKey(name)) {
-			NPCMain.instance.npc.createNPC(name, loc, store);
+		if (!PluginUtils.npcExists(name)) {
+			if (name.length() <= 16) {
+				if (PluginUtils.isAlphaNumeric(name)) {
+					NPCMain.instance.npc.createNPC(name, loc, store);
+				} else {
+					NPCMain.instance.log(Level.WARNING, "Could not create NPC '"+name+"'. The name must be alphanumeric.");
+				}
+			} else {
+				NPCMain.instance.log(Level.WARNING, "Could not create NPC '"+name+"'. The name cannot be longer than 16 characters.");
+			}
 		} else {
 			NPCMain.instance.getLogger().warning("Could not create NPC '"+name+"'. An NPC with that name already exists.");
 		}
@@ -128,6 +138,11 @@ public class NPCManagerAPI {
 		} else {
 			NPCMain.instance.getLogger().warning("Could not modify NPC '"+name+"'. That NPC does not exist.");
 		}
+	}
+
+	//TODO method to customise interact event
+	public static void changeInteractEvent(String name, String interaction) {
+		
 	}
 	
 	/**

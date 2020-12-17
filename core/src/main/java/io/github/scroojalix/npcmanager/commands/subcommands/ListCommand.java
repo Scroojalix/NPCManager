@@ -1,6 +1,7 @@
 package io.github.scroojalix.npcmanager.commands.subcommands;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.CommandUtils;
@@ -30,10 +31,17 @@ public class ListCommand extends SubCommand {
         return true;
     }
 
+    //TODO use pages
     @Override
     public boolean execute(NPCMain main, CommandSender sender, String[] args) {
         if (!main.npc.getNPCs().isEmpty()) {
-            sender.sendMessage(PluginUtils.format("&6List of all NPC's &7&o(Click to Remove)"));
+            String message;
+            if (sender instanceof Player) {
+                message = PluginUtils.format("&6List of all NPC's &7&o(Click to Remove)");
+            } else {
+                message = PluginUtils.format("&6List of all NPC's:");
+            }                
+            sender.sendMessage(message);
             for (String npc : main.npc.getNPCs().keySet()) {
                 CommandUtils.sendJSONMessage(sender, CommandUtils.getListComponents(npc));
             }

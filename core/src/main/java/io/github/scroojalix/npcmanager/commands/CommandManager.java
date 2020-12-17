@@ -23,8 +23,6 @@ public class CommandManager implements TabExecutor {
         this.main = main;
         subcommands.add(new CreateCommand());
 		subcommands.add(new ModifyCommand());
-		subcommands.add(new InteractionCommand());
-		subcommands.add(new EquipmentCommand());
         subcommands.add(new RemoveCommand());
         subcommands.add(new MoveCommand());
         subcommands.add(new TeleportCommand());
@@ -59,8 +57,9 @@ public class CommandManager implements TabExecutor {
         return true;
     }
 
-    private List<String> arg0 = new ArrayList<String>();
-
+	private List<String> arg0 = new ArrayList<String>();
+	
+	//TODO tidy up / redo this tab complete code.
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
         if (arg0.isEmpty()) {
@@ -81,11 +80,9 @@ public class CommandManager implements TabExecutor {
 			result.clear();
 			if (args[0].equalsIgnoreCase("remove")
 				|| args[0].equalsIgnoreCase("modify")
-				|| args[0].equalsIgnoreCase("interactEvent")
 				|| args[0].equalsIgnoreCase("move")
 				|| args[0].equalsIgnoreCase("info")
-				|| args[0].equalsIgnoreCase("tpto")
-				|| args[0].equalsIgnoreCase("equipment")) {
+				|| args[0].equalsIgnoreCase("tpto")) {
 				for (String npc : main.npc.getNPCs().keySet()) {
 					if (npc.toLowerCase().startsWith(args[1].toLowerCase())) result.add(npc);
 				}
@@ -98,15 +95,8 @@ public class CommandManager implements TabExecutor {
 				List<String> arg2 = new ArrayList<String>();
 				arg2.add("displayName"); arg2.add("subtitle");
 				arg2.add("hasHeadRotation"); arg2.add("range");
-				arg2.add("skin");
-				for (String a : arg2) {
-					if (a.toLowerCase().startsWith(args[2].toLowerCase())) result.add(a);
-				}
-				return result;
-			} else if (args[0].equalsIgnoreCase("interactEvent")) {
-				List<String> arg2 = new ArrayList<String>();
-				arg2.add("command"); arg2.add("custom");
-				arg2.add("none");
+				arg2.add("skin"); arg2.add("interactEvent");
+				arg2.add("equipment");
 				for (String a : arg2) {
 					if (a.toLowerCase().startsWith(args[2].toLowerCase())) result.add(a);
 				}
@@ -123,15 +113,13 @@ public class CommandManager implements TabExecutor {
 						if (a.toLowerCase().startsWith(args[3].toLowerCase())) result.add(a);
 					}
 					return result;
-				}
-				else if (args[2].equalsIgnoreCase("hasHeadRotation")) {
+				} else if (args[2].equalsIgnoreCase("hasHeadRotation")) {
 					arg3.add("true"); arg3.add("false");
 					for (String a : arg3) {
 						if (a.toLowerCase().startsWith(args[3].toLowerCase())) result.add(a);
 					}
 					return result;
-				}
-				else if (args[2].equalsIgnoreCase("skin")) {
+				} else if (args[2].equalsIgnoreCase("skin")) {
 					for (String skin : main.skinManager.values()) {
 						arg3.add(skin);
 					}
@@ -140,17 +128,28 @@ public class CommandManager implements TabExecutor {
 						if (a.toLowerCase().startsWith(args[3].toLowerCase())) result.add(a);
 					}
 					return result;
+				} else if (args[2].equalsIgnoreCase("interactEvent")) {
+					arg3.add("command"); arg3.add("custom");
+					arg3.add("none");
+					for (String a : arg3) {
+						if (a.toLowerCase().startsWith(args[3].toLowerCase())) result.add(a);
+					}
+					return result;
 				}
-			} else if (args[0].equalsIgnoreCase("interactEvent") && args[2].equalsIgnoreCase("custom")) {
-				List<String> arg3 = new ArrayList<String>();
-				for (String interaction : InteractionsManager.getInteractEvents().keySet()) {
-					arg3.add(interaction);
-				}
-				for (String a : arg3) {
-					if (a.toLowerCase().startsWith(args[3].toLowerCase())) result.add(a);
-				}
-				return result;
 			}
+			break;
+		case 5:
+			if (args[0].equalsIgnoreCase("modify") && args[2].equalsIgnoreCase("interactEvent") 
+			&& args[3].equalsIgnoreCase("custom")) {
+			List<String> arg4 = new ArrayList<String>();
+			for (String interaction : InteractionsManager.getInteractEvents().keySet()) {
+				arg4.add(interaction);
+			}
+			for (String a : arg4) {
+				if (a.toLowerCase().startsWith(args[4].toLowerCase())) result.add(a);
+			}
+			return result;
+		}
 			break;
 		}
         return new ArrayList<String>();

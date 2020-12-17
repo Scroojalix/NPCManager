@@ -5,7 +5,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import io.github.scroojalix.npcmanager.NPCMain;
-import io.github.scroojalix.npcmanager.utils.PluginUtils;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 
 public class SQLGetter {
@@ -31,7 +30,7 @@ public class SQLGetter {
 	public void addNPC(NPCData data) {
 		try {
 			String name = data.getName();
-			String json = data.toJson();
+			String json = data.toJson(false);
 			if (exists(name)) {
 				remove(name);
 			}
@@ -106,8 +105,8 @@ public class SQLGetter {
 			PreparedStatement ps = main.sql.getConnection().prepareStatement("SELECT DATA FROM "+tableName);
 			ResultSet rs = ps.executeQuery();
 			while(rs.next()) {
-				NPCData data = NPCData.fromJson(rs.getString(1));
-				if (PluginUtils.suitableData(data)) {
+				NPCData data = NPCData.fromJson(rs.getString(1), false);
+				if (data != null) {
 					main.npc.restoreNPC(data);
 				}
 			}

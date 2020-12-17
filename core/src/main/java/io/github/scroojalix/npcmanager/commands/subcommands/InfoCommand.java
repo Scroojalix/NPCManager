@@ -51,7 +51,7 @@ public class InfoCommand extends SubCommand {
                 sender.sendMessage(PluginUtils.format("&6Head Rotation: &F"+traits.hasHeadRotation()));
                 sender.sendMessage(PluginUtils.format("&6Skin: &F"+traits.getSkin()));
                 CommandUtils.sendJSONMessage(sender, CommandUtils.getEquipmentComponents(data.getName()));
-                CommandUtils.sendJSONMessage(sender, CommandUtils.getPageTurnerMessage(data.getName(), false, true));
+                CommandUtils.sendJSONMessage(sender, CommandUtils.getPageTurnerMessage("/npc info "+data.getName(), 2, 1));
             } else if (args[2].equalsIgnoreCase("2")) {
                 sender.sendMessage(PluginUtils.format("&b&M&L                        &6 NPC Info &b&M&L                        "));
                 if (data.getInteractEvent() instanceof CommandInteraction) {
@@ -68,7 +68,7 @@ public class InfoCommand extends SubCommand {
                     sender.sendMessage("");
                     sender.sendMessage("");
                 }
-                CommandUtils.sendJSONMessage(sender, CommandUtils.getPageTurnerMessage(data.getName(), true, false));
+                CommandUtils.sendJSONMessage(sender, CommandUtils.getPageTurnerMessage("/npc info "+data.getName(), 2, 2));
             } else {
                 sender.sendMessage(ChatColor.RED+"That is not a valid page number.");
             }

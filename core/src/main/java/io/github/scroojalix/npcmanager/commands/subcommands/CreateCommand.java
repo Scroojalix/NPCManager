@@ -17,7 +17,7 @@ public class CreateCommand extends SubCommand {
 
     @Override
     public String getDescription() {
-        return "Creates an NPC.";
+        return "Creates an NPC at your location.";
     }
 
     @Override
@@ -36,16 +36,18 @@ public class CreateCommand extends SubCommand {
             return false;
 
         String name = args[1];
-        //TODO check that name is alphanumerical
-        if (name.length() > 16) {
+        if (main.npc.getNPCs().containsKey(name)) {
+            sender.sendMessage(Messages.NPC_EXISTS);
+            return true;
+        } else if (name.length() > 16) {
             sender.sendMessage(Messages.LONG_NAME);
             return true;
-        } else if (!main.npc.getNPCs().containsKey(name)) {
-            main.npc.createNPC(name, ((Player)sender).getLocation());
-            sender.sendMessage(PluginUtils.format("&6Created an NPC named &F")+name);
+        } else if (!PluginUtils.isAlphaNumeric(name)) {
+            sender.sendMessage(Messages.NOT_ALPHANUMERIC);
             return true;
         }
-        sender.sendMessage(Messages.NPC_EXISTS);
+        main.npc.createNPC(name, ((Player)sender).getLocation());
+        sender.sendMessage(PluginUtils.format("&6Created an NPC named &F")+name);
         return true;
     }
     
