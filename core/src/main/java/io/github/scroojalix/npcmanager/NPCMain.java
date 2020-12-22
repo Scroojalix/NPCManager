@@ -215,16 +215,20 @@ public class NPCMain extends JavaPlugin {
 			break;
 		case MYSQL:
 			sql = new MySQL(this);
-			try {
-				sql.connect();
-			} catch (ClassNotFoundException | SQLException e) {
-				getLogger().log(Level.SEVERE, "Could not connect to database. Is the database online and the login info correct?");
-			}
-			
-			if (sql.isConnected()) {
-				log(Level.INFO, "Successfully connected to database.");
-				sql.getGetter().createTable();
-			}
+			Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
+				@Override
+				public void run() {
+					try {
+						sql.connect();
+						if (sql.isConnected()) {
+							log(Level.INFO, "Successfully connected to database.");
+							sql.getGetter().createTable();
+						}
+					} catch (ClassNotFoundException | SQLException e) {
+						getLogger().log(Level.SEVERE, "Could not connect to database. Check that the database is online and the login info is correct, then run /npc reload.");
+					}
+				}
+			});
 			break;
 		}
 	}

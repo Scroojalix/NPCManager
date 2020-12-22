@@ -3,17 +3,19 @@ package io.github.scroojalix.npcmanager.nms.interfaces;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.libs.org.apache.commons.io.FileUtils;
 import org.bukkit.entity.Player;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.utils.FileManager;
-import io.github.scroojalix.npcmanager.utils.Messages;
+import io.github.scroojalix.npcmanager.utils.chat.Messages;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.sql.SQLGetter;
@@ -28,6 +30,11 @@ public abstract class INPCManager {
 
 	protected NPCMain main;
 	protected Map<String, NPCData> NPCs;
+
+	public INPCManager(NPCMain main) {
+		this.main = main;
+		this.NPCs = new LinkedHashMap<String, NPCData>();
+	}
 
 	/**
 	 * Returns the Hash Map containing all NPC's
@@ -107,30 +114,34 @@ public abstract class INPCManager {
 			}
 		}
 		if (fromStorage) {
-			Bukkit.getScheduler().runTaskAsynchronously(main, new Runnable() {
-				@Override
-				public void run() {
-					switch (main.saveMethod) {
-						case YAML:
-							main.npcFile.getConfig().set("npc." + data.getName(), null);
-							main.npcFile.saveConfig();
-							break;
-						case JSON:
-							File jsonFile = new File(main.getDataFolder()+"/json-storage", data.getName()+".json");
-							if (jsonFile.exists()) {
-								jsonFile.delete();
-							}
-							break;
-						case MYSQL:
-							if (main.sql.getGetter().testConnection()) {
-								main.sql.getGetter().remove(data.getName());
-							} else {
-								main.log(Level.WARNING, "Could not remove an NPC from the database, because it is offline.");
-							}
-							break;
+			removeNPCFromStorage(data.getName());
+		}
+	}
+	
+	public void removeNPCFromStorage(String name) {
+		switch (main.saveMethod) {
+			case YAML:
+				main.npcFile.getConfig().set("npc." + name, null);
+				main.npcFile.saveConfig();
+				break;
+			case JSON:
+				File jsonFile = new File(main.getDataFolder()+"/json-storage", name+".json");
+				if (jsonFile.exists()) {
+					jsonFile.delete();
+				}
+				break;
+			case MYSQL:
+				if (main.sql.getGetter().testConnection()) {
+					main.sql.getGetter().remove(name);
+				} else {
+					FileManager temp = new FileManager(main, "temp.yml");
+					if (temp.getConfig().isSet("npc."+name)) {
+						temp.getConfig().set("npc."+name, null);
+						temp.saveConfig();
+						main.log(Level.INFO, "Removed an NPC from temp.yml");
 					}
 				}
-			});
+				break;
 		}
 	}
 
@@ -302,7 +313,7 @@ public abstract class INPCManager {
 				File current = npcFiles[i];
 				if (current.isFile() && current.getName().endsWith(".json")) {
 					try {
-						String json = FileUtils.readFileToString(current, "utf-8");
+						String json = new String(Files.readAllBytes(Paths.get(current.getPath())));
 						NPCData data = NPCData.fromJson(json, true);
 						if (data != null)
 							restoreNPC(data);

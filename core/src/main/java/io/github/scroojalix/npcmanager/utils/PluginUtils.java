@@ -41,24 +41,29 @@ public class PluginUtils {
 	}
 
 	public static boolean isSuitableItem(ItemStack item, String type, Player p) {
-        if (item.getType().name().toLowerCase().contains(type.toLowerCase())) {
-            return true;
-        } else if (type.equalsIgnoreCase("helmet")) {
-            if (item.getType().isBlock()) {
-                return true;
-            }
-            String name = item.getType().name();
-            if (name.contains("HEAD") || name.contains("SKULL") && !name.equalsIgnoreCase("SKULL_BANNER_PATTERN")) {
-                return true;
-            }
-        } else if (type.equalsIgnoreCase("item")) {
-            try {
-                if (item.getType().isItem()) {
-                    return true;
-                }
-            } catch (NoSuchMethodError e) {
-                return true;
-            }
+		if (item.getAmount() != 1) {
+			if (p != null) {
+				p.playSound(p.getLocation(), Sound.valueOf(CommandUtils.getErrorSound()), 5f, 0.5f);
+				p.sendMessage(ChatColor.RED+"Please do not use a stack of items.");
+			}
+			return false;
+		}
+		if (item.getType().name().toLowerCase().contains(type.toLowerCase()))
+			return true;
+		switch(type) {
+		case "helmet":
+			return true;
+		case "mainhand":
+		case "offhand":
+			try {
+				if (item.getType().isItem()) {
+					return true;
+				}
+			} catch (NoSuchMethodError e) {
+				//TODO add some more logic here
+				return true;
+			}
+			break;
 		}
 		if (p != null) {
 			p.playSound(p.getLocation(), Sound.valueOf(CommandUtils.getErrorSound()), 5f, 0.5f);

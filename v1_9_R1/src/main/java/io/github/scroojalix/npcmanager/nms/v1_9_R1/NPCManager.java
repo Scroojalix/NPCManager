@@ -1,7 +1,9 @@
 package io.github.scroojalix.npcmanager.nms.v1_9_R1;
 
-import java.util.HashMap;
 import java.util.UUID;
+
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -11,14 +13,11 @@ import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_9_R1.scoreboard.CraftScoreboard;
 import org.bukkit.entity.Player;
 
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
-
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.nms.interfaces.INPCManager;
 import io.github.scroojalix.npcmanager.nms.interfaces.NMSHologram;
-import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
+import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.npc.NPCTrait;
 import net.minecraft.server.v1_9_R1.DataWatcherRegistry;
 import net.minecraft.server.v1_9_R1.EntityPlayer;
@@ -37,12 +36,11 @@ public class NPCManager extends INPCManager {
 	private ScoreboardTeam npcTeam;
 	
 	public NPCManager(NPCMain main) {
-		this.main = main;
+		super(main);
 		npcTeam = new ScoreboardTeam(((CraftScoreboard)Bukkit.getScoreboardManager().getNewScoreboard()).getHandle(), "zzzzzzzzzzNMNPCs");
 		npcTeam.a(EnumTeamPush.NEVER);
 		npcTeam.setPrefix(PluginUtils.format("&8[NPC] "));
 		npcTeam.setNameTagVisibility(ScoreboardTeamBase.EnumNameTagVisibility.NEVER);
-		NPCs = new HashMap<String, NPCData>();
 
 		restoreNPCs();
 	}

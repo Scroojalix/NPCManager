@@ -1,6 +1,5 @@
 package io.github.scroojalix.npcmanager.nms.v1_13_R1;
 
-import java.util.HashMap;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -39,13 +38,12 @@ public class NPCManager extends INPCManager {
 	private ScoreboardTeam npcTeam;
 	
 	public NPCManager(NPCMain main) {
-		this.main = main;
+		super(main);
 		npcTeam = new ScoreboardTeam(((CraftScoreboard)Bukkit.getScoreboardManager().getNewScoreboard()).getHandle(), "zzzzzzzzzzNMNPCs");
 		npcTeam.setCollisionRule(EnumTeamPush.NEVER);
 		npcTeam.setColor(EnumChatFormat.DARK_GRAY);
 		npcTeam.setNameTagVisibility(ScoreboardTeamBase.EnumNameTagVisibility.NEVER);
 		npcTeam.setPrefix(CraftChatMessage.fromStringOrNull(PluginUtils.format("&8[NPC] ")));
-		NPCs = new HashMap<String, NPCData>();
 
 		restoreNPCs();
 	}

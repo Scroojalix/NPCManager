@@ -1,7 +1,9 @@
 package io.github.scroojalix.npcmanager.nms.v1_8_R2;
 
-import java.util.HashMap;
 import java.util.UUID;
+
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -11,14 +13,11 @@ import org.bukkit.craftbukkit.v1_8_R2.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_8_R2.scoreboard.CraftScoreboard;
 import org.bukkit.entity.Player;
 
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
-
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.nms.interfaces.INPCManager;
 import io.github.scroojalix.npcmanager.nms.interfaces.NMSHologram;
-import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
+import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.npc.NPCTrait;
 import net.minecraft.server.v1_8_R2.EntityPlayer;
 import net.minecraft.server.v1_8_R2.MinecraftServer;
@@ -35,11 +34,10 @@ public class NPCManager extends INPCManager {
 	private ScoreboardTeam npcTeam;
 	
 	public NPCManager(NPCMain main) {
-		this.main = main;
+		super(main);
 		npcTeam = new ScoreboardTeam(((CraftScoreboard)Bukkit.getScoreboardManager().getNewScoreboard()).getHandle(), "zzzzzzzzzzNMNPCs");
 		npcTeam.setPrefix(PluginUtils.format("&8[NPC] "));
 		npcTeam.setNameTagVisibility(ScoreboardTeamBase.EnumNameTagVisibility.NEVER);
-		NPCs = new HashMap<String, NPCData>();
 
 		restoreNPCs();
 	}
@@ -84,10 +82,6 @@ public class NPCManager extends INPCManager {
 		boolean hasDisplayName = displayName != null;
 		boolean hasSubtitle = subtitle != null;
 		Location loc = data.getLoc();
-		//TODO raise all holograms on all versions up
-		//upperLoc += 0.5
-		//lowerLoc += 0.3
-		//Test value on one version before implementing on rest.
 		Location upperLoc = new Location(loc.getWorld(), loc.getX(), loc.getY()+2, loc.getZ());
 		Location lowerLoc = new Location(loc.getWorld(), loc.getX(), loc.getY()+1.75, loc.getZ());
 		if (hasDisplayName && hasSubtitle) {

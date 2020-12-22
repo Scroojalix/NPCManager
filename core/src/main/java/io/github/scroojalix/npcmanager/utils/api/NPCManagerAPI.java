@@ -7,13 +7,22 @@ import org.bukkit.inventory.ItemStack;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
+import io.github.scroojalix.npcmanager.utils.interactions.CommandInteraction;
+import io.github.scroojalix.npcmanager.utils.interactions.InteractionsManager;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.npc.NPCEquipment;
 import io.github.scroojalix.npcmanager.utils.npc.NPCTrait;
 
 public class NPCManagerAPI {
 
-	//TODO update API with new features / changes
+	/**
+	 * Spawn an NPC generated from the NPCBuilder class
+	 * @param data The data of the NPC to spawn.
+	 */
+	public static void spawnNPC(NPCData data) {
+		NPCMain.instance.npc.saveNPC(data);
+		NPCMain.instance.npc.restoreNPC(data);
+	}
 
 	/**
 	 * Creates an NPC. Store parameter is set to true.
@@ -74,12 +83,12 @@ public class NPCManagerAPI {
 			boolean update = true;
 			switch (slot) {
 			case 0:
-				if (PluginUtils.isSuitableItem(item, "item", null)) {
+				if (PluginUtils.isSuitableItem(item, "mainhand", null)) {
 					equipment.setMainhandItem(item);
 				} else { update = false; }
 				break;
 			case 1:
-				if (PluginUtils.isSuitableItem(item, "item", null)) {
+				if (PluginUtils.isSuitableItem(item, "offhand", null)) {
 					equipment.setOffhandItem(item);
 				} else { update = false; }
 				break;
@@ -140,9 +149,27 @@ public class NPCManagerAPI {
 		}
 	}
 
-	//TODO method to customise interact event
-	public static void changeInteractEvent(String name, String interaction) {
-		
+	/**
+	 * Use this method to customise the interact event of an NPC.
+	 * @param name The name of the NPC to modify.
+	 * @param type The type of interaction. Can be <code>command</code> or <code>custom</code>.
+	 * @param interaction The command to run or the name of the custom interact event.
+	 */
+	public static void changeInteractEvent(String name, String type, String interaction) {
+		if (NPCMain.instance.npc.getNPCs().containsKey(name)) {
+			NPCData data = NPCMain.instance.npc.getNPCs().get(name);
+			if (type.equalsIgnoreCase("command")) {
+				data.setInteractEvent(new CommandInteraction(interaction));
+			} else if (type.equalsIgnoreCase("custom")) {
+				if (InteractionsManager.getInteractEvents().containsKey(interaction)) {
+					data.setInteractEvent(InteractionsManager.getInteractEvents().get(interaction));
+				} else {
+					NPCMain.instance.log(Level.WARNING, "Could not set the interact event of "+name+". The interact event '"+interaction+"' does not exist.");
+				}
+			} else {
+				NPCMain.instance.log(Level.WARNING, "Could not set the interact event of "+name+". The type '"+type+"' is invalid.");
+			}
+		}
 	}
 	
 	/**

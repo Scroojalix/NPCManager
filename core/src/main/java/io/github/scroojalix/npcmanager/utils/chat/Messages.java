@@ -1,4 +1,4 @@
-package io.github.scroojalix.npcmanager.utils;
+package io.github.scroojalix.npcmanager.utils.chat;
 
 import org.bukkit.ChatColor;
 

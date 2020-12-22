@@ -1,5 +1,7 @@
 package io.github.scroojalix.npcmanager.commands.subcommands;
 
+import java.util.List;
+
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -38,11 +40,17 @@ public class MoveCommand extends SubCommand {
         String name = args[1];
         if (CommandUtils.npcExists(name, sender)) {
             NPCData data = main.npc.getNPCs().get(name);
-            main.npc.moveNPC(data, ((Player)sender).getLocation());
-            sender.sendMessage(PluginUtils.format("&6Moved the NPC named &F")+name+PluginUtils.format("&6 to your position."));
+            main.npc.moveNPC(data, ((Player) sender).getLocation());
+            sender.sendMessage(
+                    PluginUtils.format("&6Moved the NPC named &F") + name + PluginUtils.format("&6 to your position."));
             return true;
         }
         return false;
+    }
+
+    @Override
+    public List<String> onTabComplete(String[] args) {
+        return getNPCs(args[1]);
     }
     
 }

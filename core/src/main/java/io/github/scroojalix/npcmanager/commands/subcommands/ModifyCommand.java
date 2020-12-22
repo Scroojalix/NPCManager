@@ -1,5 +1,8 @@
 package io.github.scroojalix.npcmanager.commands.subcommands;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -35,6 +38,14 @@ public class ModifyCommand extends SubCommand {
         return true;
     }
 
+    //TODO move all modifactions to own classes in modifications package.
+    //Essentially make this class into another CommandManager class.
+    //TODO add ability to customise pose.
+    //May have to allow multiple hologram lines first and calculate height of holograms dynamically.
+    //Things to allow:
+    //Sneaking
+    //Crawling/swimming
+    //Blocking (if using sword in old version, shield in new version)
     @Override
     public boolean execute(NPCMain main, CommandSender sender, String[] args) {
         if (args.length < 3)
@@ -56,25 +67,28 @@ public class ModifyCommand extends SubCommand {
                     if (args[3].equalsIgnoreCase("command")) {
                         String command = args[4];
                         for (int arg = 5; arg < args.length; arg++) {
-                            command += " "+args[arg];
+                            command += " " + args[arg];
                         }
                         data.setInteractEvent(new CommandInteraction(command));
                         main.npc.saveNPC(data);
-                        sender.sendMessage(PluginUtils.format("&6Set &F"+data.getName()+"'s &6Interact Event to the command &F/"+command));
+                        sender.sendMessage(PluginUtils.format(
+                                "&6Set &F" + data.getName() + "'s &6Interact Event to the command &F/" + command));
                     } else if (args[3].equalsIgnoreCase("custom")) {
                         if (InteractionsManager.getInteractEvents().containsKey(args[4])) {
                             data.setInteractEvent(InteractionsManager.getInteractEvents().get(args[4]));
                             main.npc.saveNPC(data);
-                            sender.sendMessage(PluginUtils.format("&6Set &F"+data.getName()+"'s &6Interact Event to &F"+args[3]));
+                            sender.sendMessage(PluginUtils
+                                    .format("&6Set &F" + data.getName() + "'s &6Interact Event to &F" + args[3]));
                         } else {
-                            sender.sendMessage(PluginUtils.format("&C'"+args[4]+"' is not a valid Interact Event."));
+                            sender.sendMessage(
+                                    PluginUtils.format("&C'" + args[4] + "' is not a valid Interact Event."));
                         }
                     }
                     return true;
                 } else if (args.length >= 4 && args[3].equalsIgnoreCase("none")) {
                     data.setInteractEvent(null);
                     main.npc.saveNPC(data);
-                    sender.sendMessage(PluginUtils.format("&6Removed the Interact Event for &F"+data.getName()));
+                    sender.sendMessage(PluginUtils.format("&6Removed the Interact Event for &F" + data.getName()));
                     return true;
                 }
             } else if (args.length >= 4) {
@@ -82,11 +96,11 @@ public class ModifyCommand extends SubCommand {
                 NPCTrait traits = modifying.getTraits();
                 String value = args[3];
                 for (int arg = 4; arg < args.length; arg++) {
-                    value += " "+args[arg];
+                    value += " " + args[arg];
                 }
                 try {
                     traits.modify(modifying, args[2], value);
-                } catch(IllegalArgumentException e) {
+                } catch (IllegalArgumentException e) {
                     sender.sendMessage(ChatColor.RED + e.getMessage());
                 } catch (Throwable t) {
                     sender.sendMessage(PluginUtils.format(t.getMessage()));
@@ -97,6 +111,44 @@ public class ModifyCommand extends SubCommand {
             }
         }
         return false;
+    }
+
+    @Override
+    public List<String> onTabComplete(String[] args) {
+        List<String> result = new ArrayList<String>();
+        switch(args.length) {
+        case 2:
+            return getNPCs(args[1]);
+        case 3:
+            result.add("displayName"); result.add("subtitle");
+            result.add("hasHeadRotation"); result.add("range");
+            result.add("skin"); result.add("interactEvent");
+            result.add("equipment");
+        case 4:
+            if (args[2].equalsIgnoreCase("displayName") || args[2].equalsIgnoreCase("subtitle")) {
+                result.add("none");
+            } else if (args[2].equalsIgnoreCase("hasHeadRotation")) {
+                result.add("true"); result.add("false");
+            } else if (args[2].equalsIgnoreCase("skin")) {
+                for (String skin : NPCMain.instance.skinManager.values()) {
+                    result.add(skin);
+                }
+                result.add("Default");
+            } else if (args[2].equalsIgnoreCase("interactEvent")) {
+                result.add("command"); result.add("custom");
+                result.add("none");
+            }
+            break;
+        case 5:
+            if (args[0].equalsIgnoreCase("modify") && args[2].equalsIgnoreCase("interactEvent") 
+                && args[3].equalsIgnoreCase("custom")) {
+                for (String interaction : InteractionsManager.getInteractEvents().keySet()) {
+                    result.add(interaction);
+                }
+            }
+            break;
+        }
+        return filter(args[args.length-1], result);
     }
     
 }

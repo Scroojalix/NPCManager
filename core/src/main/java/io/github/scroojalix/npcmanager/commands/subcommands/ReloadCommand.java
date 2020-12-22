@@ -1,5 +1,8 @@
 package io.github.scroojalix.npcmanager.commands.subcommands;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -30,9 +33,13 @@ public class ReloadCommand extends SubCommand {
 
     @Override
     public boolean execute(NPCMain main, CommandSender sender, String[] args) {
-        sender.sendMessage(ChatColor.GOLD+"The plugin was reloaded.");
+        sender.sendMessage(ChatColor.GOLD + "The plugin was reloaded.");
         main.reloadPlugin();
         return true;
     }
-    
+
+    @Override
+    public List<String> onTabComplete(String[] args) {
+        return new ArrayList<String>();
+    }
 }

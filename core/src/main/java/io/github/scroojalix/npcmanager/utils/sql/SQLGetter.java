@@ -91,11 +91,15 @@ public class SQLGetter {
 	}
 	
 	public boolean testConnection() {
-		try {
-			PreparedStatement ps = main.sql.getConnection().prepareStatement("SELECT * FROM "+tableName);
-			ps.execute();
-			return true;
-		} catch (NullPointerException | SQLException e) {
+		if (main.sql.isConnected()) {
+			try {
+				PreparedStatement ps = main.sql.getConnection().prepareStatement("SELECT * FROM "+tableName);
+				ps.execute();
+				return true;
+			} catch (NullPointerException | SQLException e) {
+				return false;
+			}
+		} else {
 			return false;
 		}
 	}

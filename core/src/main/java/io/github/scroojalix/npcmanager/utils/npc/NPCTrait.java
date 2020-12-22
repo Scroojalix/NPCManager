@@ -43,10 +43,10 @@ public class NPCTrait {
     public void modify(NPCData data, String key, String value) throws IllegalArgumentException, Throwable {
     switch(key) {
         case "displayName":
-            setDisplayName(value.equalsIgnoreCase("null")?null:value);
+            setDisplayName(value.equalsIgnoreCase("none")?null:value);
             throw new Throwable("&6Set the display name of &F"+data.getName()+"&6 to &F"+value);
         case "subtitle":
-            setSubtitle(value.equalsIgnoreCase("null")?null:value);
+            setSubtitle(value.equalsIgnoreCase("none")?null:value);
             throw new Throwable("&6Set the subtitle of &F"+data.getName()+"&6 to &F"+value);
         case "hasHeadRotation":
             setHeadRotation(value.equalsIgnoreCase("true"));

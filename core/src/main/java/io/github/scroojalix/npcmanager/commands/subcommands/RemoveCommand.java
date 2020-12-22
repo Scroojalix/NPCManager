@@ -1,11 +1,13 @@
 package io.github.scroojalix.npcmanager.commands.subcommands;
 
+import java.util.List;
+
 import org.bukkit.command.CommandSender;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.CommandUtils;
 import io.github.scroojalix.npcmanager.commands.SubCommand;
-import io.github.scroojalix.npcmanager.utils.Messages;
+import io.github.scroojalix.npcmanager.utils.chat.Messages;
 
 public class RemoveCommand extends SubCommand {
 
@@ -37,10 +39,15 @@ public class RemoveCommand extends SubCommand {
         if (CommandUtils.npcExists(name, sender)) {
             main.npc.removeNPC(name, true);
             main.npc.getNPCs().remove(name);
-            sender.sendMessage(Messages.REMOVE_NPC+name);
+            sender.sendMessage(Messages.REMOVE_NPC + name);
             return true;
         }
         return false;
+    }
+
+    @Override
+    public List<String> onTabComplete(String[] args) {
+        return getNPCs(args[1]);
     }
     
 }

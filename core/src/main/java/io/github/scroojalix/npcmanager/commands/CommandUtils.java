@@ -12,8 +12,9 @@ import org.bukkit.inventory.ItemStack;
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.utils.EmptySlots;
 import io.github.scroojalix.npcmanager.utils.EquipmentInventory;
-import io.github.scroojalix.npcmanager.utils.Messages;
+import io.github.scroojalix.npcmanager.utils.chat.Messages;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
+import io.github.scroojalix.npcmanager.utils.chat.TextComponentWrapper;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -32,76 +33,101 @@ public class CommandUtils {
 		}
 	}
 
+	public static TextComponentWrapper[] getTitleMessage(String title) {
+		TextComponentWrapper line = new TextComponentWrapper("                          ", true);
+		line.setColor(ChatColor.AQUA); line.setBold(true); line.setStrikethrough(true); line.setIsLine();
+		TextComponentWrapper label = new TextComponentWrapper(" "+title+" ", true);
+		label.setColor(ChatColor.GOLD);
+		return new TextComponentWrapper[] {line, label, line};
+	}
+
     @SuppressWarnings("deprecation")
-	public static TextComponent[] getListComponents(String npc) {
-		TextComponent component0 = new TextComponent(" - ");
-		component0.setColor(ChatColor.GOLD);
-		TextComponent component1 = new TextComponent(npc);
-		component1.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/npc remove "+npc));
-		component1.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(PluginUtils.format("&7&oClick to remove this NPC.")).create()));
-		component1.setColor(ChatColor.AQUA);
-		return new TextComponent[] {component0, component1};
+	public static TextComponentWrapper[] getListComponents(String npc) {
+		TextComponentWrapper arrow = new TextComponentWrapper(" --> ", true);
+		arrow.setColor(ChatColor.GRAY);
+		TextComponentWrapper name = new TextComponentWrapper(npc, true);
+		name.setColor(ChatColor.AQUA);
+		TextComponentWrapper spacer1 = new TextComponentWrapper(PluginUtils.format(getSpacer(npc.length())), false);
+		TextComponentWrapper info = new TextComponentWrapper("[INFO]", false);
+		info.setColor(ChatColor.GREEN); info.setBold(true);
+		info.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/npc info "+npc));
+		info.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(PluginUtils.format("&7&oClick to show this NPC's info.")).create()));
+		TextComponentWrapper spacer2 = new TextComponentWrapper("                ", false);
+		TextComponentWrapper remove = new TextComponentWrapper("[REMOVE]", false);
+		remove.setColor(ChatColor.RED); remove.setBold(true);
+		remove.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/npc remove "+npc));
+		remove.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(PluginUtils.format("&7&oClick to remove this NPC.")).create()));
+		return new TextComponentWrapper[] {arrow, name, spacer1, info, spacer2, remove};
 	}
 	
 	@SuppressWarnings("deprecation")
-	public static TextComponent[] getLocationComponents(String npc, Location loc) {
-		TextComponent component0 = new TextComponent("Location: ");
+	public static TextComponentWrapper[] getLocationComponents(String npc, Location loc) {
+		TextComponentWrapper component0 = new TextComponentWrapper("Location: ", true);
 		component0.setColor(ChatColor.GOLD);
-		TextComponent component1 = new TextComponent("[World: "+loc.getWorld().getName()+" , X: "+loc.getX()+" , Y: "+loc.getY()+" , Z: "+loc.getZ()+"]");
+		TextComponentWrapper component1 = new TextComponentWrapper("", true);
+		component1.setText(PluginUtils.format("&eWorld: "+loc.getWorld().getName()+" &cX: "+loc.getX()+" &aY: "+loc.getY()+" &9Z: "+loc.getZ()));
 		component1.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/npc tpto "+npc));
 		component1.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(PluginUtils.format("&7&oClick to teleport to this NPC.")).create()));
-		component1.setColor(ChatColor.YELLOW);
-		return new TextComponent[]{component0, component1};
+		return new TextComponentWrapper[]{component0, component1};
 	}
 
 	@SuppressWarnings("deprecation")
-	public static TextComponent[] getEquipmentComponents(String npc) {
-		TextComponent component0 = new TextComponent("Equipment: ");
+	public static TextComponentWrapper[] getEquipmentComponents(String npc) {
+		TextComponentWrapper component0 = new TextComponentWrapper("Equipment: ", true);
 		component0.setColor(ChatColor.GOLD);
-		TextComponent component1 = new TextComponent("[Show Equipment Menu]");
-		component1.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/npc equipment "+npc));
+		TextComponentWrapper component1 = new TextComponentWrapper("[Show Equipment Menu]", true);
+		component1.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/npc modify "+npc+" equipment"));
 		component1.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(PluginUtils.format("&7&oClick to view this NPC's equipment menu.")).create()));
 		component1.setColor(ChatColor.GREEN);
-		return new TextComponent[]{component0, component1};
+		return new TextComponentWrapper[]{component0, component1};
 	}
-
-	public static TextComponent[] getPageTurnerMessage(String command, int pages, int current) {
+	
+	public static TextComponentWrapper[] getPageTurnerMessage(String command, int pages, int current) {
 		boolean left = current > 1;
 		boolean right = pages > current;
-		TextComponent line = new TextComponent("                   ");
-		line.setColor(ChatColor.AQUA);
-		line.setBold(true); line.setStrikethrough(true);
-		TextComponent leftArrow;
+		TextComponentWrapper line = new TextComponentWrapper("                     ", true);
+		line.setIsLine();
+		line.setColor(ChatColor.AQUA); line.setBold(true); line.setStrikethrough(true);
+		TextComponentWrapper leftArrow;
 		if (left) {
-			leftArrow = new TextComponent(" <<<");
+			leftArrow = new TextComponentWrapper(" <-", true);
 			leftArrow.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command + " " + (current-1)));
+			leftArrow.setColor(ChatColor.GOLD);
 		} else {
-			leftArrow = new TextComponent("   ");
-			leftArrow.setStrikethrough(true);
-			leftArrow.setBold(true);
+			leftArrow = new TextComponentWrapper("   ", true);
+			leftArrow.setStrikethrough(true); leftArrow.setBold(true); leftArrow.setIsLine();
+			leftArrow.setColor(ChatColor.AQUA);
 		}
-		leftArrow.setColor(ChatColor.AQUA);
-		TextComponent center = new TextComponent(PluginUtils.format(" &6Page &b"+current+" &6of &b"+pages+" "));
-		TextComponent rightArrow;
+		TextComponentWrapper center = new TextComponentWrapper(PluginUtils.format(" &6Page &b"+current+" &6of &b"+pages+" "), true);
+		TextComponentWrapper rightArrow;
 		if (right) {
-			rightArrow = new TextComponent(">>> ");
+			rightArrow = new TextComponentWrapper("-> ", true);
 			rightArrow.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command + " " + (current+1)));
+			rightArrow.setColor(ChatColor.GOLD);
 		} else {
-			rightArrow = new TextComponent("   ");
-			rightArrow.setStrikethrough(true);
-			rightArrow.setBold(true);
+			rightArrow = new TextComponentWrapper("   ", true);
+			rightArrow.setStrikethrough(true); rightArrow.setBold(true); rightArrow.setIsLine();
+			rightArrow.setColor(ChatColor.AQUA);
 		}
-		rightArrow.setColor(ChatColor.AQUA);
-		return new TextComponent[]{line, leftArrow, center, rightArrow, line};
+		return new TextComponentWrapper[]{line, leftArrow, center, rightArrow, line};
 	}
 
-	public static void sendJSONMessage(CommandSender sender, TextComponent...components) {
+	public static void sendJSONMessage(CommandSender sender, TextComponentWrapper...components) {
 		if (sender instanceof Player) {
-			((Player)sender).spigot().sendMessage(components);
+			TextComponent[] message = new TextComponent[components.length];
+			for (int i = 0; i < components.length; i++) {
+				message[i] = components[i].getComponent();
+			}
+			((Player)sender).spigot().sendMessage(message);
 		} else {
 			String message = "";
-			for (TextComponent component : components) {
-				message += component.getColor() + component.getText();
+			for (TextComponentWrapper component : components) {
+				if (component.isVisibleToConsole()) {
+					if (component.isLine()) {
+						component.setText(component.getText().replace(" ", "-"));
+					}
+					message += component.getColor() + component.getText();
+				}
 			}
 			sender.sendMessage(message);
 		}
@@ -141,5 +167,22 @@ public class CommandUtils {
 			default:
 				return "";
 		}
+	}
+
+	//TODO Use this resource to make this more reliable
+	//https://www.spigotmc.org/threads/free-code-sending-perfectly-centered-chat-message.95872/
+	private static String getSpacer(int wordLength) {
+		boolean even = wordLength % 2 == 0;
+		int startLength = even?24:28;
+		int multiplier = ((wordLength+(even?0:1))/2);
+		int spaceLength = startLength - 3 * multiplier;
+		StringBuilder result = new StringBuilder();
+		for (int i = 0; i < spaceLength; i++) {
+			result.append(" ");
+		}
+		if (even) {
+			result.append("&l  ");
+		}
+		return result.toString();
 	}
 }

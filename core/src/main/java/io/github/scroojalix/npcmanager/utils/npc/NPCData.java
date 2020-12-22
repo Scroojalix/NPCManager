@@ -1,8 +1,10 @@
 package io.github.scroojalix.npcmanager.utils.npc;
 
+import java.util.Map;
 import java.util.logging.Level;
 
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.annotations.Expose;
@@ -34,6 +36,7 @@ public class NPCData {
 	private NPCTrait traits;
 	
 	//Holograms
+	//TODO make this into an array to allow multiple lines
 	private NMSHologram nameHolo;
 	private NMSHologram subtitleHolo;
 
@@ -69,8 +72,8 @@ public class NPCData {
 	}
 
 
-	//TODO fix ItemStack and null not restoring properly (Loses enchantments)
-	//TODO account for when an item is used that is not availabe in the current server version.
+	//TODO fix ItemStack not restoring properly (Loses itemmeta)
+	//Custom banners throw errors to the console when restoring.
 	/**
 	 * Creates an NPCData object from a JSON string.
 	 * @param json The JSON string to convert from.
@@ -86,12 +89,14 @@ public class NPCData {
 				builder.setPrettyPrinting();
 			}
 			
-			String world = new JsonParser().parse(json).getAsJsonObject()
-					.get("loc").getAsJsonObject().get("world").getAsString();
-			
+			JsonObject obj = new JsonParser().parse(json).getAsJsonObject();
+
+			String world = obj.get("loc").getAsJsonObject().get("world").getAsString();
 			if (Bukkit.getWorld(world) == null) {
-				//TODO remove NPC from storage if world is null
+				String name = obj.get("name").getAsString();
+				NPCMain.instance.npc.removeNPCFromStorage(name);
 				NPCMain.instance.log(Level.SEVERE, "Error restoring an NPC: The world it's in does not exist.");
+				NPCMain.instance.log(Level.SEVERE, "The NPC will be removed from storage.");
 				return null;
 			}
 
@@ -161,7 +166,13 @@ public class NPCData {
 	 * @param loc New Location
 	 */
 	public void setLoc(Location loc) {
-		this.loc = loc;
+		Map<String, Object> newLoc = loc.serialize();
+		newLoc.put("x", (double)((int)(((double)newLoc.get("x"))*100))/100);
+		newLoc.put("y", (double)((int)(((double)newLoc.get("y"))*100))/100);
+		newLoc.put("z", (double)((int)(((double)newLoc.get("z"))*100))/100);
+		newLoc.put("yaw", (float)((int)(((float)newLoc.get("yaw"))*100))/100);
+		newLoc.put("pitch", (float)((int)(((float)newLoc.get("pitch"))*100))/100);
+		this.loc = Location.deserialize(newLoc);
 	}
 	
 	/**
@@ -259,7 +270,7 @@ public class NPCData {
 		return store;
 	}
 
-	private void setStored(boolean store) {
+	public void setStored(boolean store) {
 		this.store = store;
 	}
 }

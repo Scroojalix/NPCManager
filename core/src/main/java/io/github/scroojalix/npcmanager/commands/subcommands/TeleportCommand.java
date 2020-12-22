@@ -1,11 +1,13 @@
 package io.github.scroojalix.npcmanager.commands.subcommands;
 
+import java.util.List;
+
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.SubCommand;
-import io.github.scroojalix.npcmanager.utils.Messages;
+import io.github.scroojalix.npcmanager.utils.chat.Messages;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
@@ -37,13 +39,18 @@ public class TeleportCommand extends SubCommand {
             return false;
         if (main.npc.getNPCs().containsKey(args[1])) {
             NPCData data = main.npc.getNPCs().get(args[1]);
-            ((Player)sender).teleport(data.getLoc());
-            sender.sendMessage(PluginUtils.format("&6Teleported to NPC &F"+data.getName()));
+            ((Player) sender).teleport(data.getLoc());
+            sender.sendMessage(PluginUtils.format("&6Teleported to NPC &F" + data.getName()));
             return true;
         } else {
             sender.sendMessage(Messages.UNKNOWN_NPC);
             return true;
         }
+    }
+
+    @Override
+    public List<String> onTabComplete(String[] args) {
+        return getNPCs(args[1]);
     }
 
 }

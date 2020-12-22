@@ -17,6 +17,11 @@ public class CommandInteraction implements InteractEvent {
         return null;
     }
 
+    //TODO add the ability to use variables
+    //EG ${playerName}
+    //Automatically replace them with the appropriate values.
+    //Also do tab completion for when a $ is typed.
+    
     //TODO add config option to allow running the command without permission.
     @Override
     public void onInteract(InteractAtNPCEvent event) {
