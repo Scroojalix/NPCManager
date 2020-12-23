@@ -28,7 +28,7 @@ public class CommandUtils {
 		if (NPCMain.instance.npc.getNPCs().containsKey(name)) {
 			return true;
 		} else {
-			sender.sendMessage(Messages.UNKNOWN_NPC);
+			sender.sendMessage(ChatColor.RED+Messages.UNKNOWN_NPC);
 			return false;
 		}
 	}

@@ -106,10 +106,10 @@ public class SQLGetter {
 	
 	public void restoreDataEntries() {
 		try {
-			PreparedStatement ps = main.sql.getConnection().prepareStatement("SELECT DATA FROM "+tableName);
+			PreparedStatement ps = main.sql.getConnection().prepareStatement("SELECT * FROM "+tableName);
 			ResultSet rs = ps.executeQuery();
 			while(rs.next()) {
-				NPCData data = NPCData.fromJson(rs.getString(1), false);
+				NPCData data = NPCData.fromJson(rs.getString(1), rs.getString(2), false);
 				if (data != null) {
 					main.npc.restoreNPC(data);
 				}

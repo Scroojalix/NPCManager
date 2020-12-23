@@ -16,10 +16,8 @@ import org.bukkit.entity.Player;
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.utils.FileManager;
 import io.github.scroojalix.npcmanager.utils.chat.Messages;
-import io.github.scroojalix.npcmanager.utils.PluginUtils;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.sql.SQLGetter;
-import net.md_5.bungee.api.ChatColor;
 
 /**
  * The interface that contains all methods to be used in an NPCManger class
@@ -56,8 +54,7 @@ public abstract class INPCManager {
 	}
 
 	public void createNPC(String name, Location loc, boolean store) {
-		String displayName = ChatColor.stripColor(PluginUtils.format(name)).isEmpty() ? "Default" : name;
-		NPCData data = new NPCData(name, displayName, loc, store);
+		NPCData data = new NPCData(name, loc, store);
 		restoreNPC(data);
 		saveNPC(data);
 	}
@@ -113,7 +110,7 @@ public abstract class INPCManager {
 				removeHologramForPlayer(p, data.getSubtitleHolo());
 			}
 		}
-		if (fromStorage) {
+		if (fromStorage && data.isStored()) {
 			removeNPCFromStorage(data.getName());
 		}
 	}
@@ -276,7 +273,7 @@ public abstract class INPCManager {
 	private void restoreTempNPCs(FileManager temp, boolean connected) {
 		if (temp.getConfig().contains("npc"))
 			temp.getConfig().getConfigurationSection("npc").getKeys(false).forEach(current -> {
-				NPCData data = NPCData.fromJson(temp.getConfig().getString("npc." + current), true);
+				NPCData data = NPCData.fromJson(current, temp.getConfig().getString("npc." + current), true);
 				if (data != null) {
 					if (connected) {
 						if (!main.sql.getGetter().exists(data.getName())) {
@@ -299,7 +296,7 @@ public abstract class INPCManager {
 	private void restoreYAMLNPCs() {
 		if (main.npcFile.getConfig().contains("npc"))
 			main.npcFile.getConfig().getConfigurationSection("npc").getKeys(false).forEach(current -> {
-				NPCData data = NPCData.fromJson(main.npcFile.getConfig().getString("npc." + current), true);
+				NPCData data = NPCData.fromJson(current, main.npcFile.getConfig().getString("npc." + current), true);
 				if (data != null)
 					restoreNPC(data);
 			});
@@ -314,7 +311,7 @@ public abstract class INPCManager {
 				if (current.isFile() && current.getName().endsWith(".json")) {
 					try {
 						String json = new String(Files.readAllBytes(Paths.get(current.getPath())));
-						NPCData data = NPCData.fromJson(json, true);
+						NPCData data = NPCData.fromJson(current.getName().replace(".json", ""), json, true);
 						if (data != null)
 							restoreNPC(data);
 					} catch (IOException e) {

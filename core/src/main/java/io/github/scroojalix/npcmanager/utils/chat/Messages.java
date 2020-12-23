@@ -1,18 +1,13 @@
 package io.github.scroojalix.npcmanager.utils.chat;
 
-import org.bukkit.ChatColor;
-
 public class Messages {
 
     //Error Messages
-    public static String UNKNOWN_NPC = ChatColor.RED+"An NPC with that name does not exist!";
-    public static String NPC_EXISTS = ChatColor.RED+"An NPC with that name already exists!";
-    public static String LONG_NAME = ChatColor.RED+"An NPC's name cannot be longer than 16 characters.";
-    public static String NOT_ALPHANUMERIC = ChatColor.RED+"That name is not alphanumeric!";
-    public static String NO_NPCS = ChatColor.RED+"There are no NPC's!";
-
-    //Command Messages
-    public static String REMOVE_NPC = ChatColor.GOLD+"Removed an NPC named "+ChatColor.WHITE;
+    public static String UNKNOWN_NPC = "An NPC with that name does not exist!";
+    public static String NPC_EXISTS = "An NPC with that name already exists!";
+    public static String LONG_NAME = "An NPC's name cannot be longer than 16 characters.";
+    public static String NOT_ALPHANUMERIC = "That name is not alphanumeric!";
+    public static String NO_NPCS = "There are no NPC's!";
 
     //Other
     public static String RESTORE_NPCS = "Restoring NPC's...";

@@ -16,7 +16,7 @@ public class NPCBuilder {
     private NPCData data;
 
     public NPCBuilder(String name, Location loc) {
-        this.data = new NPCData(name, name, loc, true);
+        this.data = new NPCData(name, loc, true);
     }
 
     public NPCData create() {

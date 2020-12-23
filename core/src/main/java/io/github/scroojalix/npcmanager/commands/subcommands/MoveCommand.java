@@ -1,5 +1,6 @@
 package io.github.scroojalix.npcmanager.commands.subcommands;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.command.CommandSender;
@@ -8,8 +9,8 @@ import org.bukkit.entity.Player;
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.CommandUtils;
 import io.github.scroojalix.npcmanager.commands.SubCommand;
-import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
+import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 
 public class MoveCommand extends SubCommand {
 
@@ -50,7 +51,11 @@ public class MoveCommand extends SubCommand {
 
     @Override
     public List<String> onTabComplete(String[] args) {
-        return getNPCs(args[1]);
+        if (args.length == 2) {
+            return getNPCs(args[1]);
+        } else {
+            return new ArrayList<String>();
+        }
     }
     
 }

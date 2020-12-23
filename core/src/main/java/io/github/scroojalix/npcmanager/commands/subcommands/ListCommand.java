@@ -69,7 +69,7 @@ public class ListCommand extends SubCommand {
             }
             CommandUtils.sendJSONMessage(sender, CommandUtils.getPageTurnerMessage("/npc list", pages, page));
         } else {
-            sender.sendMessage(Messages.NO_NPCS);
+            sender.sendMessage(ChatColor.RED+Messages.NO_NPCS);
         }
         return true;
     }

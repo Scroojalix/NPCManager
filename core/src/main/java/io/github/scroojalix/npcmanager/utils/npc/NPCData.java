@@ -17,7 +17,9 @@ import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.nms.interfaces.NMSHologram;
 import io.github.scroojalix.npcmanager.utils.interactions.CommandInteraction;
 import io.github.scroojalix.npcmanager.utils.interactions.InteractEvent;
+import io.github.scroojalix.npcmanager.utils.interactions.InteractEventType;
 import io.github.scroojalix.npcmanager.utils.interactions.InteractionsManager;
+import io.github.scroojalix.npcmanager.utils.interactions.NPCInteractionData;
 import io.github.scroojalix.npcmanager.utils.json.ConfigurationSerializableAdapter;
 
 /**
@@ -45,13 +47,13 @@ public class NPCData {
 	private int loaderTask;
 	private boolean store;
 
-	public NPCData(String name, String displayName, Location loc, boolean store) {
-		this(name, displayName, null, new NPCEquipment(), loc, 60, true, store);
+	public NPCData(String name, Location loc, boolean store) {
+		this(name, loc, 60, true, store);
 	}
 
-	public NPCData(String name, String displayName, String subtitle, NPCEquipment equipment, Location loc, int range, boolean headRotation, boolean store) {
+	public NPCData(String name, Location loc, int range, boolean headRotation, boolean store) {
 		this.name = name;
-		this.traits = new NPCTrait(displayName, subtitle, equipment, range, headRotation);
+		this.traits = new NPCTrait(name, range, headRotation);
 		this.store = store;
 		setLoc(loc);
 	}
@@ -79,7 +81,7 @@ public class NPCData {
 	 * @param json The JSON string to convert from.
 	 * @return An NPCData object.
 	 */
-	public static NPCData fromJson(String json, boolean prettyPrinting) {
+	public static NPCData fromJson(String name, String json, boolean prettyPrinting) {
 		try {
 			GsonBuilder builder = new GsonBuilder()
 			.disableHtmlEscaping()
@@ -93,7 +95,6 @@ public class NPCData {
 
 			String world = obj.get("loc").getAsJsonObject().get("world").getAsString();
 			if (Bukkit.getWorld(world) == null) {
-				String name = obj.get("name").getAsString();
 				NPCMain.instance.npc.removeNPCFromStorage(name);
 				NPCMain.instance.log(Level.SEVERE, "Error restoring an NPC: The world it's in does not exist.");
 				NPCMain.instance.log(Level.SEVERE, "The NPC will be removed from storage.");
@@ -105,23 +106,22 @@ public class NPCData {
 
 			//Restore Interact Event
 			if (data.getTraits().getInteractEvent() != null) {
-				String interactEvent = data.getTraits().getInteractEvent();
-				//TODO implement a better system for saving and restoring interact events.
-				//Use an enum for type, and a string for value.
-				//Make enclosing class in interactions package.
-				if (interactEvent.startsWith("Command:")) {
-					data.setInteractEvent(new CommandInteraction(interactEvent.replaceFirst("Command:", "")));
-				} else if (InteractionsManager.getInteractEvents().containsKey(interactEvent)) {
-					data.setInteractEvent(InteractionsManager.getInteractEvents().get(interactEvent));
+				NPCInteractionData interactEvent = data.getTraits().getInteractEvent();
+				if (interactEvent.getType() == InteractEventType.COMMAND) {
+					data.setInteractEvent(new CommandInteraction(interactEvent.getValue()));
+				} else if (InteractionsManager.getInteractEvents().containsKey(interactEvent.getValue())) {
+					data.setInteractEvent(InteractionsManager.getInteractEvents().get(interactEvent.getValue()));
 				} else {
 					NPCMain.instance.log(Level.WARNING, "Error restoring an NPC: Unknown interact event '"+interactEvent+"'");
-					data.getTraits().setInteractEvent(null);
+					data.getTraits().removeInteractEvent();
 				}
 			}
 
 			return data;
 		} catch (JsonSyntaxException e) {
 			NPCMain.instance.log(Level.SEVERE, "Error restoring an NPC: Invalid JSON");
+			NPCMain.instance.log(Level.SEVERE, "The NPC will be removed from storage.");
+			NPCMain.instance.npc.removeNPCFromStorage(name);
 			return null;
 		}
 	}
@@ -246,12 +246,12 @@ public class NPCData {
 		this.interactEvent = interactEvent;
 		if (interactEvent != null) {
 			if (interactEvent instanceof CommandInteraction) {
-				traits.setInteractEvent("Command:"+((CommandInteraction)interactEvent).getCommand());
+				traits.setInteractEvent(InteractEventType.COMMAND, ((CommandInteraction)interactEvent).getCommand());
 			} else {
-				traits.setInteractEvent(interactEvent.getInteractionName());
+				traits.setInteractEvent(InteractEventType.CUSTOM, interactEvent.getInteractionName());
 			}
 		} else {
-			traits.setInteractEvent(null);
+			traits.removeInteractEvent();;
 		}
 	}
 	

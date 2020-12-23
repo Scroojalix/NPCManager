@@ -1,15 +1,17 @@
 package io.github.scroojalix.npcmanager.commands.subcommands;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.SubCommand;
+import io.github.scroojalix.npcmanager.utils.PluginUtils;
 import io.github.scroojalix.npcmanager.utils.chat.Messages;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
-import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class TeleportCommand extends SubCommand {
 
@@ -43,14 +45,18 @@ public class TeleportCommand extends SubCommand {
             sender.sendMessage(PluginUtils.format("&6Teleported to NPC &F" + data.getName()));
             return true;
         } else {
-            sender.sendMessage(Messages.UNKNOWN_NPC);
+            sender.sendMessage(ChatColor.RED+Messages.UNKNOWN_NPC);
             return true;
         }
     }
 
     @Override
     public List<String> onTabComplete(String[] args) {
-        return getNPCs(args[1]);
+        if (args.length == 2) {
+            return getNPCs(args[1]);
+        } else {
+            return new ArrayList<String>();
+        }
     }
 
 }

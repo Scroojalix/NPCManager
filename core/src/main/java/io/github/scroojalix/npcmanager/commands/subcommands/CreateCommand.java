@@ -3,13 +3,14 @@ package io.github.scroojalix.npcmanager.commands.subcommands;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.SubCommand;
-import io.github.scroojalix.npcmanager.utils.chat.Messages;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
+import io.github.scroojalix.npcmanager.utils.chat.Messages;
 
 public class CreateCommand extends SubCommand {
 
@@ -40,13 +41,13 @@ public class CreateCommand extends SubCommand {
 
         String name = args[1];
         if (main.npc.getNPCs().containsKey(name)) {
-            sender.sendMessage(Messages.NPC_EXISTS);
+            sender.sendMessage(ChatColor.RED+Messages.NPC_EXISTS);
             return true;
         } else if (name.length() > 16) {
-            sender.sendMessage(Messages.LONG_NAME);
+            sender.sendMessage(ChatColor.RED+Messages.LONG_NAME);
             return true;
         } else if (!PluginUtils.isAlphaNumeric(name)) {
-            sender.sendMessage(Messages.NOT_ALPHANUMERIC);
+            sender.sendMessage(ChatColor.RED+Messages.NOT_ALPHANUMERIC);
             return true;
         }
         main.npc.createNPC(name, ((Player)sender).getLocation());

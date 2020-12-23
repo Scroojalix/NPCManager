@@ -1,5 +1,6 @@
 package io.github.scroojalix.npcmanager.commands.subcommands;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.ChatColor;
@@ -10,7 +11,7 @@ import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.CommandUtils;
 import io.github.scroojalix.npcmanager.commands.SubCommand;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
-import io.github.scroojalix.npcmanager.utils.interactions.CommandInteraction;
+import io.github.scroojalix.npcmanager.utils.interactions.NPCInteractionData;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.npc.NPCTrait;
 
@@ -57,11 +58,12 @@ public class InfoCommand extends SubCommand {
                         CommandUtils.getPageTurnerMessage("/npc info " + data.getName(), 2, 1));
             } else if (args[2].equalsIgnoreCase("2")) {
                 CommandUtils.sendJSONMessage(sender, CommandUtils.getTitleMessage("NPC Info"));
-                if (data.getInteractEvent() instanceof CommandInteraction) {
-                    sender.sendMessage(PluginUtils.format("&6Interact Event: &d[Command] /"
-                            + traits.getInteractEvent().replaceFirst("Command:", "")));
+                if (data.getInteractEvent() != null) {
+                    NPCInteractionData interactEvent = traits.getInteractEvent();
+                    sender.sendMessage(PluginUtils.format("&6Interact Event: "+interactEvent.getType().infoPrefix
+                        +traits.getInteractEvent().getValue()));
                 } else {
-                    sender.sendMessage(PluginUtils.format("&6Interact Event: &f" + traits.getInteractEvent()));
+                    sender.sendMessage(PluginUtils.format("&6Interact Event: &fnull"));
                 }
                 if (sender instanceof Player) {
                     sender.sendMessage("");
@@ -84,7 +86,11 @@ public class InfoCommand extends SubCommand {
 
     @Override
     public List<String> onTabComplete(String[] args) {
-        return getNPCs(args[1]);
+        if (args.length == 2) {
+            return getNPCs(args[1]);
+        } else {
+            return new ArrayList<String>();
+        }
     }
     
 }

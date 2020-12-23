@@ -2,6 +2,9 @@ package io.github.scroojalix.npcmanager.utils.npc;
 
 import com.google.gson.annotations.Expose;
 
+import io.github.scroojalix.npcmanager.utils.interactions.InteractEventType;
+import io.github.scroojalix.npcmanager.utils.interactions.NPCInteractionData;
+
 /**
  * Class that stores all of an NPC's traits.
  */
@@ -18,16 +21,15 @@ public class NPCTrait {
     @Expose
     private String skin;
     @Expose
-    private NPCEquipment equipment;
+    private NPCInteractionData interactEvent;
     @Expose
-    private String interactEvent;
-
-    public NPCTrait(String displayName, String subtitle, NPCEquipment equipment, int range, boolean headRotation) {
+    private NPCEquipment equipment;
+    
+    public NPCTrait(String displayName, int range, boolean headRotation) {
         this.displayName = displayName;
-        this.subtitle = subtitle;
-        this.equipment = equipment;
         this.range = range;
         this.headRotation = headRotation;
+        this.equipment = new NPCEquipment();
     }
 
     /**
@@ -119,7 +121,7 @@ public class NPCTrait {
     /**
      * @return The interact event of this NPC.
      */
-    public String getInteractEvent() {
+    public NPCInteractionData getInteractEvent() {
         return this.interactEvent;
     }
 
@@ -127,7 +129,11 @@ public class NPCTrait {
      * Sets the interact event of this NPC.
      * @param interactEvent The name of the interact event.
      */
-    public void setInteractEvent(String interactEvent) {
-        this.interactEvent = interactEvent;
+    public void setInteractEvent(InteractEventType type, String value) {
+        this.interactEvent = new NPCInteractionData(type, value);
+    }
+
+    public void removeInteractEvent() {
+        this.interactEvent = null;
     }
 }

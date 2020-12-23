@@ -1,12 +1,11 @@
 package io.github.scroojalix.npcmanager.utils.api;
 
-import java.util.logging.Level;
-
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
+import io.github.scroojalix.npcmanager.utils.chat.Messages;
 import io.github.scroojalix.npcmanager.utils.interactions.CommandInteraction;
 import io.github.scroojalix.npcmanager.utils.interactions.InteractionsManager;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
@@ -20,8 +19,16 @@ public class NPCManagerAPI {
 	 * @param data The data of the NPC to spawn.
 	 */
 	public static void spawnNPC(NPCData data) {
-		NPCMain.instance.npc.saveNPC(data);
-		NPCMain.instance.npc.restoreNPC(data);
+		if (!NPCMain.instance.npc.getNPCs().containsKey(data.getName())) {
+			if (data.getLoc() != null) {
+				NPCMain.instance.npc.saveNPC(data);
+				NPCMain.instance.npc.restoreNPC(data);
+			} else {
+				throw new NullPointerException("The NPC's location is null (not valid).");
+			}
+		} else {
+			throw new IllegalArgumentException("An NPC with that name already exists.");
+		}
 	}
 
 	/**
@@ -45,13 +52,13 @@ public class NPCManagerAPI {
 				if (PluginUtils.isAlphaNumeric(name)) {
 					NPCMain.instance.npc.createNPC(name, loc, store);
 				} else {
-					NPCMain.instance.log(Level.WARNING, "Could not create NPC '"+name+"'. The name must be alphanumeric.");
+					throw new IllegalArgumentException(Messages.NOT_ALPHANUMERIC);
 				}
 			} else {
-				NPCMain.instance.log(Level.WARNING, "Could not create NPC '"+name+"'. The name cannot be longer than 16 characters.");
+				throw new IllegalArgumentException(Messages.LONG_NAME);
 			}
 		} else {
-			NPCMain.instance.getLogger().warning("Could not create NPC '"+name+"'. An NPC with that name already exists.");
+			throw new IllegalArgumentException("An NPC with the name '"+name+"' already exists.");
 		}
 	}
 	
@@ -114,17 +121,16 @@ public class NPCManagerAPI {
 				break;
 			default:
 				update = false;
-				NPCMain.instance.getLogger().warning("Could not modify the equipment of '"+name+"'. The slot '"+slot+"' does not exist.");
-				break;
+				throw new IllegalArgumentException("The equipment slot '"+slot+"' is invalid.");
 			}
 			if (update) {
 				NPCMain.instance.npc.saveNPC(data);
 				NPCMain.instance.npc.updateNPC(data);
 			} else if (slot >= 0 && slot <= 5) {
-				NPCMain.instance.getLogger().warning("Could not modify the equipment of '"+name+"'. That item is not suitable for that slot.");
+				throw new IllegalArgumentException("That item is not suitable for that slot.");
 			}
 		} else {
-			NPCMain.instance.getLogger().warning("Could not modify the equipment of '"+name+"'. That NPC does not exist.");
+			throw new IllegalArgumentException(Messages.UNKNOWN_NPC);
 		}
 	}
 	
@@ -137,15 +143,11 @@ public class NPCManagerAPI {
 	public static void modifyNPC(String name, String key, String value) {
 		if (NPCMain.instance.npc.getNPCs().containsKey(name)) {
 			NPCData data = NPCMain.instance.npc.getNPCs().get(name);
-			try {
-				modify(data, key, value);
-			} catch (IllegalArgumentException e) {
-				NPCMain.instance.log(Level.SEVERE, e.getMessage());
-			}
+			modify(data, key, value);
 			NPCMain.instance.npc.saveNPC(data);
 			NPCMain.instance.npc.updateNPC(data);
 		} else {
-			NPCMain.instance.getLogger().warning("Could not modify NPC '"+name+"'. That NPC does not exist.");
+			throw new IllegalArgumentException(Messages.UNKNOWN_NPC);
 		}
 	}
 
@@ -164,10 +166,10 @@ public class NPCManagerAPI {
 				if (InteractionsManager.getInteractEvents().containsKey(interaction)) {
 					data.setInteractEvent(InteractionsManager.getInteractEvents().get(interaction));
 				} else {
-					NPCMain.instance.log(Level.WARNING, "Could not set the interact event of "+name+". The interact event '"+interaction+"' does not exist.");
+					throw new IllegalArgumentException("The custom interact event '"+interaction+"' does not exist.");
 				}
 			} else {
-				NPCMain.instance.log(Level.WARNING, "Could not set the interact event of "+name+". The type '"+type+"' is invalid.");
+				throw new IllegalArgumentException("The interaction type '"+type+"' is invalid.");
 			}
 		}
 	}
@@ -182,7 +184,7 @@ public class NPCManagerAPI {
 			NPCData data = NPCMain.instance.npc.getNPCs().get(name);
 			NPCMain.instance.npc.moveNPC(data, newLocation);
 		} else {
-			NPCMain.instance.getLogger().warning("Could not move NPC '"+name+"'. That NPC does not exist.");
+			throw new IllegalArgumentException(Messages.UNKNOWN_NPC);
 		}
 	}
 	
@@ -195,7 +197,7 @@ public class NPCManagerAPI {
 			NPCMain.instance.npc.removeNPC(name, true);
 			NPCMain.instance.npc.getNPCs().remove(name);
 		} else {
-			NPCMain.instance.getLogger().warning("Could not remove NPC '"+name+"'. That NPC does not exist.");
+			throw new IllegalArgumentException(Messages.UNKNOWN_NPC);
 		}
 	}
 	
@@ -209,7 +211,7 @@ public class NPCManagerAPI {
 		NPCMain.instance.npc.getNPCs().clear();
 	}
 
-	private static void modify(NPCData data, String key, String value) throws IllegalArgumentException {
+	private static void modify(NPCData data, String key, String value) {
 		NPCTrait traits = data.getTraits();
 		switch(key) {
 			case "displayName":
