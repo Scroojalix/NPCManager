@@ -2,8 +2,6 @@ package io.github.scroojalix.npcmanager.utils.npc;
 
 import com.google.gson.annotations.Expose;
 
-import io.github.scroojalix.npcmanager.NPCMain;
-
 /**
  * Class that stores all of an NPC's traits.
  */
@@ -33,48 +31,6 @@ public class NPCTrait {
     }
 
     /**
-     * Modify an NPC's traits.
-     * @param data The NPC to be modified.
-     * @param key The modification to be made.
-     * @param value The new value.
-     * @throws IllegalArgumentException If any of the arguments are not valid.
-     * @throws Throwable When a modification is successful, contains a message for player.
-     */
-    public void modify(NPCData data, String key, String value) throws IllegalArgumentException, Throwable {
-    switch(key) {
-        case "displayName":
-            setDisplayName(value.equalsIgnoreCase("none")?null:value);
-            throw new Throwable("&6Set the display name of &F"+data.getName()+"&6 to &F"+value);
-        case "subtitle":
-            setSubtitle(value.equalsIgnoreCase("none")?null:value);
-            throw new Throwable("&6Set the subtitle of &F"+data.getName()+"&6 to &F"+value);
-        case "hasHeadRotation":
-            setHeadRotation(value.equalsIgnoreCase("true"));
-            throw new Throwable("&6Set the head rotation of &F"+data.getName()+"&6 to &F"+headRotation);
-        case "range":
-            try {
-                Integer range = Integer.parseInt(value);
-                if (range <= 0) {
-                    throw new IllegalArgumentException("Range cannot be set to 0");
-                }
-                setRange(range);
-                throw new Throwable("&6Set the range of &F"+data.getName()+"&6 to &F"+range);
-            } catch(NumberFormatException e) {
-                throw new IllegalArgumentException("'"+value+"' is not a number.");
-            }
-        case "skin":
-            if (value.equalsIgnoreCase("Default") || NPCMain.instance.skinManager.values().contains(value)) {
-                data.getTraits().setSkin(value);
-                throw new Throwable("&6Set the skin of &F"+data.getName()+"&6 to &F"+value);
-            } else {
-                throw new IllegalArgumentException("'"+value+"' is not a valid skin.");
-            }
-        default:
-            throw new IllegalArgumentException("Unknown key '"+key+"'.");
-        }
-    }
-
-    /**
      * @return The display name of this NPC.
      */
     public String getDisplayName() {
@@ -86,7 +42,7 @@ public class NPCTrait {
      * @param displayName The new display name.
      */
     public void setDisplayName(String displayName) {
-        this.displayName = displayName;
+        this.displayName = displayName.equalsIgnoreCase("null")?null:displayName;
     }
 
     /**
@@ -101,7 +57,7 @@ public class NPCTrait {
      * @param subtitle The new subtitle.
      */
     public void setSubtitle(String subtitle) {
-        this.subtitle = subtitle;
+        this.subtitle = subtitle.equalsIgnoreCase("null")?null:subtitle;
     }
 
     /**

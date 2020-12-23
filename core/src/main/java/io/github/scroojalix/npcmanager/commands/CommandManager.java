@@ -43,9 +43,8 @@ public class CommandManager implements TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (args.length > 0) {
-            for (int i = 0; i < subcommands.size(); i++) {
-                if (args[0].equalsIgnoreCase(subcommands.get(i).getName())) {
-                    SubCommand command = subcommands.get(i);
+            for (SubCommand command : subcommands) {
+                if (args[0].equalsIgnoreCase(command.getName())) {
                     if (command.consoleCanRun() || sender instanceof Player) {
                         if (!command.execute(main, sender, args)) {
                             sender.sendMessage(ChatColor.RED + "Usage: " + command.getSyntax());

@@ -106,6 +106,9 @@ public class NPCData {
 			//Restore Interact Event
 			if (data.getTraits().getInteractEvent() != null) {
 				String interactEvent = data.getTraits().getInteractEvent();
+				//TODO implement a better system for saving and restoring interact events.
+				//Use an enum for type, and a string for value.
+				//Make enclosing class in interactions package.
 				if (interactEvent.startsWith("Command:")) {
 					data.setInteractEvent(new CommandInteraction(interactEvent.replaceFirst("Command:", "")));
 				} else if (InteractionsManager.getInteractEvents().containsKey(interactEvent)) {

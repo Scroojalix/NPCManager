@@ -10,13 +10,22 @@ import org.bukkit.entity.Player;
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.CommandUtils;
 import io.github.scroojalix.npcmanager.commands.SubCommand;
+import io.github.scroojalix.npcmanager.commands.subcommands.modifications.*;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
-import io.github.scroojalix.npcmanager.utils.interactions.CommandInteraction;
-import io.github.scroojalix.npcmanager.utils.interactions.InteractionsManager;
-import io.github.scroojalix.npcmanager.utils.npc.NPCData;
-import io.github.scroojalix.npcmanager.utils.npc.NPCTrait;
 
 public class ModifyCommand extends SubCommand {
+
+    private ArrayList<SubCommand> subcommands = new ArrayList<SubCommand>();
+
+    public ModifyCommand() {
+        subcommands.add(new EquipmentModification());
+        subcommands.add(new InteractEventModification());
+        subcommands.add(new DisplayNameModification());
+        subcommands.add(new SubtitleModification());
+        subcommands.add(new HeadRotationModification());
+        subcommands.add(new RangeModification());
+        subcommands.add(new SkinModification());
+    }
 
     @Override
     public String getName() {
@@ -38,8 +47,6 @@ public class ModifyCommand extends SubCommand {
         return true;
     }
 
-    //TODO move all modifactions to own classes in modifications package.
-    //Essentially make this class into another CommandManager class.
     //TODO add ability to customise pose.
     //May have to allow multiple hologram lines first and calculate height of holograms dynamically.
     //Things to allow:
@@ -48,105 +55,45 @@ public class ModifyCommand extends SubCommand {
     //Blocking (if using sword in old version, shield in new version)
     @Override
     public boolean execute(NPCMain main, CommandSender sender, String[] args) {
-        if (args.length < 3)
-            return false;
-        if (CommandUtils.npcExists(args[1], sender)) {
-            if (args[2].equalsIgnoreCase("equipment")) {
-                if (sender instanceof Player) {
-                    NPCData data = main.npc.getNPCs().get(args[1]);
-                    Player p = (Player) sender;
-                    p.openInventory(CommandUtils.getEquipmentInv(data));
-                    return true;
-                } else {
-                    sender.sendMessage(ChatColor.RED + "Sorry console, but you can't do that.");
-                    return true;
-                }
-            } else if (args[2].equalsIgnoreCase("interactEvent")) {
-                NPCData data = main.npc.getNPCs().get(args[1]);
-                if (args.length >= 5) {
-                    if (args[3].equalsIgnoreCase("command")) {
-                        String command = args[4];
-                        for (int arg = 5; arg < args.length; arg++) {
-                            command += " " + args[arg];
-                        }
-                        data.setInteractEvent(new CommandInteraction(command));
-                        main.npc.saveNPC(data);
-                        sender.sendMessage(PluginUtils.format(
-                                "&6Set &F" + data.getName() + "'s &6Interact Event to the command &F/" + command));
-                    } else if (args[3].equalsIgnoreCase("custom")) {
-                        if (InteractionsManager.getInteractEvents().containsKey(args[4])) {
-                            data.setInteractEvent(InteractionsManager.getInteractEvents().get(args[4]));
-                            main.npc.saveNPC(data);
-                            sender.sendMessage(PluginUtils
-                                    .format("&6Set &F" + data.getName() + "'s &6Interact Event to &F" + args[3]));
+        if (args.length >= 3) {
+            if (CommandUtils.npcExists(args[1], sender)) {
+                for (SubCommand command : subcommands) {
+                    if (args[2].equalsIgnoreCase(command.getName())) {
+                        if (command.consoleCanRun() || sender instanceof Player) {
+                            if (!command.execute(main, sender, args)) {
+                                sender.sendMessage(ChatColor.RED + "Usage: " + command.getSyntax());
+                            }
                         } else {
-                            sender.sendMessage(
-                                    PluginUtils.format("&C'" + args[4] + "' is not a valid Interact Event."));
+                            sender.sendMessage(ChatColor.RED + "Sorry console, but you can't do that.");
                         }
+                        return true;
                     }
-                    return true;
-                } else if (args.length >= 4 && args[3].equalsIgnoreCase("none")) {
-                    data.setInteractEvent(null);
-                    main.npc.saveNPC(data);
-                    sender.sendMessage(PluginUtils.format("&6Removed the Interact Event for &F" + data.getName()));
-                    return true;
-                }
-            } else if (args.length >= 4) {
-                NPCData modifying = main.npc.getNPCs().get(args[1]);
-                NPCTrait traits = modifying.getTraits();
-                String value = args[3];
-                for (int arg = 4; arg < args.length; arg++) {
-                    value += " " + args[arg];
-                }
-                try {
-                    traits.modify(modifying, args[2], value);
-                } catch (IllegalArgumentException e) {
-                    sender.sendMessage(ChatColor.RED + e.getMessage());
-                } catch (Throwable t) {
-                    sender.sendMessage(PluginUtils.format(t.getMessage()));
-                }
-                main.npc.saveNPC(modifying);
-                main.npc.updateNPC(modifying);
-                return true;
-            }
+                } 
+                return false;
+            } 
         }
-        return false;
+        for (SubCommand sub : subcommands) {
+            sender.sendMessage(PluginUtils.format("&B" + sub.getSyntax() + " &F&L-&6 " + sub.getDescription()));
+        }
+        return true;
     }
 
     @Override
     public List<String> onTabComplete(String[] args) {
         List<String> result = new ArrayList<String>();
-        switch(args.length) {
-        case 2:
+        if (args.length == 2) {
             return getNPCs(args[1]);
-        case 3:
-            result.add("displayName"); result.add("subtitle");
-            result.add("hasHeadRotation"); result.add("range");
-            result.add("skin"); result.add("interactEvent");
-            result.add("equipment");
-        case 4:
-            if (args[2].equalsIgnoreCase("displayName") || args[2].equalsIgnoreCase("subtitle")) {
-                result.add("none");
-            } else if (args[2].equalsIgnoreCase("hasHeadRotation")) {
-                result.add("true"); result.add("false");
-            } else if (args[2].equalsIgnoreCase("skin")) {
-                for (String skin : NPCMain.instance.skinManager.values()) {
-                    result.add(skin);
-                }
-                result.add("Default");
-            } else if (args[2].equalsIgnoreCase("interactEvent")) {
-                result.add("command"); result.add("custom");
-                result.add("none");
+        } else if (args.length == 3) {
+            for (SubCommand sub : subcommands) {
+                result.add(sub.getName());
             }
-            break;
-        case 5:
-            if (args[0].equalsIgnoreCase("modify") && args[2].equalsIgnoreCase("interactEvent") 
-                && args[3].equalsIgnoreCase("custom")) {
-                for (String interaction : InteractionsManager.getInteractEvents().keySet()) {
-                    result.add(interaction);
+        } else if (args.length >= 4) {
+            for (SubCommand sub : subcommands) {
+                if (args[2].equalsIgnoreCase(sub.getName())) {
+                    result = sub.onTabComplete(args);
+                    break;
                 }
             }
-            break;
         }
         return filter(args[args.length-1], result);
     }

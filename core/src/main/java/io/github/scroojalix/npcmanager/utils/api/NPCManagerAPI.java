@@ -138,10 +138,10 @@ public class NPCManagerAPI {
 		if (NPCMain.instance.npc.getNPCs().containsKey(name)) {
 			NPCData data = NPCMain.instance.npc.getNPCs().get(name);
 			try {
-				data.getTraits().modify(data, key, value);
+				modify(data, key, value);
 			} catch (IllegalArgumentException e) {
 				NPCMain.instance.log(Level.SEVERE, e.getMessage());
-			} catch (Throwable t) {}
+			}
 			NPCMain.instance.npc.saveNPC(data);
 			NPCMain.instance.npc.updateNPC(data);
 		} else {
@@ -207,5 +207,39 @@ public class NPCManagerAPI {
 			NPCMain.instance.npc.removeNPC(npc, true);
 		}
 		NPCMain.instance.npc.getNPCs().clear();
+	}
+
+	private static void modify(NPCData data, String key, String value) throws IllegalArgumentException {
+		NPCTrait traits = data.getTraits();
+		switch(key) {
+			case "displayName":
+				traits.setDisplayName(value.equalsIgnoreCase("none")?null:value);
+				return;
+			case "subtitle":
+				traits.setSubtitle(value.equalsIgnoreCase("none")?null:value);
+				return;
+			case "hasHeadRotation":
+				traits.setHeadRotation(value.equalsIgnoreCase("true"));
+				return;
+			case "range":
+				try {
+					Integer range = Integer.parseInt(value);
+					if (range <= 0) {
+						throw new IllegalArgumentException("Range cannot be set to 0");
+					}
+					traits.setRange(range);
+				} catch(NumberFormatException e) {
+					throw new IllegalArgumentException("'"+value+"' is not a number.");
+				}
+			case "skin":
+				if (value.equalsIgnoreCase("null") || NPCMain.instance.skinManager.values().contains(value)) {
+					traits.setSkin(value.equalsIgnoreCase("null")?null:value);
+					return;
+				} else {
+					throw new IllegalArgumentException("'"+value+"' is not a valid skin.");
+				}
+			default:
+				throw new IllegalArgumentException("Unknown key '"+key+"'.");
+			}
 	}
 }
