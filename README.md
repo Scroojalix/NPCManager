@@ -4,6 +4,9 @@ This plugin provides support for spawning NPC's, and has many customisation opti
 
 Also has support for using a MySQL database to store NPC data (Configured in the config.yml).
 
+### Disclaimer
+This project was created so I could practice coding with Java, as well as learn how to use the Spigot API. This plugin may be very buggy and may not have that many features, so by all means use something more advanced such as [Citizens](https://www.spigotmc.org/resources/citizens.13811/).
+
 ### Commands
 
  * `/npc create <name>`
