@@ -32,6 +32,7 @@ The accepted values for `<key>` are:
 * `interactEvent`
 * `range`
 * `skin`
+* `skinLayers`
 * `subtitle`
 
 ### Supported Versions
