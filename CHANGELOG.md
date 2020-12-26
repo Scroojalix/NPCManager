@@ -2,9 +2,11 @@
 
 This file is here in the hopes of recording all changes made throughout the plugins history and future, to make it easier for users and developers to understand the changes between versions.
 
-This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+This project doesn't really adhere to a formal versioning format. I just increment the numbers whenever I feel like it.
 
 ## [Unreleased]
+### Changed
+ - SkinLayers no longer get reset when a skin is being updated.
 
 ## [1.4.0] - 2020-12-27
 ### Added
@@ -30,5 +32,6 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 [//]: # (//TODO add changes for ALL versions since 1.0.0)
 [//]: # (Refer to https://keepachangelog.com/en/1.0.0/ and example on wesbite)
 
-[Unreleased]: https://github.com/Scroojalix/NPCManager/compare/v1.3.7...HEAD
+[Unreleased]: https://github.com/Scroojalix/NPCManager/compare/v1.4.0...HEAD
 [1.4.0]: https://github.com/Scroojalix/NPCManager/compare/v1.3.7...v1.4.0
+[1.3.7]: https://github.com/Scroojalix/NPCManager/compare/v1.3.6...v1.3.7
