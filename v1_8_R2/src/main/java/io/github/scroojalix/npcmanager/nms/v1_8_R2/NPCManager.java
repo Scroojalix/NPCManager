@@ -1,7 +1,5 @@
 package io.github.scroojalix.npcmanager.nms.v1_8_R2;
 
-import java.util.UUID;
-
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 
@@ -19,6 +17,8 @@ import io.github.scroojalix.npcmanager.nms.interfaces.NMSHologram;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.npc.NPCTrait;
+import io.github.scroojalix.npcmanager.utils.npc.skin.SkinData;
+import io.github.scroojalix.npcmanager.utils.npc.skin.SkinManager;
 import net.minecraft.server.v1_8_R2.EntityPlayer;
 import net.minecraft.server.v1_8_R2.MinecraftServer;
 import net.minecraft.server.v1_8_R2.PacketPlayOutEntityDestroy;
@@ -38,8 +38,6 @@ public class NPCManager extends INPCManager {
 		npcTeam = new ScoreboardTeam(((CraftScoreboard)Bukkit.getScoreboardManager().getNewScoreboard()).getHandle(), "zzzzzzzzzzNMNPCs");
 		npcTeam.setPrefix(PluginUtils.format("&8[NPC] "));
 		npcTeam.setNameTagVisibility(ScoreboardTeamBase.EnumNameTagVisibility.NEVER);
-
-		restoreNPCs();
 	}
 	
 	public ScoreboardTeam getNPCTeam() {
@@ -54,23 +52,18 @@ public class NPCManager extends INPCManager {
 	}
 	
 	public void getNMSEntity(NPCData data) {
-		GameProfile profile;
 		NPCTrait traits = data.getTraits();
-		if (traits.getSkin() != null && main.skinManager.values().contains(traits.getSkin())) {
-			String[] profileData = main.skinManager.getSkinData(traits.getSkin());
-			profile = new GameProfile(UUID.fromString(profileData[0]), data.getName());
-			profile.getProperties().put("textures", new Property("textures", profileData[1], profileData[2]));
-		} else if(data.getUUID() != null) {
-			profile = new GameProfile(UUID.fromString(data.getUUID()), data.getName());
-		}else {
-			profile = new GameProfile(UUID.randomUUID(), data.getName());
+		GameProfile profile = new GameProfile(data.getUUID(), data.getName());
+		SkinData skin = traits.getSkinData();
+		if (skin != null && skin.getTexture() != null && skin.getSignature() != null) {
+			profile.getProperties().put("textures", new Property("textures", skin.getTexture(), skin.getSignature()));
 		}
 		MinecraftServer server = ((CraftServer) Bukkit.getServer()).getServer();
 		WorldServer world = ((CraftWorld) data.getLoc().getWorld()).getHandle();
-		EntityPlayer npc = new EntityPlayer(server,world,profile, new PlayerInteractManager(world));
+		EntityPlayer npc = new EntityPlayer(server, world, profile, new PlayerInteractManager(world));
 		npc.setLocation(data.getLoc().getX(), data.getLoc().getY(), data.getLoc().getZ(), data.getLoc().getYaw(), data.getLoc().getPitch());
-		npc.getDataWatcher().watch(10, (byte)126);
-		data.setNPC(npc, npc.getProfile().getId().toString());
+		npc.getDataWatcher().watch(10, data.getTraits().getSkinLayersByte());
+		data.setNPC(npc);
 	}
 	
 	public void restoreNPC(NPCData data) {
@@ -100,6 +93,7 @@ public class NPCManager extends INPCManager {
 		
 		NPCs.put(data.getName(), data);
 		data.setLoaderTask(Bukkit.getScheduler().scheduleSyncRepeatingTask(main, new NPCLoader(main, data, this), 0l, 1l));
+		SkinManager.updateSkin(data);
 	}
 
 	public void removeHologramForPlayer(Player player, NMSHologram hologram) {

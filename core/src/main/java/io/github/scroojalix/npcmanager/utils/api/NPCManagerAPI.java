@@ -1,16 +1,19 @@
 package io.github.scroojalix.npcmanager.utils.api;
 
 import org.bukkit.Location;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 import io.github.scroojalix.npcmanager.utils.chat.Messages;
 import io.github.scroojalix.npcmanager.utils.interactions.CommandInteraction;
+import io.github.scroojalix.npcmanager.utils.interactions.InteractEventType;
 import io.github.scroojalix.npcmanager.utils.interactions.InteractionsManager;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.npc.NPCEquipment;
 import io.github.scroojalix.npcmanager.utils.npc.NPCTrait;
+import io.github.scroojalix.npcmanager.utils.npc.skin.SkinManager;
 
 public class NPCManagerAPI {
 
@@ -49,7 +52,7 @@ public class NPCManagerAPI {
 	public static void createNPC(String name, Location loc, boolean store) {
 		if (!PluginUtils.npcExists(name)) {
 			if (name.length() <= 16) {
-				if (PluginUtils.isAlphaNumeric(name)) {
+				if (PluginUtils.isAlphanumeric(name)) {
 					NPCMain.instance.npc.createNPC(name, loc, store);
 				} else {
 					throw new IllegalArgumentException(Messages.NOT_ALPHANUMERIC);
@@ -64,57 +67,43 @@ public class NPCManagerAPI {
 	
 	/**
 	 * Modify an NPC's equipment.
-	 * <p>
-	 * For the slot parameter, use a number between 0 and 5.
-	 * <p>
-	 * 0 - main hand
-	 * <p>
-	 * 1 - off hand
-	 * <p>
-	 * 2 - boots
-	 * <p>
-	 * 3 - leggings
-	 * <p>
-	 * 4 - chestplate
-	 * <p>
-	 * 5 - helmet
 	 * 
 	 * @param name The name of the NPC.
 	 * @param slot The slot to change. 
 	 * @param item The item to put in that slot.
 	 */
-	public static void changeEquipment(String name, int slot, ItemStack item) {
+	public static void changeEquipment(String name, EquipmentSlot slot, ItemStack item) {
 		if (NPCMain.instance.npc.getNPCs().containsKey(name)) {
 			NPCData data = NPCMain.instance.npc.getNPCs().get(name);
 			NPCEquipment equipment = data.getTraits().getEquipment();
 			boolean update = true;
 			switch (slot) {
-			case 0:
+			case HAND:
 				if (PluginUtils.isSuitableItem(item, "mainhand", null)) {
 					equipment.setMainhandItem(item);
 				} else { update = false; }
 				break;
-			case 1:
+			case OFF_HAND:
 				if (PluginUtils.isSuitableItem(item, "offhand", null)) {
 					equipment.setOffhandItem(item);
 				} else { update = false; }
 				break;
-			case 2:
+			case FEET:
 				if (PluginUtils.isSuitableItem(item, "boots", null)) {
 					equipment.setBoots(item);
 				} else { update = false; }
 				break;
-			case 3:
+			case LEGS:
 				if (PluginUtils.isSuitableItem(item, "leggings", null)) {
 					equipment.setLeggings(item);
 				} else { update = false; }
 				break;
-			case 4:
+			case CHEST:
 				if (PluginUtils.isSuitableItem(item, "chestplate", null)) {
 					equipment.setChestplate(item);
 				} else { update = false; }
 				break;
-			case 5:
+			case HEAD:
 				if (PluginUtils.isSuitableItem(item, "helmet", null)) {
 					equipment.setHelmet(item);
 				} else { update = false; }
@@ -126,14 +115,13 @@ public class NPCManagerAPI {
 			if (update) {
 				NPCMain.instance.npc.saveNPC(data);
 				NPCMain.instance.npc.updateNPC(data);
-			} else if (slot >= 0 && slot <= 5) {
-				throw new IllegalArgumentException("That item is not suitable for that slot.");
 			}
 		} else {
 			throw new IllegalArgumentException(Messages.UNKNOWN_NPC);
 		}
 	}
 	
+	//TODO create methods for all modifications.
 	/**
 	 * Modifies an NPC.
 	 * @param name The name of the NPC to modify.
@@ -154,15 +142,15 @@ public class NPCManagerAPI {
 	/**
 	 * Use this method to customise the interact event of an NPC.
 	 * @param name The name of the NPC to modify.
-	 * @param type The type of interaction. Can be <code>command</code> or <code>custom</code>.
+	 * @param type The type of interaction.
 	 * @param interaction The command to run or the name of the custom interact event.
 	 */
-	public static void changeInteractEvent(String name, String type, String interaction) {
+	public static void changeInteractEvent(String name, InteractEventType type, String interaction) {
 		if (NPCMain.instance.npc.getNPCs().containsKey(name)) {
 			NPCData data = NPCMain.instance.npc.getNPCs().get(name);
-			if (type.equalsIgnoreCase("command")) {
+			if (type == InteractEventType.COMMAND) {
 				data.setInteractEvent(new CommandInteraction(interaction));
-			} else if (type.equalsIgnoreCase("custom")) {
+			} else if (type == InteractEventType.CUSTOM) {
 				if (InteractionsManager.getInteractEvents().containsKey(interaction)) {
 					data.setInteractEvent(InteractionsManager.getInteractEvents().get(interaction));
 				} else {
@@ -171,8 +159,34 @@ public class NPCManagerAPI {
 			} else {
 				throw new IllegalArgumentException("The interaction type '"+type+"' is invalid.");
 			}
+		} else {
+			throw new IllegalArgumentException(Messages.UNKNOWN_NPC);
 		}
 	}
+
+	/**
+	 * Set the skin of an NPC.
+	 * @param name The name of the NPC to modify.
+	 * @param type The method of getting skin data. Can be set to <code>url</code> or <code>username</code>.
+	 * @param value The URL to the skin image or the username to get textures from.
+	 * @param optionalArg If <code>type</code> is set to <code>"url"</code> and
+	 * this is set to <code>true</code>, then the resulting skin will use the slim model.
+	 * Set it to <code>false</code> to use the default model. If <code>type</code> is set
+	 * to <code>"username"</code>, then set this to <code>true</code> to automatically
+	 * update the skin on every reload.
+	 */
+	public void setSkin(String name, String type, String value, boolean optionalArg) {
+		if (NPCMain.instance.npc.getNPCs().containsKey(name)) {
+			NPCData data = NPCMain.instance.npc.getNPCs().get(name);
+			if (type.equalsIgnoreCase("url")) {
+				SkinManager.setSkinFromURL(null, data, value, optionalArg);
+			} else if (type.equalsIgnoreCase("username")) {
+				SkinManager.setSkinFromUsername(null, data, value, optionalArg);
+			}
+		} else {
+			throw new IllegalArgumentException(Messages.UNKNOWN_NPC);
+		}
+    }
 	
 	/**
 	 * Changes the location of an NPC.
@@ -232,13 +246,6 @@ public class NPCManagerAPI {
 					traits.setRange(range);
 				} catch(NumberFormatException e) {
 					throw new IllegalArgumentException("'"+value+"' is not a number.");
-				}
-			case "skin":
-				if (value.equalsIgnoreCase("null") || NPCMain.instance.skinManager.values().contains(value)) {
-					traits.setSkin(value.equalsIgnoreCase("null")?null:value);
-					return;
-				} else {
-					throw new IllegalArgumentException("'"+value+"' is not a valid skin.");
 				}
 			default:
 				throw new IllegalArgumentException("Unknown key '"+key+"'.");

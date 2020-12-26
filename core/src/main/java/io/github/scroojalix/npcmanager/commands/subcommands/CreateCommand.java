@@ -46,7 +46,7 @@ public class CreateCommand extends SubCommand {
         } else if (name.length() > 16) {
             sender.sendMessage(ChatColor.RED+Messages.LONG_NAME);
             return true;
-        } else if (!PluginUtils.isAlphaNumeric(name)) {
+        } else if (!PluginUtils.isAlphanumeric(name)) {
             sender.sendMessage(ChatColor.RED+Messages.NOT_ALPHANUMERIC);
             return true;
         }

@@ -11,6 +11,7 @@ import org.bukkit.util.Vector;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.nms.interfaces.INPCLoader;
+import io.github.scroojalix.npcmanager.utils.PluginUtils;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.npc.NPCEquipment;
 import net.minecraft.server.v1_10_R1.EntityArmorStand;
@@ -122,7 +123,7 @@ public class NPCLoader extends INPCLoader implements Runnable {
 			public void run() {
 				connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, (EntityPlayer)data.getNPC()));
 			}
-		}, 60l));
+		}, PluginUtils.NPC_REMOVE_DELAY));
 	}
 
 	protected void sendDeletePackets(Player player) {

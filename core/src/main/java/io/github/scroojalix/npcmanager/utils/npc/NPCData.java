@@ -1,6 +1,7 @@
 package io.github.scroojalix.npcmanager.utils.npc;
 
 import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Level;
 
 import com.google.gson.GsonBuilder;
@@ -33,7 +34,7 @@ public class NPCData {
 	@Expose
 	private Location loc;
 	@Expose
-	private String uuid;
+	private UUID uuid;
 	@Expose
 	private NPCTrait traits;
 	
@@ -46,6 +47,8 @@ public class NPCData {
 	private Object npc;
 	private int loaderTask;
 	private boolean store;
+	//TODO use this to wait until NPC is loaded before updating skin.
+	//private boolean isLoaded;
 
 	public NPCData(String name, Location loc, boolean store) {
 		this(name, loc, 60, true, store);
@@ -53,9 +56,10 @@ public class NPCData {
 
 	public NPCData(String name, Location loc, int range, boolean headRotation, boolean store) {
 		this.name = name;
+		setLoc(loc);
+		this.uuid = UUID.randomUUID();
 		this.traits = new NPCTrait(name, range, headRotation);
 		this.store = store;
-		setLoc(loc);
 	}
 	
 	/**
@@ -112,7 +116,7 @@ public class NPCData {
 				} else if (InteractionsManager.getInteractEvents().containsKey(interactEvent.getValue())) {
 					data.setInteractEvent(InteractionsManager.getInteractEvents().get(interactEvent.getValue()));
 				} else {
-					NPCMain.instance.log(Level.WARNING, "Error restoring an NPC: Unknown interact event '"+interactEvent+"'");
+					NPCMain.instance.log(Level.WARNING, "Error restoring an NPC: Unknown interact event '"+interactEvent.getValue()+"'");
 					data.getTraits().removeInteractEvent();
 				}
 			}
@@ -140,6 +144,10 @@ public class NPCData {
 		return name;
 	}
 
+	public UUID getUUID() {
+		return uuid;
+	}
+
 	/**
 	 * @return EntityPlayer instance
 	 */
@@ -150,11 +158,9 @@ public class NPCData {
 	/**
 	 * Sets the EntityPlayer instance of this NPC.
 	 * @param npc The instance of EntityPlayer
-	 * @param uuid The UUID of the NPC.
 	 */
-	public void setNPC(Object npc, String uuid) {
+	public void setNPC(Object npc) {
 		this.npc = npc;
-		this.uuid = uuid;
 	}
 	
 	/**
@@ -176,21 +182,6 @@ public class NPCData {
 		newLoc.put("yaw", (float)((int)(((float)newLoc.get("yaw"))*100))/100);
 		newLoc.put("pitch", (float)((int)(((float)newLoc.get("pitch"))*100))/100);
 		this.loc = Location.deserialize(newLoc);
-	}
-	
-	/**
-	 * @return UUID of NPC
-	 */
-	public String getUUID() {
-		return uuid;
-	}
-	
-	/**
-	 * Sets the UUID string of this NPC. (Used during restoring)
-	 * @param uuid The UUID to be used when restoring this NPC.
-	 */
-	public void setUUID(String uuid) {
-		this.uuid = uuid;
 	}
 	
 	/**
@@ -262,13 +253,6 @@ public class NPCData {
 		return interactEvent;
 	}
 	
-	/**
-	 * @return Is the world that this NPC in null?
-	 */
-	public boolean isWorldNull() {
-		return loc == null || loc.getWorld() == null;
-	}
-
 	public boolean isStored() {
 		return store;
 	}

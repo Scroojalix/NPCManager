@@ -21,11 +21,10 @@ import io.github.scroojalix.npcmanager.events.EquipmentEvents;
 import io.github.scroojalix.npcmanager.events.NPCEvents;
 import io.github.scroojalix.npcmanager.nms.interfaces.INPCManager;
 import io.github.scroojalix.npcmanager.nms.interfaces.IPacketReader;
-import io.github.scroojalix.npcmanager.utils.EmptySlots;
-import io.github.scroojalix.npcmanager.utils.FileManager;
 import io.github.scroojalix.npcmanager.utils.PluginUtils.SaveMethod;
 import io.github.scroojalix.npcmanager.utils.PluginUtils.ServerVersion;
-import io.github.scroojalix.npcmanager.utils.SkinManager;
+import io.github.scroojalix.npcmanager.utils.chat.Messages;
+import io.github.scroojalix.npcmanager.utils.npc.equipment.EmptySlots;
 import io.github.scroojalix.npcmanager.utils.sql.MySQL;
 
 /**
@@ -39,12 +38,9 @@ public class NPCMain extends JavaPlugin {
 	public static NPCMain instance;
 	public static ServerVersion serverVersion;
 
-	public FileManager skinFile;
 	public INPCManager npc;
 	public IPacketReader reader;
-	public SkinManager skinManager;
 	public SaveMethod saveMethod;
-	public FileManager npcFile;
 	public MySQL sql;
 	public boolean showDebugMessages;
 
@@ -74,6 +70,7 @@ public class NPCMain extends JavaPlugin {
 			validVersion = false;
 			this.setEnabled(false);
 		} else {
+			initialise();
 			if (!Bukkit.getOnlinePlayers().isEmpty()) {
 				for (Player player : Bukkit.getOnlinePlayers()) {
 					reader.inject(player);
@@ -114,8 +111,6 @@ public class NPCMain extends JavaPlugin {
 		this.saveDefaultConfig();
 		EmptySlots.generateItems();
 		this.initSaveMethod();
-		this.skinFile = new FileManager(this, "skins.yml");
-		this.skinManager = new SkinManager(this);
 		this.getCommand("npc").setExecutor(new CommandManager(this));
 		this.getServer().getPluginManager().registerEvents(new NPCEvents(this), this);
 		this.getServer().getPluginManager().registerEvents(new EquipmentEvents(this), this);
@@ -154,8 +149,6 @@ public class NPCMain extends JavaPlugin {
 			return false;
 		}
 
-		initialise();
-
 		String pack = "io.github.scroojalix.npcmanager.nms."+version;
 		try {
 			npc = (INPCManager) Class.forName(pack + ".NPCManager").getConstructors()[0].newInstance(this);
@@ -177,20 +170,13 @@ public class NPCMain extends JavaPlugin {
 		this.saveDefaultConfig();
 		reloadConfig();
 		showDebugMessages = getConfig().getBoolean("show-debug-messages");
-		skinFile.reloadConfig();
-		skinManager.generateSkins();
 		setSaveMethod();
 		initSaveMethod();
-		npc.restoreNPCs();
 	}
 	
 	private void setSaveMethod() {
 		String save = getConfig().getString("save-method");
 		switch(save) {
-		case "YAML":
-			saveMethod = SaveMethod.YAML;
-			log(Level.INFO, "Save method set to YAML");
-			break;
 		case "JSON":
 			saveMethod = SaveMethod.JSON;
 			log(Level.INFO, "Save method set to JSON");
@@ -200,24 +186,21 @@ public class NPCMain extends JavaPlugin {
 			log(Level.INFO, "Save method set to MYSQL");
 			break;
 		default:
-			log(Level.WARNING, "Unknown saving method '"+save+"'. Defaulting it to YAML");
-			saveMethod = SaveMethod.YAML;
+			log(Level.WARNING, "Unknown saving method '"+save+"'. Defaulting it to JSON");
+			saveMethod = SaveMethod.JSON;
 			break;
 		}
 	}
 
 	private void initSaveMethod() {
-		switch(saveMethod) {
-		case YAML:
-			npcFile = new FileManager(this, "npcs.yml");
-			break;
-		case JSON:
-			break;
-		case MYSQL:
-			sql = new MySQL(this);
-			Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
-				@Override
-				public void run() {
+		Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
+			@Override
+			public void run() {
+				switch(saveMethod) {
+				case JSON:
+					break;
+				case MYSQL:
+					NPCMain.instance.sql = new MySQL(NPCMain.instance);
 					try {
 						sql.connect();
 						if (sql.isConnected()) {
@@ -225,11 +208,18 @@ public class NPCMain extends JavaPlugin {
 							sql.getGetter().createTable();
 						}
 					} catch (ClassNotFoundException | SQLException e) {
-						getLogger().log(Level.SEVERE, "Could not connect to database. Check that the database is online and the login info is correct, then run /npc reload.");
+						getLogger().log(Level.SEVERE, Messages.DATABASE_NOT_CONNECTED);
 					}
+					break;
 				}
-			});
-			break;
-		}
+
+				Bukkit.getScheduler().runTask(NPCMain.instance, new Runnable() {
+					@Override
+					public void run() {
+						NPCMain.instance.npc.restoreNPCs();
+					}
+				});
+			}
+		});
 	}
 }

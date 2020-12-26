@@ -10,6 +10,7 @@ import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.SubCommand;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
+import io.github.scroojalix.npcmanager.utils.npc.skin.SkinManager;
 
 public class SkinModification extends SubCommand {
 
@@ -25,7 +26,7 @@ public class SkinModification extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/npc modify <npc> skin <skin>";
+        return "/npc modify <npc> skin <type> [value] [options]";
     }
 
     @Override
@@ -33,20 +34,53 @@ public class SkinModification extends SubCommand {
         return true;
     }
 
-    //TODO redo this once new skin system is implemented.
     @Override
     public boolean execute(NPCMain main, CommandSender sender, String[] args) {
         if (args.length >= 4) {
-            String value = args[3];
-            if (value.equalsIgnoreCase("null") || NPCMain.instance.skinManager.values().contains(value)) {
-                NPCData data = main.npc.getNPCs().get(args[1]);
-                data.getTraits().setSkin(value.equalsIgnoreCase("null")?null:value);
-                sender.sendMessage(PluginUtils.format("&6Set the range of &F"+data.getName()+"&6 to &F"+value));
+            NPCData data = main.npc.getNPCs().get(args[1]);
+            if (args[3].equalsIgnoreCase("url")) {
+                if (args.length > 4) {
+                    sender.sendMessage(PluginUtils.format("&6Attempting to create skin data from the url &F"
+                        +args[4]+"&6. This may take a while"));
+                    boolean slimModel = false;
+                    if (args.length > 5) {
+                        for (int arg = 5; arg < args.length; arg++) {
+                            if (args[arg].equalsIgnoreCase("--slimModel")) {
+                                slimModel = true;
+                                break;
+                            }
+                        }
+                    }
+                    SkinManager.setSkinFromURL(sender, data, args[4], slimModel);
+                    return true;
+                }
+            } else if (args[3].equalsIgnoreCase("username")) {
+                if (args.length > 4) {
+                    if (PluginUtils.isAlphanumeric(args[4]) && args[4].length() <= 16) {
+                        sender.sendMessage(PluginUtils.format("&6Attempting to get skin data from the username &F"
+                            +args[4]+"&6. This may take a while"));
+                        boolean keepLatest = false;
+                        if (args.length > 5) {
+                            for (int arg = 5; arg < args.length; arg++) {
+                                if (args[arg].equalsIgnoreCase("--keepLatest")) {
+                                    keepLatest = true;
+                                    break;
+                                }
+                            }
+                        }
+                        SkinManager.setSkinFromUsername(sender, data, args[4], keepLatest);
+                        return true;
+                    } else {
+                        sender.sendMessage(ChatColor.RED+"That username is not valid.");
+                    }
+                }
+            } else if (args[3].equalsIgnoreCase("default")) {
+                data.getTraits().setSkinData(null);
+                data.getTraits().setSkinLayers(null);
                 main.npc.saveNPC(data);
                 main.npc.updateNPC(data);
+                sender.sendMessage(PluginUtils.format("&6Reset the skin of &F"+data.getName()));
                 return true;
-            } else {
-                sender.sendMessage(ChatColor.RED+"'"+value+"' is not a valid skin.");
             }
         }
         return false;
@@ -56,9 +90,12 @@ public class SkinModification extends SubCommand {
     public List<String> onTabComplete(String[] args) {
         List<String> result = new ArrayList<String>();
         if(args.length == 4) {
-            result.add("null");
-            for (String skin : NPCMain.instance.skinManager.values()) {
-                result.add(skin);
+            result.add("url"); result.add("username"); result.add("default");
+        } else if (args.length > 5) {
+            if (args[3].equalsIgnoreCase("url")) {
+                result.add("--slimModel");
+            } else if (args[3].equalsIgnoreCase("username")) {
+                result.add("--keepLatest");
             }
         }
         return result;

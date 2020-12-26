@@ -25,6 +25,7 @@ public class ModifyCommand extends SubCommand {
         subcommands.add(new HeadRotationModification());
         subcommands.add(new RangeModification());
         subcommands.add(new SkinModification());
+        subcommands.add(new SkinLayersModification());
     }
 
     @Override

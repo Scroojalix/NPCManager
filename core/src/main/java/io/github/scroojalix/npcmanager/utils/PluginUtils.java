@@ -13,6 +13,9 @@ import net.md_5.bungee.api.ChatColor;
 
 public class PluginUtils {
 
+	//TODO add config option to customise this.
+	public static final long NPC_REMOVE_DELAY = 60l;
+
     private static final Pattern pattern = Pattern.compile("#[a-fA-F0-9]{6}");
     
     /**
@@ -36,8 +39,8 @@ public class PluginUtils {
 		return NPCMain.instance.npc.getNPCs().containsKey(name);
 	}
 
-	public static boolean isAlphaNumeric(String s) {
-        return s != null && s.matches("^[a-zA-Z0-9]*$");
+	public static boolean isAlphanumeric(String s) {
+        return s != null && s.matches("^[a-zA-Z0-9_]+$");
 	}
 
 	public static boolean isSuitableItem(ItemStack item, String type, Player p) {
@@ -55,15 +58,8 @@ public class PluginUtils {
 			return true;
 		case "mainhand":
 		case "offhand":
-			try {
-				if (item.getType().isItem()) {
-					return true;
-				}
-			} catch (NoSuchMethodError e) {
-				//TODO add some more logic here
-				return true;
-			}
-			break;
+			//FIXME can cause error if using Material that is a block (eg. Material.ACACIA_WALL_SIGN) when executing this method from API.
+			return true;
 		}
 		if (p != null) {
 			p.playSound(p.getLocation(), Sound.valueOf(CommandUtils.getErrorSound()), 5f, 0.5f);
@@ -72,12 +68,13 @@ public class PluginUtils {
         return false;
     }
 	
+	//TODO implement MongoDB
 	/**
 	 * Save method for the plugin. 
 	 * @author Scroojalix
 	 */
 	public enum SaveMethod {
-		YAML, JSON, MYSQL;
+		JSON, MYSQL;
 	}
 
 	/**

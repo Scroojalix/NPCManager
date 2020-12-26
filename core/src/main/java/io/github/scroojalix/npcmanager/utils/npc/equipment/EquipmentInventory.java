@@ -1,4 +1,4 @@
-package io.github.scroojalix.npcmanager.utils;
+package io.github.scroojalix.npcmanager.utils.npc.equipment;
 
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;

@@ -4,6 +4,8 @@ import com.google.gson.annotations.Expose;
 
 import io.github.scroojalix.npcmanager.utils.interactions.InteractEventType;
 import io.github.scroojalix.npcmanager.utils.interactions.NPCInteractionData;
+import io.github.scroojalix.npcmanager.utils.npc.skin.SkinData;
+import io.github.scroojalix.npcmanager.utils.npc.skin.SkinLayers;
 
 /**
  * Class that stores all of an NPC's traits.
@@ -19,7 +21,11 @@ public class NPCTrait {
     @Expose
     private boolean headRotation;
     @Expose
-    private String skin;
+    private SkinData skin;
+    @Expose
+    private SkinLayers skinLayers;
+
+    
     @Expose
     private NPCInteractionData interactEvent;
     @Expose
@@ -31,14 +37,14 @@ public class NPCTrait {
         this.headRotation = headRotation;
         this.equipment = new NPCEquipment();
     }
-
+    
     /**
      * @return The display name of this NPC.
      */
     public String getDisplayName() {
         return this.displayName;
     }
-
+    
     /**
      * Sets the display name of this NPC.
      * @param displayName The new display name.
@@ -46,14 +52,14 @@ public class NPCTrait {
     public void setDisplayName(String displayName) {
         this.displayName = displayName.equalsIgnoreCase("null")?null:displayName;
     }
-
+    
     /**
      * @return The subtitle of this NPC.
      */
     public String getSubtitle() {
         return this.subtitle;
     }
-
+    
     /**
      * Sets the subtitle of this NPC.
      * @param subtitle The new subtitle.
@@ -61,14 +67,14 @@ public class NPCTrait {
     public void setSubtitle(String subtitle) {
         this.subtitle = subtitle.equalsIgnoreCase("null")?null:subtitle;
     }
-
+    
     /**
      * @return The distance at which this NPC will be visible from.
      */
     public int getRange() {
         return this.range;
     }
-
+    
     /**
      * Sets this range at which this NPC will be visible from.
      * @param range The new range.
@@ -76,14 +82,14 @@ public class NPCTrait {
     public void setRange(int range) {
         this.range = range;
     }
-
+    
     /**
      * @return Whether or not this NPC has head rotation.
      */
     public boolean hasHeadRotation() {
         return this.headRotation;
     }
-
+    
     /**
      * Sets whether or not this NPC has head rotation.
      * @param headRotation Should this NPC have head rotation or not?
@@ -92,24 +98,29 @@ public class NPCTrait {
         this.headRotation = headRotation;
     }
 
-    /**
-     * Returns the name of this NPC's skin.
-     * <p>
-     * The skins are configured in the skins.yml file in the plugin folder.
-     * @return The name of this NPC's skin.
-     */
-    public String getSkin() {
+    public SkinData getSkinData() {
         return this.skin;
     }
-
-    /**
-     * Sets the skin of this NPC.
-     * @param skin The name of the new skin for the NPC, defined in skins.yml.
-     */
-    public void setSkin(String skin) {
-        this.skin = skin;
+    
+    public void setSkinData(SkinData skinData) {
+        this.skin = skinData;
     }
 
+    public SkinLayers getSkinLayers() {
+        return this.skinLayers;
+    }
+
+    public void setSkinLayers(SkinLayers skinLayers) {
+        this.skinLayers = skinLayers;
+    }
+
+    public byte getSkinLayersByte() {
+        if (this.skinLayers != null) {
+            return skinLayers.getDisplayedSkinParts();
+        }
+        return 127;
+    }
+    
     /**
      * Gets the equipment that the NPC has, meaning armor, main hand and off hand items.
      * @return The NPC's equipment.

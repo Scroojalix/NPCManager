@@ -1,4 +1,4 @@
-package io.github.scroojalix.npcmanager.utils;
+package io.github.scroojalix.npcmanager.utils.npc.equipment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import io.github.scroojalix.npcmanager.NPCMain;
+import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class EmptySlots {
 

@@ -13,10 +13,9 @@ reset-headrotation: true
 
 # The save method to use.
 # Suitable Values:
-# YAML (default) - Saves all NPC's to a single .yml file.
-# JSON - Saves each NPC to its own .json file.
+# JSON (default) - Saves each NPC to its own .json file.
 # MYSQL - Saves NPC's to a MYSQL database.
-save-method: YAML
+save-method: JSON
 
 # Database Settings. Only applies if using a MYSQL database for storage.
 sql:

@@ -3,6 +3,7 @@ package io.github.scroojalix.npcmanager.utils.sql;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
@@ -27,19 +28,26 @@ public class SQLGetter {
 		}
 	}
 	
-	public void addNPC(NPCData data) {
+	public boolean addNPC(NPCData data, boolean replace) {
 		try {
 			String name = data.getName();
 			String json = data.toJson(false);
 			if (exists(name)) {
-				remove(name);
+				if (replace) {
+					remove(name);
+				} else {
+					main.log(Level.WARNING, "Could not merge NPC from temp storage to database. An NPC with the same name already exists in the database.");
+					return false;
+				}
 			}
 			PreparedStatement ps = main.sql.getConnection().prepareStatement("INSERT IGNORE INTO "+tableName+" (NAME,DATA) VALUES (?,?)");
 			ps.setString(1, name);
 			ps.setString(2, json);
 			ps.executeUpdate();
+			return true;
 		} catch(SQLException e) {
 			e.printStackTrace();
+			return false;
 		}
 	}
 	
@@ -71,15 +79,6 @@ public class SQLGetter {
 		return null;
 	}
 	
-	public void emptyTable() {
-		try {
-			PreparedStatement ps = main.sql.getConnection().prepareStatement("TRUNCATE "+tableName);
-			ps.executeUpdate();
-		} catch(SQLException | NullPointerException e) {
-			e.printStackTrace();
-		}
-	}
-	
 	public void remove(String name) {
 		try {
 			PreparedStatement ps = main.sql.getConnection().prepareStatement("DELETE FROM "+tableName+" WHERE NAME=?");
@@ -96,12 +95,9 @@ public class SQLGetter {
 				PreparedStatement ps = main.sql.getConnection().prepareStatement("SELECT * FROM "+tableName);
 				ps.execute();
 				return true;
-			} catch (NullPointerException | SQLException e) {
-				return false;
-			}
-		} else {
-			return false;
+			} catch (NullPointerException | SQLException e) {}
 		}
+		return false;
 	}
 	
 	public void restoreDataEntries() {

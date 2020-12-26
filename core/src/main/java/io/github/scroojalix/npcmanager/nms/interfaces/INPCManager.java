@@ -14,7 +14,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import io.github.scroojalix.npcmanager.NPCMain;
-import io.github.scroojalix.npcmanager.utils.FileManager;
 import io.github.scroojalix.npcmanager.utils.chat.Messages;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.sql.SQLGetter;
@@ -116,30 +115,33 @@ public abstract class INPCManager {
 	}
 	
 	public void removeNPCFromStorage(String name) {
-		switch (main.saveMethod) {
-			case YAML:
-				main.npcFile.getConfig().set("npc." + name, null);
-				main.npcFile.saveConfig();
-				break;
-			case JSON:
-				File jsonFile = new File(main.getDataFolder()+"/json-storage", name+".json");
-				if (jsonFile.exists()) {
-					jsonFile.delete();
+		Bukkit.getScheduler().runTaskAsynchronously(main, new Runnable(){
+			@Override
+			public void run() {
+				switch (main.saveMethod) {
+					case JSON:
+						File jsonFile = new File(main.getDataFolder()+"/json-storage", name+".json");
+						if (jsonFile.exists()) {
+							jsonFile.delete();
+						}
+						break;
+					case MYSQL:
+						if (main.sql.getGetter().testConnection()) {
+							main.sql.getGetter().remove(name);
+						} else {
+							File tempFile = new File(main.getDataFolder()+"/json-storage/temp", name+".json");
+							if (tempFile.exists()) {
+								tempFile.delete();
+								File tempDir = new File(main.getDataFolder()+"/json-storage/temp");
+								if (tempDir.list().length == 0) {
+									tempDir.delete();
+								}
+							}
+						}
+						break;
 				}
-				break;
-			case MYSQL:
-				if (main.sql.getGetter().testConnection()) {
-					main.sql.getGetter().remove(name);
-				} else {
-					FileManager temp = new FileManager(main, "temp.yml");
-					if (temp.getConfig().isSet("npc."+name)) {
-						temp.getConfig().set("npc."+name, null);
-						temp.saveConfig();
-						main.log(Level.INFO, "Removed an NPC from temp.yml");
-					}
-				}
-				break;
-		}
+			}
+		});
 	}
 
 	/**
@@ -150,6 +152,8 @@ public abstract class INPCManager {
 	 */
 	public abstract void sendRemoveNPCPackets(Player p, NPCData data);
 
+	//TODO move all save and restore methods to its own class. (DataManager.java)
+	//
 	/**
 	 * Saves an NPC.
 	 * 
@@ -161,25 +165,17 @@ public abstract class INPCManager {
 				@Override
 				public void run() {
 					switch (main.saveMethod) {
-					case YAML:
-						saveYAMLNPC(data, main.npcFile);
-						break;
 					case JSON:
-						saveJSONNPC(data);
+						saveJSONNPC(data, "/json-storage");
 						break;
 					case MYSQL:
 						SQLGetter getter = main.sql.getGetter();
 						if (getter.testConnection()) {
-							if (!data.isWorldNull()) {
-								getter.addNPC(data);
-							} else {
-								main.getLogger().log(Level.WARNING,
-										"Could not save NPC '" + data.getName() + "'. That world does not exist.");
-							}
+							getter.addNPC(data, true);
 						} else {
-							main.log(Level.WARNING, "Could not save NPC to database.");
-							main.log(Level.WARNING, "Saving NPC to temp.yml instead.");
-							saveYAMLNPC(data, new FileManager(main, "temp.yml"));
+							main.log(Level.SEVERE, Messages.DATABASE_NOT_CONNECTED);
+							main.log(Level.SEVERE, "Saving NPC to temp storage instead.");
+							saveJSONNPC(data, "/json-storage/temp");
 						}
 						break;
 					}
@@ -188,25 +184,13 @@ public abstract class INPCManager {
 		}
 	}
 
-	//TODO remove YAML saving and auto update current users to use JSON instead.
-	/**
-	 * Saves an NPC to a .yml file.
-	 * 
-	 * @param data The data to save.
-	 * @param file The file to save to.
-	 */
-	private void saveYAMLNPC(NPCData data, FileManager file) {
-		file.getConfig().set("npc." + data.getName(), data.toJson(true));
-		file.saveConfig();
-	}
-
 	/**
 	 * Saves an NPC to a .json file.
 	 * 
 	 * @param data The data to save.
 	 */
-	private void saveJSONNPC(NPCData data) {
-		File jsonFile = new File(main.getDataFolder() + "/json-storage", data.getName() + ".json");
+	private void saveJSONNPC(NPCData data, String dir) {
+		File jsonFile = new File(main.getDataFolder() + dir, data.getName() + ".json");
 		try {
 			jsonFile.getParentFile().mkdirs();
 			jsonFile.createNewFile();
@@ -228,16 +212,10 @@ public abstract class INPCManager {
 	 */
 	public void restoreNPCs() {
 		if (main.saveMethod != null)
-			Bukkit.getScheduler().scheduleSyncDelayedTask(main, new Runnable() {
+			Bukkit.getScheduler().runTaskLater(main, new Runnable() {
 				@Override
 				public void run() {
 					switch (main.saveMethod) {
-						case YAML:
-							if (main.npcFile.getConfig().contains("npc")) {
-								main.log(Level.INFO, Messages.RESTORE_NPCS);
-								restoreYAMLNPCs();
-							}
-							break;
 						case JSON:
 							if (new File(main.getDataFolder()+"/json-storage").exists()) {
 								main.log(Level.INFO, Messages.RESTORE_NPCS);
@@ -250,19 +228,15 @@ public abstract class INPCManager {
 								main.log(Level.INFO, Messages.RESTORE_NPCS);
 								main.sql.getGetter().restoreDataEntries();
 							}
-							File file = new File(main.getDataFolder(), "temp.yml");
-							if (file.exists()) {
-								main.log(Level.INFO, "Restoring NPC's from temp.yml");
-								FileManager temp = new FileManager(main, "temp.yml");
-								restoreTempNPCs(temp, connected);
-								if (connected) {
-									file.delete();
-								}
+							File tempDir = new File(main.getDataFolder()+"/json-storage/temp");
+							if (tempDir.exists()) {
+								main.log(Level.INFO, "Restoring NPC's from temp storage.");
+								restoreTempNPCs(connected);
 							}
 							break;
 					}
 				}
-			}, 10);
+			}, 1l);
 	}
 
 	/**
@@ -270,36 +244,32 @@ public abstract class INPCManager {
 	 * 
 	 * @param temp Reference to temp.yml file.
 	 */
-	private void restoreTempNPCs(FileManager temp, boolean connected) {
-		if (temp.getConfig().contains("npc"))
-			temp.getConfig().getConfigurationSection("npc").getKeys(false).forEach(current -> {
-				NPCData data = NPCData.fromJson(current, temp.getConfig().getString("npc." + current), true);
-				if (data != null) {
-					if (connected) {
-						if (!main.sql.getGetter().exists(data.getName())) {
-							main.sql.getGetter().addNPC(data);
-							restoreNPC(data);
-						} else {
-							main.log(Level.WARNING,
-									"Could not merge NPC from temp.yml to database, because an NPC with the same name already exists in the database.");
+	private void restoreTempNPCs(boolean connected) {
+		File tempStorage = new File(main.getDataFolder()+"/json-storage/temp");
+		File[] tempFiles = tempStorage.listFiles();
+		if (tempFiles != null) {
+			for (int i = 0; i < tempFiles.length; i++) {
+				File current = tempFiles[i];
+				if (current.isFile() && current.getName().endsWith(".json")) {
+					try {
+						String json = new String(Files.readAllBytes(Paths.get(current.getPath())));
+						NPCData data = NPCData.fromJson(current.getName().replace(".json", ""), json, true);
+						if (data != null) {
+							boolean restore = true;
+							if (connected) {
+								restore = main.sql.getGetter().addNPC(data, false);
+								current.delete();
+							}
+							if (restore) {
+								restoreNPC(data);
+							}
 						}
-					} else {
-						restoreNPC(data);
+					} catch (IOException e) {
+						e.printStackTrace();
 					}
 				}
-			});
-	}
-
-	/**
-	 * Restores all NPC's from npcs.yml
-	 */
-	private void restoreYAMLNPCs() {
-		if (main.npcFile.getConfig().contains("npc"))
-			main.npcFile.getConfig().getConfigurationSection("npc").getKeys(false).forEach(current -> {
-				NPCData data = NPCData.fromJson(current, main.npcFile.getConfig().getString("npc." + current), true);
-				if (data != null)
-					restoreNPC(data);
-			});
+			}
+		}
 	}
 
 	private void restoreJSONNPCs() {

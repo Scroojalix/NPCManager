@@ -10,8 +10,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import io.github.scroojalix.npcmanager.NPCMain;
-import io.github.scroojalix.npcmanager.utils.EmptySlots;
-import io.github.scroojalix.npcmanager.utils.EquipmentInventory;
+import io.github.scroojalix.npcmanager.utils.npc.equipment.EmptySlots;
+import io.github.scroojalix.npcmanager.utils.npc.equipment.EquipmentInventory;
 import io.github.scroojalix.npcmanager.utils.chat.Messages;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 import io.github.scroojalix.npcmanager.utils.chat.TextComponentWrapper;
@@ -169,8 +169,6 @@ public class CommandUtils {
 		}
 	}
 
-	//TODO Use this resource to make this more reliable
-	//https://www.spigotmc.org/threads/free-code-sending-perfectly-centered-chat-message.95872/
 	private static String getSpacer(int wordLength) {
 		boolean even = wordLength % 2 == 0;
 		int startLength = even?24:28;

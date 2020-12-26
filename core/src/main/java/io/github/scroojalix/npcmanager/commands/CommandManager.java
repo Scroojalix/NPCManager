@@ -37,6 +37,8 @@ public class CommandManager implements TabExecutor {
         subcommands.add(new ClearCommand());
         subcommands.add(new InfoCommand());
         subcommands.add(new ReloadCommand());
+        //TODO add rename command
+
         main.getCommand("npc").setTabCompleter(this);
     }
 

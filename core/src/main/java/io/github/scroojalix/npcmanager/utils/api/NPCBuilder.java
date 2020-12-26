@@ -10,6 +10,7 @@ import io.github.scroojalix.npcmanager.utils.PluginUtils;
 import io.github.scroojalix.npcmanager.utils.interactions.CommandInteraction;
 import io.github.scroojalix.npcmanager.utils.interactions.InteractionsManager;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
+import io.github.scroojalix.npcmanager.utils.npc.skin.SkinManager;
 
 public class NPCBuilder {
 
@@ -63,10 +64,23 @@ public class NPCBuilder {
         return this;
     }
 
-    //TODO redo this method
-    public NPCBuilder setSkin(String skin) {
-        if (NPCMain.instance.skinManager.values().contains(skin)) {
-            data.getTraits().setSkin(skin);
+    //FIXME wait until NPC is spawned before updating skin.
+    	/**
+	 * Set the skin of an NPC.
+	 * @param name The name of the NPC to modify.
+	 * @param type The method of getting skin data. Can be set to <code>url</code> or <code>username</code>.
+	 * @param value The URL to the skin image or the username to get textures from.
+	 * @param optionalArg If <code>type</code> is set to <code>"url"</code> and
+	 * this is set to <code>true</code>, then the resulting skin will use the slim model.
+	 * Set it to <code>false</code> to use the default model. If <code>type</code> is set
+	 * to <code>"username"</code>, then set this to <code>true</code> to automatically
+	 * update the skin on every reload.
+	 */
+    public NPCBuilder setSkin(String type, String value, boolean optionalArg) {
+        if (type.equalsIgnoreCase("url")) {
+            SkinManager.setSkinFromURL(null, data, value, optionalArg);
+        } else if (type.equalsIgnoreCase("username")) {
+            SkinManager.setSkinFromUsername(null, data, value, optionalArg);
         }
         return this;
     }
