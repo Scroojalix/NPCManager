@@ -5,6 +5,8 @@ This file is here in the hopes of recording all changes made throughout the plug
 This project uses the versioning format {phase}.{major}.{minor}, where phase is pretty much never going to change, major is for backwards incompatible changes, and minor is for backwards compatible bug fixes.
 
 ## [Unreleased]
+### Added
+ - MIT License to the project.
 ### Changed
  - Renamed/moved a few classes to organise the project better. Shouldn't affect the API.
 ### Fixed
