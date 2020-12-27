@@ -55,9 +55,11 @@ public class PluginUtils {
 			return true;
 		switch(type) {
 		case "helmet":
-			return true;
 		case "mainhand":
 		case "offhand":
+			//FIXME if setting this to a invalid Material eg. ACACIA_WALL_SIGN, it automatically gets replaced with AIR
+			//Causes EmptySlot item to be used in Equipment Inventory
+			//If this happens, set that slot to null, then save NPC (don't update)
 			return true;
 		}
 		if (p != null) {
