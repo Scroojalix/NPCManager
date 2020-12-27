@@ -5,7 +5,8 @@ import com.google.gson.annotations.Expose;
 import io.github.scroojalix.npcmanager.utils.interactions.InteractEventType;
 import io.github.scroojalix.npcmanager.utils.interactions.NPCInteractionData;
 import io.github.scroojalix.npcmanager.utils.npc.skin.SkinData;
-import io.github.scroojalix.npcmanager.utils.npc.skin.SkinLayers;
+import io.github.scroojalix.npcmanager.utils.npc.equipment.NPCEquipment;
+import io.github.scroojalix.npcmanager.utils.npc.skin.NPCSkinLayers;
 
 /**
  * Class that stores all of an NPC's traits.
@@ -23,7 +24,7 @@ public class NPCTrait {
     @Expose
     private SkinData skin;
     @Expose
-    private SkinLayers skinLayers;
+    private NPCSkinLayers skinLayers;
 
     
     @Expose
@@ -106,11 +107,11 @@ public class NPCTrait {
         this.skin = skinData;
     }
 
-    public SkinLayers getSkinLayers() {
+    public NPCSkinLayers getSkinLayers() {
         return this.skinLayers;
     }
 
-    public void setSkinLayers(SkinLayers skinLayers) {
+    public void setSkinLayers(NPCSkinLayers skinLayers) {
         this.skinLayers = skinLayers;
     }
 

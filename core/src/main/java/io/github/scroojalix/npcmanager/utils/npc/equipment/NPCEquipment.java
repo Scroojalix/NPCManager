@@ -1,4 +1,4 @@
-package io.github.scroojalix.npcmanager.utils.npc;
+package io.github.scroojalix.npcmanager.utils.npc.equipment;
 
 import java.util.ArrayList;
 import java.util.List;

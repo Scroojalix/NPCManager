@@ -2,7 +2,7 @@ package io.github.scroojalix.npcmanager.utils.npc.skin;
 
 import com.google.gson.annotations.Expose;
 
-public class SkinLayers {
+public class NPCSkinLayers {
 
     @Expose
     private boolean cape;
@@ -19,7 +19,7 @@ public class SkinLayers {
     @Expose
     private boolean hat;
 
-    public SkinLayers() {
+    public NPCSkinLayers() {
         cape = true;
         jacket = true;
         leftSleeve = true;

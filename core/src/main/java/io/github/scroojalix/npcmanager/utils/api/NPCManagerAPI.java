@@ -11,8 +11,8 @@ import io.github.scroojalix.npcmanager.utils.interactions.CommandInteraction;
 import io.github.scroojalix.npcmanager.utils.interactions.InteractEventType;
 import io.github.scroojalix.npcmanager.utils.interactions.InteractionsManager;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
-import io.github.scroojalix.npcmanager.utils.npc.NPCEquipment;
 import io.github.scroojalix.npcmanager.utils.npc.NPCTrait;
+import io.github.scroojalix.npcmanager.utils.npc.equipment.NPCEquipment;
 import io.github.scroojalix.npcmanager.utils.npc.skin.SkinManager;
 
 public class NPCManagerAPI {

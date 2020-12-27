@@ -12,7 +12,7 @@ import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.SubCommand;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
-import io.github.scroojalix.npcmanager.utils.npc.skin.SkinLayers;
+import io.github.scroojalix.npcmanager.utils.npc.skin.NPCSkinLayers;
 
 public class SkinLayersModification extends SubCommand {
 
@@ -39,7 +39,7 @@ public class SkinLayersModification extends SubCommand {
     @Override
     public boolean execute(NPCMain main, CommandSender sender, String[] args) {
         NPCData data = main.npc.getNPCs().get(args[1]);
-        SkinLayers layers = data.getTraits().getSkinLayers();
+        NPCSkinLayers layers = data.getTraits().getSkinLayers();
         if (args.length == 3 && layers != null) {
             sendCurrentConfiguration(sender, layers);
             return true;
@@ -68,12 +68,12 @@ public class SkinLayersModification extends SubCommand {
         if (args.length % 2 == 0) {
             ArrayList<String> usedLayers = new ArrayList<String>();
             for (int arg = 3; arg < args.length; arg++) {
-                for (String layer : SkinLayers.skinParts) {
+                for (String layer : NPCSkinLayers.skinParts) {
                     if (args[arg].replace("--","").equalsIgnoreCase(layer))
                         usedLayers.add(layer);
                 }
             }
-            for (String layer : SkinLayers.skinParts) {
+            for (String layer : NPCSkinLayers.skinParts) {
                 if (!usedLayers.contains(layer)) result.add("--"+layer);
             }
         } else if (args.length <= 17){
@@ -82,8 +82,8 @@ public class SkinLayersModification extends SubCommand {
         return result;
     }
     
-    private void sendCurrentConfiguration(CommandSender sender, SkinLayers layers) {
-        String[] skinParts = SkinLayers.skinParts;
+    private void sendCurrentConfiguration(CommandSender sender, NPCSkinLayers layers) {
+        String[] skinParts = NPCSkinLayers.skinParts;
         boolean[] values = layers.getBoolArray();
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < skinParts.length; i++) {
@@ -93,8 +93,8 @@ public class SkinLayersModification extends SubCommand {
         sender.sendMessage(builder.toString());
     }
 
-    private SkinLayers applyModifications(CommandSender sender, SkinLayers layers, LinkedHashMap<String, String> modifications) {
-        if (layers == null) layers = new SkinLayers();
+    private NPCSkinLayers applyModifications(CommandSender sender, NPCSkinLayers layers, LinkedHashMap<String, String> modifications) {
+        if (layers == null) layers = new NPCSkinLayers();
         for (Map.Entry<String, String> entry : modifications.entrySet()) {
             if (entry.getValue().equalsIgnoreCase("true") || entry.getValue().equalsIgnoreCase("false")) {
                 boolean value = entry.getValue().equalsIgnoreCase("true");
