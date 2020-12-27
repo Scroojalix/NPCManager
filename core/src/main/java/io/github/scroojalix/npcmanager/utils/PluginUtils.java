@@ -58,7 +58,6 @@ public class PluginUtils {
 			return true;
 		case "mainhand":
 		case "offhand":
-			//FIXME can cause error if using Material that is a block (eg. Material.ACACIA_WALL_SIGN) when executing this method from API.
 			return true;
 		}
 		if (p != null) {
