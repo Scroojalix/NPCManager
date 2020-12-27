@@ -122,6 +122,10 @@ public class NPCManagerAPI {
 	}
 	
 	//TODO create methods for all modifications.
+	//skinLayers -> use List<Pair<SkinLayer, Boolean>>
+
+	//move each of these modifications to there own methods
+	//ensure NPCBuilder has all the same features.
 	/**
 	 * Modifies an NPC.
 	 * @param name The name of the NPC to modify.
