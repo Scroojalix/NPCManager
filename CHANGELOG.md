@@ -5,7 +5,7 @@ This file is here in the hopes of recording all changes made throughout the plug
 This project uses the versioning format {phase}.{major}.{minor}, where phase is pretty much never going to change, major is for backwards incompatible changes, and minor is for backwards compatible bug fixes.
 
 ## [Unreleased]
-### Changed
+### Fixed
  - SkinLayers no longer get reset when a skin is being updated.
 
 ## [1.4.0] - 2020-12-27
