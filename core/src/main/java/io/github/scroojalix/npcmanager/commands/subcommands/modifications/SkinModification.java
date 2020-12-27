@@ -51,6 +51,7 @@ public class SkinModification extends SubCommand {
                             }
                         }
                     }
+                    data.getTraits().setSkinLayers(null);
                     SkinManager.setSkinFromURL(sender, data, args[4], slimModel);
                     return true;
                 }
@@ -68,6 +69,7 @@ public class SkinModification extends SubCommand {
                                 }
                             }
                         }
+                        data.getTraits().setSkinLayers(null);
                         SkinManager.setSkinFromUsername(sender, data, args[4], keepLatest);
                         return true;
                     } else {

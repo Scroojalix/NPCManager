@@ -52,7 +52,6 @@ public class SkinManager {
 					String signature = property.get("signature").getAsString();
 					data.getTraits().setSkinData(new SkinData(name, texture, signature, keepLatest));
 					data.getTraits().getSkinData().setHasUpdated(true);
-					data.getTraits().setSkinLayers(null);
 					Bukkit.getScheduler().runTask(NPCMain.instance, new Runnable() {
 						@Override
 						public void run() {
@@ -103,7 +102,6 @@ public class SkinManager {
 					String signature = (String) texture.get("signature");
 					con.disconnect();
 					data.getTraits().setSkinData(new SkinData(uuid, textureEncoded, signature, false));
-					data.getTraits().setSkinLayers(null);
 					Bukkit.getScheduler().runTask(NPCMain.instance, new Runnable() {
 						@Override
 						public void run() {
