@@ -2,7 +2,7 @@
 
 This file is here in the hopes of recording all changes made throughout the plugins history and future, to make it easier for users and developers to understand the changes between versions.
 
-This project doesn't really adhere to a formal versioning format. I just increment the numbers whenever I feel like it.
+This project uses the versioning format {phase}.{major}.{minor}, where phase is pretty much never going to change, major is for backwards incompatible changes, and minor is for backwards compatible bug fixes.
 
 ## [Unreleased]
 ### Changed
