@@ -40,8 +40,6 @@ public class NPCSkinLayers {
         return result;
     }
 
-    public static String[] skinParts = new String[] {"cape", "jacket", "leftSleeve", "rightSleeve", "leftLeg", "rightLeg", "hat"};
-
     public boolean[] getBoolArray() {
         return new boolean[] {cape, jacket, leftSleeve, rightSleeve, leftLeg, rightLeg, hat};
     }

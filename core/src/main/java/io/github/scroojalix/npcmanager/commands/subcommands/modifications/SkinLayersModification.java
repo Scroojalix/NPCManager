@@ -13,6 +13,7 @@ import io.github.scroojalix.npcmanager.commands.SubCommand;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.npc.skin.NPCSkinLayers;
+import io.github.scroojalix.npcmanager.utils.npc.skin.SkinLayer;
 
 public class SkinLayersModification extends SubCommand {
 
@@ -66,15 +67,14 @@ public class SkinLayersModification extends SubCommand {
     public List<String> onTabComplete(String[] args) {
         ArrayList<String> result = new ArrayList<String>();
         if (args.length % 2 == 0) {
-            ArrayList<String> usedLayers = new ArrayList<String>();
-            for (int arg = 3; arg < args.length; arg++) {
-                for (String layer : NPCSkinLayers.skinParts) {
-                    if (args[arg].replace("--","").equalsIgnoreCase(layer))
-                        usedLayers.add(layer);
+            for (SkinLayer layer : SkinLayer.values()) {
+                result.add(layer.label);
+                for (int arg = 3; arg < args.length; arg++) {
+                    if (args[arg].equalsIgnoreCase(layer.label)) {
+                        result.remove(layer.label);
+                        break;
+                    }
                 }
-            }
-            for (String layer : NPCSkinLayers.skinParts) {
-                if (!usedLayers.contains(layer)) result.add("--"+layer);
             }
         } else if (args.length <= 17){
             result.add("true"); result.add("false");
@@ -83,11 +83,11 @@ public class SkinLayersModification extends SubCommand {
     }
     
     private void sendCurrentConfiguration(CommandSender sender, NPCSkinLayers layers) {
-        String[] skinParts = NPCSkinLayers.skinParts;
+        SkinLayer[] skinParts = SkinLayer.values();
         boolean[] values = layers.getBoolArray();
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < skinParts.length; i++) {
-            builder.append(ChatColor.GOLD+skinParts[i]+": "+ChatColor.WHITE+values[i]);
+            builder.append(ChatColor.GOLD+skinParts[i].label+": "+ChatColor.WHITE+values[i]);
             if (i < skinParts.length - 1) builder.append(ChatColor.GOLD+", ");
         }
         sender.sendMessage(builder.toString());
