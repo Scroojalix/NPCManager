@@ -7,6 +7,7 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 ## [Unreleased]
 ### Added
  - MIT License to the project.
+ - Changelog to keep track of changes.
 ### Changed
  - Renamed/moved a few classes to organise the project better. Shouldn't affect the API.
 ### Fixed
