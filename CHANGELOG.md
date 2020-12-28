@@ -58,6 +58,17 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
  - Use different method of reading a file to a string because previous method did not exist on older server versions.
  - When spawning NPC, their location is rounded off to two decimal places in a language independent way.
 
+## [1.3.5] - 2020-12-17
+### Changed
+ - The interactEvent and equipment commands were moved into subcommands of the modify command.
+ - Command descriptions were made more informative.
+ - NPC names now have to be alphanumerical.
+### Fixed
+ - Messages containing meta data (click event/hover event) will now dislay the correct console when sent to console.
+ - Tab Completion was fixed for some commands.
+### Removed
+ - Some debug messages that were used for testing, but are no longer needed.
+
 [//]: # (//TODO add changes for ALL versions since 1.0.0)
 [//]: # (Refer to https://keepachangelog.com/en/1.0.0/ and example on wesbite)
 [//]: # (Once this is done, update all release descriptions with the changelogs)
@@ -66,3 +77,4 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 [1.4.0]: https://github.com/Scroojalix/NPCManager/compare/v1.3.7...v1.4.0
 [1.3.7]: https://github.com/Scroojalix/NPCManager/compare/v1.3.6...v1.3.7
 [1.3.6]: https://github.com/Scroojalix/NPCManager/compare/v1.3.5...v1.3.6
+[1.3.5]: https://github.com/Scroojalix/NPCManager/compare/v1.3.4...v1.3.5
