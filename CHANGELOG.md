@@ -77,7 +77,7 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 [//]: # (Refer to https://keepachangelog.com/en/1.0.0/ and example on wesbite)
 [//]: # (Once this is done, update all release descriptions with the changelogs)
 
-[Unreleased]: https://github.com/Scroojalix/NPCManager/compare/v1.4.0...HEAD
+[Unreleased]: https://github.com/Scroojalix/NPCManager/compare/v1.4.0...master
 [1.4.0]: https://github.com/Scroojalix/NPCManager/compare/v1.3.7...v1.4.0
 [1.3.7]: https://github.com/Scroojalix/NPCManager/compare/v1.3.6...v1.3.7
 [1.3.6]: https://github.com/Scroojalix/NPCManager/compare/v1.3.5...v1.3.6
