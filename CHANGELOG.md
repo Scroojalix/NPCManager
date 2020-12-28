@@ -69,6 +69,10 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 ### Removed
  - Some debug messages that were used for testing, but are no longer needed.
 
+## [1.3.4] - 2020-12-11
+### Added
+ - An Update Checker, which prints a message to the console if a new version is available on GitHub.
+
 [//]: # (//TODO add changes for ALL versions since 1.0.0)
 [//]: # (Refer to https://keepachangelog.com/en/1.0.0/ and example on wesbite)
 [//]: # (Once this is done, update all release descriptions with the changelogs)
@@ -78,3 +82,4 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 [1.3.7]: https://github.com/Scroojalix/NPCManager/compare/v1.3.6...v1.3.7
 [1.3.6]: https://github.com/Scroojalix/NPCManager/compare/v1.3.5...v1.3.6
 [1.3.5]: https://github.com/Scroojalix/NPCManager/compare/v1.3.4...v1.3.5
+[1.3.4]: https://github.com/Scroojalix/NPCManager/compare/v1.3.3...v1.3.4
