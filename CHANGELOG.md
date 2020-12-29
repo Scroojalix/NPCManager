@@ -85,19 +85,19 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 - The Info Command has been finished/fixed. Now displays all of an NPC's information.
 
 ## [1.3.1] - 2020-12-4
-## Changed
+### Changed
 - Usage message for some commands.
 - Redone interactEvent modification. Now have the option to use commands when interacting with a player.
-## Fixed
+### Fixed
 - Error when not typing the required amount of arguments for modify command.
 
 ## [1.3.0] - 2020-12-1
-## Added
+### Added
 - NPC modification to customise an NPC's equipment.
 - Clickable message in info command message that opens the NPC's equipment menu.
 - Page argument to info command.
 - changeEquipment(String name, int slot, ItemStack item) method to API.
-## Changed
+### Changed
 - Moved some classes around to organise the project.
 
 [//]: # (//TODO add changes for ALL versions since 1.0.0)
