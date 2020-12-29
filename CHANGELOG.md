@@ -10,6 +10,7 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 - Changelog to keep track of changes.
 ### Changed
 - Renamed/moved a few classes to organise the project better. Shouldn't affect the API.
+- Custom Interact Event names can now contain underscores.
 ### Fixed
 - SkinLayers no longer get reset when a skin is being updated.
 
@@ -83,6 +84,13 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 - The revision property is now used in each of the Maven Modules, making it easy to change versions.
 - The Info Command has been finished/fixed. Now displays all of an NPC's information.
 
+## [1.3.1] - 2020-12-4
+## Changed
+- Usage message for some commands.
+- Redone interactEvent modification. Now have the option to use commands when interacting with a player.
+## Fixed
+- Error when not typing the required amount of arguments.
+
 [//]: # (//TODO add changes for ALL versions since 1.0.0)
 [//]: # (Refer to https://keepachangelog.com/en/1.0.0/ and example on wesbite)
 [//]: # (Once this is done, update all release descriptions with the changelogs)
@@ -95,3 +103,4 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 [1.3.4]: https://github.com/Scroojalix/NPCManager/compare/v1.3.3...v1.3.4
 [1.3.3]: https://github.com/Scroojalix/NPCManager/compare/v1.3.2...v1.3.3
 [1.3.2]: https://github.com/Scroojalix/NPCManager/compare/v1.3.1...v1.3.2
+[1.3.1]: https://github.com/Scroojalix/NPCManager/compare/v1.3.0...v1.3.1
