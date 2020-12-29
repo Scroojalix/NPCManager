@@ -106,10 +106,18 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 - Organised the project a bit (moving classes to different packages etc)
 
 ## [1.2.1] - 2020-11-21
-### Fixed
-- NPC names not appearing gray in tablist on some server versions.
 ### Added
 - `[NPC]` prefix in tab for NPC's
+### Fixed
+- NPC names not appearing gray in tablist on some server versions.
+
+## [1.2.0] - 2020-11-9
+### Added
+- Support for MC Version 1.16.4.
+### Changed
+- Converted the project to a multi module maven project to make it easy to build the jar.
+### Fixed
+- Some debug messages not showing even if `show-debug-messages` is set to true in the config.
 
 [//]: # (//TODO add changes for ALL versions since 1.0.0)
 [//]: # (Refer to https://keepachangelog.com/en/1.0.0/ and example on wesbite)
@@ -127,3 +135,4 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 [1.3.0]: https://github.com/Scroojalix/NPCManager/compare/v1.2.2...v1.3.0
 [1.2.2]: https://github.com/Scroojalix/NPCManager/compare/v1.2.1...v1.2.2
 [1.2.1]: https://github.com/Scroojalix/NPCManager/compare/v1.2.0...v1.2.1
+[1.2.0]: https://github.com/Scroojalix/NPCManager/compare/v1.1.0...v1.2.0
