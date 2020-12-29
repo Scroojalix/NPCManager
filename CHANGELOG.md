@@ -89,7 +89,7 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 - Usage message for some commands.
 - Redone interactEvent modification. Now have the option to use commands when interacting with a player.
 ## Fixed
-- Error when not typing the required amount of arguments.
+- Error when not typing the required amount of arguments for modify command.
 
 [//]: # (//TODO add changes for ALL versions since 1.0.0)
 [//]: # (Refer to https://keepachangelog.com/en/1.0.0/ and example on wesbite)

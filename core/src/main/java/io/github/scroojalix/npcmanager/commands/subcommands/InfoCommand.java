@@ -38,6 +38,7 @@ public class InfoCommand extends SubCommand {
         return true;
     }
 
+    //TODO show skin layers
     @Override
     public boolean execute(NPCMain main, CommandSender sender, String[] args) {
         if (args.length < 2)
