@@ -113,4 +113,4 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 [1.3.3]: https://github.com/Scroojalix/NPCManager/compare/v1.3.2...v1.3.3
 [1.3.2]: https://github.com/Scroojalix/NPCManager/compare/v1.3.1...v1.3.2
 [1.3.1]: https://github.com/Scroojalix/NPCManager/compare/v1.3.0...v1.3.1
-[1.3.1]: https://github.com/Scroojalix/NPCManager/compare/v1.2.2...v1.3.0
+[1.3.0]: https://github.com/Scroojalix/NPCManager/compare/v1.2.2...v1.3.0
