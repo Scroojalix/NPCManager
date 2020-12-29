@@ -105,6 +105,12 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 - The command framework, making it way easier to add more commands in the future.
 - Organised the project a bit (moving classes to different packages etc)
 
+## [1.2.1] - 2020-11-21
+### Fixed
+- NPC names not appearing gray in tablist on some server versions.
+### Added
+- `[NPC]` prefix in tab for NPC's
+
 [//]: # (//TODO add changes for ALL versions since 1.0.0)
 [//]: # (Refer to https://keepachangelog.com/en/1.0.0/ and example on wesbite)
 [//]: # (Once this is done, update all release descriptions with the changelogs)
@@ -120,3 +126,4 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 [1.3.1]: https://github.com/Scroojalix/NPCManager/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/Scroojalix/NPCManager/compare/v1.2.2...v1.3.0
 [1.2.2]: https://github.com/Scroojalix/NPCManager/compare/v1.2.1...v1.2.2
+[1.2.1]: https://github.com/Scroojalix/NPCManager/compare/v1.2.0...v1.2.1
