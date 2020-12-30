@@ -119,6 +119,13 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 ### Fixed
 - Some debug messages not showing even if `show-debug-messages` is set to true in the config.
 
+## [1.1.0] - 2020-11-5
+### Changed
+- NPC's now have the option to not be saved to a file/database, meaning after the plugin reloads they will be gone.
+- NPC capes have been hidden. Might be changed later down the line.
+### Fixed
+- NPC changes now actually get saved.
+
 [//]: # (//TODO add changes for ALL versions since 1.0.0)
 [//]: # (Refer to https://keepachangelog.com/en/1.0.0/ and example on wesbite)
 [//]: # (Once this is done, update all release descriptions with the changelogs)
@@ -136,3 +143,4 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 [1.2.2]: https://github.com/Scroojalix/NPCManager/compare/v1.2.1...v1.2.2
 [1.2.1]: https://github.com/Scroojalix/NPCManager/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/Scroojalix/NPCManager/compare/v1.1.0...v1.2.0
+[1.1.0]: https://github.com/Scroojalix/NPCManager/compare/v1.0.2...v1.1.0
