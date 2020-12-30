@@ -135,6 +135,19 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 - Plugin properly disconnects from database on disable.
 - NPC's get updated after changes are made to them from the API.
 
+## [1.0.1] - 2020-10-31
+### Added
+- Support for all versions since 1.8.3
+- Ability to hide holograms.
+### Fixed
+- Plugin was attempting to initialise when run on an invalid server version (prior to 1.8.3)
+- Fixed NoSuchMethodError on older server versions.
+### Removed
+- Some unnecessary files.
+
+## [1.0.0] - 2020-10-27
+Initial Commit. No Changes.
+
 [//]: # (//TODO add changes for ALL versions since 1.0.0)
 [//]: # (Refer to https://keepachangelog.com/en/1.0.0/ and example on wesbite)
 [//]: # (Once this is done, update all release descriptions with the changelogs)
@@ -154,3 +167,5 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 [1.2.0]: https://github.com/Scroojalix/NPCManager/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/Scroojalix/NPCManager/compare/v1.0.2...v1.1.0
 [1.0.2]: https://github.com/Scroojalix/NPCManager/compare/v1.0.1...v1.0.2
+[1.0.1]: https://github.com/Scroojalix/NPCManager/compare/v1.0.0...v1.0.1
+[1.0.0]: https://github.com/Scroojalix/NPCManager/commit/6796697b5c20409b843e96dc817dde5a0c256c2d
