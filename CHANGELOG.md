@@ -126,6 +126,15 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 ### Fixed
 - NPC changes now actually get saved.
 
+## [1.0.2] - 2020-11-2
+### Changed
+- Some code was redone to be more versatile.
+- When saving to YAML, NPCData gets parsed into a JSON string. I will probably end up replacing YAML saving with JSON at some point because now it is useless.
+- NPC's get saved everytime a modification is made to them, rather than just when the plugin is disabling.
+### Fixed
+- Plugin properly disconnects from database on disable.
+- NPC's get updated after changes are made to them from the API.
+
 [//]: # (//TODO add changes for ALL versions since 1.0.0)
 [//]: # (Refer to https://keepachangelog.com/en/1.0.0/ and example on wesbite)
 [//]: # (Once this is done, update all release descriptions with the changelogs)
@@ -144,3 +153,4 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 [1.2.1]: https://github.com/Scroojalix/NPCManager/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/Scroojalix/NPCManager/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/Scroojalix/NPCManager/compare/v1.0.2...v1.1.0
+[1.0.2]: https://github.com/Scroojalix/NPCManager/compare/v1.0.1...v1.0.2
