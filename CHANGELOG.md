@@ -8,6 +8,7 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 ### Added
 - MIT License to the project.
 - Changelog to keep track of changes.
+- Optional argument to the create command to prevent the NPC from being saved, meaning when the server reloads, the NPC will dissappear.
 ### Changed
 - Renamed/moved a few classes to organise the project better. Shouldn't affect the API.
 - Custom Interact Event names can now contain underscores.

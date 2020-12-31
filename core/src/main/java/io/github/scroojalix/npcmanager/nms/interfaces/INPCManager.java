@@ -42,16 +42,6 @@ public abstract class INPCManager {
 		return NPCs;
 	}
 
-	/**
-	 * Creates an NPC with the Name {@code name} and Location {@code loc}
-	 * 
-	 * @param name The name of the NPC, used to identify it.
-	 * @param loc  The location of the NPC
-	 */
-	public void createNPC(String name, Location loc) {
-		createNPC(name, loc, true);
-	}
-
 	public void createNPC(String name, Location loc, boolean store) {
 		NPCData data = new NPCData(name, loc, store);
 		restoreNPC(data);

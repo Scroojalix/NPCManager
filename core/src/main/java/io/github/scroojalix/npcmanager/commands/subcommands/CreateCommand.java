@@ -26,7 +26,7 @@ public class CreateCommand extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/npc create <name>";
+        return "/npc create <name> [--doNotStore]";
     }
 
     @Override
@@ -50,13 +50,23 @@ public class CreateCommand extends SubCommand {
             sender.sendMessage(ChatColor.RED+Messages.NOT_ALPHANUMERIC);
             return true;
         }
-        main.npc.createNPC(name, ((Player)sender).getLocation());
+        boolean store = true;
+        if (args.length == 3) {
+            if (args[2].equalsIgnoreCase("--doNotStore")) {
+                store = false;
+            }
+        }
+        main.npc.createNPC(name, ((Player)sender).getLocation(), store);
         sender.sendMessage(PluginUtils.format("&6Created an NPC named &F")+name);
         return true;
     }
     
     @Override
     public List<String> onTabComplete(String[] args) {
-        return new ArrayList<String>();
+        ArrayList<String> result = new ArrayList<String>();
+        if (args.length == 3) {
+            result.add("--doNotStore");
+        }
+        return result;
     }
 }
