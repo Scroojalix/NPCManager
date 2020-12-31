@@ -41,8 +41,8 @@ public class SkinLayersModification extends SubCommand {
     public boolean execute(NPCMain main, CommandSender sender, String[] args) {
         NPCData data = main.npc.getNPCs().get(args[1]);
         NPCSkinLayers layers = data.getTraits().getSkinLayers();
-        if (args.length == 3 && layers != null) {
-            sendCurrentConfiguration(sender, layers);
+        if (args.length == 3) {
+            sender.sendMessage((layers==null?new NPCSkinLayers():layers).getCurrentConfiguration());
             return true;
         }
         LinkedHashMap<String, String> modifications = new LinkedHashMap<String, String>();
@@ -80,17 +80,6 @@ public class SkinLayersModification extends SubCommand {
             result.add("true"); result.add("false");
         }
         return result;
-    }
-    
-    private void sendCurrentConfiguration(CommandSender sender, NPCSkinLayers layers) {
-        SkinLayer[] skinParts = SkinLayer.values();
-        boolean[] values = layers.getBoolArray();
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < skinParts.length; i++) {
-            builder.append(ChatColor.GOLD+skinParts[i].label+": "+ChatColor.WHITE+values[i]);
-            if (i < skinParts.length - 1) builder.append(ChatColor.GOLD+", ");
-        }
-        sender.sendMessage(builder.toString());
     }
 
     private NPCSkinLayers applyModifications(CommandSender sender, NPCSkinLayers layers, LinkedHashMap<String, String> modifications) {

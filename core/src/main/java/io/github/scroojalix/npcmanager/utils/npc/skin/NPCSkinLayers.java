@@ -2,6 +2,8 @@ package io.github.scroojalix.npcmanager.utils.npc.skin;
 
 import com.google.gson.annotations.Expose;
 
+import org.bukkit.ChatColor;
+
 public class NPCSkinLayers {
 
     @Expose
@@ -27,6 +29,17 @@ public class NPCSkinLayers {
         leftLeg = true;
         rightLeg = true;
         hat = true;
+    }
+
+    public String getCurrentConfiguration() {
+        SkinLayer[] skinParts = SkinLayer.values();
+        boolean[] values = getBoolArray();
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < skinParts.length; i++) {
+            builder.append(ChatColor.GOLD+skinParts[i].label.replace("--","")+": "+ChatColor.WHITE+values[i]);
+            if (i < skinParts.length - 1) builder.append(ChatColor.GOLD+", ");
+        }
+        return builder.toString();
     }
 
     public byte getDisplayedSkinParts() {

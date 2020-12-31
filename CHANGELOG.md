@@ -142,6 +142,7 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 ### Fixed
 - Plugin was attempting to initialise when run on an invalid server version (prior to 1.8.3)
 - Fixed NoSuchMethodError on older server versions.
+- Skin Layers get displayed correctly in info command.
 ### Removed
 - Some unnecessary files.
 
