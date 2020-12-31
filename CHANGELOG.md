@@ -14,6 +14,7 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 - Custom Interact Event names can now contain underscores.
 ### Fixed
 - SkinLayers no longer get reset when a skin is being updated.
+- Skin Layers get displayed correctly in info command.
 
 ## [1.4.0] - 2020-12-27
 ### Added
@@ -143,16 +144,11 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 ### Fixed
 - Plugin was attempting to initialise when run on an invalid server version (prior to 1.8.3)
 - Fixed NoSuchMethodError on older server versions.
-- Skin Layers get displayed correctly in info command.
 ### Removed
 - Some unnecessary files.
 
 ## [1.0.0] - 2020-10-27
 Initial Commit. No Changes.
-
-[//]: # (//TODO add changes for ALL versions since 1.0.0)
-[//]: # (Refer to https://keepachangelog.com/en/1.0.0/ and example on wesbite)
-[//]: # (Once this is done, update all release descriptions with the changelogs)
 
 [Unreleased]: https://github.com/Scroojalix/NPCManager/compare/v1.4.0...master
 [1.4.0]: https://github.com/Scroojalix/NPCManager/compare/v1.3.7...v1.4.0
