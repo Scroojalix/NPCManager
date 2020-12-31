@@ -50,7 +50,7 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 
 ## [1.3.6] - 2020-12-22
 ### Added
-- NPCBuilder class to make spawning NPC's using the API much easier. Info on how to use this new system can be found here (//TODO)
+- NPCBuilder class to make spawning NPC's using the API much easier. Info on how to use this new system can be found [here](https://scroojalix.github.io/projects/NPCManager/wiki/).
 - Added `spawnNPC(NPCData)` method to API. Use this to spawn NPC's generated with NPCBuilder.
 ### Changed
 - Connecting to database is now done asynchronously.
