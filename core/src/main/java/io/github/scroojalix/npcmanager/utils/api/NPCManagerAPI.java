@@ -1,6 +1,6 @@
 package io.github.scroojalix.npcmanager.utils.api;
 
-import java.util.List;
+import java.util.Map;
 
 import org.bukkit.Location;
 import org.bukkit.inventory.EquipmentSlot;
@@ -18,7 +18,6 @@ import io.github.scroojalix.npcmanager.utils.npc.equipment.NPCEquipment;
 import io.github.scroojalix.npcmanager.utils.npc.skin.NPCSkinLayers;
 import io.github.scroojalix.npcmanager.utils.npc.skin.SkinLayer;
 import io.github.scroojalix.npcmanager.utils.npc.skin.SkinManager;
-import javafx.util.Pair;
 
 public class NPCManagerAPI {
 
@@ -146,34 +145,36 @@ public class NPCManagerAPI {
 		}
 	}
 	
-	public static void setSkinLayers(String name, List<Pair<SkinLayer, Boolean>> layers) {
+	public static void setSkinLayers(String name, Map<SkinLayer, Boolean> layers) {
 		if (NPCMain.instance.npc.getNPCs().containsKey(name)) {
 			NPCData data = NPCMain.instance.npc.getNPCs().get(name); 
 			if (!layers.isEmpty()) {
 				NPCSkinLayers newLayers = new NPCSkinLayers();
-				for (Pair<SkinLayer, Boolean> layer : layers) {
-					switch (layer.getKey()) {
-						case CAPE:
-						newLayers.setCape(layer.getValue());
-						break;
-						case JACKET:
-						newLayers.setJacket(layer.getValue());
-						break;
-						case LEFT_SLEEVE:
-						newLayers.setLeftSleeve(layer.getValue());
-						break;
-						case RIGHT_SLEEVE:
-						newLayers.setRightSleeve(layer.getValue());
-						break;
-						case LEFT_LEG:
-						newLayers.setLeftLeg(layer.getValue());
-						break;
-						case RIGHT_LEG:
-						newLayers.setRightLeg(layer.getValue());
-						break;
-						case HAT:
-						newLayers.setHat(layer.getValue());
-						break;
+				for (Map.Entry<SkinLayer, Boolean> layer : layers.entrySet()) {
+					if (layer.getValue() != null) {
+						switch (layer.getKey()) {
+							case CAPE:
+							newLayers.setCape(layer.getValue());
+							break;
+							case JACKET:
+							newLayers.setJacket(layer.getValue());
+							break;
+							case LEFT_SLEEVE:
+							newLayers.setLeftSleeve(layer.getValue());
+							break;
+							case RIGHT_SLEEVE:
+							newLayers.setRightSleeve(layer.getValue());
+							break;
+							case LEFT_LEG:
+							newLayers.setLeftLeg(layer.getValue());
+							break;
+							case RIGHT_LEG:
+							newLayers.setRightLeg(layer.getValue());
+							break;
+							case HAT:
+							newLayers.setHat(layer.getValue());
+							break;
+						}
 					}
 				}
 				data.getTraits().setSkinLayers(newLayers);
