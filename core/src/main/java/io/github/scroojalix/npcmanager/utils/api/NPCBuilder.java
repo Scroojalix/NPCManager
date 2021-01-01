@@ -1,5 +1,6 @@
 package io.github.scroojalix.npcmanager.utils.api;
 
+import java.util.Map;
 import java.util.logging.Level;
 
 import org.bukkit.Location;
@@ -10,6 +11,8 @@ import io.github.scroojalix.npcmanager.utils.PluginUtils;
 import io.github.scroojalix.npcmanager.utils.interactions.CommandInteraction;
 import io.github.scroojalix.npcmanager.utils.interactions.InteractionsManager;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
+import io.github.scroojalix.npcmanager.utils.npc.skin.NPCSkinLayers;
+import io.github.scroojalix.npcmanager.utils.npc.skin.SkinLayer;
 import io.github.scroojalix.npcmanager.utils.npc.skin.SkinManager;
 
 public class NPCBuilder {
@@ -84,6 +87,41 @@ public class NPCBuilder {
         }
         return this;
     }
+
+    public NPCBuilder setSkinLayers(String name, Map<SkinLayer, Boolean> layers) {
+        if (!layers.isEmpty()) {
+            NPCSkinLayers newLayers = new NPCSkinLayers();
+            for (Map.Entry<SkinLayer, Boolean> layer : layers.entrySet()) {
+                if (layer.getValue() != null) {
+                    switch (layer.getKey()) {
+                        case CAPE:
+                        newLayers.setCape(layer.getValue());
+                        break;
+                        case JACKET:
+                        newLayers.setJacket(layer.getValue());
+                        break;
+                        case LEFT_SLEEVE:
+                        newLayers.setLeftSleeve(layer.getValue());
+                        break;
+                        case RIGHT_SLEEVE:
+                        newLayers.setRightSleeve(layer.getValue());
+                        break;
+                        case LEFT_LEG:
+                        newLayers.setLeftLeg(layer.getValue());
+                        break;
+                        case RIGHT_LEG:
+                        newLayers.setRightLeg(layer.getValue());
+                        break;
+                        case HAT:
+                        newLayers.setHat(layer.getValue());
+                        break;
+                    }
+                }
+            }
+            data.getTraits().setSkinLayers(newLayers);
+        }
+        return this;
+	}
 
     public NPCBuilder setHelmet(ItemStack helmet) {
         if (PluginUtils.isSuitableItem(helmet, "helmet", null)) {
