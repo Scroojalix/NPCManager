@@ -1,5 +1,7 @@
 package io.github.scroojalix.npcmanager.utils.api;
 
+import java.util.List;
+
 import org.bukkit.Location;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -13,7 +15,10 @@ import io.github.scroojalix.npcmanager.utils.interactions.InteractionsManager;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.npc.NPCTrait;
 import io.github.scroojalix.npcmanager.utils.npc.equipment.NPCEquipment;
+import io.github.scroojalix.npcmanager.utils.npc.skin.NPCSkinLayers;
+import io.github.scroojalix.npcmanager.utils.npc.skin.SkinLayer;
 import io.github.scroojalix.npcmanager.utils.npc.skin.SkinManager;
+import javafx.util.Pair;
 
 public class NPCManagerAPI {
 
@@ -122,8 +127,6 @@ public class NPCManagerAPI {
 	}
 	
 	//TODO create methods for all modifications.
-	//skinLayers -> use List<Pair<SkinLayer, Boolean>>
-
 	//move each of these modifications to there own methods
 	//ensure NPCBuilder has all the same features.
 	/**
@@ -134,7 +137,7 @@ public class NPCManagerAPI {
 	 */
 	public static void modifyNPC(String name, String key, String value) {
 		if (NPCMain.instance.npc.getNPCs().containsKey(name)) {
-			NPCData data = NPCMain.instance.npc.getNPCs().get(name);
+			NPCData data = NPCMain.instance.npc.getNPCs().get(name); 
 			modify(data, key, value);
 			NPCMain.instance.npc.saveNPC(data);
 			NPCMain.instance.npc.updateNPC(data);
@@ -142,7 +145,46 @@ public class NPCManagerAPI {
 			throw new IllegalArgumentException(Messages.UNKNOWN_NPC);
 		}
 	}
-
+	
+	public static void setSkinLayers(String name, List<Pair<SkinLayer, Boolean>> layers) {
+		if (NPCMain.instance.npc.getNPCs().containsKey(name)) {
+			NPCData data = NPCMain.instance.npc.getNPCs().get(name); 
+			if (!layers.isEmpty()) {
+				NPCSkinLayers newLayers = new NPCSkinLayers();
+				for (Pair<SkinLayer, Boolean> layer : layers) {
+					switch (layer.getKey()) {
+						case CAPE:
+						newLayers.setCape(layer.getValue());
+						break;
+						case JACKET:
+						newLayers.setJacket(layer.getValue());
+						break;
+						case LEFT_SLEEVE:
+						newLayers.setLeftSleeve(layer.getValue());
+						break;
+						case RIGHT_SLEEVE:
+						newLayers.setRightSleeve(layer.getValue());
+						break;
+						case LEFT_LEG:
+						newLayers.setLeftLeg(layer.getValue());
+						break;
+						case RIGHT_LEG:
+						newLayers.setRightLeg(layer.getValue());
+						break;
+						case HAT:
+						newLayers.setHat(layer.getValue());
+						break;
+					}
+				}
+				data.getTraits().setSkinLayers(newLayers);
+				NPCMain.instance.npc.saveNPC(data);
+				NPCMain.instance.npc.updateNPC(data);
+			}
+		} else {
+			throw new IllegalArgumentException(Messages.UNKNOWN_NPC);
+		}
+	}
+	
 	/**
 	 * Use this method to customise the interact event of an NPC.
 	 * @param name The name of the NPC to modify.
