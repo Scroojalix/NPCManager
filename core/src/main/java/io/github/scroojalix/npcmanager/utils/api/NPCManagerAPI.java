@@ -149,7 +149,12 @@ public class NPCManagerAPI {
 		if (NPCMain.instance.npc.getNPCs().containsKey(name)) {
 			NPCData data = NPCMain.instance.npc.getNPCs().get(name); 
 			if (!layers.isEmpty()) {
-				NPCSkinLayers newLayers = new NPCSkinLayers();
+				NPCSkinLayers newLayers;
+				if (data.getTraits().getSkinLayers() != null) {
+					newLayers = data.getTraits().getSkinLayers();
+				} else {
+					newLayers = new NPCSkinLayers();
+				}
 				for (Map.Entry<SkinLayer, Boolean> layer : layers.entrySet()) {
 					if (layer.getValue() != null) {
 						switch (layer.getKey()) {
