@@ -1,8 +1,10 @@
 package io.github.scroojalix.npcmanager.utils;
 
+import java.lang.reflect.Method;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -43,7 +45,10 @@ public class PluginUtils {
         return s != null && s.matches("^[a-zA-Z0-9_]+$");
 	}
 
+	@SuppressWarnings("deprecation")
 	public static boolean isSuitableItem(ItemStack item, String type, Player p) {
+		if (item.getType() == Material.AIR)
+			return false;
 		if (item.getAmount() != 1) {
 			if (p != null) {
 				p.playSound(p.getLocation(), Sound.valueOf(CommandUtils.getErrorSound()), 5f, 0.5f);
@@ -57,10 +62,18 @@ public class PluginUtils {
 		case "helmet":
 		case "mainhand":
 		case "offhand":
-			//FIXME if setting this to a invalid Material eg. ACACIA_WALL_SIGN, it automatically gets replaced with AIR
-			//Causes EmptySlot item to be used in Equipment Inventory
-			//If this happens, set that slot to null, then save NPC (don't update)
-			return true;
+			try {
+				return item.getType().isItem();
+			} catch (NoSuchMethodError e) {
+				try {
+					Class<?> c = Class.forName("net.minecraft.server."+NPCMain.serverVersion.toString()+".Item");
+					Method m = c.getDeclaredMethod("getById", int.class);
+					return m.invoke(null, item.getType().getId()) != null;
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+				return false;
+			}
 		}
 		if (p != null) {
 			p.playSound(p.getLocation(), Sound.valueOf(CommandUtils.getErrorSound()), 5f, 0.5f);

@@ -16,6 +16,7 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 ### Fixed
 - SkinLayers no longer get reset when a skin is being updated.
 - Skin Layers get displayed correctly in info command.
+- When setting an NPC's equipment through the API, some items were being classed as suitable, when in reality they are not.
 
 ## [1.4.0] - 2020-12-27
 ### Added
