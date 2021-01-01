@@ -3,6 +3,7 @@ package io.github.scroojalix.npcmanager.utils.api;
 import java.util.Map;
 import java.util.logging.Level;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
@@ -14,6 +15,7 @@ import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.npc.skin.NPCSkinLayers;
 import io.github.scroojalix.npcmanager.utils.npc.skin.SkinLayer;
 import io.github.scroojalix.npcmanager.utils.npc.skin.SkinManager;
+import io.github.scroojalix.npcmanager.utils.npc.skin.SkinType;
 
 public class NPCBuilder {
 
@@ -67,8 +69,7 @@ public class NPCBuilder {
         return this;
     }
 
-    //FIXME wait until NPC is spawned before updating skin.
-    	/**
+    /**
 	 * Set the skin of an NPC.
 	 * @param name The name of the NPC to modify.
 	 * @param type The method of getting skin data. Can be set to <code>url</code> or <code>username</code>.
@@ -79,12 +80,24 @@ public class NPCBuilder {
 	 * to <code>"username"</code>, then set this to <code>true</code> to automatically
 	 * update the skin on every reload.
 	 */
-    public NPCBuilder setSkin(String type, String value, boolean optionalArg) {
-        if (type.equalsIgnoreCase("url")) {
-            SkinManager.setSkinFromURL(null, data, value, optionalArg);
-        } else if (type.equalsIgnoreCase("username")) {
-            SkinManager.setSkinFromUsername(null, data, value, optionalArg);
-        }
+    public NPCBuilder setSkin(SkinType type, String value, boolean optionalArg) {
+        Bukkit.getScheduler().runTaskAsynchronously(NPCMain.instance, new Runnable() {
+            @Override
+            public void run() {
+                while (!data.isLoaded()) {
+                    try {
+                        Thread.sleep(100L);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (type == SkinType.URL) {
+                    SkinManager.setSkinFromURL(null, data, value, optionalArg);
+                } else if (type == SkinType.USERNAME) {
+                    SkinManager.setSkinFromUsername(null, data, value, optionalArg);
+                }
+            }
+        });
         return this;
     }
 

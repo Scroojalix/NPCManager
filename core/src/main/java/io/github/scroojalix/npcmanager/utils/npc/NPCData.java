@@ -47,8 +47,7 @@ public class NPCData {
 	private Object npc;
 	private int loaderTask;
 	private boolean store;
-	//TODO use this to wait until NPC is loaded before updating skin.
-	//private boolean isLoaded;
+	private boolean loaded;
 
 	public NPCData(String name, Location loc, boolean store) {
 		this(name, loc, 60, true, store);
@@ -120,6 +119,8 @@ public class NPCData {
 					data.getTraits().removeInteractEvent();
 				}
 			}
+
+			//TODO check if materials for equipment are suitable before returning.
 
 			return data;
 		} catch (JsonSyntaxException e) {
@@ -259,5 +260,13 @@ public class NPCData {
 
 	public void setStored(boolean store) {
 		this.store = store;
+	}
+
+	public boolean isLoaded() {
+		return this.loaded;
+	}
+
+	public void setLoaded(boolean loaded) {
+		this.loaded = loaded;
 	}
 }

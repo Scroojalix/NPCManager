@@ -28,6 +28,7 @@ public class NPCManagerAPI {
 	public static void spawnNPC(NPCData data) {
 		if (!NPCMain.instance.npc.getNPCs().containsKey(data.getName())) {
 			if (data.getLoc() != null) {
+				data.setLoaded(true);
 				NPCMain.instance.npc.saveNPC(data);
 				NPCMain.instance.npc.restoreNPC(data);
 			} else {

@@ -17,6 +17,7 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 - SkinLayers no longer get reset when a skin is being updated.
 - Skin Layers get displayed correctly in info command.
 - When setting an NPC's equipment through the API, some items were being classed as suitable, when in reality they are not.
+- Setting the skin of an NPC using NPCBuilder. Now waits for the NPC to be spawned, then fetches and applies skin data.
 
 ## [1.4.0] - 2020-12-27
 ### Added
