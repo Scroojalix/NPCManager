@@ -67,10 +67,11 @@ public class SkinManager {
 						Bukkit.getScheduler().runTask(NPCMain.instance, new Runnable() {
 							@Override
 							public void run() {
-								sender.sendMessage(ChatColor.RED+"Something happened when attempting to fetch skin data from that username. That player may not exist.");
+								sender.sendMessage(ChatColor.RED+"Something happened when attempting to fetch skin data from the username '"+username+"'. That player may not exist.");
 							}
 						});
 					} else {
+						NPCMain.instance.getLogger().severe("Something happened when attempting to fetch skin data from the username '"+username+"'. That player may not exist.");
 						e.printStackTrace();
 					}
 				}
