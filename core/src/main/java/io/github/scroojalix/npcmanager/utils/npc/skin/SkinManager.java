@@ -71,8 +71,7 @@ public class SkinManager {
 							}
 						});
 					} else {
-						NPCMain.instance.getLogger().severe("Something happened when attempting to fetch skin data from the username '"+username+"'. That player may not exist.");
-						e.printStackTrace();
+						throw new IllegalArgumentException("Something happened when attempting to fetch skin data from the username '"+username+"'. That player may not exist.");
 					}
 				}
 			}
@@ -80,7 +79,7 @@ public class SkinManager {
 	}
 	
 	public static void setSkinFromURL(
-		CommandSender sender,
+			CommandSender sender,
 			NPCData data,
 			String url,
 			boolean useSlimModel) {
@@ -122,7 +121,7 @@ public class SkinManager {
 							}
 						});
 					} else {
-						e.printStackTrace();
+						throw new IllegalArgumentException("Could not fetch skin data from the URL. Ensure that it is a valid URL and it links to a valid .png file.");
 					}
 				}
 			}
