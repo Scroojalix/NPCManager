@@ -124,20 +124,47 @@ public class NPCManagerAPI {
 			throw new IllegalArgumentException(Messages.UNKNOWN_NPC);
 		}
 	}
-	
-	//TODO create methods for all modifications.
-	//move each of these modifications to there own methods
-	//ensure NPCBuilder has all the same features.
-	/**
-	 * Modifies an NPC.
-	 * @param name The name of the NPC to modify.
-	 * @param key The {@link NPCTrait} to modify.
-	 * @param value The new value of the key
-	 */
-	public static void modifyNPC(String name, String key, String value) {
+
+	public static void setDisplayName(String name, String newDisplayName) {
 		if (NPCMain.instance.npc.getNPCs().containsKey(name)) {
 			NPCData data = NPCMain.instance.npc.getNPCs().get(name); 
-			modify(data, key, value);
+			data.getTraits().setDisplayName(newDisplayName);
+			NPCMain.instance.npc.saveNPC(data);
+			NPCMain.instance.npc.updateNPC(data);
+		} else {
+			throw new IllegalArgumentException(Messages.UNKNOWN_NPC);
+		}
+	}
+	
+	public static void setSubtitle(String name, String newSubtitle) {
+		if (NPCMain.instance.npc.getNPCs().containsKey(name)) {
+			NPCData data = NPCMain.instance.npc.getNPCs().get(name); 
+			data.getTraits().setSubtitle(newSubtitle);
+			NPCMain.instance.npc.saveNPC(data);
+			NPCMain.instance.npc.updateNPC(data);
+		} else {
+			throw new IllegalArgumentException(Messages.UNKNOWN_NPC);
+		}
+	}
+	
+	public static void setHeadRotation(String name, boolean headRotation) {
+		if (NPCMain.instance.npc.getNPCs().containsKey(name)) {
+			NPCData data = NPCMain.instance.npc.getNPCs().get(name); 
+			data.getTraits().setHeadRotation(headRotation);
+			NPCMain.instance.npc.saveNPC(data);
+			NPCMain.instance.npc.updateNPC(data);
+		} else {
+			throw new IllegalArgumentException(Messages.UNKNOWN_NPC);
+		}
+	}
+
+	public static void setRange(String name, int range) {
+		if (NPCMain.instance.npc.getNPCs().containsKey(name)) {
+			NPCData data = NPCMain.instance.npc.getNPCs().get(name); 
+			if (range <= 0) {
+				throw new IllegalArgumentException("NPC range cannot be set to 0");
+			}
+			data.getTraits().setRange(range);
 			NPCMain.instance.npc.saveNPC(data);
 			NPCMain.instance.npc.updateNPC(data);
 		} else {
@@ -197,7 +224,7 @@ public class NPCManagerAPI {
 	 * @param type The type of interaction.
 	 * @param interaction The command to run or the name of the custom interact event.
 	 */
-	public static void changeInteractEvent(String name, InteractEventType type, String interaction) {
+	public static void setInteractEvent(String name, InteractEventType type, String interaction) {
 		if (NPCMain.instance.npc.getNPCs().containsKey(name)) {
 			NPCData data = NPCMain.instance.npc.getNPCs().get(name);
 			if (type == InteractEventType.COMMAND) {
@@ -216,6 +243,10 @@ public class NPCManagerAPI {
 		}
 	}
 
+	public static void setSkin(String name, SkinType type, String value) {
+		setSkin(name, type, value, false);
+	}
+
 	/**
 	 * Set the skin of an NPC.
 	 * @param name The name of the NPC to modify.
@@ -227,12 +258,12 @@ public class NPCManagerAPI {
 	 * to <code>"username"</code>, then set this to <code>true</code> to automatically
 	 * update the skin on every reload.
 	 */
-	public void setSkin(String name, String type, String value, boolean optionalArg) {
+	public static void setSkin(String name, SkinType type, String value, boolean optionalArg) {
 		if (NPCMain.instance.npc.getNPCs().containsKey(name)) {
 			NPCData data = NPCMain.instance.npc.getNPCs().get(name);
-			if (type.equalsIgnoreCase("url")) {
+			if (type == SkinType.URL) {
 				SkinManager.setSkinFromURL(null, data, value, optionalArg);
-			} else if (type.equalsIgnoreCase("username")) {
+			} else if (type == SkinType.USERNAME) {
 				SkinManager.setSkinFromUsername(null, data, value, optionalArg);
 			}
 		} else {
@@ -275,32 +306,5 @@ public class NPCManagerAPI {
 			NPCMain.instance.npc.removeNPC(npc, true);
 		}
 		NPCMain.instance.npc.getNPCs().clear();
-	}
-
-	private static void modify(NPCData data, String key, String value) {
-		NPCTrait traits = data.getTraits();
-		switch(key) {
-			case "displayName":
-				traits.setDisplayName(value.equalsIgnoreCase("none")?null:value);
-				return;
-			case "subtitle":
-				traits.setSubtitle(value.equalsIgnoreCase("none")?null:value);
-				return;
-			case "hasHeadRotation":
-				traits.setHeadRotation(value.equalsIgnoreCase("true"));
-				return;
-			case "range":
-				try {
-					Integer range = Integer.parseInt(value);
-					if (range <= 0) {
-						throw new IllegalArgumentException("Range cannot be set to 0");
-					}
-					traits.setRange(range);
-				} catch(NumberFormatException e) {
-					throw new IllegalArgumentException("'"+value+"' is not a number.");
-				}
-			default:
-				throw new IllegalArgumentException("Unknown key '"+key+"'.");
-			}
 	}
 }

@@ -10,12 +10,12 @@ import org.bukkit.inventory.ItemStack;
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 import io.github.scroojalix.npcmanager.utils.interactions.CommandInteraction;
+import io.github.scroojalix.npcmanager.utils.interactions.InteractEventType;
 import io.github.scroojalix.npcmanager.utils.interactions.InteractionsManager;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.npc.skin.NPCSkinLayers;
 import io.github.scroojalix.npcmanager.utils.npc.skin.SkinLayer;
 import io.github.scroojalix.npcmanager.utils.npc.skin.SkinManager;
-import io.github.scroojalix.npcmanager.utils.npc.skin.SkinType;
 
 public class NPCBuilder {
 
@@ -29,17 +29,15 @@ public class NPCBuilder {
         return data;
     }
 
-    public NPCBuilder setInteractEvent(String type, String interaction) {
-        if (type.equalsIgnoreCase("command")) {
+    public NPCBuilder setInteractEvent(InteractEventType type, String interaction) {
+        if (type == InteractEventType.COMMAND) {
             data.setInteractEvent(new CommandInteraction(interaction));
-        } else if (type.equalsIgnoreCase("custom")) {
+        } else if (type == InteractEventType.CUSTOM) {
             if (InteractionsManager.getInteractEvents().containsKey(interaction)) {
                 data.setInteractEvent(InteractionsManager.getInteractEvents().get(interaction));
             } else {
                 NPCMain.instance.log(Level.WARNING, "Could not set the interact event of "+data.getName()+". The interact event '"+interaction+"' does not exist.");
             }
-        } else {
-            NPCMain.instance.log(Level.WARNING, "Could not set the interact event of "+data.getName()+". The type '"+type+"' is invalid.");
         }
         return this;
 	}
@@ -101,7 +99,7 @@ public class NPCBuilder {
         return this;
     }
 
-    public NPCBuilder setSkinLayers(String name, Map<SkinLayer, Boolean> layers) {
+    public NPCBuilder setSkinLayers(Map<SkinLayer, Boolean> layers) {
         if (!layers.isEmpty()) {
             NPCSkinLayers newLayers = new NPCSkinLayers();
             for (Map.Entry<SkinLayer, Boolean> layer : layers.entrySet()) {

@@ -10,11 +10,13 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 - Changelog to keep track of changes.
 - Optional argument to the create command to prevent the NPC from being saved, meaning when the server reloads, the NPC will dissappear.
 - `setSkinLayers` method to API.
+- All of the NPC modifications now have their own method in the API.
 ### Changed
 - Renamed/moved a few classes to organise the project better. Shouldn't affect the API.
 - Custom Interact Event names can now contain underscores.
 - Better update checker. Now uses GitHub API, rather than getting version from looking at raw files.
 - Equipment object is now not initialised until a modification to an NPC's equipment is made.
+- Some API methods were changed to take in an input of an enum instead of a string.
 ### Fixed
 - Skin Layers no longer get reset when a skin is being updated.
 - Skin Layers get displayed correctly in info command.

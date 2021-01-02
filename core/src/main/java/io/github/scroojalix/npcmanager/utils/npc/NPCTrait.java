@@ -50,7 +50,8 @@ public class NPCTrait {
      * @param displayName The new display name.
      */
     public void setDisplayName(String displayName) {
-        this.displayName = displayName.equalsIgnoreCase("null")?null:displayName;
+        if (displayName == null) { this.displayName = null; }
+        else { this.displayName = displayName.equalsIgnoreCase("null")?null:displayName; }
     }
     
     /**
@@ -65,7 +66,8 @@ public class NPCTrait {
      * @param subtitle The new subtitle.
      */
     public void setSubtitle(String subtitle) {
-        this.subtitle = subtitle.equalsIgnoreCase("null")?null:subtitle;
+        if (subtitle == null) { this.subtitle = null; }
+        else { this.subtitle = subtitle.equalsIgnoreCase("null")?null:subtitle; }
     }
     
     /**
