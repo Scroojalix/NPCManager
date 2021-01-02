@@ -1,20 +1,16 @@
 package io.github.scroojalix.npcmanager;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.logging.Level;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathFactory;
+import com.google.gson.JsonParser;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 
 import io.github.scroojalix.npcmanager.commands.CommandManager;
 import io.github.scroojalix.npcmanager.events.EquipmentEvents;
@@ -86,18 +82,14 @@ public class NPCMain extends JavaPlugin {
 	 *         <code>false</code> otherwise.
 	 */
 	private boolean checkForUpdate() {
-		log(Level.INFO, "Checking you have the latest version of the plugin...");
+		log(Level.INFO, "Checking if you have the latest version of the plugin...");
 		String current = this.getDescription().getVersion();
-		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
 		try {
-			DocumentBuilder builder = domFactory.newDocumentBuilder();
-			URL url = new URL("https://raw.githubusercontent.com/Scroojalix/NPCManager/master/pom.xml");
-			Document doc = builder.parse(url.openStream());
-			XPath xpath = XPathFactory.newInstance().newXPath();
-			Node node = (Node) xpath.evaluate("project/properties/revision", doc, XPathConstants.NODE);
-			String latest = node.getTextContent();
-			return !latest.equalsIgnoreCase(current);
-		} catch (Exception e) {
+			URL url = new URL("https://api.github.com/repos/Scroojalix/NPCManager/releases/latest");
+			InputStreamReader reader = new InputStreamReader(url.openStream());
+			String latest = new JsonParser().parse(reader).getAsJsonObject().get("tag_name").getAsString();
+			return !current.equalsIgnoreCase(latest.replace("v",""));
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return false;

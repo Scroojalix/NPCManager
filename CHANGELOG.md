@@ -13,6 +13,7 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 ### Changed
 - Renamed/moved a few classes to organise the project better. Shouldn't affect the API.
 - Custom Interact Event names can now contain underscores.
+- Better update checker. Now uses GitHub API, rather than getting version from looking at raw files.
 ### Fixed
 - SkinLayers no longer get reset when a skin is being updated.
 - Skin Layers get displayed correctly in info command.
