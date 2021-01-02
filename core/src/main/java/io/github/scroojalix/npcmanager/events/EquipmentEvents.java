@@ -26,22 +26,22 @@ public class EquipmentEvents implements Listener {
     private void updateEquipment(NPCData data, ItemStack item, String slot) {
         switch(slot) {
         case "helmet":
-            data.getTraits().getEquipment().setHelmet(item);
+            data.getTraits().getEquipment(true).setHelmet(item);
             break;
         case "chestplate":
-            data.getTraits().getEquipment().setChestplate(item);
+            data.getTraits().getEquipment(true).setChestplate(item);
             break;
         case "leggings":
-            data.getTraits().getEquipment().setLeggings(item);
+            data.getTraits().getEquipment(true).setLeggings(item);
             break;
         case "boots":
-            data.getTraits().getEquipment().setBoots(item);
+            data.getTraits().getEquipment(true).setBoots(item);
             break;
         case "mainhand":
-            data.getTraits().getEquipment().setMainhandItem(item);
+            data.getTraits().getEquipment(true).setMainhandItem(item);
             break;
         case "offhand":
-            data.getTraits().getEquipment().setOffhandItem(item);
+            data.getTraits().getEquipment(true).setOffhandItem(item);
             break;
         }
     }

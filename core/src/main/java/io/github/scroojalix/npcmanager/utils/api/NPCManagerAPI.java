@@ -14,7 +14,6 @@ import io.github.scroojalix.npcmanager.utils.interactions.InteractEventType;
 import io.github.scroojalix.npcmanager.utils.interactions.InteractionsManager;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.npc.NPCTrait;
-import io.github.scroojalix.npcmanager.utils.npc.equipment.NPCEquipment;
 import io.github.scroojalix.npcmanager.utils.npc.skin.NPCSkinLayers;
 import io.github.scroojalix.npcmanager.utils.npc.skin.SkinLayer;
 import io.github.scroojalix.npcmanager.utils.npc.skin.SkinManager;
@@ -80,37 +79,37 @@ public class NPCManagerAPI {
 	public static void changeEquipment(String name, EquipmentSlot slot, ItemStack item) {
 		if (NPCMain.instance.npc.getNPCs().containsKey(name)) {
 			NPCData data = NPCMain.instance.npc.getNPCs().get(name);
-			NPCEquipment equipment = data.getTraits().getEquipment();
+			NPCTrait traits = data.getTraits();
 			boolean update = true;
 			switch (slot) {
 			case HAND:
 				if (PluginUtils.isSuitableItem(item, "mainhand", null)) {
-					equipment.setMainhandItem(item);
+					traits.getEquipment(true).setMainhandItem(item);
 				} else { update = false; }
 				break;
 			case OFF_HAND:
 				if (PluginUtils.isSuitableItem(item, "offhand", null)) {
-					equipment.setOffhandItem(item);
+					traits.getEquipment(true).setOffhandItem(item);
 				} else { update = false; }
 				break;
 			case FEET:
 				if (PluginUtils.isSuitableItem(item, "boots", null)) {
-					equipment.setBoots(item);
+					traits.getEquipment(true).setBoots(item);
 				} else { update = false; }
 				break;
 			case LEGS:
 				if (PluginUtils.isSuitableItem(item, "leggings", null)) {
-					equipment.setLeggings(item);
+					traits.getEquipment(true).setLeggings(item);
 				} else { update = false; }
 				break;
 			case CHEST:
 				if (PluginUtils.isSuitableItem(item, "chestplate", null)) {
-					equipment.setChestplate(item);
+					traits.getEquipment(true).setChestplate(item);
 				} else { update = false; }
 				break;
 			case HEAD:
 				if (PluginUtils.isSuitableItem(item, "helmet", null)) {
-					equipment.setHelmet(item);
+					traits.getEquipment(true).setHelmet(item);
 				} else { update = false; }
 				break;
 			default:

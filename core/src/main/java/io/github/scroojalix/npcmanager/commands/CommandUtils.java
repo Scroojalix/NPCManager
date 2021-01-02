@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.utils.npc.equipment.EmptySlots;
 import io.github.scroojalix.npcmanager.utils.npc.equipment.EquipmentInventory;
+import io.github.scroojalix.npcmanager.utils.npc.equipment.NPCEquipment;
 import io.github.scroojalix.npcmanager.utils.chat.Messages;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 import io.github.scroojalix.npcmanager.utils.chat.TextComponentWrapper;
@@ -135,7 +136,12 @@ public class CommandUtils {
 	
 	public static Inventory getEquipmentInv(NPCData data) {
 		Inventory inv = Bukkit.createInventory(new EquipmentInventory(), 45, data.getName()+"'s Equipment");
-		List<ItemStack> equipment = data.getTraits().getEquipment().getEquipmentArray();
+		List<ItemStack> equipment;
+		if (data.getTraits().getEquipment(false) == null) {
+			equipment = new NPCEquipment().getEquipmentArray();
+		} else {
+			equipment = data.getTraits().getEquipment(false).getEquipmentArray();
+		}
 		List<ItemStack> emptySlots = EmptySlots.getArray();
 		int[] slots = {10, 12, 14, 16, 30, 32};
 

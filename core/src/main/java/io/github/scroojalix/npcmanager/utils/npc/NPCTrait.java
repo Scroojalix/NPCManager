@@ -36,7 +36,6 @@ public class NPCTrait {
         this.displayName = displayName;
         this.range = range;
         this.headRotation = headRotation;
-        this.equipment = new NPCEquipment();
     }
     
     /**
@@ -126,7 +125,9 @@ public class NPCTrait {
      * Gets the equipment that the NPC has, meaning armor, main hand and off hand items.
      * @return The NPC's equipment.
      */
-    public NPCEquipment getEquipment() {
+    public NPCEquipment getEquipment(boolean modification) {
+        if (equipment == null && modification)
+            equipment = new NPCEquipment();
         return equipment;
     }
 

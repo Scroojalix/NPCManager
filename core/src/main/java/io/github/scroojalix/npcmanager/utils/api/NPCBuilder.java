@@ -138,42 +138,42 @@ public class NPCBuilder {
 
     public NPCBuilder setHelmet(ItemStack helmet) {
         if (PluginUtils.isSuitableItem(helmet, "helmet", null)) {
-            data.getTraits().getEquipment().setHelmet(helmet);
+            data.getTraits().getEquipment(true).setHelmet(helmet);
         }
         return this;
     }
 
     public NPCBuilder setChestplate(ItemStack chestplate) {
         if (PluginUtils.isSuitableItem(chestplate, "chestplate", null)) {
-            data.getTraits().getEquipment().setChestplate(chestplate);
+            data.getTraits().getEquipment(true).setChestplate(chestplate);
         }
         return this;
     }
 
     public NPCBuilder setLeggings(ItemStack leggings) {
         if (PluginUtils.isSuitableItem(leggings, "leggings", null)) {
-            data.getTraits().getEquipment().setLeggings(leggings);
+            data.getTraits().getEquipment(true).setLeggings(leggings);
         }
         return this;
     }
 
     public NPCBuilder setBoots(ItemStack boots) {
         if (PluginUtils.isSuitableItem(boots, "boots", null)) {
-            data.getTraits().getEquipment().setBoots(boots);
+            data.getTraits().getEquipment(true).setBoots(boots);
         }
         return this;
     }
 
     public NPCBuilder setMainhandItem(ItemStack mainhand) {
         if (PluginUtils.isSuitableItem(mainhand, "mainhand", null)) {
-            data.getTraits().getEquipment().setMainhandItem(mainhand);
+            data.getTraits().getEquipment(true).setMainhandItem(mainhand);
         }
         return this;
     }
 
     public NPCBuilder setOffhandItem(ItemStack offhand) {
         if (PluginUtils.isSuitableItem(offhand, "offhand", null)) {
-            data.getTraits().getEquipment().setOffhandItem(offhand);
+            data.getTraits().getEquipment(true).setOffhandItem(offhand);
         }
         return this;
     }

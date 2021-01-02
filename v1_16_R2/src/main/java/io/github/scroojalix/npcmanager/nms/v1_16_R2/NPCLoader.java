@@ -75,28 +75,30 @@ public class NPCLoader extends INPCLoader implements Runnable {
 		}
 		
 		//Equipment
-		final List<Pair<EnumItemSlot, ItemStack>> equipmentList = new ArrayList<>();
-		NPCEquipment equipment = data.getTraits().getEquipment();
-		if (equipment.getMainhandItem() != null) {
-			equipmentList.add(new Pair<>(EnumItemSlot.MAINHAND, CraftItemStack.asNMSCopy(equipment.getMainhandItem())));
-		}
-		if (equipment.getOffhandItem() != null) {
-			equipmentList.add(new Pair<>(EnumItemSlot.OFFHAND, CraftItemStack.asNMSCopy(equipment.getOffhandItem())));
-		}
-		if (equipment.getHelmet() != null) {
-			equipmentList.add(new Pair<>(EnumItemSlot.HEAD, CraftItemStack.asNMSCopy(equipment.getHelmet())));
-		}
-		if (equipment.getChestplate() != null) {
-			equipmentList.add(new Pair<>(EnumItemSlot.CHEST, CraftItemStack.asNMSCopy(equipment.getChestplate())));
-		}
-		if (equipment.getLeggings() != null) {
-			equipmentList.add(new Pair<>(EnumItemSlot.LEGS, CraftItemStack.asNMSCopy(equipment.getLeggings())));
-		}
-		if (equipment.getBoots() != null) {
-			equipmentList.add(new Pair<>(EnumItemSlot.FEET, CraftItemStack.asNMSCopy(equipment.getBoots())));
-		}
-		if (!equipmentList.isEmpty()) {
-			packets.add(new PacketPlayOutEntityEquipment(npc.getId(), equipmentList));
+		if (data.getTraits().getEquipment(false) != null) {
+			final List<Pair<EnumItemSlot, ItemStack>> equipmentList = new ArrayList<>();
+			NPCEquipment equipment = data.getTraits().getEquipment(false);
+			if (equipment.getMainhandItem() != null) {
+				equipmentList.add(new Pair<>(EnumItemSlot.MAINHAND, CraftItemStack.asNMSCopy(equipment.getMainhandItem())));
+			}
+			if (equipment.getOffhandItem() != null) {
+				equipmentList.add(new Pair<>(EnumItemSlot.OFFHAND, CraftItemStack.asNMSCopy(equipment.getOffhandItem())));
+			}
+			if (equipment.getHelmet() != null) {
+				equipmentList.add(new Pair<>(EnumItemSlot.HEAD, CraftItemStack.asNMSCopy(equipment.getHelmet())));
+			}
+			if (equipment.getChestplate() != null) {
+				equipmentList.add(new Pair<>(EnumItemSlot.CHEST, CraftItemStack.asNMSCopy(equipment.getChestplate())));
+			}
+			if (equipment.getLeggings() != null) {
+				equipmentList.add(new Pair<>(EnumItemSlot.LEGS, CraftItemStack.asNMSCopy(equipment.getLeggings())));
+			}
+			if (equipment.getBoots() != null) {
+				equipmentList.add(new Pair<>(EnumItemSlot.FEET, CraftItemStack.asNMSCopy(equipment.getBoots())));
+			}
+			if (!equipmentList.isEmpty()) {
+				packets.add(new PacketPlayOutEntityEquipment(npc.getId(), equipmentList));
+			}
 		}
 	}
 

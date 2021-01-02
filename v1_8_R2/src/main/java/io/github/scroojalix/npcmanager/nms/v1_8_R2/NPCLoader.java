@@ -69,21 +69,23 @@ public class NPCLoader extends INPCLoader implements Runnable {
 		}
 
 		//Equipment
-		NPCEquipment equipment = data.getTraits().getEquipment();
-		if (equipment.getMainhandItem() != null) {
-			packets.add(new PacketPlayOutEntityEquipment(npc.getId(), 0, CraftItemStack.asNMSCopy(equipment.getMainhandItem())));
-		}
-		if (equipment.getHelmet() != null) {
-			packets.add(new PacketPlayOutEntityEquipment(npc.getId(), 4, CraftItemStack.asNMSCopy(equipment.getHelmet())));
-		}
-		if (equipment.getChestplate() != null) {
-			packets.add(new PacketPlayOutEntityEquipment(npc.getId(), 3, CraftItemStack.asNMSCopy(equipment.getChestplate())));
-		}
-		if (equipment.getLeggings() != null) {
-			packets.add(new PacketPlayOutEntityEquipment(npc.getId(), 2, CraftItemStack.asNMSCopy(equipment.getLeggings())));
-		}
-		if (equipment.getBoots() != null) {
-			packets.add(new PacketPlayOutEntityEquipment(npc.getId(), 1, CraftItemStack.asNMSCopy(equipment.getBoots())));
+		if (data.getTraits().getEquipment(false) != null) {
+			NPCEquipment equipment = data.getTraits().getEquipment(false);
+			if (equipment.getMainhandItem() != null) {
+				packets.add(new PacketPlayOutEntityEquipment(npc.getId(), 0, CraftItemStack.asNMSCopy(equipment.getMainhandItem())));
+			}
+			if (equipment.getHelmet() != null) {
+				packets.add(new PacketPlayOutEntityEquipment(npc.getId(), 4, CraftItemStack.asNMSCopy(equipment.getHelmet())));
+			}
+			if (equipment.getChestplate() != null) {
+				packets.add(new PacketPlayOutEntityEquipment(npc.getId(), 3, CraftItemStack.asNMSCopy(equipment.getChestplate())));
+			}
+			if (equipment.getLeggings() != null) {
+				packets.add(new PacketPlayOutEntityEquipment(npc.getId(), 2, CraftItemStack.asNMSCopy(equipment.getLeggings())));
+			}
+			if (equipment.getBoots() != null) {
+				packets.add(new PacketPlayOutEntityEquipment(npc.getId(), 1, CraftItemStack.asNMSCopy(equipment.getBoots())));
+			}
 		}
 	}
 
