@@ -1,12 +1,7 @@
 package io.github.scroojalix.npcmanager;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.sql.SQLException;
 import java.util.logging.Level;
-
-import com.google.gson.JsonParser;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -17,6 +12,7 @@ import io.github.scroojalix.npcmanager.events.EquipmentEvents;
 import io.github.scroojalix.npcmanager.events.NPCEvents;
 import io.github.scroojalix.npcmanager.nms.interfaces.INPCManager;
 import io.github.scroojalix.npcmanager.nms.interfaces.IPacketReader;
+import io.github.scroojalix.npcmanager.utils.PluginUtils;
 import io.github.scroojalix.npcmanager.utils.PluginUtils.SaveMethod;
 import io.github.scroojalix.npcmanager.utils.PluginUtils.ServerVersion;
 import io.github.scroojalix.npcmanager.utils.chat.Messages;
@@ -33,36 +29,24 @@ public class NPCMain extends JavaPlugin {
 
 	public static NPCMain instance;
 	public static ServerVersion serverVersion;
-
+	
 	public INPCManager npc;
 	public IPacketReader reader;
 	public SaveMethod saveMethod;
 	public MySQL sql;
 	public boolean showDebugMessages;
-
+	
 	private boolean validVersion = true;
-
+	
 	@Override
 	public void onEnable() {
-		Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
-			@Override
-			public void run() {
-				if (checkForUpdate()) {
-					getLogger().info("--------------------------------------------------------");
-					getLogger().info("A new version of the plugin is available!");
-					getLogger().info("It can be downloaded at:");
-					getLogger().info("https://github.com/Scroojalix/NPCManager/releases/latest");
-					getLogger().info("--------------------------------------------------------");
-				} else {
-					log(Level.INFO, "You have the latest version of the plugin.");
-				}
-			}
-		});
+		NPCMain.instance = this;
 		this.showDebugMessages = this.getConfig().getBoolean("show-debug-messages");
 		this.setSaveMethod();
 		if (!validVersion()) {
 			getLogger().severe("This plugin is not compatible with that server version!");
 			getLogger().severe("Disabling the plugin.");
+			NPCMain.instance = null;
 			validVersion = false;
 			this.setEnabled(false);
 		} else {
@@ -74,40 +58,20 @@ public class NPCMain extends JavaPlugin {
 			}
 		}
 	}
-
-	/**
-	 * Check if an update is available on the github.
-	 * 
-	 * @return <code>true</code> if an update is available on the github repo.
-	 *         <code>false</code> otherwise.
-	 */
-	private boolean checkForUpdate() {
-		log(Level.INFO, "Checking if you have the latest version of the plugin...");
-		String current = this.getDescription().getVersion();
-		try {
-			URL url = new URL("https://api.github.com/repos/Scroojalix/NPCManager/releases/latest");
-			InputStreamReader reader = new InputStreamReader(url.openStream());
-			String latest = new JsonParser().parse(reader).getAsJsonObject().get("tag_name").getAsString();
-			return !current.equalsIgnoreCase(latest.replace("v",""));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return false;
-	}
-
+	
 	/**
 	 * Initialises the plugin.
 	 */
 	private void initialise() {
-		NPCMain.instance = this;
 		this.saveDefaultConfig();
 		EmptySlots.generateItems();
 		this.initSaveMethod();
 		this.getCommand("npc").setExecutor(new CommandManager(this));
 		this.getServer().getPluginManager().registerEvents(new NPCEvents(this), this);
 		this.getServer().getPluginManager().registerEvents(new EquipmentEvents(this), this);
+		PluginUtils.checkForUpdate();
 	}
-
+	
 	@Override
 	public void onDisable() {
 		if (validVersion) {
@@ -164,6 +128,7 @@ public class NPCMain extends JavaPlugin {
 		showDebugMessages = getConfig().getBoolean("show-debug-messages");
 		setSaveMethod();
 		initSaveMethod();
+		PluginUtils.checkForUpdate();
 	}
 	
 	private void setSaveMethod() {

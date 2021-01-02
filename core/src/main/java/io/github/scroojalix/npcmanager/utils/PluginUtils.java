@@ -1,9 +1,17 @@
 package io.github.scroojalix.npcmanager.utils;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Method;
+import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.gson.JsonParser;
+
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -35,6 +43,39 @@ public class PluginUtils {
 			}
 		}
 		return ChatColor.translateAlternateColorCodes('&', msg);
+	}
+
+	/**
+	 * Check if an update is available on the github repository.
+	 * 
+	 * @return <code>true</code> if an update is available on the github repo.
+	 *         <code>false</code> otherwise.
+	 */
+	public static void checkForUpdate() {
+		Bukkit.getScheduler().runTaskAsynchronously(NPCMain.instance, new Runnable() {
+			@Override
+			public void run() {
+				NPCMain.instance.log(Level.INFO, "Checking if you have the latest version of the plugin...");
+				String current = NPCMain.instance.getDescription().getVersion();
+				try {
+					URL url = new URL("https://api.github.com/repos/Scroojalix/NPCManager/releases/latest");
+					InputStreamReader reader = new InputStreamReader(url.openStream());
+					String latest = new JsonParser().parse(reader).getAsJsonObject().get("tag_name").getAsString();
+					if (!current.equalsIgnoreCase(latest.replace("v",""))) {
+						Logger logger = NPCMain.instance.getLogger();
+						logger.info("--------------------------------------------------------");
+						logger.info("A new version of the plugin is available!");
+						logger.info("It can be downloaded at:");
+						logger.info("https://github.com/Scroojalix/NPCManager/releases/latest");
+						logger.info("--------------------------------------------------------");
+					} else {
+						NPCMain.instance.log(Level.INFO, "You have the latest version of the plugin.");
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 
 	public static boolean npcExists(String name) {

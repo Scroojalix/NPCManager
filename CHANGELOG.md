@@ -15,10 +15,11 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 - Custom Interact Event names can now contain underscores.
 - Better update checker. Now uses GitHub API, rather than getting version from looking at raw files.
 ### Fixed
-- SkinLayers no longer get reset when a skin is being updated.
+- Skin Layers no longer get reset when a skin is being updated.
 - Skin Layers get displayed correctly in info command.
 - When setting an NPC's equipment through the API, some items were being classed as suitable, when in reality they are not.
 - Setting the skin of an NPC using NPCBuilder. Now waits for the NPC to be spawned, then fetches and applies skin data.
+- Check for plugin updates when running `/npc reload`
 
 ## [1.4.0] - 2020-12-27
 ### Added
