@@ -67,7 +67,9 @@ public abstract class INPCManager {
 	 * @param data The data of the NPC to be restored
 	 */
 	public void restoreNPC(NPCData data) {
-		createAndSpawnNPC(data);
+		createNPCData(data);
+		NPCs.put(data.getName(), data);
+		spawnNPC(data);
 		SkinManager.updateSkin(data);
 	}
 
@@ -299,7 +301,13 @@ public abstract class INPCManager {
 	 * Converts all data in the NPCData object into NMS stuff.
 	 * @param data The {@link NPCData} to create NMS data from.
 	 */
-	public abstract void createAndSpawnNPC(NPCData data);
+	public abstract void createNPCData(NPCData data);
+
+	/**
+	 * Spawns an NPC, assuming all the NMS code has been generated.
+	 * @param data The NPC to spawn.
+	 */
+	public abstract void spawnNPC(NPCData data);
 	
 	/**
 	 * Remove a hologram for a player

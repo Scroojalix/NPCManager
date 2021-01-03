@@ -50,7 +50,7 @@ public class NPCManager extends INPCManager {
 		connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, npcEntity));
 	}
 	
-	public void createAndSpawnNPC(NPCData data) {
+	public void createNPCData(NPCData data) {
 		//NPC
         NPCTrait traits = data.getTraits();
 		GameProfile profile = new GameProfile(data.getUUID(), data.getName());
@@ -85,9 +85,11 @@ public class NPCManager extends INPCManager {
 			data.setNameHolo(null);
 			data.setSubtitleHolo(null);
 		}
-		NPCs.put(data.getName(), data);
-		data.setLoaderTask(Bukkit.getScheduler().scheduleSyncRepeatingTask(main, new NPCLoader(main, data, this), 0l, 1l));
     }
+
+	public void spawnNPC(NPCData data) {
+		data.setLoaderTask(Bukkit.getScheduler().scheduleSyncRepeatingTask(main, new NPCLoader(main, data, this), 0l, 1l));
+	}
 
 	public void removeHologramForPlayer(Player player, NMSHologram hologram) {
 		PlayerConnection connection = ((CraftPlayer)player).getHandle().playerConnection;
