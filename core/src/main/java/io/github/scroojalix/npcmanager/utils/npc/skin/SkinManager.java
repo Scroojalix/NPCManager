@@ -9,10 +9,13 @@ import java.net.URLEncoder;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
@@ -30,11 +33,36 @@ public class SkinManager {
 		}
 	}
 
+	public static void setSkinFromOnlinePlayer(CommandSender sender, NPCData data, Player player, boolean keepLatest) {
+		Bukkit.getScheduler().runTaskAsynchronously(NPCMain.instance, new Runnable() {
+			@Override
+			public void run() {
+				try {
+					Class<?> craftPlayerClass = Class.forName("org.bukkit.craftbukkit." + NPCMain.serverVersion.toString() + ".entity.CraftPlayer");
+					GameProfile profile = (GameProfile) craftPlayerClass.getMethod("getProfile").invoke(craftPlayerClass.cast(player));
+					Property property = profile.getProperties().get("textures").iterator().next();
+					data.getTraits().setSkinData(new SkinData(player.getName(), property.getValue(), property.getSignature(), keepLatest));
+					data.getTraits().getSkinData().setHasUpdated(true);
+					saveAndUpdateNPCSynchronously(sender, data, "&6Successfully fetched skin data from the username &F"+player.getName());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
 	public static void setSkinFromUsername(
 			CommandSender sender,
 			NPCData data,
 			String username,
 			boolean keepLatest) {
+		if (Bukkit.getServer().getPlayerExact(username) != null) {
+			if (sender != null) {
+				sender.sendMessage(PluginUtils.format("&6Hey! That player is online. Getting skin data from them."));
+			}
+			setSkinFromOnlinePlayer(sender, data, Bukkit.getServer().getPlayerExact(username), keepLatest);
+			return;
+		}
 		Bukkit.getScheduler().runTaskAsynchronously(NPCMain.instance, new Runnable() {
 			@Override
 			public void run() {
@@ -50,18 +78,11 @@ public class SkinManager {
 					JsonObject property = obj.get("properties").getAsJsonArray().get(0).getAsJsonObject();
 					String texture = property.get("value").getAsString();
 					String signature = property.get("signature").getAsString();
+					//TODO access NPC game profile and set texture and signature, without updating NPC
+					//May have to add another nms interface NMSPlayer and invoke each NMS version manually
 					data.getTraits().setSkinData(new SkinData(name, texture, signature, keepLatest));
 					data.getTraits().getSkinData().setHasUpdated(true);
-					Bukkit.getScheduler().runTask(NPCMain.instance, new Runnable() {
-						@Override
-						public void run() {
-							NPCMain.instance.npc.saveNPC(data);
-							NPCMain.instance.npc.updateNPC(data);
-							if (sender != null) {
-								sender.sendMessage(PluginUtils.format("&6Successfully fetched skin data from the username &F"+username));
-							}
-						}
-					});
+					saveAndUpdateNPCSynchronously(sender, data, "&6Successfully fetched skin data from the username &F"+username);
 				} catch (Exception e) {
 					if (sender != null) {
 						Bukkit.getScheduler().runTask(NPCMain.instance, new Runnable() {
@@ -102,16 +123,7 @@ public class SkinManager {
 					String signature = (String) texture.get("signature");
 					con.disconnect();
 					data.getTraits().setSkinData(new SkinData(uuid, textureEncoded, signature, false));
-					Bukkit.getScheduler().runTask(NPCMain.instance, new Runnable() {
-						@Override
-						public void run() {
-							NPCMain.instance.npc.saveNPC(data);
-							NPCMain.instance.npc.updateNPC(data);
-							if (sender != null) {
-								sender.sendMessage(PluginUtils.format("&6Successfully fetched skin data from the URL."));
-							}
-						}
-					});
+					saveAndUpdateNPCSynchronously(sender, data, "&6Successfully fetched skin data from the URL.");
 				} catch (Exception e) {
 					if (sender != null) {
 						Bukkit.getScheduler().runTask(NPCMain.instance, new Runnable() {
@@ -138,4 +150,16 @@ public class SkinManager {
 		return result.toString();
 	}
 
+	private static void saveAndUpdateNPCSynchronously(CommandSender sender, NPCData data, String message) {
+		Bukkit.getScheduler().runTask(NPCMain.instance, new Runnable() {
+			@Override
+			public void run() {
+				NPCMain.instance.npc.saveNPC(data);
+				NPCMain.instance.npc.updateNPC(data);
+				if (sender != null) {
+					sender.sendMessage(PluginUtils.format(message));
+				}
+			}
+		});
+	}
 }
