@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.utils.chat.Messages;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
+import io.github.scroojalix.npcmanager.utils.npc.skin.SkinManager;
 import io.github.scroojalix.npcmanager.utils.sql.SQLGetter;
 
 /**
@@ -42,6 +43,9 @@ public abstract class INPCManager {
 		return NPCs;
 	}
 
+	//TODO add config option to get skin skin data based on NPC name.
+	//Upon creation call SkinManager#setSkinFromUsername
+	//It gets handled from there.
 	public void createNPC(String name, Location loc, boolean store) {
 		NPCData data = new NPCData(name, loc, store);
 		restoreNPC(data);
@@ -56,6 +60,15 @@ public abstract class INPCManager {
 	public void updateNPC(NPCData data) {
 		removeNPC(data.getName(), false);
 		restoreNPC(data);
+	}
+
+	/**
+	 * Restores a specific NPC with Data {@code data}
+	 * @param data The data of the NPC to be restored
+	 */
+	public void restoreNPC(NPCData data) {
+		createAndSpawnNPC(data);
+		SkinManager.updateSkin(data);
 	}
 
 	/**
@@ -283,16 +296,10 @@ public abstract class INPCManager {
 	}
 	
 	/**
-	 * Creates a new NMS EntityPlayer for the NPCData object.
-	 * @param data The {@link NPCData} to create an NMS NPC from.
+	 * Converts all data in the NPCData object into NMS stuff.
+	 * @param data The {@link NPCData} to create NMS data from.
 	 */
-	public abstract void getNMSEntity(NPCData data);
-	
-	/**
-	 * Restores a specific NPC with Data {@code data}
-	 * @param data The data of the NPC to be restored
-	 */
-	public abstract void restoreNPC(NPCData data);
+	public abstract void createAndSpawnNPC(NPCData data);
 	
 	/**
 	 * Remove a hologram for a player

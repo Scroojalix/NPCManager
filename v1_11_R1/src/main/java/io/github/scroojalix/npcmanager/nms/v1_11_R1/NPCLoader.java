@@ -15,7 +15,6 @@ import io.github.scroojalix.npcmanager.utils.PluginUtils;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.npc.equipment.NPCEquipment;
 import net.minecraft.server.v1_11_R1.EntityArmorStand;
-import net.minecraft.server.v1_11_R1.EntityPlayer;
 import net.minecraft.server.v1_11_R1.EnumItemSlot;
 import net.minecraft.server.v1_11_R1.MathHelper;
 import net.minecraft.server.v1_11_R1.Packet;
@@ -44,7 +43,7 @@ public class NPCLoader extends INPCLoader implements Runnable {
 	}
 
 	protected void generatePackets() {
-		EntityPlayer npc = (EntityPlayer)data.getNPC();		
+		EntityNMSPlayer npc = (EntityNMSPlayer)data.getNPC();		
 		packets.add(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, npc));
 		packets.add(new PacketPlayOutNamedEntitySpawn(npc));
 		packets.add(new PacketPlayOutEntityMetadata(npc.getId(), npc.getDataWatcher(), true));
@@ -94,7 +93,7 @@ public class NPCLoader extends INPCLoader implements Runnable {
 	}
 
 	protected void lookInDirection(Player player) {
-    	EntityPlayer npc = (EntityPlayer)data.getNPC();        
+    	EntityNMSPlayer npc = (EntityNMSPlayer)data.getNPC();        
         PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
         Vector difference = player.getLocation().subtract(npc.getBukkitEntity().getLocation()).toVector().normalize();
         float degrees = (float) Math.toDegrees(Math.atan2(difference.getZ(), difference.getX()) - Math.PI / 2);
@@ -107,7 +106,7 @@ public class NPCLoader extends INPCLoader implements Runnable {
 	}
 	
 	protected void resetLookDirection(Player player) {
-    	EntityPlayer npc = (EntityPlayer)data.getNPC();        
+    	EntityNMSPlayer npc = (EntityNMSPlayer)data.getNPC();        
         PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
         byte yaw = (byte) (data.getLoc().getYaw() * 255 / 360);
         byte pitch = (byte) (data.getLoc().getPitch() * 255 / 360);
@@ -123,13 +122,13 @@ public class NPCLoader extends INPCLoader implements Runnable {
 		loadedForPlayers.put(player, Bukkit.getScheduler().scheduleSyncDelayedTask(main, new Runnable() {
 			@Override
 			public void run() {
-				connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, (EntityPlayer)data.getNPC()));
+				connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, (EntityNMSPlayer)data.getNPC()));
 			}
 		}, PluginUtils.NPC_REMOVE_DELAY));
 	}
 
 	protected void sendDeletePackets(Player player) {
-		EntityPlayer npc = (EntityPlayer)data.getNPC();
+		EntityNMSPlayer npc = (EntityNMSPlayer)data.getNPC();
 		PlayerConnection connection = ((CraftPlayer)player).getHandle().playerConnection;
 		connection.sendPacket(new PacketPlayOutEntityDestroy(npc.getId()));
 		connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, npc));

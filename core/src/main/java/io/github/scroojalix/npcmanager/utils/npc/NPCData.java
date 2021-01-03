@@ -16,6 +16,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.nms.interfaces.NMSHologram;
+import io.github.scroojalix.npcmanager.nms.interfaces.NMSPlayer;
 import io.github.scroojalix.npcmanager.utils.interactions.CommandInteraction;
 import io.github.scroojalix.npcmanager.utils.interactions.InteractEvent;
 import io.github.scroojalix.npcmanager.utils.interactions.InteractEventType;
@@ -44,7 +45,7 @@ public class NPCData {
 	private NMSHologram subtitleHolo;
 
 	private InteractEvent interactEvent;
-	private Object npc;
+	private NMSPlayer npc;
 	private int loaderTask;
 	private boolean store;
 	private boolean loaded;
@@ -152,7 +153,7 @@ public class NPCData {
 	/**
 	 * @return EntityPlayer instance
 	 */
-	public Object getNPC() {
+	public NMSPlayer getNPC() {
 		return npc;
 	}
 	
@@ -160,7 +161,7 @@ public class NPCData {
 	 * Sets the EntityPlayer instance of this NPC.
 	 * @param npc The instance of EntityPlayer
 	 */
-	public void setNPC(Object npc) {
+	public void setNPC(NMSPlayer npc) {
 		this.npc = npc;
 	}
 	

@@ -14,7 +14,7 @@ import io.github.scroojalix.npcmanager.nms.interfaces.IPacketReader;
 import io.github.scroojalix.npcmanager.utils.interactions.InteractAtNPCEvent;
 import io.github.scroojalix.npcmanager.utils.interactions.InteractAtNPCEvent.NPCAction;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
-import net.minecraft.server.v1_8_R3.EntityPlayer;
+
 import net.minecraft.server.v1_8_R3.Packet;
 import net.minecraft.server.v1_8_R3.PacketPlayInUseEntity;
 
@@ -56,7 +56,7 @@ public class PacketReader extends IPacketReader {
 			if (getValue(packet, "action").toString().equalsIgnoreCase("INTERACT_AT")) {
 				if (list.contains(player.getUniqueId())) return;
 				for (NPCData npc : main.npc.getNPCs().values()) {
-					if (((EntityPlayer) npc.getNPC()).getId() == id) {
+					if (((EntityNMSPlayer) npc.getNPC()).getId() == id) {
 						Bukkit.getScheduler().scheduleSyncDelayedTask(main, new Runnable() {
 							@Override
 							public void run() {
@@ -76,7 +76,7 @@ public class PacketReader extends IPacketReader {
 			}
 			if (getValue(packet, "action").toString().equalsIgnoreCase("ATTACK")) {
 				for (NPCData npc : main.npc.getNPCs().values()) {
-					if (((EntityPlayer) npc.getNPC()).getId() == id) {
+					if (((EntityNMSPlayer) npc.getNPC()).getId() == id) {
 						Bukkit.getScheduler().scheduleSyncDelayedTask(main, new Runnable() {
 
 							@Override
