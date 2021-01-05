@@ -7,6 +7,8 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 ## [Unreleased]
 ### Changed
 - If attempting to get skin data from an online player, it now extracts it from their game profile, rather than through the Mojang API, to speed it up dramatically.
+### Fixed
+- When the distance to an NPC is 0, the head rotation was weird.
 
 ## [1.4.1] - 2021-1-2
 ### Added

@@ -51,7 +51,7 @@ public abstract class INPCLoader {
 							sendLoadPackets(player);
 						}
 						if (hasHeadRotation) {
-							if (distance <= headRotationRange) {
+							if (distance <= headRotationRange && distance > 0) {
 								lookInDirection(player);
 								if (outsideHeadRotationRange.contains(player)) {
 									outsideHeadRotationRange.remove(player);
