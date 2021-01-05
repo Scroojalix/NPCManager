@@ -53,6 +53,8 @@ public class RenameCommand extends SubCommand {
                     main.npc.saveNPC(data);
                     main.npc.getNPCs().put(data.getName(), data);
                     main.npc.spawnNPC(data);
+                    sender.sendMessage(PluginUtils.format("&6Renamed &f"+args[1]+" &6to &f"+args[2]));
+                    return true;
                 } else {
                     sender.sendMessage(ChatColor.RED+Messages.NOT_ALPHANUMERIC);
                 }
