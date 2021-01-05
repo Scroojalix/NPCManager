@@ -70,8 +70,9 @@ public class ModifyCommand extends SubCommand {
                         return true;
                     }
                 } 
+            } else {
                 return false;
-            } 
+            }
         }
         for (SubCommand sub : subcommands) {
             sender.sendMessage(PluginUtils.format("&B" + sub.getSyntax() + " &F&L-&6 " + sub.getDescription()));
