@@ -5,6 +5,8 @@ This file is here in the hopes of recording all changes made throughout the plug
 This project uses the versioning format {phase}.{major}.{minor}, where phase is pretty much never going to change, major is for backwards incompatible changes, and minor is for backwards compatible bug fixes. There may be some versions that are named incorrectly, as I was a bit careless at the start of this project.
 
 ## [Unreleased]
+### Added
+- Option to rename an NPC.
 ### Changed
 - If attempting to get skin data from an online player, it now extracts it from their game profile, rather than through the Mojang API, to speed it up dramatically.
 ### Fixed

@@ -10,15 +10,7 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
 import io.github.scroojalix.npcmanager.NPCMain;
-import io.github.scroojalix.npcmanager.commands.subcommands.ClearCommand;
-import io.github.scroojalix.npcmanager.commands.subcommands.CreateCommand;
-import io.github.scroojalix.npcmanager.commands.subcommands.InfoCommand;
-import io.github.scroojalix.npcmanager.commands.subcommands.ListCommand;
-import io.github.scroojalix.npcmanager.commands.subcommands.ModifyCommand;
-import io.github.scroojalix.npcmanager.commands.subcommands.MoveCommand;
-import io.github.scroojalix.npcmanager.commands.subcommands.ReloadCommand;
-import io.github.scroojalix.npcmanager.commands.subcommands.RemoveCommand;
-import io.github.scroojalix.npcmanager.commands.subcommands.TeleportCommand;
+import io.github.scroojalix.npcmanager.commands.subcommands.*;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class CommandManager implements TabExecutor {
@@ -37,6 +29,7 @@ public class CommandManager implements TabExecutor {
         subcommands.add(new ClearCommand());
         subcommands.add(new InfoCommand());
         subcommands.add(new ReloadCommand());
+        subcommands.add(new RenameCommand());
         //TODO add rename command
 
         main.getCommand("npc").setTabCompleter(this);

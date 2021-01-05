@@ -146,6 +146,10 @@ public class NPCData {
 		return name;
 	}
 
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public UUID getUUID() {
 		return uuid;
 	}

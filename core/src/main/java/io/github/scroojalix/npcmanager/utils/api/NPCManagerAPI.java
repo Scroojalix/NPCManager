@@ -68,6 +68,27 @@ public class NPCManagerAPI {
 			throw new IllegalArgumentException("An NPC with the name '"+name+"' already exists.");
 		}
 	}
+
+	public static void renameNPC(String name, String newName) {
+		if (PluginUtils.npcExists(name)) {
+			NPCData data = NPCMain.instance.npc.getNPCs().get(name);
+			if (name.equals(newName)) {
+				throw new IllegalArgumentException("You cannot rename an NPC to its previous name");
+			}
+			if (PluginUtils.isAlphanumeric(newName)) {
+				NPCMain.instance.npc.removeNPC(data.getName(), true);
+				NPCMain.instance.npc.getNPCs().remove(data.getName());
+				data.setName(newName);
+				NPCMain.instance.npc.saveNPC(data);
+				NPCMain.instance.npc.getNPCs().put(data.getName(), data);
+				NPCMain.instance.npc.spawnNPC(data);
+			} else {
+				throw new IllegalArgumentException(Messages.NOT_ALPHANUMERIC);
+			}
+		} else {
+			throw new IllegalArgumentException(Messages.UNKNOWN_NPC);
+		}
+	}
 	
 	/**
 	 * Modify an NPC's equipment.
@@ -77,7 +98,7 @@ public class NPCManagerAPI {
 	 * @param item The item to put in that slot.
 	 */
 	public static void changeEquipment(String name, EquipmentSlot slot, ItemStack item) {
-		if (NPCMain.instance.npc.getNPCs().containsKey(name)) {
+		if (PluginUtils.npcExists(name)) {
 			NPCData data = NPCMain.instance.npc.getNPCs().get(name);
 			NPCTrait traits = data.getTraits();
 			boolean update = true;
@@ -126,7 +147,7 @@ public class NPCManagerAPI {
 	}
 
 	public static void setDisplayName(String name, String newDisplayName) {
-		if (NPCMain.instance.npc.getNPCs().containsKey(name)) {
+		if (PluginUtils.npcExists(name)) {
 			NPCData data = NPCMain.instance.npc.getNPCs().get(name); 
 			data.getTraits().setDisplayName(newDisplayName);
 			NPCMain.instance.npc.saveNPC(data);
@@ -137,7 +158,7 @@ public class NPCManagerAPI {
 	}
 	
 	public static void setSubtitle(String name, String newSubtitle) {
-		if (NPCMain.instance.npc.getNPCs().containsKey(name)) {
+		if (PluginUtils.npcExists(name)) {
 			NPCData data = NPCMain.instance.npc.getNPCs().get(name); 
 			data.getTraits().setSubtitle(newSubtitle);
 			NPCMain.instance.npc.saveNPC(data);
@@ -148,7 +169,7 @@ public class NPCManagerAPI {
 	}
 	
 	public static void setHeadRotation(String name, boolean headRotation) {
-		if (NPCMain.instance.npc.getNPCs().containsKey(name)) {
+		if (PluginUtils.npcExists(name)) {
 			NPCData data = NPCMain.instance.npc.getNPCs().get(name); 
 			data.getTraits().setHeadRotation(headRotation);
 			NPCMain.instance.npc.saveNPC(data);
@@ -159,7 +180,7 @@ public class NPCManagerAPI {
 	}
 
 	public static void setRange(String name, int range) {
-		if (NPCMain.instance.npc.getNPCs().containsKey(name)) {
+		if (PluginUtils.npcExists(name)) {
 			NPCData data = NPCMain.instance.npc.getNPCs().get(name); 
 			if (range <= 0) {
 				throw new IllegalArgumentException("NPC range cannot be set to 0");
@@ -173,7 +194,7 @@ public class NPCManagerAPI {
 	}
 	
 	public static void setSkinLayers(String name, Map<SkinLayer, Boolean> layers) {
-		if (NPCMain.instance.npc.getNPCs().containsKey(name)) {
+		if (PluginUtils.npcExists(name)) {
 			NPCData data = NPCMain.instance.npc.getNPCs().get(name); 
 			if (!layers.isEmpty()) {
 				NPCSkinLayers newLayers;
@@ -225,7 +246,7 @@ public class NPCManagerAPI {
 	 * @param interaction The command to run or the name of the custom interact event.
 	 */
 	public static void setInteractEvent(String name, InteractEventType type, String interaction) {
-		if (NPCMain.instance.npc.getNPCs().containsKey(name)) {
+		if (PluginUtils.npcExists(name)) {
 			NPCData data = NPCMain.instance.npc.getNPCs().get(name);
 			if (type == InteractEventType.COMMAND) {
 				data.setInteractEvent(new CommandInteraction(interaction));
@@ -259,7 +280,7 @@ public class NPCManagerAPI {
 	 * update the skin on every reload.
 	 */
 	public static void setSkin(String name, SkinType type, String value, boolean optionalArg) {
-		if (NPCMain.instance.npc.getNPCs().containsKey(name)) {
+		if (PluginUtils.npcExists(name)) {
 			NPCData data = NPCMain.instance.npc.getNPCs().get(name);
 			if (type == SkinType.URL) {
 				SkinManager.setSkinFromURL(null, data, value, optionalArg);
@@ -277,7 +298,7 @@ public class NPCManagerAPI {
 	 * @param newLocation The intended Location.
 	 */
 	public static void moveNPC(String name, Location newLocation) {
-		if (NPCMain.instance.npc.getNPCs().containsKey(name)) {
+		if (PluginUtils.npcExists(name)) {
 			NPCData data = NPCMain.instance.npc.getNPCs().get(name);
 			NPCMain.instance.npc.moveNPC(data, newLocation);
 		} else {
@@ -290,7 +311,7 @@ public class NPCManagerAPI {
 	 * @param name The NPC to be removed.
 	 */
 	public static void removeNPC(String name) {
-		if (NPCMain.instance.npc.getNPCs().containsKey(name)) {
+		if (PluginUtils.npcExists(name)) {
 			NPCMain.instance.npc.removeNPC(name, true);
 			NPCMain.instance.npc.getNPCs().remove(name);
 		} else {

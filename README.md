@@ -18,6 +18,7 @@ This project was created so I could practice coding with Java, as well as learn 
  * `/npc clear`
  * `/npc info <npc>`
  * `/npc reload`
+ * `/npc rename`
 
 ### NPC Modifications
 An NPC can be modified by using the command:
