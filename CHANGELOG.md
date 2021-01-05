@@ -9,6 +9,7 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 - Option to rename an NPC.
 ### Changed
 - If attempting to get skin data from an online player, it now extracts it from their game profile, rather than through the Mojang API, to speed it up dramatically.
+- Can now reset skin layers by running `/npc modify <npc> skinLayers --reset`.
 ### Fixed
 - When the distance to an NPC is 0, the head rotation was weird.
 - Issue with modify command displaying all modifications if the input NPC doesn't exist.

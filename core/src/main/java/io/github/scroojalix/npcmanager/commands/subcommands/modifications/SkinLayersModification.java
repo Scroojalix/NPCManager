@@ -45,6 +45,13 @@ public class SkinLayersModification extends SubCommand {
             sender.sendMessage((layers==null?new NPCSkinLayers():layers).getCurrentConfiguration());
             return true;
         }
+        if (args[3].equalsIgnoreCase("--reset")) {
+            data.getTraits().setSkinLayers(null);
+            main.npc.saveNPC(data);
+            main.npc.updateNPC(data);
+            sender.sendMessage(ChatColor.GOLD+"Reset skin layers for "+ChatColor.WHITE+data.getName());
+            return true;
+        }
         LinkedHashMap<String, String> modifications = new LinkedHashMap<String, String>();
         for (int arg = 4; arg <= args.length; arg+=2) {
             String layer = args[arg-1];
@@ -66,18 +73,23 @@ public class SkinLayersModification extends SubCommand {
     @Override
     public List<String> onTabComplete(String[] args) {
         ArrayList<String> result = new ArrayList<String>();
-        if (args.length % 2 == 0) {
-            for (SkinLayer layer : SkinLayer.values()) {
-                result.add(layer.label);
-                for (int arg = 3; arg < args.length; arg++) {
-                    if (args[arg].equalsIgnoreCase(layer.label)) {
-                        result.remove(layer.label);
-                        break;
+        if (args.length == 4) {
+            result.add("--reset");
+        }
+        if (!args[3].equalsIgnoreCase("--reset")) {
+            if (args.length % 2 == 0) {
+                for (SkinLayer layer : SkinLayer.values()) {
+                    result.add(layer.label);
+                    for (int arg = 3; arg < args.length; arg++) {
+                        if (args[arg].equalsIgnoreCase(layer.label)) {
+                            result.remove(layer.label);
+                            break;
+                        }
                     }
                 }
+            } else if (args.length <= 17){
+                result.add("true"); result.add("false");
             }
-        } else if (args.length <= 17){
-            result.add("true"); result.add("false");
         }
         return result;
     }
