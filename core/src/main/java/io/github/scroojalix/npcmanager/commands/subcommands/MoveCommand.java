@@ -42,8 +42,7 @@ public class MoveCommand extends SubCommand {
         if (CommandUtils.npcExists(name, sender)) {
             NPCData data = main.npc.getNPCs().get(name);
             main.npc.moveNPC(data, ((Player) sender).getLocation());
-            sender.sendMessage(
-                    PluginUtils.format("&6Moved the NPC named &F") + name + PluginUtils.format("&6 to your position."));
+            sender.sendMessage(PluginUtils.format("&6Moved &F") + name + PluginUtils.format("&6 to your position."));
             return true;
         }
         return false;

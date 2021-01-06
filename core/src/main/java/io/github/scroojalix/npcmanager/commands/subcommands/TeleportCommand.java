@@ -42,7 +42,7 @@ public class TeleportCommand extends SubCommand {
         if (main.npc.getNPCs().containsKey(args[1])) {
             NPCData data = main.npc.getNPCs().get(args[1]);
             ((Player) sender).teleport(data.getLoc());
-            sender.sendMessage(PluginUtils.format("&6Teleported to NPC &F" + data.getName()));
+            sender.sendMessage(PluginUtils.format("&6Teleported to &F" + data.getName()));
             return true;
         } else {
             sender.sendMessage(ChatColor.RED+Messages.UNKNOWN_NPC);
