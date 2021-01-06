@@ -16,6 +16,7 @@ import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.npc.skin.NPCSkinLayers;
 import io.github.scroojalix.npcmanager.utils.npc.skin.SkinLayer;
 import io.github.scroojalix.npcmanager.utils.npc.skin.SkinManager;
+import io.github.scroojalix.npcmanager.utils.npc.skin.SkinType;
 
 public class NPCBuilder {
 
@@ -91,7 +92,7 @@ public class NPCBuilder {
                 }
                 if (type == SkinType.URL) {
                     SkinManager.setSkinFromURL(null, data, value, optionalArg);
-                } else if (type == SkinType.USERNAME) {
+                } else if (type == SkinType.PLAYER) {
                     SkinManager.setSkinFromUsername(null, data, value, optionalArg);
                 }
             }

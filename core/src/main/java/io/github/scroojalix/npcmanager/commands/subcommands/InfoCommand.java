@@ -66,7 +66,7 @@ public class InfoCommand extends SubCommand {
             } else if (args[2].equalsIgnoreCase("2")) {
                 CommandUtils.sendJSONMessage(sender, CommandUtils.getTitleMessage("NPC Info"));
                 SkinData skinData = traits.getSkinData();
-                sender.sendMessage(PluginUtils.format("&6Skin: &F"+(skinData==null?null:skinData.getSkinName())));
+                sender.sendMessage(PluginUtils.format("&6Skin Name: &F"+(skinData==null?null:skinData.getSkinName())));
                 NPCSkinLayers layers = traits.getSkinLayers();
                 sender.sendMessage(ChatColor.GOLD+"Skin Layers: "+(layers==null?new NPCSkinLayers():layers).getCurrentConfiguration());
                 if (sender instanceof Player) {

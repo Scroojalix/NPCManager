@@ -2,12 +2,14 @@ package io.github.scroojalix.npcmanager.utils.npc.skin;
 
 import com.google.gson.annotations.Expose;
 
-import io.github.scroojalix.npcmanager.utils.PluginUtils;
-
 public class SkinData {
 
     @Expose
-    private String skinName;
+    private SkinType type;
+    @Expose
+    private String name;
+    @Expose
+    private String uuid;
     @Expose
     private String texture;
     @Expose
@@ -17,23 +19,29 @@ public class SkinData {
     
     private boolean hasUpdated;
     
-    public SkinData(String skinName, String texture, String signature, boolean keepLatest) {
-        this.skinName = skinName;
+    public SkinData(SkinType type, String name, String uuid, String texture, String signature, boolean keepLatest) {
+        this.type = type;
+        this.name = name;
+        this.uuid = uuid;
         this.texture = texture;
         this.signature = signature;
         this.keepLatest = keepLatest;
     }
     
     public boolean needsUpdating() {
-        return !hasUpdated && keepLatest() && PluginUtils.isAlphanumeric(skinName) && skinName.length() <= 16;
+        return !hasUpdated && keepLatest && type == SkinType.PLAYER;
     }
-    
+
     public String getSkinName() {
-        return this.skinName;
+        return name;
     }
     
-    public void setSkinName(String skinName) {
-        this.skinName = skinName;
+    public String getUUID() {
+        return this.uuid;
+    }
+    
+    public void setUUID(String uuid) {
+        this.uuid = uuid;
     }
     
     public String getSignature() {
