@@ -11,6 +11,7 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 - If attempting to get skin data from an online player, it now extracts it from their game profile, rather than through the Mojang API, to speed it up dramatically.
 - Can now reset skin layers by running `/npc modify <npc> skinLayers --reset`.
 - The type of Skin (URL/PLAYER) and UUID is now stored with the skin to make it easier to determine if a skin needs updating.
+- Can now reload a specific by running `/npc reload <npc>`.
 ### Fixed
 - When the distance to an NPC is 0, the head rotation was weird.
 - Issue with modify command displaying all modifications if the input NPC doesn't exist.

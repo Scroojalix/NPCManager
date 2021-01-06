@@ -8,6 +8,8 @@ import org.bukkit.command.CommandSender;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.SubCommand;
+import io.github.scroojalix.npcmanager.utils.PluginUtils;
+import io.github.scroojalix.npcmanager.utils.chat.Messages;
 
 public class ReloadCommand extends SubCommand {
 
@@ -18,12 +20,12 @@ public class ReloadCommand extends SubCommand {
 
     @Override
     public String getDescription() {
-        return "Reloads the plugin.";
+        return "Reloads the plugin, or a specific NPC.";
     }
 
     @Override
     public String getSyntax() {
-        return "/npc reload";
+        return "/npc reload [npc]";
     }
 
     @Override
@@ -33,13 +35,25 @@ public class ReloadCommand extends SubCommand {
 
     @Override
     public boolean execute(NPCMain main, CommandSender sender, String[] args) {
-        sender.sendMessage(ChatColor.GOLD + "The plugin was reloaded.");
-        main.reloadPlugin();
-        return true;
+        if (args.length == 1) {
+            sender.sendMessage(ChatColor.GOLD + "Reloaded the plugin.");
+            main.reloadPlugin();
+            return true;
+        } else if (main.npc.getNPCs().containsKey(args[1])) {
+            main.npc.updateNPC(main.npc.getNPCs().get(args[1]));
+            sender.sendMessage(PluginUtils.format("&6Reloaded &f"+args[1]));
+            return true;
+        } else {
+            sender.sendMessage(ChatColor.RED+Messages.UNKNOWN_NPC);
+            return false;
+        }
     }
 
     @Override
     public List<String> onTabComplete(String[] args) {
+        if (args.length == 2) {
+            return getNPCs(args[1]);
+        }
         return new ArrayList<String>();
     }
 }
