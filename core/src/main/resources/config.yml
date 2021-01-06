@@ -11,6 +11,9 @@ npc-headrotation-range: 6
 # Reset head rotation when further than the range set in the above field.
 reset-headrotation: true
 
+# When creating an NPC, use the name of the NPC to get skin data.
+fetch-default-skins: true
+
 # The save method to use.
 # Suitable Values:
 # JSON (default) - Saves each NPC to its own .json file.

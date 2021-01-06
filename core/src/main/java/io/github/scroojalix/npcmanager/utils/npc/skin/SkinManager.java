@@ -54,6 +54,15 @@ public class SkinManager {
 			NPCData data,
 			String username,
 			boolean keepLatest) {
+		setSkinFromUsername(sender, data, username, keepLatest, false);
+	}
+
+	public static void setSkinFromUsername(
+			CommandSender sender,
+			NPCData data,
+			String username,
+			boolean keepLatest,
+			boolean fetchedSkin) {
 		if (Bukkit.getServer().getPlayerExact(username) != null) {
 			if (sender != null) {
 				sender.sendMessage(PluginUtils.format("&6Hey! That player is online. Getting skin data from them."));
@@ -70,15 +79,17 @@ public class SkinManager {
 					String uuid = new JsonParser().parse(reader).getAsJsonObject().get("id").getAsString();
 					setSkinFromUUID(sender, data, uuid, keepLatest);
 				} catch (Exception e) {
-					if (sender != null) {
-						Bukkit.getScheduler().runTask(NPCMain.instance, new Runnable() {
-							@Override
-							public void run() {
-								sender.sendMessage(ChatColor.RED+"Something happened when attempting to fetch skin data from the username '"+username+"'. That player may not exist.");
-							}
-						});
-					} else {
-						throw new IllegalArgumentException("Something happened when attempting to fetch skin data from the username '"+username+"'. That player may not exist.");
+					if (!fetchedSkin) {
+						if (sender != null) {
+							Bukkit.getScheduler().runTask(NPCMain.instance, new Runnable() {
+								@Override
+								public void run() {
+									sender.sendMessage(ChatColor.RED+"Something happened when attempting to fetch skin data from the username '"+username+"'. That player may not exist.");
+								}
+							});
+						} else {
+							throw new IllegalArgumentException("Something happened when attempting to fetch skin data from the username '"+username+"'. That player may not exist.");
+						}
 					}
 				}
 			}

@@ -28,10 +28,12 @@ public abstract class INPCManager {
 
 	protected NPCMain main;
 	protected Map<String, NPCData> NPCs;
+	private boolean fetchDefaultSkins;
 
 	public INPCManager(NPCMain main) {
 		this.main = main;
 		this.NPCs = new LinkedHashMap<String, NPCData>();
+		fetchDefaultSkins = main.getConfig().getBoolean("fetch-default-skins");
 	}
 
 	/**
@@ -43,13 +45,13 @@ public abstract class INPCManager {
 		return NPCs;
 	}
 
-	//TODO add config option to get skin skin data based on NPC name.
-	//Upon creation call SkinManager#setSkinFromUsername
-	//It gets handled from there.
 	public void createNPC(String name, Location loc, boolean store) {
 		NPCData data = new NPCData(name, loc, store);
 		restoreNPC(data);
 		saveNPC(data);
+		if (fetchDefaultSkins) {
+			SkinManager.setSkinFromUsername(null, data, name, false, true);
+		}
 	}
 
 	/**
