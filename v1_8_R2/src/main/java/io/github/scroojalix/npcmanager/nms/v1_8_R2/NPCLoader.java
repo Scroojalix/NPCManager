@@ -1,5 +1,6 @@
 package io.github.scroojalix.npcmanager.nms.v1_8_R2;
 
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -49,7 +50,9 @@ public class NPCLoader extends INPCLoader implements Runnable {
 		packets.add(new PacketPlayOutEntityHeadRotation(npc, (byte) (npc.yaw * 256 / 360)));
 		
 		packets.add(new PacketPlayOutScoreboardTeam(npcClass.getNPCTeam(), 0));
-		packets.add(new PacketPlayOutScoreboardTeam(npcClass.getNPCTeam(), npcClass.getNPCs().keySet(), 3));
+		HashSet<String> npcs = new HashSet<String>();
+		npcs.add(data.getNPC().getProfile().getName());
+		packets.add(new PacketPlayOutScoreboardTeam(npcClass.getNPCTeam(), npcs, 3));
 		
 		packets.add(new PacketPlayOutAnimation(npc, 0));
 		

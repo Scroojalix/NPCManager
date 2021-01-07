@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.SecureRandom;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -317,4 +318,14 @@ public abstract class INPCManager {
 	 * @param hologram - The hologram to remove.
 	 */
 	public abstract void removeHologramForPlayer(Player player, NMSHologram hologram);
+
+	public String getRandomNPCName() {
+		char[] chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_".toCharArray();
+		SecureRandom rand = new SecureRandom();
+		char[] result = new char[16];
+		for (int i = 0; i < result.length; i++) {
+			result[i] = chars[rand.nextInt(chars.length)];
+		}
+		return new String(result);
+	}
 }

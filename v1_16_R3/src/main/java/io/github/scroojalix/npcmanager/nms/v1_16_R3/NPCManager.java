@@ -53,15 +53,11 @@ public class NPCManager extends INPCManager {
 		connection.sendPacket(new PacketPlayOutEntityDestroy(npcEntity.getId()));
 		connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, npcEntity));
 	}
-	
-	//TODO fix issue caused when an npc has the same name as a player.
-	//Player will have [NPC] prefix.
-	//Make npc profile names be a random string of 16 characters.
 
 	public void createNPCData(NPCData data) {
 		//NPC
         NPCTrait traits = data.getTraits();
-		GameProfile profile = new GameProfile(data.getUUID(), data.getName());
+		GameProfile profile = new GameProfile(data.getUUID(), getRandomNPCName());
 		SkinData skin = traits.getSkinData();
 		if (skin != null && skin.getTexture() != null && skin.getSignature() != null) {
 			profile.getProperties().put("textures", new Property("textures", skin.getTexture(), skin.getSignature()));

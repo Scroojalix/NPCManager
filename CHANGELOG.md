@@ -17,6 +17,7 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 ### Fixed
 - When the distance to an NPC is 0, the head rotation was weird.
 - Issue with modify command displaying all modifications if the input NPC doesn't exist.
+- Issue when NPC's had the same name as a player, it caused the player to be put in the NPC scoreboard team, which gave them the `[NPC]` prefix and a gray name. This was fixed by randomly generating a 16 character string for the NPC's tablist name.
 
 ## [1.4.1] - 2021-1-2
 ### Added

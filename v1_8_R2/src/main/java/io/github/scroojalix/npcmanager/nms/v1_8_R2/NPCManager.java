@@ -53,7 +53,7 @@ public class NPCManager extends INPCManager {
 	public void createNPCData(NPCData data) {
 		//NPC
         NPCTrait traits = data.getTraits();
-		GameProfile profile = new GameProfile(data.getUUID(), data.getName());
+		GameProfile profile = new GameProfile(data.getUUID(), getRandomNPCName());
 		SkinData skin = traits.getSkinData();
 		if (skin != null && skin.getTexture() != null && skin.getSignature() != null) {
 			profile.getProperties().put("textures", new Property("textures", skin.getTexture(), skin.getSignature()));
