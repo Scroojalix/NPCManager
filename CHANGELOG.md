@@ -8,6 +8,7 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 ### Added
 - Rename command
 - Option in config to fetch skin data using the NPC's name when creating an NPC.
+- Option in config to make NPC's have better head rotation by making them perform the punch animation.
 ### Changed
 - If attempting to get skin data from an online player, it now extracts it from their game profile, rather than through the Mojang API, to speed it up dramatically.
 - Can now reset skin layers by running `/npc modify <npc> skinLayers --reset`.

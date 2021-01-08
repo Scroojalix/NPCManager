@@ -14,6 +14,9 @@ reset-headrotation: true
 # When creating an NPC, use the name of the NPC to get skin data.
 fetch-default-skins: true
 
+# If true, NPC's will perform the punch animation for perfect NPC orientation.
+perfect-npc-orientation: true
+
 # The save method to use.
 # Suitable Values:
 # JSON (default) - Saves each NPC to its own .json file.

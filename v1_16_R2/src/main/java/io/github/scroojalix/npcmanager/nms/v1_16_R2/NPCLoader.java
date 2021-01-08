@@ -60,7 +60,9 @@ public class NPCLoader extends INPCLoader implements Runnable {
 		npcs.add(data.getNPC().getProfile().getName());
 		packets.add(new PacketPlayOutScoreboardTeam(npcClass.getNPCTeam(), npcs, 3));
 		
-		packets.add(new PacketPlayOutAnimation(npc, 0));
+		if (perfectOrientation) {
+			packets.add(new PacketPlayOutAnimation(npc, 0));
+		}
 		
 		//Holograms
 		EntityArmorStand holo;

@@ -13,7 +13,7 @@ import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 
 public abstract class INPCLoader {
-	
+
 	protected NPCMain main;
 	protected NPCData data;
 	protected Map<Player, Integer> loadedForPlayers = new HashMap<Player, Integer>();
@@ -23,6 +23,7 @@ public abstract class INPCLoader {
 	private boolean hasHeadRotation;
 	private double headRotationRange;
 	private boolean resetRotation;
+	protected boolean perfectOrientation;
 	
 	public INPCLoader(NPCMain main, NPCData data) {
 		this.main = main;
@@ -31,6 +32,7 @@ public abstract class INPCLoader {
 		this.hasHeadRotation = data.getTraits().hasHeadRotation();
 		this.headRotationRange = main.getConfig().getDouble("npc-headrotation-range");
 		this.resetRotation = main.getConfig().getBoolean("reset-headrotation");
+		this.perfectOrientation = main.getConfig().getBoolean("perfect-npc-orientation");
 	}
 
 	public void clearAllTasks() {
