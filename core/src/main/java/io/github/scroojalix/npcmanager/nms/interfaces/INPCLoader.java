@@ -32,6 +32,14 @@ public abstract class INPCLoader {
 		this.headRotationRange = main.getConfig().getDouble("npc-headrotation-range");
 		this.resetRotation = main.getConfig().getBoolean("reset-headrotation");
 	}
+
+	public void clearAllTasks() {
+		for (int id : loadedForPlayers.values()) {
+			Bukkit.getScheduler().cancelTask(id);
+		}
+		loadedForPlayers.clear();
+		outsideHeadRotationRange.clear();
+	}
 	
 	/**
 	 * Generate all packets required to spawn an NPC, and store them in a LinkedHashSet.

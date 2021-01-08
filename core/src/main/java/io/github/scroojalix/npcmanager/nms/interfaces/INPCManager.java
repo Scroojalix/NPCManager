@@ -107,7 +107,8 @@ public abstract class INPCManager {
 	 */
 	public void removeNPC(String npc, boolean fromStorage) {
 		NPCData data = NPCs.get(npc);
-		Bukkit.getScheduler().cancelTask(data.getLoaderTask());
+		Bukkit.getScheduler().cancelTask(data.getLoaderTaskID());
+		data.getLoaderTask().clearAllTasks();
 		for (Player p : Bukkit.getOnlinePlayers()) {
 			sendRemoveNPCPackets(p, data);
 			if (data.getNameHolo() != null) {

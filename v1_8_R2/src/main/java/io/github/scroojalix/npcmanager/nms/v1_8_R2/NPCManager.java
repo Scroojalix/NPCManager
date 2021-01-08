@@ -88,7 +88,8 @@ public class NPCManager extends INPCManager {
     }
 
 	public void spawnNPC(NPCData data) {
-		data.setLoaderTask(Bukkit.getScheduler().scheduleSyncRepeatingTask(main, new NPCLoader(main, data, this), 0l, 1l));
+		NPCLoader loader = new NPCLoader(main, data, this);
+		data.setLoaderTask(Bukkit.getScheduler().scheduleSyncRepeatingTask(main, loader, 0l, 1l), loader);
 	}
 
 	public void removeHologramForPlayer(Player player, NMSHologram hologram) {

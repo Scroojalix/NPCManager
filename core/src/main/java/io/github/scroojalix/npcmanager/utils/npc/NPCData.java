@@ -15,6 +15,7 @@ import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
 import io.github.scroojalix.npcmanager.NPCMain;
+import io.github.scroojalix.npcmanager.nms.interfaces.INPCLoader;
 import io.github.scroojalix.npcmanager.nms.interfaces.NMSHologram;
 import io.github.scroojalix.npcmanager.nms.interfaces.NMSPlayer;
 import io.github.scroojalix.npcmanager.utils.interactions.CommandInteraction;
@@ -46,7 +47,8 @@ public class NPCData {
 
 	private InteractEvent interactEvent;
 	private NMSPlayer npc;
-	private int loaderTask;
+	private int loaderTaskID;
+	private INPCLoader loaderTask;
 	private boolean store;
 	private boolean loaded;
 
@@ -77,7 +79,6 @@ public class NPCData {
 		return builder.create().toJson(this);
 	}
 
-
 	//TODO fix ItemStack not restoring properly (Loses itemmeta)
 	//Custom banners throw errors to the console when restoring.
 	/**
@@ -89,6 +90,7 @@ public class NPCData {
 		try {
 			GsonBuilder builder = new GsonBuilder()
 			.disableHtmlEscaping()
+			.excludeFieldsWithoutExposeAnnotation()
 			.registerTypeHierarchyAdapter(ConfigurationSerializable.class, new ConfigurationSerializableAdapter());
 
 			if (prettyPrinting) {
@@ -224,14 +226,19 @@ public class NPCData {
 	 * Sets the Integer assigned to the loader task of this NPC.
 	 * @param task Integer assigned to Loader task.
 	 */
-	public void setLoaderTask(int task) {
-		this.loaderTask = task;
+	public void setLoaderTask(int taskID, INPCLoader loaderTask) {
+		this.loaderTaskID = taskID;
+		this.loaderTask = loaderTask;
 	}
 	
 	/**
 	 * @return Integer assigned to Loader task of this NPC.
 	 */
-	public int getLoaderTask() {
+	public int getLoaderTaskID() {
+		return loaderTaskID;
+	}
+
+	public INPCLoader getLoaderTask() {
 		return loaderTask;
 	}
 	
