@@ -14,6 +14,10 @@ import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 
 public class InteractEventModification extends SubCommand {
 
+    //TODO upgrade command interactions.
+    //option to execute command as console
+    //add variables eg ${playername}
+
     @Override
     public String getName() {
         return "interactEvent";
