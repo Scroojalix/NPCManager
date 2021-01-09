@@ -52,7 +52,7 @@ public class PluginUtils {
 	 *         <code>false</code> otherwise.
 	 */
 	public static void checkForUpdate() {
-		Bukkit.getScheduler().runTaskAsynchronously(NPCMain.instance, new Runnable() {
+		Bukkit.getScheduler().runTaskLaterAsynchronously(NPCMain.instance, new Runnable() {
 			@Override
 			public void run() {
 				NPCMain.instance.log(Level.INFO, "Checking if you have the latest version of the plugin...");
@@ -75,7 +75,7 @@ public class PluginUtils {
 					e.printStackTrace();
 				}
 			}
-		});
+		}, 5l);
 	}
 
 	public static boolean npcExists(String name) {

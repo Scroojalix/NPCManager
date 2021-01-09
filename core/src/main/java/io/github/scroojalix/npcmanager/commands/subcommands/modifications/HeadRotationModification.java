@@ -40,7 +40,7 @@ public class HeadRotationModification extends SubCommand {
                 boolean value = args[3].equalsIgnoreCase("true");
                 data.getTraits().setHeadRotation(value);
                 sender.sendMessage(PluginUtils.format("&6Set the head rotation of &F"+data.getName()+"&6 to &F"+value));
-                main.npc.saveNPC(data);
+                main.storage.saveNPC(data);
                 main.npc.updateNPC(data);
                 return true;
             }

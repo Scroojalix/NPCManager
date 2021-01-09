@@ -92,7 +92,7 @@ public class NPCManager extends INPCManager {
 		}
     }
 
-	public void spawnNPC(NPCData data) {
+	public void startLoaderTask(NPCData data) {
 		NPCLoader loader = new NPCLoader(main, data, this);
 		data.setLoaderTask(Bukkit.getScheduler().scheduleSyncRepeatingTask(main, loader, 0l, 1l), loader);
 	}

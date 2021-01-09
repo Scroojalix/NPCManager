@@ -50,7 +50,7 @@ public class RenameCommand extends SubCommand {
                     main.npc.removeNPC(data.getName(), true);
                     main.npc.getNPCs().remove(data.getName());
                     data.setName(args[2]);
-                    main.npc.saveNPC(data);
+                    main.storage.saveNPC(data);
                     main.npc.getNPCs().put(data.getName(), data);
                     main.npc.spawnNPC(data);
                     sender.sendMessage(PluginUtils.format("&6Renamed &f"+args[1]+" &6to &f"+args[2]));

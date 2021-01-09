@@ -45,7 +45,7 @@ public class RangeModification extends SubCommand {
                 }
                 data.getTraits().setRange(value);
                 sender.sendMessage(PluginUtils.format("&6Set the range of &F"+data.getName()+"&6 to &F"+value));
-                main.npc.saveNPC(data);
+                main.storage.saveNPC(data);
                 main.npc.updateNPC(data);
                 return true;
             } catch (NumberFormatException e) {

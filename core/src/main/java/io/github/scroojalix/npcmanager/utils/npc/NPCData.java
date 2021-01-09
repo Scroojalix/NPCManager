@@ -23,7 +23,7 @@ import io.github.scroojalix.npcmanager.utils.interactions.InteractEvent;
 import io.github.scroojalix.npcmanager.utils.interactions.InteractEventType;
 import io.github.scroojalix.npcmanager.utils.interactions.InteractionsManager;
 import io.github.scroojalix.npcmanager.utils.interactions.NPCInteractionData;
-import io.github.scroojalix.npcmanager.utils.json.ConfigurationSerializableAdapter;
+import io.github.scroojalix.npcmanager.utils.storage.misc.ConfigurationSerializableAdapter;
 
 /**
  * Class that stores all of an NPC's data.
@@ -101,7 +101,7 @@ public class NPCData {
 
 			String world = obj.get("loc").getAsJsonObject().get("world").getAsString();
 			if (Bukkit.getWorld(world) == null) {
-				NPCMain.instance.npc.removeNPCFromStorage(name);
+				NPCMain.instance.storage.removeNPC(name);
 				NPCMain.instance.log(Level.SEVERE, "Error restoring an NPC: The world it's in does not exist.");
 				NPCMain.instance.log(Level.SEVERE, "The NPC will be removed from storage.");
 				return null;
@@ -129,7 +129,7 @@ public class NPCData {
 		} catch (JsonSyntaxException e) {
 			NPCMain.instance.log(Level.SEVERE, "Error restoring an NPC: Invalid JSON");
 			NPCMain.instance.log(Level.SEVERE, "The NPC will be removed from storage.");
-			NPCMain.instance.npc.removeNPCFromStorage(name);
+			NPCMain.instance.storage.removeNPC(name);
 			return null;
 		}
 	}

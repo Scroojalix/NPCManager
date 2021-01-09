@@ -1,5 +1,6 @@
-package io.github.scroojalix.npcmanager.utils.sql;
+package io.github.scroojalix.npcmanager.utils.storage.implementation.mysql;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,9 +19,9 @@ public class SQLGetter {
 		this.tableName = tableName;
 	}
 	
-	public void createTable() {
+	public void createTable(Connection connection) {
 		try {
-			PreparedStatement ps = main.sql.getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS "+tableName+
+			PreparedStatement ps = connection.prepareStatement("CREATE TABLE IF NOT EXISTS "+tableName+
 					" (NAME VARCHAR(16) BINARY,DATA TEXT BINARY,PRIMARY KEY (NAME))");
 			ps.executeUpdate();
 		} catch(SQLException e) {
@@ -28,19 +29,19 @@ public class SQLGetter {
 		}
 	}
 	
-	public boolean addNPC(NPCData data, boolean replace) {
+	public boolean addNPC(Connection connection, NPCData data, boolean replace) {
 		try {
 			String name = data.getName();
 			String json = data.toJson(false);
-			if (exists(name)) {
+			if (exists(connection, name)) {
 				if (replace) {
-					remove(name);
+					remove(connection, name);
 				} else {
 					main.log(Level.WARNING, "Could not merge NPC from temp storage to database. An NPC with the same name already exists in the database.");
 					return false;
 				}
 			}
-			PreparedStatement ps = main.sql.getConnection().prepareStatement("INSERT IGNORE INTO "+tableName+" (NAME,DATA) VALUES (?,?)");
+			PreparedStatement ps = connection.prepareStatement("INSERT IGNORE INTO "+tableName+" (NAME,DATA) VALUES (?,?)");
 			ps.setString(1, name);
 			ps.setString(2, json);
 			ps.executeUpdate();
@@ -51,9 +52,9 @@ public class SQLGetter {
 		}
 	}
 	
-	public boolean exists(String name) {
+	private boolean exists(Connection connection, String name) {
 		try {
-			PreparedStatement ps = main.sql.getConnection().prepareStatement("SELECT * FROM "+tableName+" WHERE NAME=?");
+			PreparedStatement ps = connection.prepareStatement("SELECT * FROM "+tableName+" WHERE NAME=?");
 			ps.setString(1, name);
 			ResultSet results = ps.executeQuery();
 			return results.next();
@@ -63,25 +64,9 @@ public class SQLGetter {
 		return false;
 	}
 	
-	public String getData(String name) {
+	public void remove(Connection connection, String name) {
 		try {
-			PreparedStatement ps = main.sql.getConnection().prepareStatement("SELECT DATA FROM "+tableName+" WHERE NAME=?");
-			ps.setString(1, name);
-			ResultSet rs = ps.executeQuery();
-			String data = null;
-			if (rs.next()) {
-				data = rs.getString("DATA");
-			}
-			return data;
-		} catch(SQLException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	public void remove(String name) {
-		try {
-			PreparedStatement ps = main.sql.getConnection().prepareStatement("DELETE FROM "+tableName+" WHERE NAME=?");
+			PreparedStatement ps = connection.prepareStatement("DELETE FROM "+tableName+" WHERE NAME=?");
 			ps.setString(1, name);
 			ps.executeUpdate();
 		} catch(SQLException e) {
@@ -89,10 +74,10 @@ public class SQLGetter {
 		}
 	}
 	
-	public boolean testConnection() {
-		if (main.sql.isConnected()) {
+	public boolean testConnection(Connection connection) {
+		if (connection != null) {
 			try {
-				PreparedStatement ps = main.sql.getConnection().prepareStatement("SELECT * FROM "+tableName);
+				PreparedStatement ps = connection.prepareStatement("SELECT * FROM "+tableName);
 				ps.execute();
 				return true;
 			} catch (NullPointerException | SQLException e) {}
@@ -100,14 +85,14 @@ public class SQLGetter {
 		return false;
 	}
 	
-	public void restoreDataEntries() {
+	public void restoreDataEntries(Connection connection) {
 		try {
-			PreparedStatement ps = main.sql.getConnection().prepareStatement("SELECT * FROM "+tableName);
+			PreparedStatement ps = connection.prepareStatement("SELECT * FROM "+tableName);
 			ResultSet rs = ps.executeQuery();
 			while(rs.next()) {
 				NPCData data = NPCData.fromJson(rs.getString(1), rs.getString(2), false);
 				if (data != null) {
-					main.npc.restoreNPC(data);
+					main.npc.spawnNPC(data);
 				}
 			}
 		} catch(SQLException | NullPointerException e) {

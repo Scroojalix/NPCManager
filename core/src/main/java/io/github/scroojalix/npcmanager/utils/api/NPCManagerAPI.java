@@ -29,8 +29,8 @@ public class NPCManagerAPI {
 		if (!NPCMain.instance.npc.getNPCs().containsKey(data.getName())) {
 			if (data.getLoc() != null) {
 				data.setLoaded(true);
-				NPCMain.instance.npc.saveNPC(data);
-				NPCMain.instance.npc.restoreNPC(data);
+				NPCMain.instance.storage.saveNPC(data);
+				NPCMain.instance.npc.spawnNPC(data);
 			} else {
 				throw new NullPointerException("The NPC's location is null (not valid).");
 			}
@@ -80,7 +80,7 @@ public class NPCManagerAPI {
 				NPCMain.instance.npc.removeNPC(data.getName(), true);
 				NPCMain.instance.npc.getNPCs().remove(data.getName());
 				data.setName(newName);
-				NPCMain.instance.npc.saveNPC(data);
+				NPCMain.instance.storage.saveNPC(data);
 				NPCMain.instance.npc.getNPCs().put(data.getName(), data);
 				NPCMain.instance.npc.spawnNPC(data);
 			} else {
@@ -139,7 +139,7 @@ public class NPCManagerAPI {
 				throw new IllegalArgumentException("The equipment slot '"+slot+"' is invalid.");
 			}
 			if (update) {
-				NPCMain.instance.npc.saveNPC(data);
+				NPCMain.instance.storage.saveNPC(data);
 				NPCMain.instance.npc.updateNPC(data);
 			}
 		} else {
@@ -151,7 +151,7 @@ public class NPCManagerAPI {
 		if (PluginUtils.npcExists(name)) {
 			NPCData data = NPCMain.instance.npc.getNPCs().get(name); 
 			data.getTraits().setDisplayName(newDisplayName);
-			NPCMain.instance.npc.saveNPC(data);
+			NPCMain.instance.storage.saveNPC(data);
 			NPCMain.instance.npc.updateNPC(data);
 		} else {
 			throw new IllegalArgumentException(Messages.UNKNOWN_NPC);
@@ -162,7 +162,7 @@ public class NPCManagerAPI {
 		if (PluginUtils.npcExists(name)) {
 			NPCData data = NPCMain.instance.npc.getNPCs().get(name); 
 			data.getTraits().setSubtitle(newSubtitle);
-			NPCMain.instance.npc.saveNPC(data);
+			NPCMain.instance.storage.saveNPC(data);
 			NPCMain.instance.npc.updateNPC(data);
 		} else {
 			throw new IllegalArgumentException(Messages.UNKNOWN_NPC);
@@ -173,7 +173,7 @@ public class NPCManagerAPI {
 		if (PluginUtils.npcExists(name)) {
 			NPCData data = NPCMain.instance.npc.getNPCs().get(name); 
 			data.getTraits().setHeadRotation(headRotation);
-			NPCMain.instance.npc.saveNPC(data);
+			NPCMain.instance.storage.saveNPC(data);
 			NPCMain.instance.npc.updateNPC(data);
 		} else {
 			throw new IllegalArgumentException(Messages.UNKNOWN_NPC);
@@ -187,7 +187,7 @@ public class NPCManagerAPI {
 				throw new IllegalArgumentException("NPC range cannot be set to 0");
 			}
 			data.getTraits().setRange(range);
-			NPCMain.instance.npc.saveNPC(data);
+			NPCMain.instance.storage.saveNPC(data);
 			NPCMain.instance.npc.updateNPC(data);
 		} else {
 			throw new IllegalArgumentException(Messages.UNKNOWN_NPC);
@@ -232,7 +232,7 @@ public class NPCManagerAPI {
 					}
 				}
 				data.getTraits().setSkinLayers(newLayers);
-				NPCMain.instance.npc.saveNPC(data);
+				NPCMain.instance.storage.saveNPC(data);
 				NPCMain.instance.npc.updateNPC(data);
 			}
 		} else {

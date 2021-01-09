@@ -1,4 +1,4 @@
-package io.github.scroojalix.npcmanager.utils.json;
+package io.github.scroojalix.npcmanager.utils.storage.misc;
 
 import java.lang.reflect.Type;
 import java.util.LinkedHashMap;
