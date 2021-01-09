@@ -3,6 +3,7 @@ package io.github.scroojalix.npcmanager.nms.interfaces;
 import java.security.SecureRandom;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -22,11 +23,20 @@ public abstract class INPCManager {
 	protected NPCMain main;
 	protected Map<String, NPCData> NPCs;
 	private boolean fetchDefaultSkins;
+	private int npcNameLength;
 
 	public INPCManager(NPCMain main) {
 		this.main = main;
 		this.NPCs = new LinkedHashMap<String, NPCData>();
 		fetchDefaultSkins = main.getConfig().getBoolean("fetch-default-skins");
+		npcNameLength = main.getConfig().getInt("npc-name-length");
+		if (npcNameLength > 16) npcNameLength = 16;
+		if (npcNameLength < 3) npcNameLength = 3;
+		main.log(Level.INFO, "Set NPC tab list name length to "+npcNameLength);
+	}
+
+	public void setNPCNameLength(int npcNameLength) {
+		this.npcNameLength = npcNameLength;
 	}
 
 	/**
@@ -142,11 +152,10 @@ public abstract class INPCManager {
 	 */
 	public abstract void removeHologramForPlayer(Player player, NMSHologram hologram);
 
-	//TODO config option to customise random name length
 	public String getRandomNPCName() {
 		char[] chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_".toCharArray();
 		SecureRandom rand = new SecureRandom();
-		char[] result = new char[16];
+		char[] result = new char[npcNameLength];
 		for (int i = 0; i < result.length; i++) {
 			result[i] = chars[rand.nextInt(chars.length)];
 		}

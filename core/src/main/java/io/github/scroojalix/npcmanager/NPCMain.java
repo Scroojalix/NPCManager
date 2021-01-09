@@ -127,6 +127,11 @@ public class NPCMain extends JavaPlugin {
 		npc.removeAllNPCs();
 		this.saveDefaultConfig();
 		reloadConfig();
+		int newNPCNameLength = this.getConfig().getInt("npc-name-length");
+		if (newNPCNameLength > 16) newNPCNameLength = 16;
+		if (newNPCNameLength < 3) newNPCNameLength = 3;
+		log(Level.INFO, "Set NPC tab list name length to "+newNPCNameLength);
+		npc.setNPCNameLength(newNPCNameLength);
 		showDebugMessages = getConfig().getBoolean("show-debug-messages");
 		storage.shutdown();
 		this.storage = new StorageFactory(this).getInstance();

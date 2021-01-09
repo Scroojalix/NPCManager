@@ -17,6 +17,12 @@ fetch-default-skins: true
 # If true, NPC's will perform the punch animation for perfect NPC orientation.
 perfect-npc-orientation: true
 
+# The length of an NPC's name to be used in the tablist.
+# NPC Tab List names need to be randomised as it fixes a bug
+# caused when an online player has the same name as an NPC.
+# This needs to be set between 3 and 16.
+npc-name-length: 16
+
 # The save method to use.
 # Suitable Values:
 # JSON (default) - Saves each NPC to its own .json file.
