@@ -120,17 +120,8 @@ public class PluginUtils {
 			p.sendMessage(ChatColor.RED+"That item cannot be placed in this slot!");
 		}
         return false;
-    }
-	
-	//TODO implement MongoDB
-	/**
-	 * Save method for the plugin. 
-	 * @author Scroojalix
-	 */
-	public enum SaveMethod {
-		JSON, MYSQL;
 	}
-
+	
 	/**
 	 * Version that the server is running.
 	 * @author Scroojalix

@@ -4,6 +4,7 @@ import java.util.logging.Level;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 
+//TODO implement MongoDB
 public enum StorageType {
     JSON("JSON"),
     MYSQL("MySQL");
