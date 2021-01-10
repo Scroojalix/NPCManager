@@ -72,6 +72,9 @@ public class NPCMain extends JavaPlugin {
 		}
 		this.saveDefaultConfig();
 		EmptySlots.generateItems();
+		long npcRemoveDelay = getConfig().getLong("npc-remove-delay");
+		if (npcRemoveDelay < 1) npcRemoveDelay = 1;
+		PluginUtils.NPC_REMOVE_DELAY = npcRemoveDelay;
 		this.storage = new StorageFactory(this).getInstance();
 		this.storage.init();
 		this.getCommand("npc").setExecutor(new CommandManager(this));
@@ -127,12 +130,15 @@ public class NPCMain extends JavaPlugin {
 		npc.removeAllNPCs();
 		this.saveDefaultConfig();
 		reloadConfig();
+		showDebugMessages = getConfig().getBoolean("show-debug-messages");
 		int newNPCNameLength = this.getConfig().getInt("npc-name-length");
 		if (newNPCNameLength > 16) newNPCNameLength = 16;
 		if (newNPCNameLength < 3) newNPCNameLength = 3;
 		log(Level.INFO, "Set NPC tab list name length to "+newNPCNameLength);
 		npc.setNPCNameLength(newNPCNameLength);
-		showDebugMessages = getConfig().getBoolean("show-debug-messages");
+		long npcRemoveDelay = getConfig().getLong("npc-remove-delay");
+		if (npcRemoveDelay < 1) npcRemoveDelay = 1;
+		PluginUtils.NPC_REMOVE_DELAY = npcRemoveDelay;
 		storage.shutdown();
 		this.storage = new StorageFactory(this).getInstance();
 		this.storage.init();

@@ -23,8 +23,7 @@ import net.md_5.bungee.api.ChatColor;
 
 public class PluginUtils {
 
-	//TODO add config option to customise this.
-	public static final long NPC_REMOVE_DELAY = 60l;
+	public static long NPC_REMOVE_DELAY = 60l;
 
     private static final Pattern pattern = Pattern.compile("#[a-fA-F0-9]{6}");
     
