@@ -8,3 +8,4 @@
 target/
 Build/
 *.log
+dependency-reduced-pom.xml
