@@ -8,12 +8,15 @@ import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
 
 import org.bukkit.configuration.file.FileConfiguration;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.utils.chat.Messages;
+import io.github.scroojalix.npcmanager.utils.dependencies.Dependency;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.storage.implementation.StorageImplementation;
 
@@ -161,6 +164,10 @@ public class MySQLStorage implements StorageImplementation {
 			}
         }
         if (connected) tempStorage.delete();
-	}
+    }
+    
+    public Set<Dependency> getDependencies() {
+        return new HashSet<Dependency>();
+    }
     
 }

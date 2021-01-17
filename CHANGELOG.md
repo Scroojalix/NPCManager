@@ -5,6 +5,8 @@ This file is here in the hopes of recording all changes made throughout the plug
 This project uses the versioning format {phase}.{major}.{minor}, where phase is pretty much never going to change, major is for backwards incompatible changes, and minor is for backwards compatible bug fixes. There may be some versions that are named incorrectly, as I was a bit careless at the start of this project.
 
 ## [Unreleased]
+### Added
+- Dependency Manager that downloads dependencies into a cache folder and remaps them for use within the plugin. Will be used to implement more storage methods.
 
 ## [1.4.2] - 2021-1-10
 ### Added

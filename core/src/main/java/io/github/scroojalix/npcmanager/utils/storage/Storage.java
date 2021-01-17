@@ -1,10 +1,12 @@
 package io.github.scroojalix.npcmanager.utils.storage;
 
+import java.util.Set;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 
 import io.github.scroojalix.npcmanager.NPCMain;
+import io.github.scroojalix.npcmanager.utils.dependencies.Dependency;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.storage.implementation.StorageImplementation;
 
@@ -24,9 +26,13 @@ public class Storage {
             @Override
             public void run() {
                 try {
+                    Set<Dependency> dependencies = implementation.getDependencies();
+                    if (!dependencies.isEmpty()) {
+                        main.dependencyManager.loadDependencies(dependencies);
+                    }
                     implementation.init();
-                } catch(Exception e) {
-                    main.getLogger().log(Level.SEVERE, "Failed to init storage implementation", e);
+                } catch(Throwable t) {
+                    main.getLogger().log(Level.SEVERE, "Failed to init storage implementation", t);
                 }
                 restoreNPCs();
             }
@@ -37,8 +43,8 @@ public class Storage {
         this.main.log(Level.INFO, "Shutting down storage implementation");
         try {
             this.implementation.shutdown();
-        } catch(Exception e) {
-            this.main.getLogger().log(Level.SEVERE, "Failed to shutdown storage implementation", e);
+        } catch(Throwable t) {
+            this.main.getLogger().log(Level.SEVERE, "Failed to shutdown storage implementation", t);
         }
     }
 

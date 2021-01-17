@@ -13,6 +13,8 @@ import io.github.scroojalix.npcmanager.nms.interfaces.INPCManager;
 import io.github.scroojalix.npcmanager.nms.interfaces.IPacketReader;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 import io.github.scroojalix.npcmanager.utils.PluginUtils.ServerVersion;
+import io.github.scroojalix.npcmanager.utils.dependencies.DependencyManager;
+import io.github.scroojalix.npcmanager.utils.dependencies.classloader.ReflectionClassLoader;
 import io.github.scroojalix.npcmanager.utils.npc.equipment.EmptySlots;
 import io.github.scroojalix.npcmanager.utils.npc.equipment.EquipmentInventory;
 import io.github.scroojalix.npcmanager.utils.storage.Storage;
@@ -31,10 +33,12 @@ public class NPCMain extends JavaPlugin {
 	
 	public INPCManager npc;
 	public IPacketReader reader;
+	public DependencyManager dependencyManager;
 	public Storage storage;
 	public boolean showDebugMessages;
 	
 	private boolean validVersion = true;
+	private ReflectionClassLoader classLoader;
 	
 	@Override
 	public void onEnable() {
@@ -75,6 +79,8 @@ public class NPCMain extends JavaPlugin {
 		long npcRemoveDelay = getConfig().getLong("npc-remove-delay");
 		if (npcRemoveDelay < 1) npcRemoveDelay = 1;
 		PluginUtils.NPC_REMOVE_DELAY = npcRemoveDelay;
+		this.classLoader = new ReflectionClassLoader(this);
+		this.dependencyManager = new DependencyManager(this);
 		this.storage = new StorageFactory(this).getInstance();
 		this.storage.init();
 		this.getCommand("npc").setExecutor(new CommandManager(this));
@@ -114,6 +120,10 @@ public class NPCMain extends JavaPlugin {
 			return false;
 		}
 		return true;
+	}
+
+	public ReflectionClassLoader getPluginClassLoader() {
+		return this.classLoader;
 	}
 	
 	public void log(Level level, String msg) {
