@@ -94,10 +94,10 @@ public class MySQLStorage implements StorageImplementation {
         if (getter.testConnection(connection)) {
             getter.remove(connection, name);
         } else {
-            File tempFile = new File(main.getDataFolder()+"/json-storage/temp", name+".json");
+            File tempFile = new File(main.getDataFolder()+"/json-storage/mysql-temp", name+".json");
             if (tempFile.exists()) {
                 tempFile.delete();
-                File tempDir = new File(main.getDataFolder()+"/json-storage/temp");
+                File tempDir = new File(main.getDataFolder()+"/json-storage/mysql-temp");
                 if (tempDir.list().length == 0) {
                     tempDir.delete();
                 }
@@ -112,7 +112,7 @@ public class MySQLStorage implements StorageImplementation {
             main.log(Level.INFO, Messages.RESTORE_NPCS);
             getter.restoreDataEntries(connection);
         }
-        File tempDir = new File(main.getDataFolder()+"/json-storage/temp");
+        File tempDir = new File(main.getDataFolder()+"/json-storage/mysql-temp");
         if (tempDir.exists()) {
             main.log(Level.INFO, "Restoring NPC's from temp storage.");
             restoreTempNPCs(connected);
@@ -120,7 +120,7 @@ public class MySQLStorage implements StorageImplementation {
     }
 
     private void saveTempNPC(NPCData data) {
-		File jsonFile = new File(main.getDataFolder()+"/json-storage/temp", data.getName()+".json");
+		File jsonFile = new File(main.getDataFolder()+"/json-storage/mysql-temp", data.getName()+".json");
 		try {
 			jsonFile.getParentFile().mkdirs();
 			jsonFile.createNewFile();
@@ -138,7 +138,7 @@ public class MySQLStorage implements StorageImplementation {
 	}
 
     private void restoreTempNPCs(boolean connected) {
-		File tempStorage = new File(main.getDataFolder()+"/json-storage/temp");
+		File tempStorage = new File(main.getDataFolder()+"/json-storage/mysql-temp");
 		File[] tempFiles = tempStorage.listFiles();
 		if (tempFiles != null) {
 			for (int i = 0; i < tempFiles.length; i++) {
