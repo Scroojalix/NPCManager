@@ -27,7 +27,6 @@ import io.github.scroojalix.npcmanager.utils.dependencies.relocation.RelocationH
 
 public class DependencyManager {
 
-    private final Path cacheDirectory;
     private final NPCMain main;
     private final String url;
 
@@ -37,7 +36,6 @@ public class DependencyManager {
     
     public DependencyManager(NPCMain main) {
         this.main = main;
-        this.cacheDirectory = setupCacheDirectory();
         url = "https://repo1.maven.org/maven2/";
     }
 
@@ -71,7 +69,7 @@ public class DependencyManager {
             return normalFile;
         }
 
-        Path remappedFile = this.cacheDirectory.resolve(dependency.getFileName() + "-remapped.jar");
+        Path remappedFile = this.getCacheDirectory().resolve(dependency.getFileName() + "-remapped.jar");
 
         // if the remapped source exists already, just use that.
         if (Files.exists(remappedFile)) {
@@ -140,7 +138,7 @@ public class DependencyManager {
      * @throws DependencyDownloadException if something goes wrong when attemting to download the dependency.
      */
     private Path downloadDependency(Dependency dependency) throws DependencyDownloadException {
-        Path file = this.cacheDirectory.resolve(dependency.getFileName() + ".jar");
+        Path file = this.getCacheDirectory().resolve(dependency.getFileName() + ".jar");
         if (Files.exists(file)) {
             return file;
         }
@@ -186,7 +184,7 @@ public class DependencyManager {
         }
     }
 
-    private Path setupCacheDirectory() {
+    private Path getCacheDirectory() {
         Path cache = main.getDataFolder().toPath().toAbsolutePath().resolve("libs");
         if (Files.exists(cache) && (Files.isDirectory(cache) || Files.isSymbolicLink(cache))) {
             return cache;
