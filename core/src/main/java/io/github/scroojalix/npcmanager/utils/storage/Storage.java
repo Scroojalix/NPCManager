@@ -1,12 +1,10 @@
 package io.github.scroojalix.npcmanager.utils.storage;
 
-import java.util.Set;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 
 import io.github.scroojalix.npcmanager.NPCMain;
-import io.github.scroojalix.npcmanager.utils.dependencies.Dependency;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.storage.implementation.StorageImplementation;
 
@@ -26,10 +24,6 @@ public class Storage {
             @Override
             public void run() {
                 try {
-                    Set<Dependency> dependencies = implementation.getDependencies();
-                    if (!dependencies.isEmpty()) {
-                        main.dependencyManager.loadDependencies(dependencies);
-                    }
                     implementation.init();
                 } catch(Throwable t) {
                     main.getLogger().log(Level.SEVERE, "Failed to init storage implementation", t);
@@ -53,7 +47,9 @@ public class Storage {
             Bukkit.getScheduler().runTaskAsynchronously(main, new Runnable() {
                 @Override
                 public void run() {
-                    implementation.saveNPC(data);
+                    try {
+                        implementation.saveNPC(data);
+                    } catch(Throwable t) {}
                 }
             });
         }
@@ -63,7 +59,9 @@ public class Storage {
         Bukkit.getScheduler().runTaskAsynchronously(main, new Runnable(){
 			@Override
             public void run() {
-                implementation.removeNPC(name);
+                try {
+                    implementation.removeNPC(name);
+                } catch(Throwable t) {}
             }
         });
     }
@@ -72,7 +70,9 @@ public class Storage {
         Bukkit.getScheduler().runTaskLater(main, new Runnable() {
             @Override
             public void run() {
-                implementation.restoreNPCs();
+                try {
+                    implementation.restoreNPCs();
+                } catch(Throwable t) {}
             }
         }, 1l);
     }

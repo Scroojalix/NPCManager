@@ -7,6 +7,7 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 ## [Unreleased]
 ### Added
 - Dependency Manager that downloads dependencies into a cache folder and remaps them for use within the plugin. Will be used to implement more storage methods.
+- `MongoDB` as a new storage method.
 ### Changed
 - Name of temp folder for MySQL storage renamed from `temp` to `mysql-temp` so more storage methods can have temp storage.
 

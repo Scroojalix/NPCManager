@@ -14,7 +14,6 @@ import io.github.scroojalix.npcmanager.nms.interfaces.IPacketReader;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 import io.github.scroojalix.npcmanager.utils.PluginUtils.ServerVersion;
 import io.github.scroojalix.npcmanager.utils.dependencies.DependencyManager;
-import io.github.scroojalix.npcmanager.utils.dependencies.classloader.ReflectionClassLoader;
 import io.github.scroojalix.npcmanager.utils.npc.equipment.EmptySlots;
 import io.github.scroojalix.npcmanager.utils.npc.equipment.EquipmentInventory;
 import io.github.scroojalix.npcmanager.utils.storage.Storage;
@@ -38,7 +37,6 @@ public class NPCMain extends JavaPlugin {
 	public boolean showDebugMessages;
 	
 	private boolean validVersion = true;
-	private ReflectionClassLoader classLoader;
 	
 	@Override
 	public void onEnable() {
@@ -79,10 +77,13 @@ public class NPCMain extends JavaPlugin {
 		long npcRemoveDelay = getConfig().getLong("npc-remove-delay");
 		if (npcRemoveDelay < 1) npcRemoveDelay = 1;
 		PluginUtils.NPC_REMOVE_DELAY = npcRemoveDelay;
-		this.classLoader = new ReflectionClassLoader(this);
+
+		StorageFactory factory = new StorageFactory(this);
 		this.dependencyManager = new DependencyManager(this);
-		this.storage = new StorageFactory(this).getInstance();
-		this.storage.init();
+		this.dependencyManager.loadStorageDependencies(factory.getType());
+
+		this.storage = factory.getInstance();
+		
 		this.getCommand("npc").setExecutor(new CommandManager(this));
 		this.getServer().getPluginManager().registerEvents(new NPCEvents(this), this);
 		this.getServer().getPluginManager().registerEvents(new EquipmentEvents(this), this);
@@ -121,10 +122,6 @@ public class NPCMain extends JavaPlugin {
 		}
 		return true;
 	}
-
-	public ReflectionClassLoader getPluginClassLoader() {
-		return this.classLoader;
-	}
 	
 	public void log(Level level, String msg) {
 		if (showDebugMessages) {
@@ -149,9 +146,8 @@ public class NPCMain extends JavaPlugin {
 		long npcRemoveDelay = getConfig().getLong("npc-remove-delay");
 		if (npcRemoveDelay < 1) npcRemoveDelay = 1;
 		PluginUtils.NPC_REMOVE_DELAY = npcRemoveDelay;
-		storage.shutdown();
+		this.storage.shutdown();
 		this.storage = new StorageFactory(this).getInstance();
-		this.storage.init();
 		PluginUtils.checkForUpdate();
 	}
 }

@@ -30,17 +30,38 @@ npc-name-length: 16
 
 # The save method to use.
 # Suitable Values:
-# JSON (default) - Saves each NPC to its own .json file.
-# MYSQL - Saves NPC's to a MYSQL database.
+# JSON (default)
+# MySQL
+# MongoDB
 save-method: JSON
 
-# Database Settings. Only applies if using a MYSQL database for storage.
-sql:
-  host: localhost
-  port: 3306
+# Database Settings. Only applies if using a remote storage type such as MySQL or MongoDB
+data:
+  
+  # Define the address and port for the database.
+  # - Standard DB engine port is used by default.
+  #   (MySQL: 3306, MongoDB: 27017)
+  # - Specify as "host:port" if using a different port.
+  address: localhost
+  
+  # The name of the database. Has to be created already.
   database: database
+
+  # Credentials for the database.
   username: root
   password: ""
-  useSSL: false
+
+  # Name of the table to use. Doubles as collection name for MongoDB databases.
+  # Works fine if you leave this as default.
   table-name: npcdata
+
+  # Amount of time in seconds before the plugin assumes that the database is offline.
+  connection-timeout: 10
+
+  # Can just leave this as it is. Dont change this unless you know what your doing.
+  useSSL: false
   
+  # MongoDB ClientConnectionURI for use with replica sets and custom connection options
+  # - See https://docs.mongodb.com/manual/reference/connection-string/
+  # Only change this if you know what your doing and want increased customisation.
+  mongodb-connection-string: ''

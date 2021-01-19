@@ -5,13 +5,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.logging.Level;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.utils.chat.Messages;
-import io.github.scroojalix.npcmanager.utils.dependencies.Dependency;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.storage.implementation.StorageImplementation;
 
@@ -78,9 +75,5 @@ public class JsonStorage implements StorageImplementation {
                 }
             }
         }
-    }
-    
-    public Set<Dependency> getDependencies() {
-        return new HashSet<Dependency>();
     }
 }

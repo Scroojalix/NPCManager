@@ -31,6 +31,32 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.4</version>
+                <executions>
+                    <execution>
+                      <phase>package</phase>
+                      <goals>
+                        <goal>shade</goal>
+                      </goals>
+                      <configuration>
+                        <relocations>
+                          <!--Add relocation settings here-->
+                          <relocation>
+                            <pattern>com.mongodb</pattern>
+                            <shadedPattern>io.github.scroojalix.npcmanager.lib.mongodb</shadedPattern>
+                          </relocation>
+                          <relocation>
+                            <pattern>org.bson</pattern>
+                            <shadedPattern>io.github.scroojalix.npcmanager.lib.bson</shadedPattern>
+                          </relocation>
+                        </relocations>
+                      </configuration>
+                    </execution>
+                  </executions>
+            </plugin>
         </plugins>
     </build>
     <dependencies>
@@ -38,6 +64,13 @@
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
             <version>1.16.4-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <!--Add required dependencies here-->
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+            <version>3.12.7</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

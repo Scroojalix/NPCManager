@@ -8,42 +8,47 @@ import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.logging.Level;
 
 import org.bukkit.configuration.file.FileConfiguration;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.utils.chat.Messages;
-import io.github.scroojalix.npcmanager.utils.dependencies.Dependency;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.storage.implementation.StorageImplementation;
 
 public class MySQLStorage implements StorageImplementation {
 
-    private NPCMain main;
-    private String host;
-	private String port;
-	private String database;
-	private String username;
-	private String password;
-    private boolean useSSL;
+    private final NPCMain main;
+    private final String address;
+	private final String database;
+	private final String username;
+    private final String password;
+    
+    private final int connectionTimeout;
+    private final boolean useSSL;
     
     private Connection connection;
     private SQLGetter getter;
 
+    //TODO change this code
+    //Dont need to check if the database is connected. Just save to temp storage if an error is thrown.
+    //Merge this class with the SQLGetter class.
+    //move each storage type out of their individual packages into the implementation package.
+    //remove temp storage code. Do that in Storage.java, so it works for all storage methods.
+
     public MySQLStorage(NPCMain main) {
         this.main = main;
         FileConfiguration config = main.getConfig();
-		host = config.getString("sql.host");
-		port = config.getString("sql.port");
-		database = config.getString("sql.database");
-		username = config.getString("sql.username");
-		password = config.getString("sql.password");
-        useSSL = config.getBoolean("sql.useSSL");
+		address = config.getString("data.address");
+		database = config.getString("data.database");
+		username = config.getString("data.username");
+        password = config.getString("data.password");
         
-        getter = new SQLGetter(main, config.getString("sql.table-name"));
+        this.connectionTimeout = config.getInt("data.connection-timeout");
+        useSSL = config.getBoolean("data.useSSL");
+        
+        getter = new SQLGetter(main, config.getString("data.table-name"));
     }
 
     @Override
@@ -64,8 +69,10 @@ public class MySQLStorage implements StorageImplementation {
     }
 	
 	public void connect() throws ClassNotFoundException, SQLException {
-		if (!isConnected())
-			connection = DriverManager.getConnection("jdbc:mysql://"+host+":"+port+"/"+database+"?useSSL="+useSSL, username, password);
+		if (!isConnected()) {
+            DriverManager.setLoginTimeout(connectionTimeout);
+			connection = DriverManager.getConnection("jdbc:mysql://"+address+"/"+database+"?useSSL="+useSSL, username, password);
+        }
 	}
 
     @Override
@@ -165,9 +172,4 @@ public class MySQLStorage implements StorageImplementation {
         }
         if (connected) tempStorage.delete();
     }
-    
-    public Set<Dependency> getDependencies() {
-        return new HashSet<Dependency>();
-    }
-    
 }
