@@ -3,10 +3,10 @@ package io.github.scroojalix.npcmanager.utils.storage;
 import java.util.logging.Level;
 
 import io.github.scroojalix.npcmanager.NPCMain;
+import io.github.scroojalix.npcmanager.utils.storage.implementation.JsonStorage;
+import io.github.scroojalix.npcmanager.utils.storage.implementation.MongoStorage;
+import io.github.scroojalix.npcmanager.utils.storage.implementation.MySQLStorage;
 import io.github.scroojalix.npcmanager.utils.storage.implementation.StorageImplementation;
-import io.github.scroojalix.npcmanager.utils.storage.implementation.json.JsonStorage;
-import io.github.scroojalix.npcmanager.utils.storage.implementation.mongodb.MongoStorage;
-import io.github.scroojalix.npcmanager.utils.storage.implementation.mysql.MySQLStorage;
 
 public class StorageFactory {
     

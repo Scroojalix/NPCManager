@@ -1,7 +1,7 @@
-package io.github.scroojalix.npcmanager.utils.storage.implementation.mongodb;
+package io.github.scroojalix.npcmanager.utils.storage.implementation;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.logging.LogManager;
 
 import com.google.common.base.Strings;
 import com.mongodb.MongoClient;
@@ -18,7 +18,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
-import io.github.scroojalix.npcmanager.utils.storage.implementation.StorageImplementation;
 
 public class MongoStorage implements StorageImplementation {
     
@@ -51,8 +50,18 @@ public class MongoStorage implements StorageImplementation {
     }
 
     @Override
+    public String getImplementationName() {
+        return "MongoDB";
+    }
+
+    @Override
+    public boolean isRemote() {
+        return true;
+    }
+
+    @Override
     public void init() {
-        Logger mongoLogger = Logger.getLogger("com.mongodb"); mongoLogger.setLevel(Level.SEVERE);
+        disableLogging();
         if (!Strings.isNullOrEmpty(this.connectionString)) {
             this.client = new MongoClient(new MongoClientURI(this.connectionString));
         } else {
@@ -84,6 +93,16 @@ public class MongoStorage implements StorageImplementation {
         }
 
         this.database = this.client.getDatabase(databaseName);
+    }
+
+    private void disableLogging() {
+        LogManager l = LogManager.getLogManager();
+        l.getLogger("org.mongodb.driver.connection").setLevel(Level.OFF);
+        l.getLogger("org.mongodb.driver.management").setLevel(Level.OFF);
+        l.getLogger("org.mongodb.driver.cluster").setLevel(Level.OFF);
+        l.getLogger("org.mongodb.driver.protocol.insert").setLevel(Level.OFF);
+        l.getLogger("org.mongodb.driver.protocol.query").setLevel(Level.OFF);
+        l.getLogger("org.mongodb.driver.protocol.update").setLevel(Level.OFF);
     }
 
     @Override

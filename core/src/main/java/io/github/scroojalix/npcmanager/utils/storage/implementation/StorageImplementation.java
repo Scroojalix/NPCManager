@@ -3,6 +3,10 @@ package io.github.scroojalix.npcmanager.utils.storage.implementation;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 
 public interface StorageImplementation {
+
+    public String getImplementationName();
+
+    public boolean isRemote();
     
     public void init() throws Throwable;
 

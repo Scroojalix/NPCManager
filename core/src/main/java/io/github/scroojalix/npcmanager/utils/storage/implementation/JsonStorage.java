@@ -1,4 +1,4 @@
-package io.github.scroojalix.npcmanager.utils.storage.implementation.json;
+package io.github.scroojalix.npcmanager.utils.storage.implementation;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -10,7 +10,6 @@ import java.util.logging.Level;
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.utils.chat.Messages;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
-import io.github.scroojalix.npcmanager.utils.storage.implementation.StorageImplementation;
 
 public class JsonStorage implements StorageImplementation {
 
@@ -18,6 +17,16 @@ public class JsonStorage implements StorageImplementation {
 
     public JsonStorage(NPCMain main) {
         this.main = main;
+    }
+
+    @Override
+    public String getImplementationName() {
+        return "JSON";
+    }
+
+    @Override
+    public boolean isRemote() {
+        return true;
     }
 
     @Override
