@@ -10,6 +10,7 @@ import java.util.logging.Level;
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.utils.chat.Messages;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
+import io.github.scroojalix.npcmanager.utils.storage.implementation.interfaces.StorageImplementation;
 
 public class JsonStorage implements StorageImplementation {
 
@@ -23,17 +24,6 @@ public class JsonStorage implements StorageImplementation {
     public String getImplementationName() {
         return "JSON";
     }
-
-    @Override
-    public boolean isRemote() {
-        return true;
-    }
-
-    @Override
-    public void init() {}
-
-    @Override
-    public void shutdown() {}
 
     @Override
     public void saveNPC(NPCData data) {

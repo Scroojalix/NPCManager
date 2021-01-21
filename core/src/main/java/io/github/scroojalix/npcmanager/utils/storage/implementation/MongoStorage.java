@@ -1,8 +1,5 @@
 package io.github.scroojalix.npcmanager.utils.storage.implementation;
 
-import java.util.logging.Level;
-import java.util.logging.LogManager;
-
 import com.google.common.base.Strings;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
@@ -18,8 +15,10 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
+import io.github.scroojalix.npcmanager.utils.storage.implementation.interfaces.RemoteStorage;
+import io.github.scroojalix.npcmanager.utils.storage.implementation.interfaces.StorageImplementation;
 
-public class MongoStorage implements StorageImplementation {
+public class MongoStorage implements StorageImplementation, RemoteStorage {
     
     private final NPCMain main;
     private final String address;
@@ -55,10 +54,22 @@ public class MongoStorage implements StorageImplementation {
     }
 
     @Override
-    public boolean isRemote() {
-        return true;
+    public boolean isConnected() {
+        return client != null;
     }
 
+    @Override
+    public boolean exists(String name) {
+        if (!isConnected())
+            return false;
+        try {
+            MongoCollection<Document> c = this.database.getCollection(this.collectionName);
+            return c.countDocuments(new Document("_id", name)) == 1;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    
     @Override
     public void init() {
         disableLogging();
@@ -96,6 +107,8 @@ public class MongoStorage implements StorageImplementation {
     }
 
     private void disableLogging() {
+        //TODO disable logging
+        /*
         LogManager l = LogManager.getLogManager();
         l.getLogger("org.mongodb.driver.connection").setLevel(Level.OFF);
         l.getLogger("org.mongodb.driver.management").setLevel(Level.OFF);
@@ -103,6 +116,7 @@ public class MongoStorage implements StorageImplementation {
         l.getLogger("org.mongodb.driver.protocol.insert").setLevel(Level.OFF);
         l.getLogger("org.mongodb.driver.protocol.query").setLevel(Level.OFF);
         l.getLogger("org.mongodb.driver.protocol.update").setLevel(Level.OFF);
+        */
     }
 
     @Override

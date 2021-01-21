@@ -48,7 +48,7 @@ data:
   database: database
 
   # Credentials for the database.
-  username: root
+  username: ""
   password: ""
 
   # Name of the table to use. Doubles as collection name for MongoDB databases.
