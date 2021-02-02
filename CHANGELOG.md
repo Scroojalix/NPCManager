@@ -5,6 +5,8 @@ This file is here in the hopes of recording all changes made throughout the plug
 This project uses the versioning format {phase}.{major}.{minor}, where phase is pretty much never going to change, major is for backwards incompatible changes, and minor is for backwards compatible bug fixes. There may be some versions that are named incorrectly, as I was a bit careless at the start of this project.
 
 ## [Unreleased]
+
+## [1.4.3] - 2021-2-2
 ### Added
 - Dependency Manager that downloads dependencies into a cache folder and remaps them for use within the plugin. Will be used to implement more storage methods.
 - `MongoDB` as a new storage method.
@@ -185,7 +187,8 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 ## [1.0.0] - 2020-10-27
 Initial Commit. No Changes.
 
-[Unreleased]: https://github.com/Scroojalix/NPCManager/compare/v1.4.2...master
+[Unreleased]: https://github.com/Scroojalix/NPCManager/compare/v1.4.3...master
+[1.4.2]: https://github.com/Scroojalix/NPCManager/compare/v1.4.2...1.4.3
 [1.4.2]: https://github.com/Scroojalix/NPCManager/compare/v1.4.1...1.4.2
 [1.4.1]: https://github.com/Scroojalix/NPCManager/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/Scroojalix/NPCManager/compare/v1.3.7...v1.4.0
