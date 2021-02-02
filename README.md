@@ -7,6 +7,8 @@ Also has support for using a MySQL database to store NPC data (Configured in the
 ### Disclaimer
 This project was created so I could practice coding with Java, as well as learn how to use the Spigot API. This plugin may be very buggy and may not have that many features, so by all means use something more advanced such as [Citizens](https://www.spigotmc.org/resources/citizens.13811/).
 
+This project was built and tested on a Windows computer. I have no idea if it will work on Linux/MacOS, so if you wish to try this on one of those platforms, then please feel free to post any issues in the issues tab.
+
 ### Commands
 
  * `/npc create <name>`
