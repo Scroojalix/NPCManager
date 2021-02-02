@@ -1,5 +1,8 @@
 package io.github.scroojalix.npcmanager.utils.storage.implementation;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.google.common.base.Strings;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
@@ -107,16 +110,17 @@ public class MongoStorage implements StorageImplementation, RemoteStorage {
     }
 
     private void disableLogging() {
-        //TODO disable logging
-        /*
-        LogManager l = LogManager.getLogManager();
-        l.getLogger("org.mongodb.driver.connection").setLevel(Level.OFF);
-        l.getLogger("org.mongodb.driver.management").setLevel(Level.OFF);
-        l.getLogger("org.mongodb.driver.cluster").setLevel(Level.OFF);
-        l.getLogger("org.mongodb.driver.protocol.insert").setLevel(Level.OFF);
-        l.getLogger("org.mongodb.driver.protocol.query").setLevel(Level.OFF);
-        l.getLogger("org.mongodb.driver.protocol.update").setLevel(Level.OFF);
-        */
+        //TODO disable logging - this for some reason doesnt work.
+        //Potential Issue - "org.mongodb.driver.cluster" does not return the same logger that is actually being used.
+        Logger.getLogger("org.mongodb.driver.connection").setLevel(Level.OFF);
+        Logger.getLogger("org.mongodb.driver.management").setLevel(Level.OFF);
+
+        //All these loggers are successfully disabled.
+        Logger.getLogger("org.mongodb.driver.cluster").log(Level.SEVERE, "Attempting to disable logging");
+        Logger.getLogger("org.mongodb.driver.cluster").setLevel(Level.OFF);
+        Logger.getLogger("org.mongodb.driver.protocol.insert").setLevel(Level.OFF);
+        Logger.getLogger("org.mongodb.driver.protocol.query").setLevel(Level.OFF);
+        Logger.getLogger("org.mongodb.driver.protocol.update").setLevel(Level.OFF);
     }
 
     @Override
