@@ -147,7 +147,12 @@ public class NPCMain extends JavaPlugin {
 		if (npcRemoveDelay < 1) npcRemoveDelay = 1;
 		PluginUtils.NPC_REMOVE_DELAY = npcRemoveDelay;
 		this.storage.shutdown();
-		this.storage = new StorageFactory(this).getInstance();
+
+		StorageFactory factory = new StorageFactory(this);
+		this.dependencyManager.loadStorageDependencies(factory.getType());
+
+		this.storage = factory.getInstance();
+
 		PluginUtils.checkForUpdate();
 	}
 }
