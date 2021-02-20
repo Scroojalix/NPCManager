@@ -40,7 +40,7 @@ The accepted values for `<key>` are:
 
 ### Supported Versions
 
-This plugin supports a wide range of Spigot versions, from 1.8.3 to 1.16.4.
+This plugin supports a wide range of Spigot versions, from 1.8.3 to 1.16.5.
 
 ### How to build
 
