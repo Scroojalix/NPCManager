@@ -5,10 +5,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.logging.Level;
 
 import io.github.scroojalix.npcmanager.NPCMain;
-import io.github.scroojalix.npcmanager.utils.chat.Messages;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.storage.implementation.interfaces.StorageImplementation;
 
@@ -55,7 +53,6 @@ public class JsonStorage implements StorageImplementation {
     @Override
     public void restoreNPCs() {
         if (new File(main.getDataFolder()+"/json-storage").exists()) {
-            main.log(Level.INFO, Messages.RESTORE_NPCS);
             File jsonStorage = new File(main.getDataFolder() + "/json-storage");
             File[] npcFiles = jsonStorage.listFiles();
             if (npcFiles != null) {

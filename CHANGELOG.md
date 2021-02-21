@@ -7,6 +7,7 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 ## [Unreleased]
 ### Fixed
 - NPC's not restoring if the storage method used is not remote.
+- "Restoring NPC's..." message getting sent twice if JSON storage is used.
 
 ## [1.4.3] - 2021-2-2
 ### Added
