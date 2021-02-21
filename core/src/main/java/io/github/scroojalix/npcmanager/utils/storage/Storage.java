@@ -47,6 +47,9 @@ public class Storage {
                     restoreNPCs();
                 }
             });
+        } else {
+            // Fixed Bug where this method wasnt called if the storage method is not remote.
+            restoreNPCs();
         }
     }
     
