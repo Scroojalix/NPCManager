@@ -79,7 +79,7 @@ public class NPCData {
 		return builder.create().toJson(this);
 	}
 
-	//TODO fix ItemStack not restoring properly (Loses itemmeta)
+	//FIXME ItemStack not restoring properly (Loses itemmeta)
 	//Custom banners throw errors to the console when restoring.
 	/**
 	 * Creates an NPCData object from a JSON string.

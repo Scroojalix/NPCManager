@@ -110,7 +110,7 @@ public class MongoStorage implements StorageImplementation, RemoteStorage {
     }
 
     private void disableLogging() {
-        //TODO disable logging - this for some reason doesnt work.
+        //FIXME disable logging - this for some reason doesnt work.
         //Potential Issue - "org.mongodb.driver.cluster" does not return the same logger that is actually being used.
         Logger.getLogger("org.mongodb.driver.connection").setLevel(Level.OFF);
         Logger.getLogger("org.mongodb.driver.management").setLevel(Level.OFF);
