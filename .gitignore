@@ -1,11 +1,11 @@
 # Project Files
 .settings/
 .vscode/
-.classpath
 .project
 
 # Maven
 target/
 Build/
 *.log
+.classpath
 dependency-reduced-pom.xml
