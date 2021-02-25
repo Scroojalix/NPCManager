@@ -50,7 +50,6 @@ public class MySQLStorage implements StorageImplementation, RemoteStorage {
     @Override
     public boolean isConnected() {
         return connection != null;
-        //FIXME add more logic to isConnected() methods.
     }
 
     @Override

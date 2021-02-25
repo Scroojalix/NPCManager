@@ -30,6 +30,10 @@ import io.github.scroojalix.npcmanager.utils.storage.misc.ConfigurationSerializa
  * @author Scroojalix
  */
 public class NPCData {
+
+	//TODO add createdby field
+	//Use this to add the feature of restricting the amount of NPC's each player can spawn to a
+	//predetermined value from config.yml. May be used in survival servers to customise bases.
 	
 	@Expose
 	private String name;
