@@ -191,7 +191,7 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 Initial Commit. No Changes.
 
 [Unreleased]: https://github.com/Scroojalix/NPCManager/compare/v1.4.3...master
-[1.4.2]: https://github.com/Scroojalix/NPCManager/compare/v1.4.2...1.4.3
+[1.4.3]: https://github.com/Scroojalix/NPCManager/compare/v1.4.2...1.4.3
 [1.4.2]: https://github.com/Scroojalix/NPCManager/compare/v1.4.1...1.4.2
 [1.4.1]: https://github.com/Scroojalix/NPCManager/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/Scroojalix/NPCManager/compare/v1.3.7...v1.4.0
