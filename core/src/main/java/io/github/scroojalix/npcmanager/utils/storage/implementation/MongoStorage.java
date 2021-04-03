@@ -1,6 +1,5 @@
 package io.github.scroojalix.npcmanager.utils.storage.implementation;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.common.base.Strings;
@@ -15,7 +14,9 @@ import com.mongodb.client.model.ReplaceOptions;
 
 import org.bson.Document;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.slf4j.LoggerFactory;
 
+import ch.qos.logback.classic.LoggerContext;
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.storage.implementation.interfaces.RemoteStorage;
@@ -82,45 +83,51 @@ public class MongoStorage implements StorageImplementation, RemoteStorage {
             MongoCredential credential = null;
             if (!Strings.isNullOrEmpty(this.username)) {
                 credential = MongoCredential.createCredential(
-                        this.username,
-                        this.databaseName,
-                        Strings.isNullOrEmpty(this.password) ? null : this.password.toCharArray()
-                );
-            }
-
-            String[] addressSplit = this.address.split(":");
-            String host = addressSplit[0];
-            int port = addressSplit.length > 1 ? Integer.parseInt(addressSplit[1]) : 27017;
-            ServerAddress address = new ServerAddress(host, port);
-
-            MongoClientOptions options = MongoClientOptions
+                    this.username,
+                    this.databaseName,
+                    Strings.isNullOrEmpty(this.password) ? null : this.password.toCharArray()
+                    );
+                }
+                
+                String[] addressSplit = this.address.split(":");
+                String host = addressSplit[0];
+                int port = addressSplit.length > 1 ? Integer.parseInt(addressSplit[1]) : 27017;
+                ServerAddress address = new ServerAddress(host, port);
+                
+                MongoClientOptions options = MongoClientOptions
                 .builder()
                 .sslEnabled(useSSL)
                 .connectTimeout(connectionTimeout*1000)
                 .build();
-
-            if (credential == null) {
-                this.client = new MongoClient(address, options);
-            } else {
-                this.client = new MongoClient(address, credential, options);
+                
+                if (credential == null) {
+                    this.client = new MongoClient(address, options);
+                } else {
+                    this.client = new MongoClient(address, credential, options);
+                }
             }
+            
+            this.database = this.client.getDatabase(databaseName);
+            disableLogging();
+        }
+        
+        private void disableLogging() {
+            // Is SLF4J in use?
+        boolean useSLF4J;
+        try {
+            Class.forName("org.slf4j.Logger");
+            useSLF4J = true;
+        } catch (Exception e) {
+            useSLF4J = false;
         }
 
-        this.database = this.client.getDatabase(databaseName);
-    }
-
-    private void disableLogging() {
-        //FIXME disable logging - this for some reason doesnt work.
-        //Potential Issue - "org.mongodb.driver.cluster" does not return the same logger that is actually being used.
-        Logger.getLogger("org.mongodb.driver.connection").setLevel(Level.OFF);
-        Logger.getLogger("org.mongodb.driver.management").setLevel(Level.OFF);
-
-        //All these loggers are successfully disabled.
-        Logger.getLogger("org.mongodb.driver.cluster").log(Level.SEVERE, "Attempting to disable logging");
-        Logger.getLogger("org.mongodb.driver.cluster").setLevel(Level.OFF);
-        Logger.getLogger("org.mongodb.driver.protocol.insert").setLevel(Level.OFF);
-        Logger.getLogger("org.mongodb.driver.protocol.query").setLevel(Level.OFF);
-        Logger.getLogger("org.mongodb.driver.protocol.update").setLevel(Level.OFF);
+        if (useSLF4J) {
+            ((LoggerContext) LoggerFactory.getILoggerFactory()).getLogger("org.mongodb.driver.cluster").setLevel(ch.qos.logback.classic.Level.OFF);
+            ((LoggerContext) LoggerFactory.getILoggerFactory()).getLogger("org.mongodb.driver.connection").setLevel(ch.qos.logback.classic.Level.OFF);
+        } else {
+            Logger.getLogger("org.mongodb.driver.cluster").setLevel(java.util.logging.Level.OFF);
+            Logger.getLogger("org.mongodb.driver.connection").setLevel(java.util.logging.Level.OFF);
+        }
     }
 
     @Override

@@ -11,7 +11,7 @@ import io.github.scroojalix.npcmanager.utils.storage.StorageType;
 public class DependencyRegistry {
 
     private static final ListMultimap<StorageType, Dependency> STORAGE_DEPENDENCIES = ImmutableListMultimap.<StorageType, Dependency>builder()
-    .putAll(StorageType.MONGODB, Dependency.MONGODB_DRIVER)
+    .putAll(StorageType.MONGODB, Dependency.MONGODB_DRIVER, Dependency.LOGBACK)
     .build();
 
     public static Set<Dependency> resolveStorageDependencies(StorageType storageType) {

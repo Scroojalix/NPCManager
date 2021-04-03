@@ -18,16 +18,16 @@ public enum Dependency {
         "SrL6K20sycyx6qBeoynEB7R7E+0pFfYvjEuMyWJY1N4="
     ),
     ASM_COMMONS(
-            "org.ow2.asm",
-            "asm-commons",
-            "7.1",
-            "5VkEidjxmE2Fv+q9Oxc3TFnCiuCdSOxKDrvQGVns01g="
+        "org.ow2.asm",
+        "asm-commons",
+        "7.1",
+        "5VkEidjxmE2Fv+q9Oxc3TFnCiuCdSOxKDrvQGVns01g="
     ),
     JAR_RELOCATOR(
-            "me.lucko",
-            "jar-relocator",
-            "1.4",
-            "1RsiF3BiVztjlfTA+svDCuoDSGFuSpTZYHvUK8yBx8I="
+        "me.lucko",
+        "jar-relocator",
+        "1.4",
+        "1RsiF3BiVztjlfTA+svDCuoDSGFuSpTZYHvUK8yBx8I="
     ),
 
     MONGODB_DRIVER(
@@ -37,7 +37,14 @@ public enum Dependency {
         "D/zgBJWNb9mzmuetJ37a0X9XtpcfSGsXYpxe6eE8Tao=",
         Relocation.of("mongodb", "com{}mongodb"),
         Relocation.of("bson", "org{}bson")
+    ),
+    LOGBACK(
+        "ch.qos.logback",
+        "logback-classic",
+        "1.2.3",
+        "+1P4U55/y48JOlbhOBEgVuwdyAnrsCC1nYo2peusN+A="
     );
+
 
     private final String mavenRepoPath;
     private final String version;
