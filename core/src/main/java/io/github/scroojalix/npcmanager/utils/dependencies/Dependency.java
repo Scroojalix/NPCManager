@@ -18,16 +18,16 @@ public enum Dependency {
         "SrL6K20sycyx6qBeoynEB7R7E+0pFfYvjEuMyWJY1N4="
     ),
     ASM_COMMONS(
-            "org.ow2.asm",
-            "asm-commons",
-            "7.1",
-            "5VkEidjxmE2Fv+q9Oxc3TFnCiuCdSOxKDrvQGVns01g="
+        "org.ow2.asm",
+        "asm-commons",
+        "7.1",
+        "5VkEidjxmE2Fv+q9Oxc3TFnCiuCdSOxKDrvQGVns01g="
     ),
     JAR_RELOCATOR(
-            "me.lucko",
-            "jar-relocator",
-            "1.4",
-            "1RsiF3BiVztjlfTA+svDCuoDSGFuSpTZYHvUK8yBx8I="
+        "me.lucko",
+        "jar-relocator",
+        "1.4",
+        "1RsiF3BiVztjlfTA+svDCuoDSGFuSpTZYHvUK8yBx8I="
     ),
 
     MONGODB_DRIVER(

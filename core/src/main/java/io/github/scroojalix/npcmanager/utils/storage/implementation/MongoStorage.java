@@ -82,45 +82,43 @@ public class MongoStorage implements StorageImplementation, RemoteStorage {
             MongoCredential credential = null;
             if (!Strings.isNullOrEmpty(this.username)) {
                 credential = MongoCredential.createCredential(
-                        this.username,
-                        this.databaseName,
-                        Strings.isNullOrEmpty(this.password) ? null : this.password.toCharArray()
+                    this.username,
+                    this.databaseName,
+                    Strings.isNullOrEmpty(this.password) ? null : this.password.toCharArray()
                 );
             }
-
+                
             String[] addressSplit = this.address.split(":");
             String host = addressSplit[0];
             int port = addressSplit.length > 1 ? Integer.parseInt(addressSplit[1]) : 27017;
             ServerAddress address = new ServerAddress(host, port);
-
+            
             MongoClientOptions options = MongoClientOptions
                 .builder()
                 .sslEnabled(useSSL)
                 .connectTimeout(connectionTimeout*1000)
                 .build();
-
+                
             if (credential == null) {
                 this.client = new MongoClient(address, options);
             } else {
                 this.client = new MongoClient(address, credential, options);
             }
         }
-
+            
         this.database = this.client.getDatabase(databaseName);
+        disableLogging();
     }
-
+        
     private void disableLogging() {
-        //FIXME disable logging - this for some reason doesnt work.
-        //Potential Issue - "org.mongodb.driver.cluster" does not return the same logger that is actually being used.
-        Logger.getLogger("org.mongodb.driver.connection").setLevel(Level.OFF);
-        Logger.getLogger("org.mongodb.driver.management").setLevel(Level.OFF);
-
-        //All these loggers are successfully disabled.
-        Logger.getLogger("org.mongodb.driver.cluster").log(Level.SEVERE, "Attempting to disable logging");
-        Logger.getLogger("org.mongodb.driver.cluster").setLevel(Level.OFF);
-        Logger.getLogger("org.mongodb.driver.protocol.insert").setLevel(Level.OFF);
-        Logger.getLogger("org.mongodb.driver.protocol.query").setLevel(Level.OFF);
-        Logger.getLogger("org.mongodb.driver.protocol.update").setLevel(Level.OFF);
+        //Small temporary workaround for when SLF4J is in the classpath - usually on paper servers.
+        try {
+            Class.forName("org.slf4j.Logger");
+            main.log(Level.WARNING, "Could not disable logging for MongoDB as slf4j is in the classpath.");
+        } catch (ClassNotFoundException e) {
+            Logger.getLogger("org.mongodb.driver.cluster").setLevel(java.util.logging.Level.OFF);
+            Logger.getLogger("org.mongodb.driver.connection").setLevel(java.util.logging.Level.OFF);
+        }
     }
 
     @Override
