@@ -1,5 +1,6 @@
 package io.github.scroojalix.npcmanager.utils.storage.implementation;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.common.base.Strings;
@@ -14,9 +15,7 @@ import com.mongodb.client.model.ReplaceOptions;
 
 import org.bson.Document;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.slf4j.LoggerFactory;
 
-import ch.qos.logback.classic.LoggerContext;
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.storage.implementation.interfaces.RemoteStorage;
@@ -112,19 +111,11 @@ public class MongoStorage implements StorageImplementation, RemoteStorage {
     }
         
     private void disableLogging() {
-            // Is SLF4J in use?
-        boolean useSLF4J;
+        //Small temporary workaround for when SLF4J is in the classpath - usually on paper servers.
         try {
             Class.forName("org.slf4j.Logger");
-            useSLF4J = true;
-        } catch (Exception e) {
-            useSLF4J = false;
-        }
-
-        if (useSLF4J) {
-            ((LoggerContext) LoggerFactory.getILoggerFactory()).getLogger("org.mongodb.driver.cluster").setLevel(ch.qos.logback.classic.Level.OFF);
-            ((LoggerContext) LoggerFactory.getILoggerFactory()).getLogger("org.mongodb.driver.connection").setLevel(ch.qos.logback.classic.Level.OFF);
-        } else {
+            main.log(Level.WARNING, "Could not disable logging for MongoDB as slf4j is in the classpath.");
+        } catch (ClassNotFoundException e) {
             Logger.getLogger("org.mongodb.driver.cluster").setLevel(java.util.logging.Level.OFF);
             Logger.getLogger("org.mongodb.driver.connection").setLevel(java.util.logging.Level.OFF);
         }

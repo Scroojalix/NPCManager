@@ -37,14 +37,7 @@ public enum Dependency {
         "D/zgBJWNb9mzmuetJ37a0X9XtpcfSGsXYpxe6eE8Tao=",
         Relocation.of("mongodb", "com{}mongodb"),
         Relocation.of("bson", "org{}bson")
-    ),
-    LOGBACK(
-        "ch.qos.logback",
-        "logback-classic",
-        "1.2.3",
-        "+1P4U55/y48JOlbhOBEgVuwdyAnrsCC1nYo2peusN+A="
     );
-
 
     private final String mavenRepoPath;
     private final String version;
