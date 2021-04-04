@@ -86,32 +86,32 @@ public class MongoStorage implements StorageImplementation, RemoteStorage {
                     this.username,
                     this.databaseName,
                     Strings.isNullOrEmpty(this.password) ? null : this.password.toCharArray()
-                    );
-                }
+                );
+            }
                 
-                String[] addressSplit = this.address.split(":");
-                String host = addressSplit[0];
-                int port = addressSplit.length > 1 ? Integer.parseInt(addressSplit[1]) : 27017;
-                ServerAddress address = new ServerAddress(host, port);
-                
-                MongoClientOptions options = MongoClientOptions
+            String[] addressSplit = this.address.split(":");
+            String host = addressSplit[0];
+            int port = addressSplit.length > 1 ? Integer.parseInt(addressSplit[1]) : 27017;
+            ServerAddress address = new ServerAddress(host, port);
+            
+            MongoClientOptions options = MongoClientOptions
                 .builder()
                 .sslEnabled(useSSL)
                 .connectTimeout(connectionTimeout*1000)
                 .build();
                 
-                if (credential == null) {
-                    this.client = new MongoClient(address, options);
-                } else {
-                    this.client = new MongoClient(address, credential, options);
-                }
+            if (credential == null) {
+                this.client = new MongoClient(address, options);
+            } else {
+                this.client = new MongoClient(address, credential, options);
             }
-            
-            this.database = this.client.getDatabase(databaseName);
-            disableLogging();
         }
+            
+        this.database = this.client.getDatabase(databaseName);
+        disableLogging();
+    }
         
-        private void disableLogging() {
+    private void disableLogging() {
             // Is SLF4J in use?
         boolean useSLF4J;
         try {
