@@ -67,7 +67,7 @@ public class MongoStorage implements StorageImplementation, RemoteStorage {
             return false;
         try {
             MongoCollection<Document> c = this.database.getCollection(this.collectionName);
-            return c.countDocuments(new Document("_id", name)) == 1;
+            return c.countDocuments(new Document("name", name)) == 1;
         } catch (Exception e) {
             return false;
         }
@@ -131,21 +131,21 @@ public class MongoStorage implements StorageImplementation, RemoteStorage {
     @Override
     public void saveNPC(NPCData data) {
         MongoCollection<Document> c = this.database.getCollection(this.collectionName);
-        Document doc = Document.parse(data.toJson(true)).append("_id", data.getName());
-        c.replaceOne(new Document("_id", data.getName()), doc, new ReplaceOptions().upsert(true));
+        Document doc = Document.parse(data.toJson(true));
+        c.replaceOne(new Document("name", data.getName()), doc, new ReplaceOptions().upsert(true));
     }
 
     @Override
     public void removeNPC(String name) {
         MongoCollection<Document> c = this.database.getCollection(collectionName);
-        c.deleteOne(new Document("_id", name));
+        c.deleteOne(new Document("name", name));
     }
 
     @Override
     public void restoreNPCs() {
         MongoCollection<Document> c = this.database.getCollection(collectionName);
         for (Document doc : c.find()) {
-            NPCData data = NPCData.fromJson(doc.get("_id").toString(), doc.toJson(), true);
+            NPCData data = NPCData.fromJson(doc.get("name").toString(), doc.toJson(), true);
             if (data != null) {
                 main.npc.spawnNPC(data);
             }
