@@ -21,6 +21,8 @@ public class DependencyRegistry {
     public static Set<Dependency> getGlobalDependencies() {
         Set<Dependency> dependencies = new HashSet<Dependency>();
         dependencies.add(Dependency.ASM);
+        dependencies.add(Dependency.ASM_COMMONS);
+        dependencies.add(Dependency.JAR_RELOCATOR);
         return dependencies;
     }
 
