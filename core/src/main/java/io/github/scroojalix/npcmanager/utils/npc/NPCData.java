@@ -128,7 +128,7 @@ public class NPCData {
 			}
 
 			return data;
-		} catch (JsonSyntaxException e) {
+		} catch (JsonSyntaxException | IllegalStateException e) {
 			NPCMain.instance.log(Level.SEVERE, "Error restoring an NPC: Invalid JSON");
 			NPCMain.instance.log(Level.SEVERE, "The NPC will be removed from storage.");
 			NPCMain.instance.storage.removeNPC(name);
