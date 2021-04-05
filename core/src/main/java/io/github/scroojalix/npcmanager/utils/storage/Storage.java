@@ -130,7 +130,7 @@ public class Storage {
                     implementation.restoreNPCs();
                 } catch(Throwable t) {
                     if (!remote) {
-                        main.getLogger().log(Level.SEVERE, "Failed to restore an NPC's.", t);
+                        main.getLogger().log(Level.SEVERE, "Failed to restore NPC's.", t);
                     }
                 } finally {
                     if (remote) {
