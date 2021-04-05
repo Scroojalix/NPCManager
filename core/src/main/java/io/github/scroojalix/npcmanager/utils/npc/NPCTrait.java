@@ -1,17 +1,22 @@
 package io.github.scroojalix.npcmanager.utils.npc;
 
+import java.util.Map;
+
 import com.google.gson.annotations.Expose;
 
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+
+import io.github.scroojalix.npcmanager.utils.PluginUtils;
 import io.github.scroojalix.npcmanager.utils.interactions.InteractEventType;
 import io.github.scroojalix.npcmanager.utils.interactions.NPCInteractionData;
-import io.github.scroojalix.npcmanager.utils.npc.skin.SkinData;
 import io.github.scroojalix.npcmanager.utils.npc.equipment.NPCEquipment;
 import io.github.scroojalix.npcmanager.utils.npc.skin.NPCSkinLayers;
+import io.github.scroojalix.npcmanager.utils.npc.skin.SkinData;
 
 /**
  * Class that stores all of an NPC's traits.
  */
-public class NPCTrait {
+public class NPCTrait implements ConfigurationSerializable {
     
     @Expose
     private String displayName;
@@ -26,7 +31,6 @@ public class NPCTrait {
     @Expose
     private NPCSkinLayers skinLayers;
 
-    
     @Expose
     private NPCInteractionData interactEvent;
     @Expose
@@ -37,6 +41,11 @@ public class NPCTrait {
         this.range = range;
         this.headRotation = headRotation;
     }
+
+	@Override
+	public Map<String, Object> serialize() {
+        return PluginUtils.serialise(this);
+	}
     
     /**
      * @return The display name of this NPC.

@@ -2,12 +2,16 @@ package io.github.scroojalix.npcmanager.utils.npc.equipment;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.google.gson.annotations.Expose;
 
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.inventory.ItemStack;
 
-public class NPCEquipment {
+import io.github.scroojalix.npcmanager.utils.PluginUtils;
+
+public class NPCEquipment implements ConfigurationSerializable {
     
     @Expose
     private ItemStack helmet;
@@ -22,6 +26,10 @@ public class NPCEquipment {
     @Expose
     private ItemStack offhand;
 
+	@Override
+	public Map<String, Object> serialize() {
+        return PluginUtils.serialise(this);
+	}
 
     public List<ItemStack> getEquipmentArray() {
         List<ItemStack> equipment = new ArrayList<ItemStack>();

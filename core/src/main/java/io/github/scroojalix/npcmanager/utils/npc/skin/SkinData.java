@@ -1,8 +1,14 @@
 package io.github.scroojalix.npcmanager.utils.npc.skin;
 
+import java.util.Map;
+
 import com.google.gson.annotations.Expose;
 
-public class SkinData {
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+
+import io.github.scroojalix.npcmanager.utils.PluginUtils;
+
+public class SkinData implements ConfigurationSerializable {
 
     @Expose
     private SkinType type;
@@ -27,6 +33,11 @@ public class SkinData {
         this.signature = signature;
         this.keepLatest = keepLatest;
     }
+
+	@Override
+	public Map<String, Object> serialize() {
+        return PluginUtils.serialise(this);
+	}
     
     public boolean needsUpdating() {
         return !hasUpdated && keepLatest && type == SkinType.PLAYER;

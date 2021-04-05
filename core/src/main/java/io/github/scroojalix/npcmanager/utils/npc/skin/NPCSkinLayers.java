@@ -1,10 +1,15 @@
 package io.github.scroojalix.npcmanager.utils.npc.skin;
 
+import java.util.Map;
+
 import com.google.gson.annotations.Expose;
 
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
-public class NPCSkinLayers {
+import io.github.scroojalix.npcmanager.utils.PluginUtils;
+
+public class NPCSkinLayers implements ConfigurationSerializable {
 
     @Expose
     private boolean cape;
@@ -30,6 +35,11 @@ public class NPCSkinLayers {
         rightLeg = true;
         hat = true;
     }
+
+	@Override
+	public Map<String, Object> serialize() {
+        return PluginUtils.serialise(this);
+	}
 
     public String getCurrentConfiguration() {
         SkinLayer[] skinParts = SkinLayer.values();

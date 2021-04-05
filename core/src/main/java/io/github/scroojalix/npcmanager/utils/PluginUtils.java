@@ -2,18 +2,23 @@ package io.github.scroojalix.npcmanager.utils;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.gson.JsonParser;
+import com.google.gson.annotations.Expose;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -42,6 +47,39 @@ public class PluginUtils {
 			}
 		}
 		return ChatColor.translateAlternateColorCodes('&', msg);
+	}
+
+	/**
+	 * Serialises an object into a Map<String, Object>
+	 * @param instance The class instance to serialise.
+	 * @return the serialised form of {@code instance}
+	 */
+	public static Map<String, Object> serialise(Object instance) {
+		Map<String, Object> serialised = new LinkedHashMap<String, Object>();
+		Field[] fields = instance.getClass().getDeclaredFields();
+		for (Field f : fields) {
+			try {
+				boolean access = f.isAccessible();
+				f.setAccessible(true);
+				
+				//Check that the field has the @Expose annotation
+				if (f.isAnnotationPresent(Expose.class)) {
+					Object value = f.get(instance);
+					if (value != null) {
+						if (ConfigurationSerializable.class.isAssignableFrom(f.getType())) {
+							value = ((ConfigurationSerializable) value).serialize();
+						}
+						serialised.put(f.getName(), value);
+					}
+				}
+
+				f.setAccessible(access);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		return serialised;
 	}
 
 	/**

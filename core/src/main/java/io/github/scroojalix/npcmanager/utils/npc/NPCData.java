@@ -18,6 +18,7 @@ import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.nms.interfaces.INPCLoader;
 import io.github.scroojalix.npcmanager.nms.interfaces.NMSHologram;
 import io.github.scroojalix.npcmanager.nms.interfaces.NMSPlayer;
+import io.github.scroojalix.npcmanager.utils.PluginUtils;
 import io.github.scroojalix.npcmanager.utils.interactions.CommandInteraction;
 import io.github.scroojalix.npcmanager.utils.interactions.InteractEvent;
 import io.github.scroojalix.npcmanager.utils.interactions.InteractEventType;
@@ -29,7 +30,7 @@ import io.github.scroojalix.npcmanager.utils.storage.misc.ConfigurationSerializa
  * Class that stores all of an NPC's data.
  * @author Scroojalix
  */
-public class NPCData {
+public class NPCData implements ConfigurationSerializable {
 
 	//TODO add createdby field
 	//Use this to add the feature of restricting the amount of NPC's each player can spawn to a
@@ -66,6 +67,11 @@ public class NPCData {
 		this.uuid = UUID.randomUUID();
 		this.traits = new NPCTrait(name, range, headRotation);
 		this.store = store;
+	}
+
+	@Override
+	public Map<String, Object> serialize() {
+		return PluginUtils.serialise(this);
 	}
 	
 	/**
