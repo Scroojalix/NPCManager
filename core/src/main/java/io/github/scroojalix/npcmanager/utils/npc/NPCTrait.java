@@ -4,19 +4,18 @@ import java.util.Map;
 
 import com.google.gson.annotations.Expose;
 
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 import io.github.scroojalix.npcmanager.utils.interactions.InteractEventType;
 import io.github.scroojalix.npcmanager.utils.interactions.NPCInteractionData;
 import io.github.scroojalix.npcmanager.utils.npc.equipment.NPCEquipment;
 import io.github.scroojalix.npcmanager.utils.npc.skin.NPCSkinLayers;
 import io.github.scroojalix.npcmanager.utils.npc.skin.SkinData;
+import io.github.scroojalix.npcmanager.utils.storage.misc.Serialisable;
 
 /**
  * Class that stores all of an NPC's traits.
  */
-public class NPCTrait implements ConfigurationSerializable {
+public class NPCTrait implements Serialisable {
     
     @Expose
     private String displayName;
@@ -43,7 +42,7 @@ public class NPCTrait implements ConfigurationSerializable {
     }
 
 	@Override
-	public Map<String, Object> serialize() {
+	public Map<String, Object> serialise() {
         return PluginUtils.serialise(this);
 	}
     

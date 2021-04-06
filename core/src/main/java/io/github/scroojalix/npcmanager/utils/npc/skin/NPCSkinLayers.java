@@ -5,11 +5,11 @@ import java.util.Map;
 import com.google.gson.annotations.Expose;
 
 import org.bukkit.ChatColor;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
+import io.github.scroojalix.npcmanager.utils.storage.misc.Serialisable;
 
-public class NPCSkinLayers implements ConfigurationSerializable {
+public class NPCSkinLayers implements Serialisable {
 
     @Expose
     private boolean cape;
@@ -37,7 +37,7 @@ public class NPCSkinLayers implements ConfigurationSerializable {
     }
 
 	@Override
-	public Map<String, Object> serialize() {
+	public Map<String, Object> serialise() {
         return PluginUtils.serialise(this);
 	}
 

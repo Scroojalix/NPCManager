@@ -4,11 +4,10 @@ import java.util.Map;
 
 import com.google.gson.annotations.Expose;
 
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
+import io.github.scroojalix.npcmanager.utils.storage.misc.Serialisable;
 
-public class NPCInteractionData implements ConfigurationSerializable {
+public class NPCInteractionData implements Serialisable {
 
     @Expose
     private InteractEventType type;
@@ -16,7 +15,7 @@ public class NPCInteractionData implements ConfigurationSerializable {
     private String value;
 
 	@Override
-	public Map<String, Object> serialize() {
+	public Map<String, Object> serialise() {
         return PluginUtils.serialise(this);
 	}
 

@@ -25,12 +25,13 @@ import io.github.scroojalix.npcmanager.utils.interactions.InteractEventType;
 import io.github.scroojalix.npcmanager.utils.interactions.InteractionsManager;
 import io.github.scroojalix.npcmanager.utils.interactions.NPCInteractionData;
 import io.github.scroojalix.npcmanager.utils.storage.misc.ConfigurationSerializableAdapter;
+import io.github.scroojalix.npcmanager.utils.storage.misc.Serialisable;
 
 /**
  * Class that stores all of an NPC's data.
  * @author Scroojalix
  */
-public class NPCData implements ConfigurationSerializable {
+public class NPCData implements Serialisable {
 
 	//TODO add createdby field
 	//Use this to add the feature of restricting the amount of NPC's each player can spawn to a
@@ -70,7 +71,7 @@ public class NPCData implements ConfigurationSerializable {
 	}
 
 	@Override
-	public Map<String, Object> serialize() {
+	public Map<String, Object> serialise() {
 		return PluginUtils.serialise(this);
 	}
 	
@@ -79,6 +80,7 @@ public class NPCData implements ConfigurationSerializable {
 	 * @return The JSON string.
 	 */
 	public String toJson(boolean prettyPrinting) {
+		System.out.println(this.serialise());
 		GsonBuilder builder = new GsonBuilder()
 		.disableHtmlEscaping()
 		.excludeFieldsWithoutExposeAnnotation()
@@ -117,7 +119,9 @@ public class NPCData implements ConfigurationSerializable {
 				return null;
 			}
 
+			//FIXME this returns null
 			NPCData data = builder.create().fromJson(json, NPCData.class);
+			
 			data.setStored(true);
 
 			//Restore Interact Event

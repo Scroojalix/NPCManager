@@ -6,12 +6,12 @@ import java.util.Map;
 
 import com.google.gson.annotations.Expose;
 
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.inventory.ItemStack;
 
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
+import io.github.scroojalix.npcmanager.utils.storage.misc.Serialisable;
 
-public class NPCEquipment implements ConfigurationSerializable {
+public class NPCEquipment implements Serialisable {
     
     @Expose
     private ItemStack helmet;
@@ -27,7 +27,7 @@ public class NPCEquipment implements ConfigurationSerializable {
     private ItemStack offhand;
 
 	@Override
-	public Map<String, Object> serialize() {
+	public Map<String, Object> serialise() {
         return PluginUtils.serialise(this);
 	}
 

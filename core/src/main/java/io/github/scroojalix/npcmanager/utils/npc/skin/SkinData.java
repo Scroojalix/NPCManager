@@ -4,11 +4,10 @@ import java.util.Map;
 
 import com.google.gson.annotations.Expose;
 
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
+import io.github.scroojalix.npcmanager.utils.storage.misc.Serialisable;
 
-public class SkinData implements ConfigurationSerializable {
+public class SkinData implements Serialisable {
 
     @Expose
     private SkinType type;
@@ -35,7 +34,7 @@ public class SkinData implements ConfigurationSerializable {
     }
 
 	@Override
-	public Map<String, Object> serialize() {
+	public Map<String, Object> serialise() {
         return PluginUtils.serialise(this);
 	}
     

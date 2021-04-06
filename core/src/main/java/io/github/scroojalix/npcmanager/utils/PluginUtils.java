@@ -24,6 +24,7 @@ import org.bukkit.inventory.ItemStack;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.CommandUtils;
+import io.github.scroojalix.npcmanager.utils.storage.misc.Serialisable;
 import net.md_5.bungee.api.ChatColor;
 
 public class PluginUtils {
@@ -68,6 +69,10 @@ public class PluginUtils {
 					if (value != null) {
 						if (ConfigurationSerializable.class.isAssignableFrom(f.getType())) {
 							value = ((ConfigurationSerializable) value).serialize();
+							//TODO remove serialisable class once previous system has been removed.
+							//All Serialisable classes should implement ConfigurationSerializable
+						} else if (Serialisable.class.isAssignableFrom(f.getType())) {
+							value = ((Serialisable) value).serialise();
 						}
 						serialised.put(f.getName(), value);
 					}
