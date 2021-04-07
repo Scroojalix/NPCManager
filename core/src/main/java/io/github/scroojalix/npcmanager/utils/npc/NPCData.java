@@ -18,7 +18,6 @@ import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.nms.interfaces.INPCLoader;
 import io.github.scroojalix.npcmanager.nms.interfaces.NMSHologram;
 import io.github.scroojalix.npcmanager.nms.interfaces.NMSPlayer;
-import io.github.scroojalix.npcmanager.utils.PluginUtils;
 import io.github.scroojalix.npcmanager.utils.interactions.CommandInteraction;
 import io.github.scroojalix.npcmanager.utils.interactions.InteractEvent;
 import io.github.scroojalix.npcmanager.utils.interactions.InteractEventType;
@@ -58,6 +57,8 @@ public class NPCData implements Serialisable {
 	private boolean store;
 	private boolean loaded;
 
+	NPCData() {}
+
 	public NPCData(String name, Location loc, boolean store) {
 		this(name, loc, 60, true, store);
 	}
@@ -70,10 +71,6 @@ public class NPCData implements Serialisable {
 		this.store = store;
 	}
 
-	@Override
-	public Map<String, Object> serialise() {
-		return PluginUtils.serialise(this);
-	}
 	
 	/**
 	 * Converts this NPCData object to a JSON string.
@@ -119,9 +116,7 @@ public class NPCData implements Serialisable {
 				return null;
 			}
 
-			//FIXME this returns null
-			NPCData data = builder.create().fromJson(json, NPCData.class);
-			
+			NPCData data = builder.create().fromJson(json, NPCData.class);			
 			data.setStored(true);
 
 			//Restore Interact Event

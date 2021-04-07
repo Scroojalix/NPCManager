@@ -1,10 +1,7 @@
 package io.github.scroojalix.npcmanager.utils.npc;
 
-import java.util.Map;
-
 import com.google.gson.annotations.Expose;
 
-import io.github.scroojalix.npcmanager.utils.PluginUtils;
 import io.github.scroojalix.npcmanager.utils.interactions.InteractEventType;
 import io.github.scroojalix.npcmanager.utils.interactions.NPCInteractionData;
 import io.github.scroojalix.npcmanager.utils.npc.equipment.NPCEquipment;
@@ -35,17 +32,14 @@ public class NPCTrait implements Serialisable {
     @Expose
     private NPCEquipment equipment;
     
+    NPCTrait() {}
+
     public NPCTrait(String displayName, int range, boolean headRotation) {
         this.displayName = displayName;
         this.range = range;
         this.headRotation = headRotation;
     }
 
-	@Override
-	public Map<String, Object> serialise() {
-        return PluginUtils.serialise(this);
-	}
-    
     /**
      * @return The display name of this NPC.
      */

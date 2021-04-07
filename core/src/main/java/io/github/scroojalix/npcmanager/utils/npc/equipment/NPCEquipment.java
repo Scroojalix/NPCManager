@@ -2,13 +2,11 @@ package io.github.scroojalix.npcmanager.utils.npc.equipment;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import com.google.gson.annotations.Expose;
 
 import org.bukkit.inventory.ItemStack;
 
-import io.github.scroojalix.npcmanager.utils.PluginUtils;
 import io.github.scroojalix.npcmanager.utils.storage.misc.Serialisable;
 
 public class NPCEquipment implements Serialisable {
@@ -25,11 +23,6 @@ public class NPCEquipment implements Serialisable {
     private ItemStack mainhand;
     @Expose
     private ItemStack offhand;
-
-	@Override
-	public Map<String, Object> serialise() {
-        return PluginUtils.serialise(this);
-	}
 
     public List<ItemStack> getEquipmentArray() {
         List<ItemStack> equipment = new ArrayList<ItemStack>();
