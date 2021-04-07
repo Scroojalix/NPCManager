@@ -5,9 +5,14 @@ This file is here in the hopes of recording all changes made throughout the plug
 This project uses the versioning format {phase}.{major}.{minor}, where phase is pretty much never going to change, major is for backwards incompatible changes, and minor is for backwards compatible bug fixes. There may be some versions that are named incorrectly, as I was a bit careless at the start of this project.
 
 ## [Unreleased]
+### Added
+- New serialisation/deserialisation system to make adding new storage methods easier.
+### Changed
+- Refactored some code.
 ### Fixed
 - NPC's not restoring if the storage method used is not remote.
 - "Restoring NPC's..." message getting sent twice if JSON storage is used.
+- Some spelling mistakes.
 
 ## [1.4.3] - 2021-2-2
 ### Added
