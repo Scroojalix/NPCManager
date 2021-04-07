@@ -20,6 +20,7 @@ import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.storage.implementation.interfaces.RemoteStorage;
 import io.github.scroojalix.npcmanager.utils.storage.implementation.interfaces.StorageImplementation;
+import io.github.scroojalix.npcmanager.utils.storage.misc.JsonParser;
 
 public class MongoStorage implements StorageImplementation, RemoteStorage {
     
@@ -131,7 +132,7 @@ public class MongoStorage implements StorageImplementation, RemoteStorage {
     @Override
     public void saveNPC(NPCData data) {
         MongoCollection<Document> c = this.database.getCollection(this.collectionName);
-        Document doc = Document.parse(data.toJson(true));
+        Document doc = Document.parse(JsonParser.toJson(data, true));
         c.replaceOne(new Document("name", data.getName()), doc, new ReplaceOptions().upsert(true));
     }
 
@@ -145,7 +146,7 @@ public class MongoStorage implements StorageImplementation, RemoteStorage {
     public void restoreNPCs() {
         MongoCollection<Document> c = this.database.getCollection(collectionName);
         for (Document doc : c.find()) {
-            NPCData data = NPCData.fromJson(doc.get("name").toString(), doc.toJson(), true);
+            NPCData data = JsonParser.fromJson(doc.get("name").toString(), doc.toJson(), true);
             if (data != null) {
                 main.npc.spawnNPC(data);
             }

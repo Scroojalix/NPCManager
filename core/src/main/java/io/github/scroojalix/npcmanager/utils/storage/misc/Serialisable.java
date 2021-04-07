@@ -51,7 +51,7 @@ public abstract interface Serialisable {
 	}
 
 	@SuppressWarnings("unchecked")
-    public static <T extends Serialisable> Object deserialise(Map<String, Object> serialised, Class<T> result) {
+    public static <T extends Serialisable> T deserialise(Map<String, Object> serialised, Class<T> result) {
 		try {
 			Constructor<T> con = result.getDeclaredConstructor();
 			con.setAccessible(true);

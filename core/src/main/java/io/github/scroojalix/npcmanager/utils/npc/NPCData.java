@@ -2,28 +2,17 @@ package io.github.scroojalix.npcmanager.utils.npc;
 
 import java.util.Map;
 import java.util.UUID;
-import java.util.logging.Level;
 
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
 import com.google.gson.annotations.Expose;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
-import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.nms.interfaces.INPCLoader;
 import io.github.scroojalix.npcmanager.nms.interfaces.NMSHologram;
 import io.github.scroojalix.npcmanager.nms.interfaces.NMSPlayer;
 import io.github.scroojalix.npcmanager.utils.interactions.CommandInteraction;
 import io.github.scroojalix.npcmanager.utils.interactions.InteractEvent;
 import io.github.scroojalix.npcmanager.utils.interactions.InteractEventType;
-import io.github.scroojalix.npcmanager.utils.interactions.InteractionsManager;
-import io.github.scroojalix.npcmanager.utils.interactions.NPCInteractionData;
-import io.github.scroojalix.npcmanager.utils.storage.misc.ConfigurationSerializableAdapter;
 import io.github.scroojalix.npcmanager.utils.storage.misc.Serialisable;
 
 /**
@@ -69,76 +58,6 @@ public class NPCData implements Serialisable {
 		this.uuid = UUID.randomUUID();
 		this.traits = new NPCTrait(name, range, headRotation);
 		this.store = store;
-	}
-
-	
-	/**
-	 * Converts this NPCData object to a JSON string.
-	 * @return The JSON string.
-	 */
-	public String toJson(boolean prettyPrinting) {
-		System.out.println(this.serialise());
-		GsonBuilder builder = new GsonBuilder()
-		.disableHtmlEscaping()
-		.excludeFieldsWithoutExposeAnnotation()
-		.registerTypeHierarchyAdapter(ConfigurationSerializable.class, new ConfigurationSerializableAdapter());
-		if (prettyPrinting) {
-			builder.setPrettyPrinting();
-		}
-		return builder.create().toJson(this);
-	}
-
-	//FIXME ItemStack not restoring properly (Loses itemmeta)
-	//Custom banners throw errors to the console when restoring.
-	/**
-	 * Creates an NPCData object from a JSON string.
-	 * @param json The JSON string to convert from.
-	 * @return An NPCData object.
-	 */
-	public static NPCData fromJson(String name, String json, boolean prettyPrinting) {
-		try {
-			GsonBuilder builder = new GsonBuilder()
-			.disableHtmlEscaping()
-			.excludeFieldsWithoutExposeAnnotation()
-			.registerTypeHierarchyAdapter(ConfigurationSerializable.class, new ConfigurationSerializableAdapter());
-
-			if (prettyPrinting) {
-				builder.setPrettyPrinting();
-			}
-			
-			JsonObject obj = new JsonParser().parse(json).getAsJsonObject();
-
-			String world = obj.get("loc").getAsJsonObject().get("world").getAsString();
-			if (Bukkit.getWorld(world) == null) {
-				NPCMain.instance.storage.removeNPC(name);
-				NPCMain.instance.log(Level.SEVERE, "Error restoring an NPC: The world it's in does not exist.");
-				NPCMain.instance.log(Level.SEVERE, "The NPC will be removed from storage.");
-				return null;
-			}
-
-			NPCData data = builder.create().fromJson(json, NPCData.class);			
-			data.setStored(true);
-
-			//Restore Interact Event
-			if (data.getTraits().getInteractEvent() != null) {
-				NPCInteractionData interactEvent = data.getTraits().getInteractEvent();
-				if (interactEvent.getType() == InteractEventType.COMMAND) {
-					data.setInteractEvent(new CommandInteraction(interactEvent.getValue()));
-				} else if (InteractionsManager.getInteractEvents().containsKey(interactEvent.getValue())) {
-					data.setInteractEvent(InteractionsManager.getInteractEvents().get(interactEvent.getValue()));
-				} else {
-					NPCMain.instance.log(Level.WARNING, "Error restoring an NPC: Unknown interact event '"+interactEvent.getValue()+"'");
-					data.getTraits().removeInteractEvent();
-				}
-			}
-
-			return data;
-		} catch (JsonSyntaxException | IllegalStateException e) {
-			NPCMain.instance.log(Level.SEVERE, "Error restoring an NPC: Invalid JSON");
-			NPCMain.instance.log(Level.SEVERE, "The NPC will be removed from storage.");
-			NPCMain.instance.storage.removeNPC(name);
-			return null;
-		}
 	}
 
 	/**
