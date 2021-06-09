@@ -7,6 +7,8 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 ## [Unreleased]
 
 ## [1.4.4] - 2021-6-9
+### Added
+- Temporary workaround for disabling MongoDB logging.
 ### Fixed
 - NPC's not restoring if the storage method used is not remote.
 - "Restoring NPC's..." message getting sent twice if JSON storage is used.
