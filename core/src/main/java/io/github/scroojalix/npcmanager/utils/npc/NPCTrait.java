@@ -4,14 +4,15 @@ import com.google.gson.annotations.Expose;
 
 import io.github.scroojalix.npcmanager.utils.interactions.InteractEventType;
 import io.github.scroojalix.npcmanager.utils.interactions.NPCInteractionData;
-import io.github.scroojalix.npcmanager.utils.npc.skin.SkinData;
 import io.github.scroojalix.npcmanager.utils.npc.equipment.NPCEquipment;
 import io.github.scroojalix.npcmanager.utils.npc.skin.NPCSkinLayers;
+import io.github.scroojalix.npcmanager.utils.npc.skin.SkinData;
+import io.github.scroojalix.npcmanager.utils.storage.misc.Serialisable;
 
 /**
  * Class that stores all of an NPC's traits.
  */
-public class NPCTrait {
+public class NPCTrait implements Serialisable {
     
     @Expose
     private String displayName;
@@ -26,18 +27,19 @@ public class NPCTrait {
     @Expose
     private NPCSkinLayers skinLayers;
 
-    
     @Expose
     private NPCInteractionData interactEvent;
     @Expose
     private NPCEquipment equipment;
     
+    NPCTrait() {}
+
     public NPCTrait(String displayName, int range, boolean headRotation) {
         this.displayName = displayName;
         this.range = range;
         this.headRotation = headRotation;
     }
-    
+
     /**
      * @return The display name of this NPC.
      */

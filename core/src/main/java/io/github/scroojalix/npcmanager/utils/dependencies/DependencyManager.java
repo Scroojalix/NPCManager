@@ -41,6 +41,7 @@ public class DependencyManager {
         this.main = main;
         url = "https://repo1.maven.org/maven2/";
         this.pluginClassLoader = new ReflectionClassLoader(main);
+        loadDependencies(DependencyRegistry.getGlobalDependencies());
     }
 
     public void loadStorageDependencies(StorageType type) {
