@@ -29,6 +29,8 @@ public class ReflectionClassLoader {
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
+        //TODO fix InaccessibleObjectException for java 16
+        //Potential fix: https://github.com/lucko/helper/issues/98
     }
 
     private final URLClassLoader classLoader;
