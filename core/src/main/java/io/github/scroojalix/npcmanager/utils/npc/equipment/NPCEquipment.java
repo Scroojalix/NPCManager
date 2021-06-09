@@ -7,9 +7,7 @@ import com.google.gson.annotations.Expose;
 
 import org.bukkit.inventory.ItemStack;
 
-import io.github.scroojalix.npcmanager.utils.storage.misc.Serialisable;
-
-public class NPCEquipment implements Serialisable {
+public class NPCEquipment {
     
     @Expose
     private ItemStack helmet;
@@ -23,6 +21,7 @@ public class NPCEquipment implements Serialisable {
     private ItemStack mainhand;
     @Expose
     private ItemStack offhand;
+
 
     public List<ItemStack> getEquipmentArray() {
         List<ItemStack> equipment = new ArrayList<ItemStack>();

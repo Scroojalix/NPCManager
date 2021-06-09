@@ -4,9 +4,7 @@ import com.google.gson.annotations.Expose;
 
 import org.bukkit.ChatColor;
 
-import io.github.scroojalix.npcmanager.utils.storage.misc.Serialisable;
-
-public class NPCSkinLayers implements Serialisable {
+public class NPCSkinLayers {
 
     @Expose
     private boolean cape;

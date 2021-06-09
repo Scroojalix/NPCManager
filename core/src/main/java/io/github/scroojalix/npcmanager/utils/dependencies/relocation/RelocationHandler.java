@@ -8,12 +8,14 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import io.github.scroojalix.npcmanager.utils.dependencies.Dependency;
 import io.github.scroojalix.npcmanager.utils.dependencies.DependencyManager;
 import io.github.scroojalix.npcmanager.utils.dependencies.classloader.IsolatedClassLoader;
 
 public class RelocationHandler {
+    public static final Set<Dependency> DEPENDENCIES = EnumSet.of(Dependency.ASM, Dependency.ASM_COMMONS, Dependency.JAR_RELOCATOR);
     private static final String JAR_RELOCATOR_CLASS = "me.lucko.jarrelocator.JarRelocator";
     private static final String JAR_RELOCATOR_RUN_METHOD = "run";
 
@@ -22,8 +24,10 @@ public class RelocationHandler {
 
     public RelocationHandler(DependencyManager dependencyManager) {
         try {
+            // download the required dependencies for remapping
+            dependencyManager.loadDependencies(DEPENDENCIES);
             // get a classloader containing the required dependencies as sources
-            IsolatedClassLoader classLoader = dependencyManager.obtainClassLoaderWith(EnumSet.of(Dependency.ASM, Dependency.ASM_COMMONS, Dependency.JAR_RELOCATOR));
+            IsolatedClassLoader classLoader = dependencyManager.obtainClassLoaderWith(DEPENDENCIES);
 
             // load the relocator class
             Class<?> jarRelocatorClass = classLoader.loadClass(JAR_RELOCATOR_CLASS);

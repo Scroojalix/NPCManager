@@ -2,16 +2,12 @@ package io.github.scroojalix.npcmanager.utils.interactions;
 
 import com.google.gson.annotations.Expose;
 
-import io.github.scroojalix.npcmanager.utils.storage.misc.Serialisable;
-
-public class NPCInteractionData implements Serialisable {
+public class NPCInteractionData {
 
     @Expose
     private InteractEventType type;
     @Expose
     private String value;
-
-    NPCInteractionData() {}
 
     public NPCInteractionData(InteractEventType type, String value) {
         this.type = type;

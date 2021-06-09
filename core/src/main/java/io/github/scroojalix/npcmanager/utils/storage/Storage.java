@@ -14,7 +14,6 @@ import io.github.scroojalix.npcmanager.utils.chat.Messages;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.storage.implementation.interfaces.RemoteStorage;
 import io.github.scroojalix.npcmanager.utils.storage.implementation.interfaces.StorageImplementation;
-import io.github.scroojalix.npcmanager.utils.storage.misc.JsonParser;
 
 public class Storage {
 
@@ -81,7 +80,7 @@ public class Storage {
                                 jsonFile.getParentFile().mkdirs();
                                 if (jsonFile.createNewFile()) {
                                     FileWriter writer = new FileWriter(jsonFile);
-                                    writer.write(JsonParser.toJson(data, true));
+                                    writer.write(data.toJson(true));
                                     writer.close();
                                 }
                             } catch (IOException e) {
@@ -131,7 +130,7 @@ public class Storage {
                     implementation.restoreNPCs();
                 } catch(Throwable t) {
                     if (!remote) {
-                        main.getLogger().log(Level.SEVERE, "Failed to restore NPC's.", t);
+                        main.getLogger().log(Level.SEVERE, "Failed to restore an NPC's.", t);
                     }
                 } finally {
                     if (remote) {
@@ -155,7 +154,7 @@ public class Storage {
 				if (current.isFile() && current.getName().endsWith(".json")) {
 					try {
 						String json = new String(Files.readAllBytes(Paths.get(current.getPath())));
-						NPCData data = JsonParser.fromJson(current.getName().replace(".json", ""), json, true);
+						NPCData data = NPCData.fromJson(current.getName().replace(".json", ""), json, true);
 						if (data != null) {
 							boolean restore = true;
 							if (((RemoteStorage)implementation).isConnected()) {
