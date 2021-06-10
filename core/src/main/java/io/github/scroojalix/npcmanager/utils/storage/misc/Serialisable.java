@@ -18,7 +18,6 @@ public abstract interface Serialisable {
 	 * @param instance The class instance to serialise.
 	 * @return the serialised form of {@code instance}
 	 */
-	@SuppressWarnings("deprecation")
 	public default Map<String, Object> serialise() {
 		Map<String, Object> serialised = new LinkedHashMap<String, Object>();
 		Field[] fields = this.getClass().getDeclaredFields();
@@ -34,8 +33,6 @@ public abstract interface Serialisable {
 						if (ConfigurationSerializable.class.isAssignableFrom(f.getType())) {
 							value = ((ConfigurationSerializable) value).serialize();
 							//FIXME json objects aren't being saved with "==" type key.
-							//TODO remove serialisable class once previous system has been removed.
-							//All Serialisable classes should implement ConfigurationSerializable
 						} else if (Serialisable.class.isAssignableFrom(f.getType())) {
 							value = ((Serialisable) value).serialise();
 						}
@@ -52,7 +49,7 @@ public abstract interface Serialisable {
 		return serialised;
 	}
 
-	@SuppressWarnings({"unchecked", "deprecation"})
+	@SuppressWarnings("unchecked")
     public static <T extends Serialisable> T deserialise(Map<String, Object> serialised, Class<T> result) {
 		try {
 			Constructor<T> con = result.getDeclaredConstructor();
