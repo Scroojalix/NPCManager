@@ -18,6 +18,7 @@ public abstract interface Serialisable {
 	 * @param instance The class instance to serialise.
 	 * @return the serialised form of {@code instance}
 	 */
+	@SuppressWarnings("unchecked")
 	public default Map<String, Object> serialise() {
 		Map<String, Object> serialised = new LinkedHashMap<String, Object>();
 		Field[] fields = this.getClass().getDeclaredFields();
@@ -31,8 +32,9 @@ public abstract interface Serialisable {
 					Object value = f.get(this);
 					if (value != null) {
 						if (ConfigurationSerializable.class.isAssignableFrom(f.getType())) {
-							value = ((ConfigurationSerializable) value).serialize();
-							//FIXME json objects aren't being saved with "==" type key.
+							Map<String, Object> map = ((ConfigurationSerializable) value).serialize();
+							map.put(ConfigurationSerialization.SERIALIZED_TYPE_KEY, ConfigurationSerialization.getAlias((Class<ConfigurationSerializable>)f.getType()));
+							value = map;
 						} else if (Serialisable.class.isAssignableFrom(f.getType())) {
 							value = ((Serialisable) value).serialise();
 						}
