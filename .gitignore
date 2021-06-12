@@ -2,7 +2,6 @@
 .settings/
 .vscode/
 .project
-.factorypath
 
 # Maven
 target/
@@ -10,3 +9,4 @@ Build/
 *.log
 .classpath
 dependency-reduced-pom.xml
+.factorypath
