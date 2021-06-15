@@ -5,24 +5,24 @@ import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_17_R1.util.CraftChatMessage;
 
 import io.github.scroojalix.npcmanager.nms.interfaces.NMSHologram;
-import net.minecraft.server.v1_17_R1.EntityArmorStand;
-import net.minecraft.server.v1_17_R1.EntityTypes;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.decoration.ArmorStand;
 
-public class EntityNMSHologram extends EntityArmorStand implements NMSHologram {
+public class EntityNMSHologram extends ArmorStand implements NMSHologram {
 
 	public EntityNMSHologram(Location loc, String text) {
-		super(EntityTypes.ARMOR_STAND, ((CraftWorld)loc.getWorld()).getHandle());
+		super(EntityType.ARMOR_STAND, ((CraftWorld)loc.getWorld()).getHandle());
 		setNoGravity(true);
 		setCustomName(CraftChatMessage.fromStringOrNull(text));
 		setCustomNameVisible(getCustomName() != null && !getCustomName().toString().isEmpty());
 		setInvisible(true);
-		setBasePlate(true);
+		setNoBasePlate(true);
 		setSmall(true);
 		setMarker(true);
-		setPosition(loc.getX(), loc.getY(), loc.getZ());
+		setPos(loc.getX(), loc.getY(), loc.getZ());
 	}
 
-	public EntityArmorStand getEntity() {
+	public ArmorStand getEntity() {
 		return this;
 	}
 }

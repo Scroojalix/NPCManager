@@ -4,22 +4,30 @@ import com.mojang.authlib.GameProfile;
 
 import io.github.scroojalix.npcmanager.nms.interfaces.NMSPlayer;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
-import net.minecraft.server.v1_17_R1.DataWatcherRegistry;
-import net.minecraft.server.v1_17_R1.EntityPlayer;
-import net.minecraft.server.v1_17_R1.MinecraftServer;
-import net.minecraft.server.v1_17_R1.PlayerInteractManager;
-import net.minecraft.server.v1_17_R1.WorldServer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 
-public class EntityNMSPlayer extends EntityPlayer implements NMSPlayer {
+public class EntityNMSPlayer extends Player implements NMSPlayer {
 
-    public EntityNMSPlayer(MinecraftServer server, WorldServer world, GameProfile profile, PlayerInteractManager interactManager, NPCData data) {
-        super(server, world, profile, interactManager);
-        this.setLocation(data.getLoc().getX(), data.getLoc().getY(), data.getLoc().getZ(), data.getLoc().getYaw(), data.getLoc().getPitch());
-        this.getDataWatcher().set(DataWatcherRegistry.a.a(16), data.getTraits().getSkinLayersByte());
+    public EntityNMSPlayer(Level world, GameProfile profile, BlockPos position, NPCData data) {
+        super(world, position, 0f, profile);
+        //TODO update this to 1.17
+        // this.getDataWatcher().set(DataWatcherRegistry.a.a(16), data.getTraits().getSkinLayersByte());
     }
 
     @Override
     public GameProfile getProfile() {
-        return super.getProfile();
+        return super.getGameProfile();
+    }
+
+    @Override
+    public boolean isCreative() {
+        return false;
+    }
+
+    @Override
+    public boolean isSpectator() {
+        return false;
     }
 }

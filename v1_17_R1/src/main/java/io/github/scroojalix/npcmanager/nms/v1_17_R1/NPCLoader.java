@@ -19,22 +19,10 @@ import io.github.scroojalix.npcmanager.nms.interfaces.INPCLoader;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.npc.equipment.NPCEquipment;
-import net.minecraft.server.v1_17_R1.EntityArmorStand;
-import net.minecraft.server.v1_17_R1.EnumItemSlot;
-import net.minecraft.server.v1_17_R1.ItemStack;
-import net.minecraft.server.v1_17_R1.MathHelper;
-import net.minecraft.server.v1_17_R1.Packet;
-import net.minecraft.server.v1_17_R1.PacketPlayOutAnimation;
-import net.minecraft.server.v1_17_R1.PacketPlayOutEntity;
-import net.minecraft.server.v1_17_R1.PacketPlayOutEntityDestroy;
-import net.minecraft.server.v1_17_R1.PacketPlayOutEntityEquipment;
-import net.minecraft.server.v1_17_R1.PacketPlayOutEntityHeadRotation;
-import net.minecraft.server.v1_17_R1.PacketPlayOutEntityMetadata;
-import net.minecraft.server.v1_17_R1.PacketPlayOutNamedEntitySpawn;
-import net.minecraft.server.v1_17_R1.PacketPlayOutPlayerInfo;
-import net.minecraft.server.v1_17_R1.PacketPlayOutScoreboardTeam;
-import net.minecraft.server.v1_17_R1.PacketPlayOutSpawnEntityLiving;
-import net.minecraft.server.v1_17_R1.PlayerConnection;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.item.ItemStack;
 
 public class NPCLoader extends INPCLoader implements Runnable {
 	
@@ -50,7 +38,7 @@ public class NPCLoader extends INPCLoader implements Runnable {
 
 	protected void generatePackets() {
 		EntityNMSPlayer npc = (EntityNMSPlayer)data.getNPC();		
-		packets.add(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, npc));
+		packets.add(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, npc));
 		packets.add(new PacketPlayOutNamedEntitySpawn(npc));
 		packets.add(new PacketPlayOutEntityMetadata(npc.getId(), npc.getDataWatcher(), true));
 		packets.add(new PacketPlayOutEntityHeadRotation(npc, (byte) (npc.yaw * 256 / 360)));
@@ -65,15 +53,15 @@ public class NPCLoader extends INPCLoader implements Runnable {
 		}
 		
 		//Holograms
-		EntityArmorStand holo;
+		ArmorStand holo;
 		if (data.getNameHolo() != null) {
-			holo = (EntityArmorStand) data.getNameHolo().getEntity();
+			holo = (ArmorStand) data.getNameHolo().getEntity();
 			packets.add(new PacketPlayOutSpawnEntityLiving(holo));
 			packets.add(new PacketPlayOutEntityMetadata(holo.getId(), holo.getDataWatcher(), true));
 		}
 		
 		if (data.getSubtitleHolo() != null) {
-			holo = (EntityArmorStand) data.getSubtitleHolo().getEntity();
+			holo = (ArmorStand) data.getSubtitleHolo().getEntity();
 			packets.add(new PacketPlayOutSpawnEntityLiving(holo));
 			packets.add(new PacketPlayOutEntityMetadata(holo.getId(), holo.getDataWatcher(), true));
 		}
