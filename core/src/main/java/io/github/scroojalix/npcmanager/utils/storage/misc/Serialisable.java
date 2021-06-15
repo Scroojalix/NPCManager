@@ -10,6 +10,8 @@ import com.google.gson.annotations.Expose;
 
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public abstract interface Serialisable {
 
@@ -32,9 +34,13 @@ public abstract interface Serialisable {
 					Object value = f.get(this);
 					if (value != null) {
 						if (ConfigurationSerializable.class.isAssignableFrom(f.getType())) {
-							Map<String, Object> map = ((ConfigurationSerializable) value).serialize();
-							map.put(ConfigurationSerialization.SERIALIZED_TYPE_KEY, ConfigurationSerialization.getAlias((Class<ConfigurationSerializable>)f.getType()));
-							value = map;
+							if (ItemStack.class.isAssignableFrom(f.getType())) {
+								value = ((ItemStack)value).serialize();
+							} else {
+								Map<String, Object> map = ((ConfigurationSerializable) value).serialize();
+								map.put(ConfigurationSerialization.SERIALIZED_TYPE_KEY, ConfigurationSerialization.getAlias((Class<ConfigurationSerializable>)f.getType()));
+								value = map;
+							}
 						} else if (Serialisable.class.isAssignableFrom(f.getType())) {
 							value = ((Serialisable) value).serialise();
 						}
@@ -67,7 +73,15 @@ public abstract interface Serialisable {
 					Object value = serialised.get(f.getName());
 					if (value != null) {
 						if (ConfigurationSerializable.class.isAssignableFrom(type)) {
-							value = ConfigurationSerialization.deserializeObject((Map<String, Object>) value);
+							//FIXME ItemMeta not properly being deserialised. Could convert to YAML then use built-in API
+							//Source: https://www.spigotmc.org/threads/deserializing-itemmeta.292145/
+							if (ItemStack.class.isAssignableFrom(type)) {
+								Map<String, Object> map = (Map<String, Object>) value;
+								map.computeIfPresent("meta", ($, serialized) -> (ItemMeta) ConfigurationSerialization.deserializeObject((Map<String, Object>) serialized));
+								value = ItemStack.deserialize(map);
+							} else {
+								value = ConfigurationSerialization.deserializeObject((Map<String, Object>) value);
+							}
 						} else if (Serialisable.class.isAssignableFrom(type)) {
 							value = deserialise((Map<String, Object>) value, (Class<T>) type);
 						} else if (type.isEnum()) {
