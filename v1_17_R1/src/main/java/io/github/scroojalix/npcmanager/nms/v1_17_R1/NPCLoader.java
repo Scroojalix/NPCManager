@@ -20,7 +20,18 @@ import io.github.scroojalix.npcmanager.utils.PluginUtils;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.npc.equipment.NPCEquipment;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.network.protocol.game.ClientboundAddPlayerPacket;
+import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket;
+import net.minecraft.network.protocol.game.ClientboundRemoveEntityPacket;
+import net.minecraft.network.protocol.game.ClientboundRotateHeadPacket;
+import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
+import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
+import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
+import net.minecraft.network.protocol.game.ServerGamePacketListener;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.item.ItemStack;
 
@@ -39,107 +50,107 @@ public class NPCLoader extends INPCLoader implements Runnable {
 	protected void generatePackets() {
 		EntityNMSPlayer npc = (EntityNMSPlayer)data.getNPC();		
 		packets.add(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, npc));
-		packets.add(new PacketPlayOutNamedEntitySpawn(npc));
-		packets.add(new PacketPlayOutEntityMetadata(npc.getId(), npc.getDataWatcher(), true));
-		packets.add(new PacketPlayOutEntityHeadRotation(npc, (byte) (npc.yaw * 256 / 360)));
+		packets.add(new ClientboundAddPlayerPacket(npc)); // may need to be AddEntity
+		packets.add(new ClientboundSetEntityDataPacket(npc.getId(), npc.getEntityData(), true));
+		packets.add(new ClientboundRotateHeadPacket(npc, (byte) (npc.getYRot() * 256 / 360)));
 		
-		packets.add(new PacketPlayOutScoreboardTeam(npcClass.getNPCTeam(), 0));
+		packets.add(new ClientboundSetPlayerTeamPacket(npcClass.getNPCTeam(), 0));
 		HashSet<String> npcs = new HashSet<String>();
 		npcs.add(data.getNPC().getProfile().getName());
-		packets.add(new PacketPlayOutScoreboardTeam(npcClass.getNPCTeam(), npcs, 3));
+		packets.add(new ClientboundSetPlayerTeamPacket(npcClass.getNPCTeam(), npcs, 3));
 		
 		if (perfectOrientation) {
-			packets.add(new PacketPlayOutAnimation(npc, 0));
+			packets.add(new ClientboundAnimatePacket(npc, 0));
 		}
 		
 		//Holograms
 		ArmorStand holo;
 		if (data.getNameHolo() != null) {
 			holo = (ArmorStand) data.getNameHolo().getEntity();
-			packets.add(new PacketPlayOutSpawnEntityLiving(holo));
-			packets.add(new PacketPlayOutEntityMetadata(holo.getId(), holo.getDataWatcher(), true));
+			packets.add(new ClientboundAddEntityPacket(holo));
+			packets.add(new ClientboundSetEntityDataPacket(holo.getId(), holo.getEntityData(), true));
 		}
 		
 		if (data.getSubtitleHolo() != null) {
 			holo = (ArmorStand) data.getSubtitleHolo().getEntity();
-			packets.add(new PacketPlayOutSpawnEntityLiving(holo));
-			packets.add(new PacketPlayOutEntityMetadata(holo.getId(), holo.getDataWatcher(), true));
+			packets.add(new ClientboundAddEntityPacket(holo));
+			packets.add(new ClientboundSetEntityDataPacket(holo.getId(), holo.getEntityData(), true));
 		}
 		
 		//Equipment
 		if (data.getTraits().getEquipment(false) != null) {
-			final List<Pair<EnumItemSlot, ItemStack>> equipmentList = new ArrayList<>();
+			final List<Pair<EquipmentSlot, ItemStack>> equipmentList = new ArrayList<>();
 			NPCEquipment equipment = data.getTraits().getEquipment(false);
 			if (equipment.getMainhandItem() != null) {
-				equipmentList.add(new Pair<>(EnumItemSlot.MAINHAND, CraftItemStack.asNMSCopy(equipment.getMainhandItem())));
+				equipmentList.add(new Pair<>(EquipmentSlot.MAINHAND, CraftItemStack.asNMSCopy(equipment.getMainhandItem())));
 			}
 			if (equipment.getOffhandItem() != null) {
-				equipmentList.add(new Pair<>(EnumItemSlot.OFFHAND, CraftItemStack.asNMSCopy(equipment.getOffhandItem())));
+				equipmentList.add(new Pair<>(EquipmentSlot.OFFHAND, CraftItemStack.asNMSCopy(equipment.getOffhandItem())));
 			}
 			if (equipment.getHelmet() != null) {
-				equipmentList.add(new Pair<>(EnumItemSlot.HEAD, CraftItemStack.asNMSCopy(equipment.getHelmet())));
+				equipmentList.add(new Pair<>(EquipmentSlot.HEAD, CraftItemStack.asNMSCopy(equipment.getHelmet())));
 			}
 			if (equipment.getChestplate() != null) {
-				equipmentList.add(new Pair<>(EnumItemSlot.CHEST, CraftItemStack.asNMSCopy(equipment.getChestplate())));
+				equipmentList.add(new Pair<>(EquipmentSlot.CHEST, CraftItemStack.asNMSCopy(equipment.getChestplate())));
 			}
 			if (equipment.getLeggings() != null) {
-				equipmentList.add(new Pair<>(EnumItemSlot.LEGS, CraftItemStack.asNMSCopy(equipment.getLeggings())));
+				equipmentList.add(new Pair<>(EquipmentSlot.LEGS, CraftItemStack.asNMSCopy(equipment.getLeggings())));
 			}
 			if (equipment.getBoots() != null) {
-				equipmentList.add(new Pair<>(EnumItemSlot.FEET, CraftItemStack.asNMSCopy(equipment.getBoots())));
+				equipmentList.add(new Pair<>(EquipmentSlot.FEET, CraftItemStack.asNMSCopy(equipment.getBoots())));
 			}
 			if (!equipmentList.isEmpty()) {
-				packets.add(new PacketPlayOutEntityEquipment(npc.getId(), equipmentList));
+				packets.add(new ClientboundSetEquipmentPacket(npc.getId(), equipmentList));
 			}
 		}
 	}
 
 	protected void lookInDirection(Player player) {
     	EntityNMSPlayer npc = (EntityNMSPlayer)data.getNPC();        
-        PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
+        ServerGamePacketListenerImpl connection = ((CraftPlayer)player).getHandle().connection;
         Vector difference = player.getLocation().subtract(npc.getBukkitEntity().getLocation()).toVector().normalize();
         float degrees = (float) Math.toDegrees(Math.atan2(difference.getZ(), difference.getX()) - Math.PI / 2);
         byte angle = (byte) MathHelper.d((degrees * 256.0F) / 360.0F);
         Vector height = npc.getBukkitEntity().getLocation().subtract(player.getLocation()).toVector().normalize();
         byte pitch = (byte) MathHelper.d((Math.toDegrees(Math.atan(height.getY())) * 256.0F) / 360.0F);
 
-        connection.sendPacket(new PacketPlayOutEntityHeadRotation(npc, angle));
-        connection.sendPacket(new PacketPlayOutEntity.PacketPlayOutEntityLook(npc.getId(), angle, pitch, true));
+        connection.send(new ClientboundRotateHeadPacket(npc, angle));
+        connection.send(new PacketPlayOutEntity.PacketPlayOutEntityLook(npc.getId(), angle, pitch, true));
 	}
 	
 	protected void resetLookDirection(Player player) {
     	EntityNMSPlayer npc = (EntityNMSPlayer)data.getNPC();        
-        PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
+        ServerGamePacketListenerImpl connection = ((CraftPlayer)player).getHandle().connection;
         byte yaw = (byte) (data.getLoc().getYaw() * 255 / 360);
         byte pitch = (byte) (data.getLoc().getPitch() * 255 / 360);
-        connection.sendPacket(new PacketPlayOutEntityHeadRotation(npc, yaw));
+        connection.sendPacket(new ClientboundRotateHeadPacket(npc, yaw));
         connection.sendPacket(new PacketPlayOutEntity.PacketPlayOutEntityLook(npc.getId(), yaw, pitch, true));
 	}
 
 	protected void sendLoadPackets(Player player) {
-		PlayerConnection connection = ((CraftPlayer)player).getHandle().playerConnection;
+		ServerGamePacketListenerImpl connection = ((CraftPlayer)player).getHandle().connection;
 		for (Packet<?> packet : packets) {
 			connection.sendPacket(packet);
 		}
 		loadedForPlayers.put(player, Bukkit.getScheduler().scheduleSyncDelayedTask(main, new Runnable() {
 			@Override
 			public void run() {
-				connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, (EntityNMSPlayer)data.getNPC()));
+				connection.sendPacket(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.REMOVE_PLAYER, (EntityNMSPlayer)data.getNPC()));
 			}
 		}, PluginUtils.NPC_REMOVE_DELAY));
 	}
 
 	protected void sendDeletePackets(Player player) {
 		EntityNMSPlayer npc = (EntityNMSPlayer)data.getNPC();
-		PlayerConnection connection = ((CraftPlayer)player).getHandle().playerConnection;
-		connection.sendPacket(new PacketPlayOutEntityDestroy(npc.getId()));
-		connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, npc));
+		ServerGamePacketListenerImpl connection = ((CraftPlayer)player).getHandle().connection;
+		connection.send(new ClientboundRemoveEntityPacket(npc.getId()));
+		connection.send(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.REMOVE_PLAYER, npc));
 		
 		if (data.getNameHolo() != null) {
-			connection.sendPacket(new PacketPlayOutEntityDestroy(((EntityArmorStand) data.getNameHolo().getEntity()).getId()));
+			connection.send(new ClientboundRemoveEntityPacket(((ArmorStand) data.getNameHolo().getEntity()).getId()));
 		}
 		if (data.getSubtitleHolo() != null) {
-			connection.sendPacket(new PacketPlayOutEntityDestroy(((EntityArmorStand) data.getSubtitleHolo().getEntity()).getId()));
+			connection.send(new ClientboundRemoveEntityPacket(((ArmorStand) data.getSubtitleHolo().getEntity()).getId()));
 		}
 		
 		Bukkit.getScheduler().cancelTask(loadedForPlayers.get(player));
