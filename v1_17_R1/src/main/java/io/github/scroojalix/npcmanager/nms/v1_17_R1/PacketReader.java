@@ -14,7 +14,6 @@ import io.github.scroojalix.npcmanager.utils.interactions.InteractAtNPCEvent.NPC
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
-import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ServerboundInteractPacket;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -43,15 +42,21 @@ public class PacketReader extends IPacketReader {
 		}
 	}
 	
-	public void readPacket(Player player, Packet<?> packet) {
+	public void readPacket(Player player, ServerboundInteractPacket packet) {
 		
-		if (packet.getClass().getSimpleName().equalsIgnoreCase("ServerboundInteractPacket")) {
+		//TODO remove this if statement on all versions. Not necessary.
+		// Also improve efficiency of code ie. use else if + store action in String
+		// Remove channel from super class. Should be stored per method.
+		// See if its possible to remove this class altogether and use a built in event
+		if (packet.getClass().getSimpleName().equalsIgnoreCase("PacketPlayInUseEntity")) {			
 			
-			if (getValue(packet, "action").toString().equalsIgnoreCase("INTERACT")) return;
+			String action = getValueFromMethod(getValue(packet, "b"), "a").toString();
+
+			if (action.equalsIgnoreCase("INTERACT")) return;
 			
 			int id = (int) getValue(packet, "a");
 			
-			if (getValue(packet, "action").toString().equalsIgnoreCase("INTERACT_AT")) {
+			if (action.equalsIgnoreCase("INTERACT_AT")) {
 				if (list.contains(player.getUniqueId())) return;
 				for (NPCData npc : main.npc.getNPCs().values()) {
 					if (((ServerPlayer) npc.getNPC()).getId() == id) {
@@ -71,8 +76,7 @@ public class PacketReader extends IPacketReader {
 						}, 1l);
 					}
 				}
-			}
-			if (getValue(packet, "action").toString().equalsIgnoreCase("ATTACK")) {
+			} else if (action.equalsIgnoreCase("ATTACK")) {
 				for (NPCData npc : main.npc.getNPCs().values()) {
 					if (((ServerPlayer) npc.getNPC()).getId() == id) {
 						Bukkit.getScheduler().scheduleSyncDelayedTask(main, new Runnable() {
