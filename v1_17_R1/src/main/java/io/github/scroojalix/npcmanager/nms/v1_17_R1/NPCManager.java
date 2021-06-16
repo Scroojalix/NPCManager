@@ -19,39 +19,38 @@ import io.github.scroojalix.npcmanager.utils.PluginUtils;
 import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.npc.NPCTrait;
 import io.github.scroojalix.npcmanager.utils.npc.skin.SkinData;
-import net.minecraft.server.v1_17_R1.EnumChatFormat;
-import net.minecraft.server.v1_17_R1.MinecraftServer;
-import net.minecraft.server.v1_17_R1.PacketPlayOutEntityDestroy;
-import net.minecraft.server.v1_17_R1.PacketPlayOutPlayerInfo;
-import net.minecraft.server.v1_17_R1.PlayerConnection;
-import net.minecraft.server.v1_17_R1.PlayerInteractManager;
-import net.minecraft.server.v1_17_R1.ScoreboardTeam;
-import net.minecraft.server.v1_17_R1.ScoreboardTeamBase;
-import net.minecraft.server.v1_17_R1.ScoreboardTeamBase.EnumTeamPush;
-import net.minecraft.server.v1_17_R1.WorldServer;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket;
+import net.minecraft.network.protocol.game.ClientboundRemoveEntityPacket;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.world.scores.PlayerTeam;
+import net.minecraft.world.scores.Team.CollisionRule;
+import net.minecraft.world.scores.Team.Visibility;
 
 public class NPCManager extends INPCManager {
 	
-	private ScoreboardTeam npcTeam;
+	private PlayerTeam npcTeam;
 	
 	public NPCManager(NPCMain main) {
 		super(main);
-		npcTeam = new ScoreboardTeam(((CraftScoreboard)Bukkit.getScoreboardManager().getNewScoreboard()).getHandle(), "zzzzzzzzzzNMNPCs");
-		npcTeam.setCollisionRule(EnumTeamPush.NEVER);
-		npcTeam.setColor(EnumChatFormat.DARK_GRAY);
-		npcTeam.setNameTagVisibility(ScoreboardTeamBase.EnumNameTagVisibility.NEVER);
-		npcTeam.setPrefix(CraftChatMessage.fromStringOrNull(PluginUtils.format("&8[NPC] ")));
+		npcTeam = new PlayerTeam(((CraftScoreboard)Bukkit.getScoreboardManager().getNewScoreboard()).getHandle(), "zzzzzzzzzzNMNPCs");
+		npcTeam.setCollisionRule(CollisionRule.NEVER);
+		npcTeam.setColor(ChatFormatting.DARK_GRAY);
+		npcTeam.setNameTagVisibility(Visibility.NEVER);
+		npcTeam.setPlayerPrefix(CraftChatMessage.fromStringOrNull(PluginUtils.format("&8[NPC] ")));
 	}
 	
-	public ScoreboardTeam getNPCTeam() {
+	public PlayerTeam getNPCTeam() {
 		return npcTeam;
 	}
 		
 	public void sendRemoveNPCPackets(Player p, NPCData data) {
 		EntityNMSPlayer npcEntity = (EntityNMSPlayer) data.getNPC();
-		PlayerConnection connection = ((CraftPlayer)p).getHandle().playerConnection;
-		connection.sendPacket(new PacketPlayOutEntityDestroy(npcEntity.getId()));
-		connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, npcEntity));
+		ServerGamePacketListenerImpl connection = ((CraftPlayer)p).getHandle().connection;
+		connection.send(new ClientboundRemoveEntityPacket(npcEntity.getId()));
+		connection.send(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.REMOVE_PLAYER, npcEntity));
 	}
 
 	public void createNPCData(NPCData data) {
@@ -63,8 +62,8 @@ public class NPCManager extends INPCManager {
 			profile.getProperties().put("textures", new Property("textures", skin.getTexture(), skin.getSignature()));
 		}
 		MinecraftServer server = ((CraftServer)Bukkit.getServer()).getServer();
-		WorldServer world = ((CraftWorld)data.getLoc().getWorld()).getHandle();
-        EntityNMSPlayer npc = new EntityNMSPlayer(server, world, profile, new PlayerInteractManager(world), data);
+		ServerLevel world = ((CraftWorld)data.getLoc().getWorld()).getHandle();
+        EntityNMSPlayer npc = new EntityNMSPlayer(server, world, profile, data);
         data.setNPC(npc);
 
         //Holograms
@@ -97,7 +96,7 @@ public class NPCManager extends INPCManager {
 	}
 
 	public void removeHologramForPlayer(Player player, NMSHologram hologram) {
-		PlayerConnection connection = ((CraftPlayer)player).getHandle().playerConnection;
-		connection.sendPacket(new PacketPlayOutEntityDestroy(((EntityNMSHologram) hologram.getEntity()).getId()));
+		ServerGamePacketListenerImpl connection = ((CraftPlayer)player).getHandle().connection;
+		connection.send(new ClientboundRemoveEntityPacket(((EntityNMSHologram) hologram.getEntity()).getId()));
 	}
 }

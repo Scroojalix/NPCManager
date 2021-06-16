@@ -1,7 +1,6 @@
 package io.github.scroojalix.npcmanager.nms.v1_17_R1;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -23,14 +22,16 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundAddPlayerPacket;
 import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
+import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket;
 import net.minecraft.network.protocol.game.ClientboundRemoveEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundRotateHeadPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
 import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
-import net.minecraft.network.protocol.game.ServerGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket.Action;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.item.ItemStack;
@@ -54,10 +55,8 @@ public class NPCLoader extends INPCLoader implements Runnable {
 		packets.add(new ClientboundSetEntityDataPacket(npc.getId(), npc.getEntityData(), true));
 		packets.add(new ClientboundRotateHeadPacket(npc, (byte) (npc.getYRot() * 256 / 360)));
 		
-		packets.add(new ClientboundSetPlayerTeamPacket(npcClass.getNPCTeam(), 0));
-		HashSet<String> npcs = new HashSet<String>();
-		npcs.add(data.getNPC().getProfile().getName());
-		packets.add(new ClientboundSetPlayerTeamPacket(npcClass.getNPCTeam(), npcs, 3));
+		packets.add(ClientboundSetPlayerTeamPacket.createAddOrModifyPacket(npcClass.getNPCTeam(), true));
+		packets.add(ClientboundSetPlayerTeamPacket.createPlayerPacket(npcClass.getNPCTeam(), data.getNPC().getProfile().getName(), Action.ADD));
 		
 		if (perfectOrientation) {
 			packets.add(new ClientboundAnimatePacket(npc, 0));
@@ -110,12 +109,12 @@ public class NPCLoader extends INPCLoader implements Runnable {
         ServerGamePacketListenerImpl connection = ((CraftPlayer)player).getHandle().connection;
         Vector difference = player.getLocation().subtract(npc.getBukkitEntity().getLocation()).toVector().normalize();
         float degrees = (float) Math.toDegrees(Math.atan2(difference.getZ(), difference.getX()) - Math.PI / 2);
-        byte angle = (byte) MathHelper.d((degrees * 256.0F) / 360.0F);
+        byte angle = (byte) Mth.floor((degrees * 256.0F) / 360.0F);
         Vector height = npc.getBukkitEntity().getLocation().subtract(player.getLocation()).toVector().normalize();
-        byte pitch = (byte) MathHelper.d((Math.toDegrees(Math.atan(height.getY())) * 256.0F) / 360.0F);
+        byte pitch = (byte) Mth.floor((Math.toDegrees(Math.atan(height.getY())) * 256.0F) / 360.0F);
 
         connection.send(new ClientboundRotateHeadPacket(npc, angle));
-        connection.send(new PacketPlayOutEntity.PacketPlayOutEntityLook(npc.getId(), angle, pitch, true));
+        connection.send(new ClientboundMoveEntityPacket.Rot(npc.getId(), angle, pitch, true));
 	}
 	
 	protected void resetLookDirection(Player player) {
@@ -123,19 +122,19 @@ public class NPCLoader extends INPCLoader implements Runnable {
         ServerGamePacketListenerImpl connection = ((CraftPlayer)player).getHandle().connection;
         byte yaw = (byte) (data.getLoc().getYaw() * 255 / 360);
         byte pitch = (byte) (data.getLoc().getPitch() * 255 / 360);
-        connection.sendPacket(new ClientboundRotateHeadPacket(npc, yaw));
-        connection.sendPacket(new PacketPlayOutEntity.PacketPlayOutEntityLook(npc.getId(), yaw, pitch, true));
+        connection.send(new ClientboundRotateHeadPacket(npc, yaw));
+        connection.send(new ClientboundMoveEntityPacket.Rot(npc.getId(), yaw, pitch, true));
 	}
 
 	protected void sendLoadPackets(Player player) {
 		ServerGamePacketListenerImpl connection = ((CraftPlayer)player).getHandle().connection;
 		for (Packet<?> packet : packets) {
-			connection.sendPacket(packet);
+			connection.send(packet);
 		}
 		loadedForPlayers.put(player, Bukkit.getScheduler().scheduleSyncDelayedTask(main, new Runnable() {
 			@Override
 			public void run() {
-				connection.sendPacket(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.REMOVE_PLAYER, (EntityNMSPlayer)data.getNPC()));
+				connection.send(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.REMOVE_PLAYER, (EntityNMSPlayer)data.getNPC()));
 			}
 		}, PluginUtils.NPC_REMOVE_DELAY));
 	}
