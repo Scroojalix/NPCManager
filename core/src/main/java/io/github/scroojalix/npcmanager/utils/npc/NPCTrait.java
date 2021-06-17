@@ -116,7 +116,7 @@ public class NPCTrait {
         this.skinLayers = skinLayers;
     }
 
-    public byte getSkinLayersByte() {
+    public Byte getSkinLayersByte() {
         if (this.skinLayers != null) {
             return skinLayers.getDisplayedSkinParts();
         }

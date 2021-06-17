@@ -101,7 +101,8 @@ public class NPCMain extends JavaPlugin {
 					player.closeInventory();
 				reader.uninject(player);
 			}
-			storage.shutdown();
+			if (storage != null)
+				storage.shutdown();
 		}
 		instance = null;
 	}

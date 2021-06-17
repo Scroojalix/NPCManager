@@ -1,6 +1,7 @@
 package io.github.scroojalix.npcmanager.nms.interfaces;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -9,8 +10,8 @@ import java.util.UUID;
 
 import org.bukkit.entity.Player;
 
-import io.netty.channel.Channel;
 import io.github.scroojalix.npcmanager.NPCMain;
+import io.netty.channel.Channel;
 
 public abstract class IPacketReader {
 	
@@ -48,6 +49,19 @@ public abstract class IPacketReader {
 			field.setAccessible(true);
 			result = field.get(instance);
 			field.setAccessible(false);
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	protected Object getValueFromMethod(Object instance, String methodName) {
+		Object result = null;
+		try {
+			Method method = instance.getClass().getDeclaredMethod(methodName);
+			method.setAccessible(true);
+			result = method.invoke(instance);
+			method.setAccessible(false);
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
