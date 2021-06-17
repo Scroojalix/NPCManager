@@ -6,6 +6,7 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 
 ## [Unreleased]
 ### Added
+- support for the plugin to work on 1.17 servers.
 - New serialisation/deserialisation system to make adding new storage methods easier.
 ### Changed
 - Refactored some code.

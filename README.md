@@ -49,16 +49,18 @@ It is not required to build the plugin, as I will do so upon each release. I hav
 #### Requirements:
 
  * [Maven](https://maven.apache.org/download.cgi)
- * [Java 8 or Higher](https://www.oracle.com/au/java/technologies/javase-downloads.html)
+ * [Java JDK](https://www.oracle.com/au/java/technologies/javase-downloads.html)
  * [Git](https://git-scm.com/downloads)
 
 Run the following commands in the command line:
 
 ```
 git clone https://github.com/Scroojalix/NPCManager.git
-
+```
+```
 cd NPCManager
-
+```
+```
 mvn clean install
 ```
 
