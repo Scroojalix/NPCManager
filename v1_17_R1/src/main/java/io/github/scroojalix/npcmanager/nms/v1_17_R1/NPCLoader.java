@@ -51,7 +51,7 @@ public class NPCLoader extends INPCLoader implements Runnable {
 	protected void generatePackets() {
 		EntityNMSPlayer npc = (EntityNMSPlayer) data.getNPC();
 		packets.add(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, npc));
-		packets.add(new ClientboundAddPlayerPacket(npc)); // FIXME may need to be AddEntity. test if this is true
+		packets.add(new ClientboundAddPlayerPacket(npc));
 		packets.add(new ClientboundSetEntityDataPacket(npc.getId(), npc.getEntityData(), true));
 		packets.add(new ClientboundRotateHeadPacket(npc, (byte) (npc.getYRot() * 256 / 360)));
 		
