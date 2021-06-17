@@ -5,6 +5,8 @@ This file is here in the hopes of recording all changes made throughout the plug
 This project uses the versioning format {phase}.{major}.{minor}, where phase is pretty much never going to change, major is for backwards incompatible changes, and minor is for backwards compatible bug fixes. There may be some versions that are named incorrectly, as I was a bit careless at the start of this project.
 
 ## [Unreleased]
+
+## [1.4.5] - 2021-6-17
 ### Added
 - support for the plugin to work on 1.17 servers.
 
@@ -196,7 +198,8 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 ## [1.0.0] - 2020-10-27
 Initial Commit. No Changes.
 
-[Unreleased]: https://github.com/Scroojalix/NPCManager/compare/v1.4.4...master
+[Unreleased]: https://github.com/Scroojalix/NPCManager/compare/v1.4.5...master
+[1.4.5]: https://github.com/Scroojalix/NPCManager/compare/v1.4.4...v1.4.5
 [1.4.4]: https://github.com/Scroojalix/NPCManager/compare/v1.4.3...v1.4.4
 [1.4.3]: https://github.com/Scroojalix/NPCManager/compare/v1.4.2...v1.4.3
 [1.4.2]: https://github.com/Scroojalix/NPCManager/compare/v1.4.1...v1.4.2
