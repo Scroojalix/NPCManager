@@ -11,9 +11,9 @@ import org.bukkit.inventory.ItemStack;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.CommandUtils;
-import io.github.scroojalix.npcmanager.utils.npc.equipment.*;
-import io.github.scroojalix.npcmanager.utils.PluginUtils;
-import io.github.scroojalix.npcmanager.utils.npc.NPCData;
+import io.github.scroojalix.npcmanager.common.PluginUtils;
+import io.github.scroojalix.npcmanager.common.npc.NPCData;
+import io.github.scroojalix.npcmanager.common.npc.equipment.*;
 
 public class EquipmentEvents implements Listener {
 

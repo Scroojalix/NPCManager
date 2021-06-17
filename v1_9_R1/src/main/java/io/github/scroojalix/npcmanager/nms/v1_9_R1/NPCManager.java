@@ -12,13 +12,12 @@ import org.bukkit.craftbukkit.v1_9_R1.scoreboard.CraftScoreboard;
 import org.bukkit.entity.Player;
 
 import io.github.scroojalix.npcmanager.NPCMain;
+import io.github.scroojalix.npcmanager.common.PluginUtils;
+import io.github.scroojalix.npcmanager.common.npc.NPCData;
+import io.github.scroojalix.npcmanager.common.npc.NPCTrait;
+import io.github.scroojalix.npcmanager.common.npc.skin.SkinData;
 import io.github.scroojalix.npcmanager.nms.interfaces.INPCManager;
 import io.github.scroojalix.npcmanager.nms.interfaces.NMSHologram;
-import io.github.scroojalix.npcmanager.utils.PluginUtils;
-import io.github.scroojalix.npcmanager.utils.npc.NPCData;
-import io.github.scroojalix.npcmanager.utils.npc.NPCTrait;
-import io.github.scroojalix.npcmanager.utils.npc.skin.SkinData;
-
 import net.minecraft.server.v1_9_R1.MinecraftServer;
 import net.minecraft.server.v1_9_R1.PacketPlayOutEntityDestroy;
 import net.minecraft.server.v1_9_R1.PacketPlayOutPlayerInfo;

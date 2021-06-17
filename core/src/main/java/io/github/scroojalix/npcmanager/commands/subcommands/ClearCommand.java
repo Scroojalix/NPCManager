@@ -8,8 +8,8 @@ import org.bukkit.command.CommandSender;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.SubCommand;
-import io.github.scroojalix.npcmanager.utils.PluginUtils;
-import io.github.scroojalix.npcmanager.utils.chat.Messages;
+import io.github.scroojalix.npcmanager.common.PluginUtils;
+import io.github.scroojalix.npcmanager.common.chatutils.Messages;
 
 public class ClearCommand extends SubCommand {
 

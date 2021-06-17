@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.subcommands.*;
-import io.github.scroojalix.npcmanager.utils.PluginUtils;
+import io.github.scroojalix.npcmanager.common.PluginUtils;
 
 public class CommandManager implements TabExecutor {
 
