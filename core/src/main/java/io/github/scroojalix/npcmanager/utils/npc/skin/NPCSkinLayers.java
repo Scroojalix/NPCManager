@@ -42,7 +42,7 @@ public class NPCSkinLayers {
         return builder.toString();
     }
 
-    public byte getDisplayedSkinParts() {
+    public Byte getDisplayedSkinParts() {
         byte bitSize = 1;
         byte result = 0;
         boolean[] bools = getBoolArray();
