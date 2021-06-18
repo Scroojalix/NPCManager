@@ -80,6 +80,7 @@ public class NPCBuilder {
 	 * update the skin on every reload.
 	 */
     public NPCBuilder setSkin(SkinType type, String value, boolean optionalArg) {
+        //FIXME this will result in an infinite loop if the NPC is never spawned.
         Bukkit.getScheduler().runTaskAsynchronously(NPCMain.instance, new Runnable() {
             @Override
             public void run() {
