@@ -5,6 +5,8 @@ This file is here in the hopes of recording all changes made throughout the plug
 This project uses the versioning format {phase}.{major}.{minor}, where phase is pretty much never going to change, major is for backwards incompatible changes, and minor is for backwards compatible bug fixes. There may be some versions that are named incorrectly, as I was a bit careless at the start of this project.
 
 ## [Unreleased]
+### Changed
+- renamed io.github.scroojalix.npcmanager.utils to io.github.scroojalix.npcmanager.common and moved api package to io.github.scroojalix.npcmanager.api
 
 ## [1.4.5] - 2021-6-17
 ### Added

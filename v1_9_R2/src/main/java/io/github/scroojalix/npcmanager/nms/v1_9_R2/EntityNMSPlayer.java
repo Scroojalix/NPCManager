@@ -2,8 +2,8 @@ package io.github.scroojalix.npcmanager.nms.v1_9_R2;
 
 import com.mojang.authlib.GameProfile;
 
+import io.github.scroojalix.npcmanager.common.npc.NPCData;
 import io.github.scroojalix.npcmanager.nms.interfaces.NMSPlayer;
-import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import net.minecraft.server.v1_9_R2.DataWatcherRegistry;
 import net.minecraft.server.v1_9_R2.EntityPlayer;
 import net.minecraft.server.v1_9_R2.MinecraftServer;
