@@ -12,7 +12,8 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 ### Changed
 - Refactored some code.
 ### Renamed
-- renamed io.github.scroojalix.npcmanager.utils to io.github.scroojalix.npcmanager.common and moved api package to io.github.scroojalix.npcmanager.api
+- renamed io.github.scroojalix.npcmanager.utils to io.github.scroojalix.npcmanager.common
+- moved api package to io.github.scroojalix.npcmanager.api
 ### Fixed
 - ItemStack meta now gets serialised and deserialised correctly.
 - Some spelling mistakes.
