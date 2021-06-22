@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.common.npc.NPCData;
 import io.github.scroojalix.npcmanager.common.storage.implementation.interfaces.StorageImplementation;
+import io.github.scroojalix.npcmanager.common.storage.misc.JsonParser;
 
 public class JsonStorage implements StorageImplementation {
 
@@ -35,7 +36,7 @@ public class JsonStorage implements StorageImplementation {
 
 		try {
 			FileWriter writer = new FileWriter(jsonFile);
-			writer.write(data.toJson(true));
+			writer.write(JsonParser.toJson(data, true));
 			writer.close();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -61,7 +62,7 @@ public class JsonStorage implements StorageImplementation {
                     if (current.isFile() && current.getName().endsWith(".json")) {
                         try {
                             String json = new String(Files.readAllBytes(Paths.get(current.getPath())));
-                            NPCData data = NPCData.fromJson(current.getName().replace(".json", ""), json, true);
+                            NPCData data = JsonParser.fromJson(current.getName().replaceFirst("[.][^.]+$", ""), json, true);
                             if (data != null)
                                 main.npc.spawnNPC(data);
                         } catch (IOException e) {

@@ -2,7 +2,9 @@ package io.github.scroojalix.npcmanager.common.npc.skin;
 
 import com.google.gson.annotations.Expose;
 
-public class SkinData {
+import io.github.scroojalix.npcmanager.common.storage.misc.Serialisable;
+
+public class SkinData implements Serialisable {
 
     @Expose
     private SkinType type;
@@ -18,6 +20,8 @@ public class SkinData {
     private boolean keepLatest;
     
     private boolean hasUpdated;
+
+    SkinData() {}
     
     public SkinData(SkinType type, String name, String uuid, String texture, String signature, boolean keepLatest) {
         this.type = type;
@@ -27,7 +31,7 @@ public class SkinData {
         this.signature = signature;
         this.keepLatest = keepLatest;
     }
-    
+
     public boolean needsUpdating() {
         return !hasUpdated && keepLatest && type == SkinType.PLAYER;
     }

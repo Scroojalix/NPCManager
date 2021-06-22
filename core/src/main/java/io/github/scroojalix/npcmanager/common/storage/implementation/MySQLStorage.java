@@ -12,6 +12,7 @@ import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.common.npc.NPCData;
 import io.github.scroojalix.npcmanager.common.storage.implementation.interfaces.RemoteStorage;
 import io.github.scroojalix.npcmanager.common.storage.implementation.interfaces.StorageImplementation;
+import io.github.scroojalix.npcmanager.common.storage.misc.JsonParser;
 
 public class MySQLStorage implements StorageImplementation, RemoteStorage {
 
@@ -90,11 +91,12 @@ public class MySQLStorage implements StorageImplementation, RemoteStorage {
         }
     }
 
+    //TODO save NPCData in better format than in json.
     @Override
     public void saveNPC(NPCData data) throws Throwable {
         PreparedStatement ps = connection.prepareStatement("INSERT IGNORE INTO "+tableName+" (NAME,DATA) VALUES (?,?)");
         ps.setString(1, data.getName());
-        ps.setString(2, data.toJson(false));
+        ps.setString(2, JsonParser.toJson(data, false));
         ps.executeUpdate();
     }
 
@@ -112,7 +114,7 @@ public class MySQLStorage implements StorageImplementation, RemoteStorage {
         PreparedStatement ps = connection.prepareStatement("SELECT * FROM "+tableName);
         ResultSet rs = ps.executeQuery();
         while(rs.next()) {
-            NPCData data = NPCData.fromJson(rs.getString(1), rs.getString(2), false);
+            NPCData data = JsonParser.fromJson(rs.getString(1), rs.getString(2), false);
             if (data != null) {
                 main.npc.spawnNPC(data);
             }
