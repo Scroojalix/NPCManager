@@ -12,6 +12,7 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 - Refactored some code.
 ### Fixed
 - Some spelling mistakes.
+- ItemStack meta now gets serialised and deserialised correctly.
 
 ## [1.4.4] - 2021-6-9
 ### Added
