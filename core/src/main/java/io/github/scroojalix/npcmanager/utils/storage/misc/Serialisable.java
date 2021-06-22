@@ -11,7 +11,6 @@ import com.google.gson.annotations.Expose;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 public abstract interface Serialisable {
 
@@ -35,7 +34,9 @@ public abstract interface Serialisable {
 					if (value != null) {
 						if (ConfigurationSerializable.class.isAssignableFrom(f.getType())) {
 							if (ItemStack.class.isAssignableFrom(f.getType())) {
-								value = ((ItemStack)value).serialize();
+								//Serialise itemstack to base64 string
+								//Source: https://gist.github.com/graywolf336/8153678
+								value = Base64Serialisation.itemStackToBase64((ItemStack)value);
 							} else {
 								Map<String, Object> map = ((ConfigurationSerializable) value).serialize();
 								map.put(ConfigurationSerialization.SERIALIZED_TYPE_KEY, ConfigurationSerialization.getAlias((Class<ConfigurationSerializable>)f.getType()));
@@ -76,9 +77,7 @@ public abstract interface Serialisable {
 							//FIXME ItemMeta not properly being deserialised. Could convert to YAML then use built-in API
 							//Source: https://www.spigotmc.org/threads/deserializing-itemmeta.292145/
 							if (ItemStack.class.isAssignableFrom(type)) {
-								Map<String, Object> map = (Map<String, Object>) value;
-								map.computeIfPresent("meta", ($, serialized) -> (ItemMeta) ConfigurationSerialization.deserializeObject((Map<String, Object>) serialized));
-								value = ItemStack.deserialize(map);
+								value = Base64Serialisation.itemStackFromBase64((String)value);
 							} else {
 								value = ConfigurationSerialization.deserializeObject((Map<String, Object>) value);
 							}
