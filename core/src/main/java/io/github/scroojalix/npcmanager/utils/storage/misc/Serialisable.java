@@ -5,12 +5,15 @@ import java.lang.reflect.Field;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Level;
 
 import com.google.gson.annotations.Expose;
 
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.inventory.ItemStack;
+
+import io.github.scroojalix.npcmanager.NPCMain;
 
 public abstract interface Serialisable {
 
@@ -74,10 +77,14 @@ public abstract interface Serialisable {
 					Object value = serialised.get(f.getName());
 					if (value != null) {
 						if (ConfigurationSerializable.class.isAssignableFrom(type)) {
-							//FIXME ItemMeta not properly being deserialised. Could convert to YAML then use built-in API
-							//Source: https://www.spigotmc.org/threads/deserializing-itemmeta.292145/
 							if (ItemStack.class.isAssignableFrom(type)) {
-								value = Base64Serialisation.itemStackFromBase64((String)value);
+								try {
+									value = Base64Serialisation.itemStackFromBase64((String)value);
+								} catch(ClassCastException e) {
+									//User is updating from version with old serialisation system to new one.
+									value = null;
+									NPCMain.instance.log(Level.SEVERE, "Could not deserialise ItemStack for an NPC. You may have to customise this NPC's equipment again.");
+								} 
 							} else {
 								value = ConfigurationSerialization.deserializeObject((Map<String, Object>) value);
 							}
