@@ -13,13 +13,12 @@ import org.bukkit.craftbukkit.v1_13_R2.util.CraftChatMessage;
 import org.bukkit.entity.Player;
 
 import io.github.scroojalix.npcmanager.NPCMain;
+import io.github.scroojalix.npcmanager.common.PluginUtils;
+import io.github.scroojalix.npcmanager.common.npc.NPCData;
+import io.github.scroojalix.npcmanager.common.npc.NPCTrait;
+import io.github.scroojalix.npcmanager.common.npc.skin.SkinData;
 import io.github.scroojalix.npcmanager.nms.interfaces.INPCManager;
 import io.github.scroojalix.npcmanager.nms.interfaces.NMSHologram;
-import io.github.scroojalix.npcmanager.utils.PluginUtils;
-import io.github.scroojalix.npcmanager.utils.npc.NPCData;
-import io.github.scroojalix.npcmanager.utils.npc.NPCTrait;
-import io.github.scroojalix.npcmanager.utils.npc.skin.SkinData;
-
 import net.minecraft.server.v1_13_R2.EnumChatFormat;
 import net.minecraft.server.v1_13_R2.MinecraftServer;
 import net.minecraft.server.v1_13_R2.PacketPlayOutEntityDestroy;

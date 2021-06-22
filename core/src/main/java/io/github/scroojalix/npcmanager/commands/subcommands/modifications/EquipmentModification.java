@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.CommandUtils;
 import io.github.scroojalix.npcmanager.commands.SubCommand;
-import io.github.scroojalix.npcmanager.utils.npc.NPCData;
+import io.github.scroojalix.npcmanager.common.npc.NPCData;
 
 public class EquipmentModification extends SubCommand {
 

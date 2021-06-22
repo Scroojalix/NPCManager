@@ -4,8 +4,8 @@ import com.mojang.authlib.GameProfile;
 
 import org.bukkit.Location;
 
+import io.github.scroojalix.npcmanager.common.npc.NPCData;
 import io.github.scroojalix.npcmanager.nms.interfaces.NMSPlayer;
-import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;

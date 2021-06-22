@@ -10,12 +10,12 @@ import org.bukkit.entity.Player;
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.CommandUtils;
 import io.github.scroojalix.npcmanager.commands.SubCommand;
-import io.github.scroojalix.npcmanager.utils.PluginUtils;
-import io.github.scroojalix.npcmanager.utils.interactions.NPCInteractionData;
-import io.github.scroojalix.npcmanager.utils.npc.NPCData;
-import io.github.scroojalix.npcmanager.utils.npc.NPCTrait;
-import io.github.scroojalix.npcmanager.utils.npc.skin.NPCSkinLayers;
-import io.github.scroojalix.npcmanager.utils.npc.skin.SkinData;
+import io.github.scroojalix.npcmanager.common.PluginUtils;
+import io.github.scroojalix.npcmanager.common.interactions.NPCInteractionData;
+import io.github.scroojalix.npcmanager.common.npc.NPCData;
+import io.github.scroojalix.npcmanager.common.npc.NPCTrait;
+import io.github.scroojalix.npcmanager.common.npc.skin.NPCSkinLayers;
+import io.github.scroojalix.npcmanager.common.npc.skin.SkinData;
 
 public class InfoCommand extends SubCommand {
 

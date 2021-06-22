@@ -8,9 +8,9 @@ import org.bukkit.command.CommandSender;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.SubCommand;
-import io.github.scroojalix.npcmanager.utils.PluginUtils;
-import io.github.scroojalix.npcmanager.utils.npc.NPCData;
-import io.github.scroojalix.npcmanager.utils.npc.skin.SkinManager;
+import io.github.scroojalix.npcmanager.common.PluginUtils;
+import io.github.scroojalix.npcmanager.common.npc.NPCData;
+import io.github.scroojalix.npcmanager.common.npc.skin.SkinManager;
 
 public class SkinModification extends SubCommand {
 

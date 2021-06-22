@@ -6,13 +6,18 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 
 ## [Unreleased]
 ### Added
-- support for the plugin to work on 1.17 servers.
 - New serialisation/deserialisation system to make adding new storage methods easier.
 ### Changed
 - Refactored some code.
+### Renamed
+- renamed io.github.scroojalix.npcmanager.utils to io.github.scroojalix.npcmanager.common and moved api package to io.github.scroojalix.npcmanager.api
 ### Fixed
-- Some spelling mistakes.
 - ItemStack meta now gets serialised and deserialised correctly.
+- Some spelling mistakes.
+
+## [1.4.5] - 2021-6-17
+### Added
+- support for the plugin to work on 1.17 servers.
 
 ## [1.4.4] - 2021-6-9
 ### Added
@@ -202,7 +207,8 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 ## [1.0.0] - 2020-10-27
 Initial Commit. No Changes.
 
-[Unreleased]: https://github.com/Scroojalix/NPCManager/compare/v1.4.4...master
+[Unreleased]: https://github.com/Scroojalix/NPCManager/compare/v1.4.5...master
+[1.4.5]: https://github.com/Scroojalix/NPCManager/compare/v1.4.4...v1.4.5
 [1.4.4]: https://github.com/Scroojalix/NPCManager/compare/v1.4.3...v1.4.4
 [1.4.3]: https://github.com/Scroojalix/NPCManager/compare/v1.4.2...v1.4.3
 [1.4.2]: https://github.com/Scroojalix/NPCManager/compare/v1.4.1...v1.4.2

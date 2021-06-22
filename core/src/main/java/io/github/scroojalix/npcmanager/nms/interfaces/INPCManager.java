@@ -10,8 +10,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import io.github.scroojalix.npcmanager.NPCMain;
-import io.github.scroojalix.npcmanager.utils.npc.NPCData;
-import io.github.scroojalix.npcmanager.utils.npc.skin.SkinManager;
+import io.github.scroojalix.npcmanager.common.npc.NPCData;
+import io.github.scroojalix.npcmanager.common.npc.skin.SkinManager;
 
 /**
  * The interface that contains all methods to be used in an NPCManger class

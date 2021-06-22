@@ -8,10 +8,10 @@ import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import io.github.scroojalix.npcmanager.NPCMain;
+import io.github.scroojalix.npcmanager.common.interactions.InteractAtNPCEvent;
+import io.github.scroojalix.npcmanager.common.interactions.InteractAtNPCEvent.NPCAction;
+import io.github.scroojalix.npcmanager.common.npc.NPCData;
 import io.github.scroojalix.npcmanager.nms.interfaces.IPacketReader;
-import io.github.scroojalix.npcmanager.utils.interactions.InteractAtNPCEvent;
-import io.github.scroojalix.npcmanager.utils.interactions.InteractAtNPCEvent.NPCAction;
-import io.github.scroojalix.npcmanager.utils.npc.NPCData;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
 import net.minecraft.network.protocol.game.ServerboundInteractPacket;
