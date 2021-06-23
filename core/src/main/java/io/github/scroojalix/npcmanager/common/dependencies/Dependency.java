@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableList;
 import io.github.scroojalix.npcmanager.common.dependencies.relocation.Relocation;
 
 public enum Dependency {
+
     ASM(
         "org.ow2.asm",
         "asm",
@@ -37,6 +38,13 @@ public enum Dependency {
         "D/zgBJWNb9mzmuetJ37a0X9XtpcfSGsXYpxe6eE8Tao=",
         Relocation.of("mongodb", "com{}mongodb"),
         Relocation.of("bson", "org{}bson")
+    ),
+    TOML4J(
+        "com{}moandjiezana{}toml",
+        "toml4j",
+        "0.7.2",
+        "9UdeY+fonl22IiNImux6Vr0wNUN3IHehfCy1TBnKOiA=",
+        Relocation.of("toml", "com{}moandjiezana{}toml")
     );
 
     private final String mavenRepoPath;
