@@ -39,7 +39,7 @@ public abstract interface Serialisable {
 							if (ItemStack.class.isAssignableFrom(f.getType())) {
 								//Serialise itemstack to base64 string
 								//Source: https://gist.github.com/graywolf336/8153678
-								value = Base64Serialisation.itemStackToBase64((ItemStack)value);
+								value = Base64Serialisation.toBase64(value);
 							} else {
 								Map<String, Object> map = ((ConfigurationSerializable) value).serialize();
 								map.put(ConfigurationSerialization.SERIALIZED_TYPE_KEY, ConfigurationSerialization.getAlias((Class<ConfigurationSerializable>)f.getType()));
@@ -79,7 +79,7 @@ public abstract interface Serialisable {
 						if (ConfigurationSerializable.class.isAssignableFrom(type)) {
 							if (ItemStack.class.isAssignableFrom(type)) {
 								try {
-									value = Base64Serialisation.itemStackFromBase64((String)value);
+									value = Base64Serialisation.fromBase64((String)value);
 								} catch(ClassCastException e) {
 									//User is updating from version with old serialisation system to new one.
 									value = null;
