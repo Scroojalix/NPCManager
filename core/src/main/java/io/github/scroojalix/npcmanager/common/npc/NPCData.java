@@ -30,7 +30,7 @@ public class NPCData implements Serialisable {
 	@Expose
 	private Location loc;
 	@Expose
-	private UUID uuid;
+	private String uuid;
 	@Expose
 	private NPCTrait traits;
 	
@@ -55,7 +55,7 @@ public class NPCData implements Serialisable {
 	public NPCData(String name, Location loc, int range, boolean headRotation, boolean store) {
 		this.name = name;
 		setLoc(loc);
-		this.uuid = UUID.randomUUID();
+		this.uuid = UUID.randomUUID().toString();
 		this.traits = new NPCTrait(name, range, headRotation);
 		this.store = store;
 	}
@@ -79,7 +79,7 @@ public class NPCData implements Serialisable {
 	}
 
 	public UUID getUUID() {
-		return uuid;
+		return UUID.fromString(uuid);
 	}
 
 	/**

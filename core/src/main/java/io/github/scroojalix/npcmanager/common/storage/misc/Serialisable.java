@@ -4,7 +4,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.logging.Level;
 
 import com.google.gson.annotations.Expose;
@@ -86,6 +85,11 @@ public abstract interface Serialisable {
 									NPCMain.instance.log(Level.SEVERE, "Could not deserialise ItemStack for an NPC. You may have to customise this NPC's equipment again.");
 								} 
 							} else {
+								Map<String, Object> map = (Map<String, Object>) value;
+								// TODO refactor this code, because it is crap. 
+								// Add CustomSerialisationRule class then apply all rules to serialise/deserialise the object.
+								if (map.containsKey("\"==\""))
+									map.put(ConfigurationSerialization.SERIALIZED_TYPE_KEY, map.get("\"==\""));
 								value = ConfigurationSerialization.deserializeObject((Map<String, Object>) value);
 							}
 						} else if (Serialisable.class.isAssignableFrom(type)) {
@@ -124,10 +128,6 @@ public abstract interface Serialisable {
 									value = num.doubleValue();
 									break;
 							}
-						//Other values that do not fit.
-						//Should probably create TypeAdapters like in gson but thats too much work.
-						} else if (UUID.class.isAssignableFrom(type)) {
-							value = UUID.fromString(value.toString());
 						}
 						
 						f.set(object, value);

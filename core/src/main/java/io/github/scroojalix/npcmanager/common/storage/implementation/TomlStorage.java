@@ -49,6 +49,7 @@ public class TomlStorage implements StorageImplementation {
         }
     }
 
+    //TODO abstract this out. It is very repetitive code.
     @Override
     @SuppressWarnings("unchecked")
     public void restoreNPCs() throws Throwable {
@@ -63,7 +64,7 @@ public class TomlStorage implements StorageImplementation {
                             Toml toml = new Toml().read(current);
                             NPCData data = Serialisable.deserialise(toml.to(Map.class), NPCData.class);
                             data.setStored(true);
-                            if (data != null)
+                            if (data != null && data.getTraits() != null)
                                 main.npc.spawnNPC(data);
                         } catch (IllegalStateException e) {
                             e.printStackTrace();
