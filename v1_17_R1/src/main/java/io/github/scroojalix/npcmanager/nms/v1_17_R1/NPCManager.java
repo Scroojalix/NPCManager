@@ -21,7 +21,7 @@ import io.github.scroojalix.npcmanager.nms.interfaces.INPCManager;
 import io.github.scroojalix.npcmanager.nms.interfaces.NMSHologram;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket;
-import net.minecraft.network.protocol.game.ClientboundRemoveEntityPacket;
+import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
@@ -49,7 +49,7 @@ public class NPCManager extends INPCManager {
 	public void sendRemoveNPCPackets(Player p, NPCData data) {
 		EntityNMSPlayer npcEntity = (EntityNMSPlayer) data.getNPC();
 		ServerGamePacketListenerImpl connection = ((CraftPlayer)p).getHandle().connection;
-		connection.send(new ClientboundRemoveEntityPacket(npcEntity.getId()));
+		connection.send(new ClientboundRemoveEntitiesPacket(npcEntity.getId()));
 		connection.send(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.REMOVE_PLAYER, npcEntity));
 	}
 
@@ -97,6 +97,6 @@ public class NPCManager extends INPCManager {
 
 	public void removeHologramForPlayer(Player player, NMSHologram hologram) {
 		ServerGamePacketListenerImpl connection = ((CraftPlayer)player).getHandle().connection;
-		connection.send(new ClientboundRemoveEntityPacket(((EntityNMSHologram) hologram.getEntity()).getId()));
+		connection.send(new ClientboundRemoveEntitiesPacket(((EntityNMSHologram) hologram.getEntity()).getId()));
 	}
 }
