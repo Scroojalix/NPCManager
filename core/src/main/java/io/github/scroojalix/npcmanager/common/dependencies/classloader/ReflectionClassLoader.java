@@ -16,6 +16,14 @@ public class ReflectionClassLoader {
 
     @SuppressWarnings("Guava")
     private static final Supplier<Method> ADD_URL_METHOD = Suppliers.memoize(() -> {
+        // If on Java 9+, open the URLClassLoader module to this module
+        // so we can access its API via reflection without producing a warning.
+        try {
+            openUrlClassLoaderModule();
+        } catch (Exception e) {
+            e.printStackTrace();
+            // ignore exception - will throw on Java 8 since the Module classes don't exist
+        }
         try {
             Method addUrlMethod = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
             addUrlMethod.setAccessible(true);
@@ -41,5 +49,24 @@ public class ReflectionClassLoader {
         } catch (IllegalAccessException | InvocationTargetException | MalformedURLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @SuppressWarnings("JavaReflectionMemberAccess")
+    private static void openUrlClassLoaderModule() throws Exception {
+        Class<?> moduleClass = Class.forName("java.lang.Module");
+        Method getModuleMethod = Class.class.getMethod("getModule");
+        Method addOpensMethod = moduleClass.getMethod("addOpens", String.class, moduleClass);
+
+        Object urlClassLoaderModule = getModuleMethod.invoke(URLClassLoader.class);
+        Object thisModule = getModuleMethod.invoke(ReflectionClassLoader.class);
+
+        //TODO get base module
+        Object baseModule = getModuleMethod.invoke(Class.forName("java.base"));
+
+        NPCMain.instance.getLogger().info(thisModule.toString());
+
+        addOpensMethod.invoke(baseModule, "java.net", thisModule);
+
+        addOpensMethod.invoke(urlClassLoaderModule, URLClassLoader.class.getPackage().getName(), thisModule);
     }
 }
