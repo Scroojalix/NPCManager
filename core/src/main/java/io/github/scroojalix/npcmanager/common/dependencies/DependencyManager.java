@@ -35,12 +35,10 @@ public class DependencyManager {
     private final Map<ImmutableSet<Dependency>, IsolatedClassLoader> loaders = new HashMap<>();
     private final EnumMap<Dependency, Path> loaded = new EnumMap<>(Dependency.class);
     private RelocationHandler relocationHandler = null;
-    private ReflectionClassLoader pluginClassLoader;
     
     public DependencyManager(NPCMain main) {
         this.main = main;
         url = "https://repo1.maven.org/maven2/";
-        this.pluginClassLoader = new ReflectionClassLoader(main);
         loadDependencies(DependencyRegistry.getGlobalDependencies());
     }
 
@@ -67,7 +65,7 @@ public class DependencyManager {
         this.loaded.put(dependency, file);
 
         if (DependencyRegistry.shouldAutoLoad(dependency)) {
-            this.pluginClassLoader.addJarToClasspath(file);
+            ReflectionClassLoader.addJarToClasspath(file);
         }
     }
 
