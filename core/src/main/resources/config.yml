@@ -30,9 +30,12 @@ npc-name-length: 16
 
 # The save method to use.
 # Suitable Values:
-# JSON (default)
-# MySQL
-# MongoDB
+# Remote Databases
+#   - MySQL
+#   - MongoDB
+# Readable and editable text files
+#   - JSON
+#   - TOML
 save-method: JSON
 
 # Database Settings. Only applies if using a remote storage type such as MySQL or MongoDB

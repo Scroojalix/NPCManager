@@ -12,6 +12,7 @@ public class DependencyRegistry {
 
     private static final SetMultimap<StorageType, Dependency> STORAGE_DEPENDENCIES = ImmutableSetMultimap.<StorageType, Dependency>builder()
     .putAll(StorageType.MONGODB, Dependency.MONGODB_DRIVER)
+    .putAll(StorageType.TOML, Dependency.TOML4J)
     .build();
 
     public static Set<Dependency> resolveStorageDependencies(StorageType storageType) {

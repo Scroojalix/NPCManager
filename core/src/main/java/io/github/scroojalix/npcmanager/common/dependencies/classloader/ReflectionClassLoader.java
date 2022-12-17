@@ -1,9 +1,5 @@
 package io.github.scroojalix.npcmanager.common.dependencies.classloader;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.util.function.Supplier;
@@ -43,11 +39,11 @@ public class ReflectionClassLoader {
         }
     }
 
-    public void addJarToClasspath(Path file) {
+    public static void addJarToClasspath(Path file) {
         try {
-            ADD_URL_METHOD.get().invoke(this.classLoader, file.toUri().toURL());
-        } catch (IllegalAccessException | InvocationTargetException | MalformedURLException e) {
-            throw new RuntimeException(e);
+            URL_INJECTOR.get().addURL(file.toUri().toURL());
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to load a dependency.", e);
         }
     }
 
