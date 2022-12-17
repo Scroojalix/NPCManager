@@ -8,6 +8,8 @@ import java.util.Set;
 import com.mojang.datafixers.util.Pair;
 
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.libs.it.unimi.dsi.fastutil.ints.IntArrayList;
+import org.bukkit.craftbukkit.libs.it.unimi.dsi.fastutil.ints.IntList;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
@@ -24,7 +26,7 @@ import net.minecraft.network.protocol.game.ClientboundAddPlayerPacket;
 import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
 import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket;
-import net.minecraft.network.protocol.game.ClientboundRemoveEntityPacket;
+import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
 import net.minecraft.network.protocol.game.ClientboundRotateHeadPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
@@ -142,15 +144,17 @@ public class NPCLoader extends INPCLoader implements Runnable {
 	protected void sendDeletePackets(Player player) {
 		EntityNMSPlayer npc = (EntityNMSPlayer)data.getNPC();
 		ServerGamePacketListenerImpl connection = ((CraftPlayer)player).getHandle().connection;
-		connection.send(new ClientboundRemoveEntityPacket(npc.getId()));
-		connection.send(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.REMOVE_PLAYER, npc));
+		IntList ids = new IntArrayList();
+		ids.add(npc.getId());
 		
 		if (data.getNameHolo() != null) {
-			connection.send(new ClientboundRemoveEntityPacket(((ArmorStand) data.getNameHolo().getEntity()).getId()));
+			ids.add(((ArmorStand) data.getNameHolo().getEntity()).getId());
 		}
 		if (data.getSubtitleHolo() != null) {
-			connection.send(new ClientboundRemoveEntityPacket(((ArmorStand) data.getSubtitleHolo().getEntity()).getId()));
+			ids.add(((ArmorStand) data.getSubtitleHolo().getEntity()).getId());
 		}
+		connection.send(new ClientboundRemoveEntitiesPacket(ids));
+		connection.send(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.REMOVE_PLAYER, npc));
 		
 		Bukkit.getScheduler().cancelTask(loadedForPlayers.get(player));
 		loadedForPlayers.remove(player);
