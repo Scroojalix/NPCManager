@@ -108,7 +108,6 @@ public class MongoStorage implements StorageImplementation, RemoteStorage {
         }
             
         this.database = this.client.getDatabase(databaseName);
-        disableLogging();
     }
         
     private void disableLogging() {
