@@ -94,7 +94,7 @@ public class MySQLStorage implements StorageImplementation, RemoteStorage {
     //TODO save NPCData in better format than in json.
     @Override
     public void saveNPC(NPCData data) throws Throwable {
-        PreparedStatement ps = connection.prepareStatement("INSERT IGNORE INTO "+tableName+" (NAME,DATA) VALUES (?,?)");
+        PreparedStatement ps = connection.prepareStatement("REPLACE INTO "+tableName+" (NAME,DATA) VALUES (?,?)");
         ps.setString(1, data.getName());
         ps.setString(2, JsonParser.toJson(data, false));
         ps.executeUpdate();
