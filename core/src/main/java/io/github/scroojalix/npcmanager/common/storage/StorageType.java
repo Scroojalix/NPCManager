@@ -5,9 +5,16 @@ import java.util.logging.Level;
 import io.github.scroojalix.npcmanager.NPCMain;
 
 public enum StorageType {
-    JSON("JSON"),
+
+    //Remote database
     MYSQL("MySQL"),
-    MONGODB("MongoDB", "Mongo", "MongoDB");
+    MONGODB("MongoDB", "Mongo"),
+
+    //Local database - TODO (h2/SQLite)
+
+    //Readable and editable text files
+    JSON("JSON"),
+    TOML("TOML");
 
     private final String name;
     private final String[] identifiers;

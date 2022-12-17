@@ -52,6 +52,10 @@
                             <pattern>org.bson</pattern>
                             <shadedPattern>io.github.scroojalix.npcmanager.lib.bson</shadedPattern>
                           </relocation>
+                          <relocation>
+                            <pattern>com.moandjiezana.toml</pattern>
+                            <shadedPattern>io.github.scroojalix.npcmanager.lib.toml</shadedPattern>
+                          </relocation>
                         </relocations>
                       </configuration>
                     </execution>
@@ -72,6 +76,12 @@
             <artifactId>mongo-java-driver</artifactId>
             <version>3.12.7</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>com.moandjiezana.toml</groupId>
+          <artifactId>toml4j</artifactId>
+          <version>0.7.2</version>
+          <scope>provided</scope>
         </dependency>
     </dependencies>
  </project>
