@@ -69,6 +69,11 @@
         </dependency>
         <dependency>
             <groupId>io.github.scroojalix</groupId>
+            <artifactId>npcmanager-v1_18_R1</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.scroojalix</groupId>
             <artifactId>npcmanager-v1_17_R1</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
