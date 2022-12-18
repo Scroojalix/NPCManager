@@ -7,7 +7,7 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 ## [Unreleased]
 
 ## [1.5.1]
-### Addded
+### Added
 - Option to store NPC data using TOML syntax
 ### Fixed
 - disableLogging() for MongoDB storage getting called twice
