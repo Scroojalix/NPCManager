@@ -6,11 +6,11 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 
 ## [Unreleased]
 
-## [1.5.2]
+## [1.5.2] - 2022-12-19
 ### Added
 - support for 1.18
 
-## [1.5.1]
+## [1.5.1] - 2022-12-18
 ### Added
 - Option to store NPC data using TOML syntax
 ### Fixed
