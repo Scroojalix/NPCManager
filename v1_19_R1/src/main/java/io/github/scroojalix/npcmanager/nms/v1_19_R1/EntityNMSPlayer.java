@@ -14,7 +14,7 @@ import net.minecraft.server.level.ServerPlayer;
 public class EntityNMSPlayer extends ServerPlayer implements NMSPlayer {
 
     public EntityNMSPlayer(MinecraftServer server, ServerLevel world, GameProfile profile, NPCData data) {
-        super(server, world, profile);
+        super(server, world, profile, null);
         Location loc = data.getLoc();
         this.setPos(loc.getX(), loc.getY(), loc.getZ());
         this.setRot(loc.getYaw(), loc.getPitch());
