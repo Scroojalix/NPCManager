@@ -43,7 +43,6 @@ public class NPCMain extends JavaPlugin {
 		NPCMain.instance = this;
 		this.showDebugMessages = this.getConfig().getBoolean("show-debug-messages");
 		if (!validVersion()) {
-			getLogger().severe("This plugin is not compatible with that server version!");
 			getLogger().severe("Disabling the plugin.");
 			NPCMain.instance = null;
 			validVersion = false;
@@ -119,6 +118,7 @@ public class NPCMain extends JavaPlugin {
 		try {
 			serverVersion = ServerVersion.valueOf(version);
 		} catch(Exception e) {
+			this.getLogger().severe(version + " is not a supported version!");
 			return false;
 		}
 		return true;
