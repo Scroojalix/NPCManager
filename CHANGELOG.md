@@ -6,6 +6,10 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 
 ## [Unreleased]
 
+## [1.5.3] - 2022-12-26
+### Added
+- support for 1.19
+
 ## [1.5.2] - 2022-12-19
 ### Added
 - support for 1.18
@@ -223,8 +227,9 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 ## [1.0.0] - 2020-10-27
 Initial Commit. No Changes.
 
-[Unreleased]: https://github.com/Scroojalix/NPCManager/compare/v1.5.2...master
-[1.5.1]: https://github.com/Scroojalix/NPCManager/compare/v1.5.1...v1.5.2
+[Unreleased]: https://github.com/Scroojalix/NPCManager/compare/v1.5.3...master
+[1.5.3]: https://github.com/Scroojalix/NPCManager/compare/v1.5.2...v1.5.3
+[1.5.2]: https://github.com/Scroojalix/NPCManager/compare/v1.5.1...v1.5.2
 [1.5.1]: https://github.com/Scroojalix/NPCManager/compare/v1.5.0...v1.5.1
 [1.5.0]: https://github.com/Scroojalix/NPCManager/compare/v1.4.5...v1.5.0
 [1.4.5]: https://github.com/Scroojalix/NPCManager/compare/v1.4.4...v1.4.5
