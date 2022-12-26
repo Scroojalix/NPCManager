@@ -1,31 +1,32 @@
 package io.github.scroojalix.npcmanager.nms.v1_19_R2;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.mojang.datafixers.util.Pair;
-
 import org.bukkit.Bukkit;
-
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntList;
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_19_R2.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+
+import com.mojang.datafixers.util.Pair;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.common.PluginUtils;
 import io.github.scroojalix.npcmanager.common.npc.NPCData;
 import io.github.scroojalix.npcmanager.common.npc.equipment.NPCEquipment;
 import io.github.scroojalix.npcmanager.nms.interfaces.INPCLoader;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundAddPlayerPacket;
 import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
 import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket;
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
 import net.minecraft.network.protocol.game.ClientboundRotateHeadPacket;
@@ -137,7 +138,7 @@ public class NPCLoader extends INPCLoader implements Runnable {
 		loadedForPlayers.put(player, Bukkit.getScheduler().scheduleSyncDelayedTask(main, new Runnable() {
 			@Override
 			public void run() {
-				connection.send(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.UPDATE_LISTED, (EntityNMSPlayer)data.getNPC()));
+				connection.send(new ClientboundPlayerInfoRemovePacket(Arrays.asList(data.getUUID())));
 			}
 		}, PluginUtils.NPC_REMOVE_DELAY));
 	}
@@ -155,7 +156,7 @@ public class NPCLoader extends INPCLoader implements Runnable {
 			ids.add(((ArmorStand) data.getSubtitleHolo().getEntity()).getId());
 		}
 		connection.send(new ClientboundRemoveEntitiesPacket(ids));
-		connection.send(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.UPDATE_LISTED, npc));
+		connection.send(new ClientboundPlayerInfoRemovePacket(Arrays.asList(npc.getUUID())));
 		
 		Bukkit.getScheduler().cancelTask(loadedForPlayers.get(player));
 		loadedForPlayers.remove(player);
