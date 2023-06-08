@@ -37,7 +37,6 @@ public class TomlStorage implements StorageImplementation {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-        //FIXME if the data contains an item stack with meta, stackoverflow error is thrown.
         writer.write(data.serialise(), file);
     }
 
