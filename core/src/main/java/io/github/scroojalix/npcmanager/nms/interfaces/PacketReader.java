@@ -40,7 +40,7 @@ public class PacketReader {
 			PacketType.Play.Client.USE_ENTITY) {
 			@Override
 			public void onPacketReceiving(PacketEvent event) {
-				PacketContainer packet = event.getPacket();
+				PacketContainer packet = event.getPacket().deepClone();
 				Player p = event.getPlayer();
 
 				// Get values from packet
