@@ -16,7 +16,7 @@ import io.github.scroojalix.npcmanager.common.storage.Storage;
 import io.github.scroojalix.npcmanager.common.storage.StorageFactory;
 import io.github.scroojalix.npcmanager.events.EquipmentEvents;
 import io.github.scroojalix.npcmanager.events.NPCEvents;
-import io.github.scroojalix.npcmanager.nms.interfaces.INPCManager;
+import io.github.scroojalix.npcmanager.nms.interfaces.NPCManager;
 import io.github.scroojalix.npcmanager.nms.interfaces.IPacketReader;
 
 /**
@@ -30,7 +30,7 @@ public class NPCMain extends JavaPlugin {
 	public static NPCMain instance;
 	public static ServerVersion serverVersion;
 	
-	public INPCManager npc;
+	public NPCManager npc;
 	public IPacketReader reader;
 	public DependencyManager dependencyManager;
 	public Storage storage;
@@ -63,7 +63,7 @@ public class NPCMain extends JavaPlugin {
 	private void initialise() {
 		String pack = "io.github.scroojalix.npcmanager.nms."+serverVersion;
 		try {
-			npc = (INPCManager) Class.forName(pack + ".NPCManager").getConstructors()[0].newInstance(this);
+			npc = new NPCManager(this);
 			reader = (IPacketReader) Class.forName(pack + ".PacketReader").getConstructors()[0].newInstance(this);
 		} catch (Exception e) {
 			this.getLogger().log(Level.SEVERE, "Could not initialise the plugin", e);
