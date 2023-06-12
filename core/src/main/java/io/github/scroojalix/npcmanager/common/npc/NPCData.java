@@ -7,9 +7,7 @@ import com.google.gson.annotations.Expose;
 
 import org.bukkit.Location;
 
-import io.github.scroojalix.npcmanager.nms.interfaces.INPCLoader;
 import io.github.scroojalix.npcmanager.nms.interfaces.NMSHologram;
-import io.github.scroojalix.npcmanager.nms.interfaces.NMSPlayer;
 import io.github.scroojalix.npcmanager.common.interactions.CommandInteraction;
 import io.github.scroojalix.npcmanager.common.interactions.InteractEvent;
 import io.github.scroojalix.npcmanager.common.interactions.InteractEventType;
@@ -40,9 +38,6 @@ public class NPCData implements Serialisable {
 	private NMSHologram subtitleHolo;
 
 	private InteractEvent interactEvent;
-	private NMSPlayer npc;
-	private int loaderTaskID;
-	private INPCLoader loaderTask;
 	private boolean store;
 	private boolean loaded;
 
@@ -80,21 +75,6 @@ public class NPCData implements Serialisable {
 
 	public UUID getUUID() {
 		return UUID.fromString(uuid);
-	}
-
-	/**
-	 * @return EntityPlayer instance
-	 */
-	public NMSPlayer getNPC() {
-		return npc;
-	}
-	
-	/**
-	 * Sets the EntityPlayer instance of this NPC.
-	 * @param npc The instance of EntityPlayer
-	 */
-	public void setNPC(NMSPlayer npc) {
-		this.npc = npc;
 	}
 	
 	/**
@@ -146,27 +126,7 @@ public class NPCData implements Serialisable {
 	 */
 	public NMSHologram getSubtitleHolo() {
 		return subtitleHolo;
-	}
-	
-	/**
-	 * Sets the Integer assigned to the loader task of this NPC.
-	 * @param task Integer assigned to Loader task.
-	 */
-	public void setLoaderTask(int taskID, INPCLoader loaderTask) {
-		this.loaderTaskID = taskID;
-		this.loaderTask = loaderTask;
-	}
-	
-	/**
-	 * @return Integer assigned to Loader task of this NPC.
-	 */
-	public int getLoaderTaskID() {
-		return loaderTaskID;
-	}
-
-	public INPCLoader getLoaderTask() {
-		return loaderTask;
-	}
+	}	
 	
 	/**
 	 * Sets the Interact Event of this NPC.
