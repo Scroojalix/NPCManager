@@ -37,20 +37,16 @@ public class NPCContainer {
         this.playerInfo = playerInfo;
     }
 
-    public int getLoaderTaskID() {
-        return this.loaderTaskId;
+    public void setLoaderTask(NPCLoader loaderTask, int loaderTaskId) {
+        this.loaderTask = loaderTask;
+        this.loaderTaskId = loaderTaskId;
     }
 
-    public void setLoaderTaskID(int loaderTaskId) {
-        this.loaderTaskId = loaderTaskId;
+    public int getLoaderTaskID() {
+        return this.loaderTaskId;
     }
 
     public NPCLoader getLoaderTask() {
         return this.loaderTask;
     }
-
-    public void setLoaderTask(NPCLoader loaderTask) {
-        this.loaderTask = loaderTask;
-    }
-
 }

@@ -201,8 +201,7 @@ public class NPCManager {
 	public void startLoaderTask(NPCContainer container) {
 		NPCLoader loader = new NPCLoader(main, container, protocolManager);
 		int taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(main, loader, 0l, 1l);
-		container.setLoaderTask(loader);
-		container.setLoaderTaskID(taskId);
+		container.setLoaderTask(loader, taskId);
 	}
 	
 	/**
