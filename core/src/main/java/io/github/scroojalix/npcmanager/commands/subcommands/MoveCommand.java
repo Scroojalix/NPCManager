@@ -40,7 +40,7 @@ public class MoveCommand extends SubCommand {
             return false;
         String name = args[1];
         if (CommandUtils.npcExists(name, sender)) {
-            NPCData data = main.npc.getNPCs().get(name);
+            NPCData data = PluginUtils.getNPCDataByName(name);
             main.npc.moveNPC(data, ((Player) sender).getLocation());
             sender.sendMessage(PluginUtils.format("&6Moved &F") + name + PluginUtils.format("&6 to your position."));
             return true;
@@ -56,5 +56,5 @@ public class MoveCommand extends SubCommand {
             return new ArrayList<String>();
         }
     }
-    
+
 }

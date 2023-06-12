@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.CommandUtils;
 import io.github.scroojalix.npcmanager.commands.SubCommand;
+import io.github.scroojalix.npcmanager.common.PluginUtils;
 import io.github.scroojalix.npcmanager.common.npc.NPCData;
 
 public class EquipmentModification extends SubCommand {
@@ -35,7 +36,7 @@ public class EquipmentModification extends SubCommand {
 
     @Override
     public boolean execute(NPCMain main, CommandSender sender, String[] args) {
-        NPCData data = main.npc.getNPCs().get(args[1]);
+        NPCData data = PluginUtils.getNPCDataByName(args[1]);
         Player p = (Player) sender;
         p.openInventory(CommandUtils.getEquipmentInv(data));
         return true;
@@ -45,5 +46,5 @@ public class EquipmentModification extends SubCommand {
     public List<String> onTabComplete(String[] args) {
         return new ArrayList<String>();
     }
-    
+
 }

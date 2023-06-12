@@ -37,19 +37,19 @@ public class RangeModification extends SubCommand {
     public boolean execute(NPCMain main, CommandSender sender, String[] args) {
         if (args.length >= 4) {
             try {
-                NPCData data = main.npc.getNPCs().get(args[1]);
+                NPCData data = PluginUtils.getNPCDataByName(args[1]);
                 int value = Integer.parseInt(args[3]);
                 if (value <= 0) {
-                    sender.sendMessage(ChatColor.RED+"Range must be above 0.");
+                    sender.sendMessage(ChatColor.RED + "Range must be above 0.");
                     return false;
                 }
                 data.getTraits().setRange(value);
-                sender.sendMessage(PluginUtils.format("&6Set the range of &F"+data.getName()+"&6 to &F"+value));
+                sender.sendMessage(PluginUtils.format("&6Set the range of &F" + data.getName() + "&6 to &F" + value));
                 main.storage.saveNPC(data);
                 main.npc.updateNPC(data);
                 return true;
             } catch (NumberFormatException e) {
-                sender.sendMessage(ChatColor.RED+"'"+args[3]+"' is not a number.");
+                sender.sendMessage(ChatColor.RED + "'" + args[3] + "' is not a number.");
             }
         }
         return false;
@@ -59,5 +59,5 @@ public class RangeModification extends SubCommand {
     public List<String> onTabComplete(String[] args) {
         return new ArrayList<String>();
     }
-    
+
 }

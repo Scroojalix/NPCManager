@@ -92,7 +92,7 @@ public class NPCMain extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		if (validVersion) {
-			if (!npc.getNPCs().isEmpty()) {
+			if (!PluginUtils.noNPCs()) {
 				npc.removeAllNPCs();
 			}
 			for (Player player : Bukkit.getOnlinePlayers()) {

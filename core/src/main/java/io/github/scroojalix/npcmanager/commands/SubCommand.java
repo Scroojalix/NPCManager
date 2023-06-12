@@ -6,6 +6,7 @@ import java.util.List;
 import org.bukkit.command.CommandSender;
 
 import io.github.scroojalix.npcmanager.NPCMain;
+import io.github.scroojalix.npcmanager.common.PluginUtils;
 
 public abstract class SubCommand {
 
@@ -33,7 +34,7 @@ public abstract class SubCommand {
 
     protected List<String> getNPCs(String current) {
         List<String> result = new ArrayList<String>();
-        for (String npc : NPCMain.instance.npc.getNPCs().keySet()) {
+        for (String npc : PluginUtils.getAllNPCNames()) {
             if (npc.toLowerCase().startsWith(current.toLowerCase())) result.add(npc);
         }
         return result;

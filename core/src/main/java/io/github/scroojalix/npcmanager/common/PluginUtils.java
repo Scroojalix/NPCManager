@@ -4,12 +4,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.google.gson.JsonParser;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -17,8 +16,12 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import com.google.gson.JsonParser;
+
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.CommandUtils;
+import io.github.scroojalix.npcmanager.common.npc.NPCData;
+import io.github.scroojalix.npcmanager.nms.interfaces.NPCManager;
 import net.md_5.bungee.api.ChatColor;
 
 public class PluginUtils {
@@ -26,6 +29,8 @@ public class PluginUtils {
 	public static long NPC_REMOVE_DELAY = 60l;
 
     private static final Pattern pattern = Pattern.compile("#[a-fA-F0-9]{6}");
+
+	private static final NPCManager manager = NPCMain.instance.npc;
     
     /**
 	 * Translate colour codes and hex codes into a coloured string.
@@ -78,7 +83,40 @@ public class PluginUtils {
 	}
 
 	public static boolean npcExists(String name) {
-		return NPCMain.instance.npc.getNPCs().containsKey(name);
+		return manager.getNPCHashMap().containsKey(name);
+	}
+
+	/**
+	 * Gets NPCData object by name
+	 * 
+	 * Returns null if it doesn't exist
+	 */
+	public static NPCData getNPCDataByName(String name) {
+		return manager.getNPCHashMap().get(name).getNPCData();
+	}
+
+	/**
+	 * Returns true if the NPC hashmap is empty
+	 * @return the value of NPCs#isEmpty()
+	 */
+	public static boolean noNPCs() {
+		return manager.getNPCHashMap().isEmpty();
+	}
+
+	/**
+	 * Returns number of NPCs
+	 * @return the value of NPCs#size()
+	 */
+	public static int getNumberOfNPCs() {
+		return manager.getNPCHashMap().size();
+	}
+
+	/**
+	 * Returns set of all NPC names
+	 * @return value of NPCs#keySet()
+	 */
+	public static Set<String> getAllNPCNames() {
+		return manager.getNPCHashMap().keySet();
 	}
 
 	public static boolean isAlphanumeric(String s) {

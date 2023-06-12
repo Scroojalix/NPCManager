@@ -40,7 +40,7 @@ public class CreateCommand extends SubCommand {
             return false;
 
         String name = args[1];
-        if (main.npc.getNPCs().containsKey(name)) {
+        if (PluginUtils.npcExists(name)) {
             sender.sendMessage(ChatColor.RED+Messages.NPC_EXISTS);
             return true;
         } else if (name.length() > 16) {

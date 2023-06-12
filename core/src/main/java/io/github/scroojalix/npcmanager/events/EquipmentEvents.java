@@ -50,7 +50,7 @@ public class EquipmentEvents implements Listener {
     public void onInventoryClick(InventoryClickEvent e) {
         if (e.getCurrentItem() == null) return;
         if (e.getInventory().getHolder() instanceof EquipmentInventory) {
-            NPCData data = main.npc.getNPCs().get(e.getView().getTitle().replace("'s Equipment", ""));
+            NPCData data = PluginUtils.getNPCDataByName(e.getView().getTitle().replace("'s Equipment", ""));
             if (e.getClickedInventory().equals(e.getView().getTopInventory())) {
                 //Temp Variables
                 Player p = (Player) e.getWhoClicked();

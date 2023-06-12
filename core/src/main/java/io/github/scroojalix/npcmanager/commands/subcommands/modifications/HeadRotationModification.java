@@ -36,10 +36,11 @@ public class HeadRotationModification extends SubCommand {
     public boolean execute(NPCMain main, CommandSender sender, String[] args) {
         if (args.length >= 4) {
             if (args[3].equalsIgnoreCase("true") || args[3].equalsIgnoreCase("false")) {
-                NPCData data = main.npc.getNPCs().get(args[1]);
+                NPCData data = PluginUtils.getNPCDataByName(args[1]);
                 boolean value = args[3].equalsIgnoreCase("true");
                 data.getTraits().setHeadRotation(value);
-                sender.sendMessage(PluginUtils.format("&6Set the head rotation of &F"+data.getName()+"&6 to &F"+value));
+                sender.sendMessage(
+                        PluginUtils.format("&6Set the head rotation of &F" + data.getName() + "&6 to &F" + value));
                 main.storage.saveNPC(data);
                 main.npc.updateNPC(data);
                 return true;
@@ -51,11 +52,11 @@ public class HeadRotationModification extends SubCommand {
     @Override
     public List<String> onTabComplete(String[] args) {
         List<String> result = new ArrayList<String>();
-        if(args.length == 4) {
+        if (args.length == 4) {
             result.add("true");
             result.add("false");
         }
         return result;
     }
-    
+
 }

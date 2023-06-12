@@ -55,11 +55,11 @@ public class NPCManager {
 	}
 
 	/**
-	 * Returns the Hash Map containing all NPC's
-	 * 
-	 * @return The Hash Map which stores the NPC's in memory.
+	 * Getter for NPCs hashmap.
+	 * Please do not use this function anywhere but the PluginUtils class.
+	 * @return NPCs HashMap
 	 */
-	public Map<String, NPCContainer> getNPCs() {
+	public Map<String, NPCContainer> getNPCHashMap() {
 		return NPCs;
 	}
 
@@ -139,6 +139,7 @@ public class NPCManager {
 		if (fromStorage && container.getNPCData().isStored()) {
 			main.storage.removeNPC(container.getNPCData().getName());
 		}
+		NPCs.remove(npc);
 	}
 
 	/**

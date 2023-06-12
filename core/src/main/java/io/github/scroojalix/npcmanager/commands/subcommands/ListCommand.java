@@ -9,6 +9,7 @@ import org.bukkit.command.CommandSender;
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.CommandUtils;
 import io.github.scroojalix.npcmanager.commands.SubCommand;
+import io.github.scroojalix.npcmanager.common.PluginUtils;
 import io.github.scroojalix.npcmanager.common.chatutils.Messages;
 
 public class ListCommand extends SubCommand {
@@ -35,9 +36,9 @@ public class ListCommand extends SubCommand {
 
     @Override
     public boolean execute(NPCMain main, CommandSender sender, String[] args) {
-        if (!main.npc.getNPCs().isEmpty()) {
+        if (!PluginUtils.noNPCs()) {
             //Calculate Number of Pages.
-            int size = main.npc.getNPCs().size();
+            int size = PluginUtils.getNumberOfNPCs();
             int remainder = size % 8;
             int pages = ((size - remainder) / 8) + (remainder != 0?1:0);
 
@@ -57,7 +58,7 @@ public class ListCommand extends SubCommand {
 
             //Print Correct NPCs
             CommandUtils.sendJSONMessage(sender, CommandUtils.getTitleMessage("NPC List"));
-            List<String> keys = new ArrayList<String>(main.npc.getNPCs().keySet());
+            List<String> keys = new ArrayList<String>(PluginUtils.getAllNPCNames());
             for (int i = 0; i < 8; i++) {
                 int npcIndex = ((page-1)*8)+i;
                 try {

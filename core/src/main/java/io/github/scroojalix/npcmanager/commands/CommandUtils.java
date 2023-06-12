@@ -26,7 +26,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 public class CommandUtils {
 
 	public static boolean npcExists(String name, CommandSender sender) {
-		if (NPCMain.instance.npc.getNPCs().containsKey(name)) {
+		if (PluginUtils.npcExists(name)) {
 			return true;
 		} else {
 			sender.sendMessage(ChatColor.RED+Messages.UNKNOWN_NPC);
