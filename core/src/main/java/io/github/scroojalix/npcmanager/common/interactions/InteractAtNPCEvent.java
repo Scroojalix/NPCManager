@@ -12,13 +12,15 @@ public class InteractAtNPCEvent extends Event implements Cancellable{
 	private final Player player;
 	private final NPCData data;
 	private final NPCAction action;
+	private final boolean crouched;
 	private boolean isCancelled;
 	private static final HandlerList HANDLERS = new HandlerList();
 	
-	public InteractAtNPCEvent(Player player, NPCData data, NPCAction action) {
+	public InteractAtNPCEvent(Player player, NPCData data, NPCAction action, boolean crouched) {
 		this.player = player;
 		this.data = data;
 		this.action = action;
+		this.crouched = crouched;
 	}
 	
 	/**
@@ -42,6 +44,13 @@ public class InteractAtNPCEvent extends Event implements Cancellable{
 	 */
 	public NPCAction getAction() {
 		return action;
+	}
+
+	/**
+	 * @return whether the player is crouched when interacting with the NPC.
+	 */
+	public boolean isCrouched() {
+		return crouched;
 	}
 	
 	@Override

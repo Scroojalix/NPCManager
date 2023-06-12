@@ -17,7 +17,7 @@ import io.github.scroojalix.npcmanager.common.storage.StorageFactory;
 import io.github.scroojalix.npcmanager.events.EquipmentEvents;
 import io.github.scroojalix.npcmanager.events.NPCEvents;
 import io.github.scroojalix.npcmanager.nms.interfaces.NPCManager;
-import io.github.scroojalix.npcmanager.nms.interfaces.IPacketReader;
+import io.github.scroojalix.npcmanager.nms.interfaces.PacketReader;
 
 /**
  * Main class for the NPCManager plugin.
@@ -31,7 +31,7 @@ public class NPCMain extends JavaPlugin {
 	public static ServerVersion serverVersion;
 	
 	public NPCManager npc;
-	public IPacketReader reader;
+	private PacketReader reader;
 	public DependencyManager dependencyManager;
 	public Storage storage;
 	public boolean showDebugMessages;
@@ -49,11 +49,6 @@ public class NPCMain extends JavaPlugin {
 			this.setEnabled(false);
 		} else {
 			initialise();
-			if (!Bukkit.getOnlinePlayers().isEmpty()) {
-				for (Player player : Bukkit.getOnlinePlayers()) {
-					reader.inject(player);
-				}
-			}
 		}
 	}
 	
@@ -61,10 +56,10 @@ public class NPCMain extends JavaPlugin {
 	 * Initialises the plugin.
 	 */
 	private void initialise() {
-		String pack = "io.github.scroojalix.npcmanager.nms."+serverVersion;
 		try {
 			npc = new NPCManager(this);
-			reader = (IPacketReader) Class.forName(pack + ".PacketReader").getConstructors()[0].newInstance(this);
+			reader = new PacketReader(this);
+			reader.registerPacketListener();
 		} catch (Exception e) {
 			this.getLogger().log(Level.SEVERE, "Could not initialise the plugin", e);
 			validVersion = false;
@@ -84,7 +79,7 @@ public class NPCMain extends JavaPlugin {
 		this.storage = factory.getInstance();
 		
 		this.getCommand("npc").setExecutor(new CommandManager(this));
-		this.getServer().getPluginManager().registerEvents(new NPCEvents(this), this);
+		this.getServer().getPluginManager().registerEvents(new NPCEvents(), this);
 		this.getServer().getPluginManager().registerEvents(new EquipmentEvents(this), this);
 		PluginUtils.checkForUpdate();
 	}
@@ -92,13 +87,13 @@ public class NPCMain extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		if (validVersion) {
+			reader.deregisterPacketListener();
 			if (!PluginUtils.noNPCs()) {
 				npc.removeAllNPCs();
 			}
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				if (player.getOpenInventory().getTopInventory().getHolder() instanceof EquipmentInventory) 
 					player.closeInventory();
-				reader.uninject(player);
 			}
 			if (storage != null)
 				storage.shutdown();
