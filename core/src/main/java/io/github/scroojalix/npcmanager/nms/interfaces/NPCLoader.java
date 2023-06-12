@@ -12,6 +12,7 @@ import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
@@ -22,7 +23,9 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
 import com.comphenix.protocol.wrappers.Pair;
+import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedDataValue;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.common.PluginUtils;
@@ -80,7 +83,7 @@ public class NPCLoader implements Runnable {
 		loadPackets.add(add);
 		
 		PacketContainer spawn = pm.createPacket(PacketType.Play.Server.NAMED_ENTITY_SPAWN);
-		spawn.getIntegers().write(0, npcContainer.getEntityId());
+		spawn.getIntegers().write(0, npcContainer.getNPCEntityID());
 		spawn.getUUIDs().write(0, npcContainer.getPlayerInfo().getProfileId());
 		spawn.getDoubles()
 			.write(0, loc.getX())
@@ -92,13 +95,13 @@ public class NPCLoader implements Runnable {
 		loadPackets.add(spawn);
 
 		PacketContainer meta = pm.createPacket(PacketType.Play.Server.ENTITY_METADATA);
-		meta.getIntegers().write(0, npcContainer.getEntityId());
+		meta.getIntegers().write(0, npcContainer.getNPCEntityID());
 		// TODO add skin layers byte to data watcher
 		meta.getDataValueCollectionModifier().write(0, new ArrayList<WrappedDataValue>());
 		loadPackets.add(meta);
 
 		PacketContainer rotate = pm.createPacket(PacketType.Play.Server.ENTITY_HEAD_ROTATION);
-		rotate.getIntegers().write(0, npcContainer.getEntityId());
+		rotate.getIntegers().write(0, npcContainer.getNPCEntityID());
 		rotate.getBytes().write(0, (byte)(loc.getYaw() * 256.0F / 360.0F));
 		loadPackets.add(rotate);
 
@@ -109,10 +112,26 @@ public class NPCLoader implements Runnable {
 
 			PacketContainer orient = pm.createPacket(PacketType.Play.Server.ANIMATION);
 			orient.getIntegers()
-				.write(0, npcContainer.getEntityId())
+				.write(0, npcContainer.getNPCEntityID())
 				.write(1, 0);			
 			
-			loadPackets.add(orient);			
+			loadPackets.add(orient);	
+		}
+
+		//Holograms
+		if (npcContainer.isNameHoloEnabled()) {
+			addHologramPackets(
+				npcContainer.getNameHoloID(),
+				npcContainer.getNameHoloLocation(),
+				WrappedChatComponent.fromText(PluginUtils.format(npcContainer.getNPCData().getTraits().getDisplayName()))
+			);
+		}
+		if (npcContainer.isSubtitleHoloEnabled()) {
+			addHologramPackets(
+				npcContainer.getNameHoloID(),
+				npcContainer.getNameHoloLocation(),
+				WrappedChatComponent.fromText(PluginUtils.format(npcContainer.getNPCData().getTraits().getDisplayName()))
+			);
 		}
 
 		//Equipment
@@ -140,13 +159,47 @@ public class NPCLoader implements Runnable {
 			if (!equipmentList.isEmpty()) {
 
 				PacketContainer equipmentPacket = pm.createPacket(PacketType.Play.Server.ENTITY_EQUIPMENT);
-				equipmentPacket.getIntegers().write(0, npcContainer.getEntityId());
+				equipmentPacket.getIntegers().write(0, npcContainer.getNPCEntityID());
 				equipmentPacket.getSlotStackPairLists().write(0, equipmentList);
 
 				loadPackets.add(equipmentPacket);
 			}
 		}
 
+	}
+
+	private void addHologramPackets(int id, Location loc, WrappedChatComponent text) {
+		PacketContainer addHologram = pm.createPacket(PacketType.Play.Server.SPAWN_ENTITY);
+		addHologram.getIntegers().write(0, id);
+		addHologram.getEntityTypeModifier().write(0, EntityType.ARMOR_STAND);
+		addHologram.getDoubles()
+			.write(0, loc.getX())
+			.write(1, loc.getY())
+			.write(2, loc.getZ());
+		// FIXME do i need to set object data here?
+
+		PacketContainer hologramData = pm.createPacket(PacketType.Play.Server.ENTITY_METADATA);
+		hologramData.getIntegers().write(0, id);
+
+		// Watcher Needs:
+		// Index	|	value
+		//	0		|   0x20
+		//	2		|	Custom Name
+		//  3 		| 	name not null AND name not empty
+		//  5		|	1
+		//	15		|	0x01 | 0x08 | 0x10
+
+		WrappedDataWatcher watcher = new WrappedDataWatcher();
+		watcher.setObject(0, 0x20);
+		watcher.setObject(2, text);
+		watcher.setObject(3, text != null && !text.toString().isEmpty());
+		watcher.setObject(5, true);
+		watcher.setObject(15, 0x01 | 0x08 | 0x10);
+
+		hologramData.getWatchableCollectionModifier().write(0, watcher.getWatchableObjects());
+
+		loadPackets.add(addHologram);
+		loadPackets.add(hologramData);
 	}
 	
 	/**
@@ -213,11 +266,11 @@ public class NPCLoader implements Runnable {
 
 	private void setLookDirection(Player player, byte yaw, byte pitch) {
 		PacketContainer rotate = pm.createPacket(PacketType.Play.Server.ENTITY_HEAD_ROTATION);
-		rotate.getIntegers().write(0, npcContainer.getEntityId());
+		rotate.getIntegers().write(0, npcContainer.getNPCEntityID());
 		rotate.getBytes().write(0, yaw);
 
 		PacketContainer move = pm.createPacket(PacketType.Play.Server.ENTITY_LOOK);
-		move.getIntegers().write(0, npcContainer.getEntityId());
+		move.getIntegers().write(0, npcContainer.getNPCEntityID());
 		// TODO may not need this
 		move.getShorts()
 			.write(0, (short)0)
@@ -260,15 +313,14 @@ public class NPCLoader implements Runnable {
 	private void sendDeletePackets(Player player) {
 		PacketContainer removeEntities = pm.createPacket(PacketType.Play.Server.ENTITY_DESTROY);
 		List<Integer> ids = new ArrayList<Integer>();
-		ids.add(npcContainer.getEntityId());
+		ids.add(npcContainer.getNPCEntityID());
 
-		// TODO add holograms
-		// if (data.getNameHolo() != null) {
-		// 	ids.add(((ArmorStand) data.getNameHolo().getEntity()).getId());
-		// }
-		// if (data.getSubtitleHolo() != null) {
-		// 	ids.add(((ArmorStand) data.getSubtitleHolo().getEntity()).getId());
-		// }
+		if (npcContainer.isNameHoloEnabled()) {
+			ids.add(npcContainer.getNameHoloID());
+		}
+		if (npcContainer.isSubtitleHoloEnabled()) {
+			ids.add(npcContainer.getSubtitleHoloID());
+		}
 
 		removeEntities.getIntLists().write(0, ids);
 

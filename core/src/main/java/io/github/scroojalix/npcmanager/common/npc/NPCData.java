@@ -7,7 +7,6 @@ import com.google.gson.annotations.Expose;
 
 import org.bukkit.Location;
 
-import io.github.scroojalix.npcmanager.nms.interfaces.NMSHologram;
 import io.github.scroojalix.npcmanager.common.interactions.CommandInteraction;
 import io.github.scroojalix.npcmanager.common.interactions.InteractEvent;
 import io.github.scroojalix.npcmanager.common.interactions.InteractEventType;
@@ -32,11 +31,7 @@ public class NPCData implements Serialisable {
 	@Expose
 	private NPCTrait traits;
 	
-	//Holograms
-	//TODO make this into an array to allow multiple lines
-	private NMSHologram nameHolo;
-	private NMSHologram subtitleHolo;
-
+	//TODO move to NPCContainer
 	private InteractEvent interactEvent;
 	private boolean store;
 	private boolean loaded;
@@ -97,36 +92,6 @@ public class NPCData implements Serialisable {
 		newLoc.put("pitch", (float)((int)(((float)newLoc.get("pitch"))*100))/100);
 		this.loc = Location.deserialize(newLoc);
 	}
-	
-	/**
-	 * Sets the name hologram of this NPC.
-	 * @param hologram The new name Hologram
-	 */
-	public void setNameHolo(NMSHologram hologram) {
-		this.nameHolo = hologram;
-	}
-	
-	/**
-	 * @return The name hologram of this NPC.
-	 */
-	public NMSHologram getNameHolo() {
-		return nameHolo;
-	}
-	
-	/**
-	 * Sets the subtitle hologram of this NPC.
-	 * @param hologram The new name Hologram
-	 */
-	public void setSubtitleHolo(NMSHologram hologram) {
-		this.subtitleHolo = hologram;
-	}
-	
-	/**
-	 * @return The subtitle hologram of this NPC.
-	 */
-	public NMSHologram getSubtitleHolo() {
-		return subtitleHolo;
-	}	
 	
 	/**
 	 * Sets the Interact Event of this NPC.

@@ -40,14 +40,20 @@ public class NPCManager {
 	private int npcNameLength;
 	private ProtocolManager protocolManager;
 
+	private Random random;
+
 	public NPCManager(NPCMain main) {
 		this.main = main;
 		this.protocolManager = ProtocolLibrary.getProtocolManager();
 		fetchDefaultSkins = main.getConfig().getBoolean("fetch-default-skins");
 		npcNameLength = main.getConfig().getInt("npc-name-length");
-		if (npcNameLength > 16) npcNameLength = 16;
-		if (npcNameLength < 3) npcNameLength = 3;
-		main.log(Level.INFO, "Set NPC tab list name length to "+npcNameLength);
+		if (npcNameLength > 16)
+			npcNameLength = 16;
+		if (npcNameLength < 3)
+			npcNameLength = 3;
+		main.log(Level.INFO, "Set NPC tab list name length to " + npcNameLength);
+
+		this.random = new Random(83837);
 	}
 
 	public void setNPCNameLength(int npcNameLength) {
@@ -150,7 +156,7 @@ public class NPCManager {
 	 */
 	public void sendRemoveNPCPackets(Player p, NPCContainer container) {
 		PacketContainer destroyEntity = protocolManager.createPacket(PacketType.Play.Server.ENTITY_DESTROY);
-		destroyEntity.getIntLists().write(0, Collections.singletonList(container.getEntityId()));
+		destroyEntity.getIntLists().write(0, Collections.singletonList(container.getNPCEntityID()));
 
 		// FIXME not compatible with older server versions
 		PacketContainer removeInfo = protocolManager.createPacket(PacketType.Play.Server.PLAYER_INFO_REMOVE);
@@ -159,7 +165,7 @@ public class NPCManager {
 		protocolManager.sendServerPacket(p, destroyEntity);
 		protocolManager.sendServerPacket(p, removeInfo);
 	}
-	
+
 	/**
 	 * Converts all data in the NPCData object into NMS stuff.
 	 * @param data The {@link NPCData} to create NMS data from.
@@ -168,31 +174,53 @@ public class NPCManager {
 		NPCContainer container = new NPCContainer(data, nextEntityId());
 
 		//NPC
-        NPCTrait traits = data.getTraits();
+		NPCTrait traits = data.getTraits();
 		WrappedGameProfile profile = new WrappedGameProfile(data.getUUID(), getRandomNPCName());
 		SkinData skin = traits.getSkinData();
 		if (skin != null && skin.getTexture() != null && skin.getSignature() != null) {
-			profile.getProperties().put("textures", new WrappedSignedProperty("textures", skin.getTexture(), skin.getSignature()));
+			profile.getProperties().put("textures",
+					new WrappedSignedProperty("textures", skin.getTexture(), skin.getSignature()));
 		}
-        PlayerInfoData infoData = new PlayerInfoData(
-			profile,
-			0,
-			EnumWrappers.NativeGameMode.SURVIVAL,
-			WrappedChatComponent.fromText(profile.getName())
-		);
-        container.setPlayerInfo(infoData);
+		PlayerInfoData infoData = new PlayerInfoData(
+				profile,
+				0,
+				EnumWrappers.NativeGameMode.SURVIVAL,
+				WrappedChatComponent.fromText(profile.getName()));
+		container.setPlayerInfo(infoData);
 
-		//TODO hologram containers
+		//Holograms
+		String displayName = data.getTraits().getDisplayName();
+		String subtitle = data.getTraits().getSubtitle();
+
+		boolean hasDisplayName = displayName != null;
+		boolean hasSubtitle = subtitle != null;
+		Location loc = data.getLoc();
+		Location upperLoc = new Location(loc.getWorld(), loc.getX(), loc.getY() + 1.95, loc.getZ());
+		Location lowerLoc = new Location(loc.getWorld(), loc.getX(), loc.getY() + 1.7, loc.getZ());
+		if (hasDisplayName && hasSubtitle) {
+			container.setNameHolo(true, nextEntityId(), upperLoc);
+			container.setSubtitleHolo(true, nextEntityId(), lowerLoc);
+		} else if (hasDisplayName && !hasSubtitle) {
+			container.setNameHolo(true, nextEntityId(), lowerLoc);
+			container.disableSubtitleHolo();
+		} else if (!hasDisplayName && hasSubtitle) {
+			container.disableNameHolo();
+			container.setSubtitleHolo(true, nextEntityId(), lowerLoc);
+		} else {
+			container.disableNameHolo();
+			container.disableSubtitleHolo();
+		}
+
 		return container;
 	}
 
 	// need a function that gets the next Entity Id
-    // May need to use reflection on Entity#ENTITY_COUNTER
-    // https://www.spigotmc.org/threads/create-new-entityid.557198/
-    // For now, a random large integer will do
-    private int nextEntityId() {
-        return new Random(83837).nextInt();
-    }
+	// May need to use reflection on Entity#ENTITY_COUNTER
+	// https://www.spigotmc.org/threads/create-new-entityid.557198/
+	// For now, a random large integer will do
+	private int nextEntityId() {
+		return random.nextInt();
+	}
 
 	/**
 	 * Spawns an NPC, assuming all the NMS code has been generated.
@@ -203,7 +231,7 @@ public class NPCManager {
 		int taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(main, loader, 0l, 1l);
 		container.setLoaderTask(loader, taskId);
 	}
-	
+
 	/**
 	 * Remove a hologram for a player
 	 * @param player - The player to remove the hologram from.

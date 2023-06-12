@@ -93,7 +93,7 @@ public class PluginUtils {
 	 * @return Entity ID of NPC with name, or null.
 	 */
 	public static int getNPCIDByName(String name) {
-		return npcExists(name)?manager.getNPCHashMap().get(name).getEntityId():null;
+		return npcExists(name)?manager.getNPCHashMap().get(name).getNPCEntityID():null;
 	}
 
 	/**
