@@ -96,14 +96,16 @@ public class NPCLoader implements Runnable {
 			.write(1, (byte)(loc.getPitch() * 256.0F / 360.0F));
 		loadPackets.add(spawn);
 
-		// PacketContainer meta = pm.createPacket(PacketType.Play.Server.ENTITY_METADATA);
-		// meta.getIntegers().write(0, npcContainer.getNPCEntityID());
-		// WrappedDataWatcher watcher = new WrappedDataWatcher();
-		// //TODO get per versionskin byte index
-		// watcher.setObject(17, WrappedDataWatcher.Registry.get(Byte.class),
-		// 	npcContainer.getNPCData().getTraits().getSkinLayersByte());
-		// meta.getWatchableCollectionModifier().write(0, watcher.getWatchableObjects());
-		// loadPackets.add(meta);
+		PacketContainer meta = pm.createPacket(PacketType.Play.Server.ENTITY_METADATA);
+		meta.getIntegers().write(0, npcContainer.getNPCEntityID());
+		final List<WrappedDataValue> wrappedDataValueList = new ArrayList<>();
+		wrappedDataValueList.add(new WrappedDataValue(
+			17,  //TODO get per versionskin byte index
+			WrappedDataWatcher.Registry.get(Byte.class), 
+			npcContainer.getNPCData().getTraits().getSkinLayersByte()));
+		
+		meta.getDataValueCollectionModifier().write(0, wrappedDataValueList);
+		loadPackets.add(meta);
 
 		PacketContainer rotate = pm.createPacket(PacketType.Play.Server.ENTITY_HEAD_ROTATION);
 		rotate.getIntegers().write(0, npcContainer.getNPCEntityID());
