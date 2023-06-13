@@ -26,6 +26,8 @@ import com.comphenix.protocol.wrappers.Pair;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedDataValue;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
+import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.common.PluginUtils;
@@ -94,11 +96,14 @@ public class NPCLoader implements Runnable {
 			.write(1, (byte)(loc.getPitch() * 256.0F / 360.0F));
 		loadPackets.add(spawn);
 
-		PacketContainer meta = pm.createPacket(PacketType.Play.Server.ENTITY_METADATA);
-		meta.getIntegers().write(0, npcContainer.getNPCEntityID());
-		// TODO add skin layers byte to data watcher
-		meta.getDataValueCollectionModifier().write(0, new ArrayList<WrappedDataValue>());
-		loadPackets.add(meta);
+		// PacketContainer meta = pm.createPacket(PacketType.Play.Server.ENTITY_METADATA);
+		// meta.getIntegers().write(0, npcContainer.getNPCEntityID());
+		// WrappedDataWatcher watcher = new WrappedDataWatcher();
+		// //TODO get per versionskin byte index
+		// watcher.setObject(17, WrappedDataWatcher.Registry.get(Byte.class),
+		// 	npcContainer.getNPCData().getTraits().getSkinLayersByte());
+		// meta.getWatchableCollectionModifier().write(0, watcher.getWatchableObjects());
+		// loadPackets.add(meta);
 
 		PacketContainer rotate = pm.createPacket(PacketType.Play.Server.ENTITY_HEAD_ROTATION);
 		rotate.getIntegers().write(0, npcContainer.getNPCEntityID());
@@ -189,14 +194,41 @@ public class NPCLoader implements Runnable {
 		//  5		|	1
 		//	15		|	0x01 | 0x08 | 0x10
 
+		// TODO tidy this code up
+		// could create the datawatcher in another class
 		WrappedDataWatcher watcher = new WrappedDataWatcher();
-		watcher.setObject(0, 0x20);
-		watcher.setObject(2, text);
-		watcher.setObject(3, text != null && !text.toString().isEmpty());
-		watcher.setObject(5, true);
-		watcher.setObject(15, 0x01 | 0x08 | 0x10);
 
-		hologramData.getWatchableCollectionModifier().write(0, watcher.getWatchableObjects());
+		//Serializers
+		WrappedDataWatcher.Serializer byteSerializer = WrappedDataWatcher.Registry.get(Byte.class);
+		WrappedDataWatcher.Serializer chatCompSerializer = WrappedDataWatcher.Registry.getChatComponentSerializer();
+		WrappedDataWatcher.Serializer booleanSerializer = WrappedDataWatcher.Registry.get(Boolean.class);
+
+		watcher.setObject(0, byteSerializer, (byte)0x20);
+		watcher.setObject(2, chatCompSerializer, text);
+		watcher.setObject(new WrappedDataWatcher.
+			WrappedDataWatcherObject(3, booleanSerializer),
+			text != null && !text.toString().isEmpty());
+		watcher.setObject(new WrappedDataWatcher.
+			WrappedDataWatcherObject(5, booleanSerializer),
+			true);
+		watcher.setObject(15, byteSerializer, (byte)(0x01 | 0x08 | 0x10));
+
+		// Convert to List of WrappedDataValue
+		final List<WrappedDataValue> wrappedDataValueList = new ArrayList<>();
+		for(final WrappedWatchableObject entry : watcher.getWatchableObjects()) {
+			if(entry == null) continue;
+
+			final WrappedDataWatcherObject watcherObject = entry.getWatcherObject();
+			wrappedDataValueList.add(
+				new WrappedDataValue(
+					watcherObject.getIndex(),
+					watcherObject.getSerializer(),
+					entry.getRawValue()
+				)
+			);
+		}
+
+		hologramData.getDataValueCollectionModifier().write(0, wrappedDataValueList);
 
 		loadPackets.add(addHologram);
 		loadPackets.add(hologramData);
