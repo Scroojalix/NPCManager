@@ -8,9 +8,11 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -19,7 +21,9 @@ import org.bukkit.util.Vector;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.InternalStructure;
 import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.utility.MinecraftReflection;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
 import com.comphenix.protocol.wrappers.Pair;
@@ -112,8 +116,39 @@ public class NPCLoader implements Runnable {
 		rotate.getBytes().write(0, (byte)(loc.getYaw() * 256.0F / 360.0F));
 		loadPackets.add(rotate);
 
+		//Scoreboards
+		// TODO can probably use spigot api for this, rather than NMS
+		// I did try implementing it in the API, but ran into issues
+		// regarding adding each player to the scoreboard so they can
+		// see the team modifiers, but this overwrites any scoreboard
+		// from other plugins.
+		PacketContainer addTeam = pm.createPacket(PacketType.Play.Server.SCOREBOARD_TEAM);
+		addTeam.getStrings().write(0, PluginUtils.NPC_SCOREBOARD_TEAM_NAME);
+		addTeam.getIntegers().write(0, 0);
+		addTeam.getModifier().write(2, Collections.singletonList(
+			npcContainer.getPlayerInfo().getProfile().getName()
+		));
 
-		//TODO Scoreboard team packets
+		InternalStructure struct = addTeam.getOptionalStructures().read(0).get();
+		struct.getChatComponents()
+			// .write(0, WrappedChatComponent.fromText(""))
+			.write(1, WrappedChatComponent.fromText(PluginUtils.format("&8[NPC] ")));
+		struct.getStrings()
+			.write(0, "never")  // Visibility
+			.write(1, "never"); // Collision
+		struct.getEnumModifier(ChatColor.class, MinecraftReflection.getMinecraftClass("EnumChatFormat")).write(0, ChatColor.DARK_GRAY);
+
+		addTeam.getOptionalStructures().write(0, Optional.of(struct));
+		loadPackets.add(addTeam);
+
+		PacketContainer addNPCToTeam = pm.createPacket(PacketType.Play.Server.SCOREBOARD_TEAM);
+		addNPCToTeam.getStrings().write(0, PluginUtils.NPC_SCOREBOARD_TEAM_NAME);
+		addNPCToTeam.getIntegers().write(0, 3);
+		addNPCToTeam.getOptionalStructures().write(0, Optional.empty());
+		addNPCToTeam.getModifier().write(2, Collections.singletonList(
+			npcContainer.getPlayerInfo().getProfile().getName()
+		));
+		loadPackets.add(addNPCToTeam);
 
 		if (perfectOrientation) {
 
@@ -330,6 +365,7 @@ public class NPCLoader implements Runnable {
 		for (PacketContainer container : loadPackets) {
 			pm.sendServerPacket(player, container);
 		}
+		// FIXME npc does not need to be removed on newer servers, as they are not shown in player list anymore
 		loadedForPlayers.put(player, Bukkit.getScheduler().scheduleSyncDelayedTask(main, new Runnable() {
 			@Override
 			public void run() {
