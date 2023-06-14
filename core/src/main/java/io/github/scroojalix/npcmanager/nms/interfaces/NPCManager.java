@@ -53,7 +53,7 @@ public class NPCManager {
 			npcNameLength = 3;
 		main.log(Level.INFO, "Set NPC tab list name length to " + npcNameLength);
 
-		this.random = new Random(83837);
+		this.random = new Random(6878);
 	}
 
 	public void setNPCNameLength(int npcNameLength) {
@@ -73,6 +73,7 @@ public class NPCManager {
 		NPCData data = new NPCData(name, loc, store);
 		main.storage.saveNPC(data);
 		spawnNPC(data);
+		// FIXME skin manager stuff called twice? see spawnNPC()
 		if (fetchDefaultSkins) {
 			SkinManager.setSkinFromUsername(null, data, name, false, true);
 		}
@@ -115,6 +116,7 @@ public class NPCManager {
 	 * Removes all NPCs.
 	 */
 	public void removeAllNPCs() {
+		// FIXME removeNPC() should take in npcContainer as input, not name.
 		for (NPCContainer container : NPCs.values()) {
 			removeNPC(container.getNPCData().getName(), false);
 		}
@@ -219,7 +221,7 @@ public class NPCManager {
 	// https://www.spigotmc.org/threads/create-new-entityid.557198/
 	// For now, a random large integer will do
 	private int nextEntityId() {
-		return random.nextInt();
+		return random.nextInt() & Integer.MAX_VALUE;
 	}
 
 	/**
