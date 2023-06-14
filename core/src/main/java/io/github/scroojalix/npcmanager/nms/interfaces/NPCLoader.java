@@ -335,11 +335,6 @@ public class NPCLoader implements Runnable {
 
 		PacketContainer move = pm.createPacket(PacketType.Play.Server.ENTITY_LOOK);
 		move.getIntegers().write(0, npcContainer.getNPCEntityID());
-		// TODO may not need this
-		move.getShorts()
-			.write(0, (short)0)
-			.write(1, (short)0)
-			.write(2, (short)0);
 		move.getBytes()
 			.write(0, yaw)
 			.write(1, pitch);
