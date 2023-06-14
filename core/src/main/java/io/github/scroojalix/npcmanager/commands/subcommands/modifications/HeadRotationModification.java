@@ -32,6 +32,13 @@ public class HeadRotationModification extends SubCommand {
         return true;
     }
 
+    // TODO add extra headrotation option
+    // none | perplayer | global
+    // also add per NPC headrotation range/reset
+    //
+    // Also modify SubCommand.java to have final fields, rather than abstract functions
+    // https://stackoverflow.com/questions/2211002/why-not-abstract-fields
+
     @Override
     public boolean execute(NPCMain main, CommandSender sender, String[] args) {
         if (args.length >= 4) {
