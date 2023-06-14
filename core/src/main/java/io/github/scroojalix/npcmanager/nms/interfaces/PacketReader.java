@@ -35,7 +35,7 @@ public class PacketReader {
 		this.manager = ProtocolLibrary.getProtocolManager();
 	}
 
-	public void registerPacketListener() {
+	public void registerInteractPacketListener() {
 		manager.addPacketListener(new PacketAdapter(main, ListenerPriority.NORMAL,
 			PacketType.Play.Client.USE_ENTITY) {
 			@Override
@@ -59,7 +59,7 @@ public class PacketReader {
 		});
 	}
 
-	public void deregisterPacketListener() {
+	public void deregisterPacketListeners() {
 		manager.removePacketListeners(main);
 	}
 

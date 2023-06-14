@@ -59,7 +59,7 @@ public class NPCMain extends JavaPlugin {
 		try {
 			npc = new NPCManager(this);
 			reader = new PacketReader(this);
-			reader.registerPacketListener();
+			reader.registerInteractPacketListener();
 		} catch (Exception e) {
 			this.getLogger().log(Level.SEVERE, "Could not initialise the plugin", e);
 			validVersion = false;
@@ -87,7 +87,7 @@ public class NPCMain extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		if (validVersion) {
-			reader.deregisterPacketListener();
+			reader.deregisterPacketListeners();
 			if (!PluginUtils.noNPCs()) {
 				npc.removeAllNPCs();
 			}
