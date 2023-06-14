@@ -1,7 +1,6 @@
 package io.github.scroojalix.npcmanager.nms.interfaces;
 
 import java.security.SecureRandom;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
@@ -11,10 +10,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
@@ -135,37 +132,12 @@ public class NPCManager {
 		Bukkit.getScheduler().cancelTask(container.getLoaderTaskID());
 		container.getLoaderTask().clearAllTasks();
 		for (Player p : Bukkit.getOnlinePlayers()) {
-			sendRemoveNPCPackets(p, container);
-			// TODO do holograms
-			// if (data.getNameHolo() != null) {
-			// 	removeHologramForPlayer(p, data.getNameHolo());
-			// }
-			// if (data.getSubtitleHolo() != null) {
-			// 	removeHologramForPlayer(p, data.getSubtitleHolo());
-			// }
+			container.getLoaderTask().sendDeletePackets(p);
 		}
 		if (fromStorage && container.getNPCData().isStored()) {
 			main.storage.removeNPC(container.getNPCData().getName());
 		}
 		NPCs.remove(npc);
-	}
-
-	/**
-	 * Send packets to a player which remove an NPC.
-	 * 
-	 * @param p    The player to send packets to.
-	 * @param container The NPC to remove.
-	 */
-	public void sendRemoveNPCPackets(Player p, NPCContainer container) {
-		PacketContainer destroyEntity = protocolManager.createPacket(PacketType.Play.Server.ENTITY_DESTROY);
-		destroyEntity.getIntLists().write(0, Collections.singletonList(container.getNPCEntityID()));
-
-		// FIXME not compatible with older server versions
-		PacketContainer removeInfo = protocolManager.createPacket(PacketType.Play.Server.PLAYER_INFO_REMOVE);
-		removeInfo.getUUIDLists().write(0, Collections.singletonList(container.getNPCData().getUUID()));
-
-		protocolManager.sendServerPacket(p, destroyEntity);
-		protocolManager.sendServerPacket(p, removeInfo);
 	}
 
 	/**
@@ -216,7 +188,7 @@ public class NPCManager {
 		return container;
 	}
 
-	// need a function that gets the next Entity Id
+	// TODO need a function that gets the next Entity Id
 	// May need to use reflection on Entity#ENTITY_COUNTER
 	// https://www.spigotmc.org/threads/create-new-entityid.557198/
 	// For now, a random large integer will do
@@ -233,14 +205,6 @@ public class NPCManager {
 		int taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(main, loader, 0l, 1l);
 		container.setLoaderTask(loader, taskId);
 	}
-
-	/**
-	 * Remove a hologram for a player
-	 * @param player - The player to remove the hologram from.
-	 * @param hologram - The hologram to remove.
-	 */
-	// TODO implement holograms in ProtocolLib
-	// public abstract void removeHologramForPlayer(Player player, NMSHologram hologram);
 
 	public String getRandomNPCName() {
 		char[] chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_".toCharArray();

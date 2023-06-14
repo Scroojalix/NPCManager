@@ -248,6 +248,8 @@ public class NPCLoader implements Runnable {
 					}
 				} else if (loadedForPlayers.containsKey(player)) {
 					sendDeletePackets(player);
+					Bukkit.getScheduler().cancelTask(loadedForPlayers.get(player));
+					loadedForPlayers.remove(player);
 				}
 			} else if (loadedForPlayers.containsKey(player)) loadedForPlayers.remove(player);
 		}
@@ -319,29 +321,23 @@ public class NPCLoader implements Runnable {
 	 * Send packets to a player to delete/hide an NPC.
 	 * @param player
 	 */
-	private void sendDeletePackets(Player player) {
+	public void sendDeletePackets(Player player) {
 		PacketContainer removeEntities = pm.createPacket(PacketType.Play.Server.ENTITY_DESTROY);
 		List<Integer> ids = new ArrayList<Integer>();
 		ids.add(npcContainer.getNPCEntityID());
-
 		if (npcContainer.isNameHoloEnabled()) {
 			ids.add(npcContainer.getNameHolo().getID());
 		}
 		if (npcContainer.isSubtitleHoloEnabled()) {
 			ids.add(npcContainer.getSubtitleHolo().getID());
 		}
-
 		removeEntities.getIntLists().write(0, ids);
 
 		PacketContainer removeInfo = pm.createPacket(PacketType.Play.Server.PLAYER_INFO_REMOVE);
 		removeInfo.getUUIDLists().write(0, Collections.singletonList(npcContainer.getNPCData().getUUID()));
 		
-		
 		pm.sendServerPacket(player, removeEntities);
 		pm.sendServerPacket(player, removeInfo);
-
-		Bukkit.getScheduler().cancelTask(loadedForPlayers.get(player));
-		loadedForPlayers.remove(player);
 	}
 	
 	/**
