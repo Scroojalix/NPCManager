@@ -26,7 +26,10 @@ public class PacketReader {
 	
 	private NPCMain main;
 	
-	private Set<UUID> list = new HashSet<UUID>();
+	// Hacky way to prevent right click interaction getting fired twice
+	// Player gets added to this list, and then removed 1 tick later
+	// When handling the interaction, check if the user is in this list first.
+	private Set<UUID> recentInteractors = new HashSet<UUID>();
 
 	private ProtocolManager manager;
 	
@@ -64,19 +67,22 @@ public class PacketReader {
 	}
 
 	private void handleInteraction(Player p, NPCData data, EntityUseAction action, boolean crouched) {
-		if (list.contains(p.getUniqueId())) return;
+		if (recentInteractors.contains(p.getUniqueId())) return;
 		switch(action) {
 			case ATTACK: // Left Click
-			// TODO test if this needs to be synchronised
-			Bukkit.getPluginManager().callEvent(new InteractAtNPCEvent(p, data, NPCAction.LEFT_CLICK, crouched));
+			Bukkit.getScheduler().scheduleSyncDelayedTask(main, () -> {	
+				Bukkit.getPluginManager().callEvent(new InteractAtNPCEvent(p, data, NPCAction.LEFT_CLICK, crouched));
+			});
 			break;
 			case INTERACT_AT: // Right Click
-			Bukkit.getPluginManager().callEvent(new InteractAtNPCEvent(p, data, NPCAction.RIGHT_CLICK, crouched));
-			list.add(p.getUniqueId());
+			Bukkit.getScheduler().scheduleSyncDelayedTask(main, () -> {
+				Bukkit.getPluginManager().callEvent(new InteractAtNPCEvent(p, data, NPCAction.RIGHT_CLICK, crouched));
+			});
+			recentInteractors.add(p.getUniqueId());
 			Bukkit.getScheduler().runTaskLater(main, new Runnable() {
 				@Override
 				public void run() {
-					list.remove(p.getUniqueId());
+					recentInteractors.remove(p.getUniqueId());
 				}
 			}, 1l);
 			
