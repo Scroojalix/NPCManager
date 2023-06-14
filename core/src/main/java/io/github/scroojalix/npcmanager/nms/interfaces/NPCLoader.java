@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -172,9 +173,9 @@ public class NPCLoader implements Runnable {
 		}
 		if (npcContainer.isSubtitleHoloEnabled()) {
 			addHologramPackets(
-				npcContainer.getNameHoloID(),
-				npcContainer.getNameHoloLocation(),
-				WrappedChatComponent.fromText(PluginUtils.format(npcContainer.getNPCData().getTraits().getDisplayName()))
+				npcContainer.getSubtitleHoloID(),
+				npcContainer.getSubtitleHoloLocation(),
+				WrappedChatComponent.fromText(PluginUtils.format(npcContainer.getNPCData().getTraits().getSubtitle()))
 			);
 		}
 
@@ -214,24 +215,18 @@ public class NPCLoader implements Runnable {
 
 	private void addHologramPackets(int id, Location loc, WrappedChatComponent text) {
 		PacketContainer addHologram = pm.createPacket(PacketType.Play.Server.SPAWN_ENTITY);
-		addHologram.getIntegers().write(0, id);
+		addHologram.getIntegers()
+			.write(0, id)
+			.write(1, 1);
 		addHologram.getEntityTypeModifier().write(0, EntityType.ARMOR_STAND);
+		addHologram.getUUIDs().write(0, UUID.randomUUID());
 		addHologram.getDoubles()
 			.write(0, loc.getX())
 			.write(1, loc.getY())
 			.write(2, loc.getZ());
-		// FIXME do i need to set object data here?
 
 		PacketContainer hologramData = pm.createPacket(PacketType.Play.Server.ENTITY_METADATA);
 		hologramData.getIntegers().write(0, id);
-
-		// Watcher Needs:
-		// Index	|	value
-		//	0		|   0x20
-		//	2		|	Custom Name
-		//  3 		| 	name not null AND name not empty
-		//  5		|	1
-		//	15		|	0x01 | 0x08 | 0x10
 
 		// TODO tidy this code up
 		// could create the datawatcher in another class
@@ -239,11 +234,11 @@ public class NPCLoader implements Runnable {
 
 		//Serializers
 		WrappedDataWatcher.Serializer byteSerializer = WrappedDataWatcher.Registry.get(Byte.class);
-		WrappedDataWatcher.Serializer chatCompSerializer = WrappedDataWatcher.Registry.getChatComponentSerializer();
+		WrappedDataWatcher.Serializer chatCompSerializer = WrappedDataWatcher.Registry.getChatComponentSerializer(true);
 		WrappedDataWatcher.Serializer booleanSerializer = WrappedDataWatcher.Registry.get(Boolean.class);
 
 		watcher.setObject(0, byteSerializer, (byte)0x20);
-		watcher.setObject(2, chatCompSerializer, text);
+		watcher.setObject(2, chatCompSerializer, Optional.of(text.getHandle()));
 		watcher.setObject(new WrappedDataWatcher.
 			WrappedDataWatcherObject(3, booleanSerializer),
 			text != null && !text.toString().isEmpty());
