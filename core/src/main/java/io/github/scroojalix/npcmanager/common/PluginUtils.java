@@ -21,17 +21,17 @@ import com.google.gson.JsonParser;
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.CommandUtils;
 import io.github.scroojalix.npcmanager.common.npc.NPCData;
-import io.github.scroojalix.npcmanager.nms.interfaces.NPCManager;
 import net.md_5.bungee.api.ChatColor;
 
 public class PluginUtils {
 
+	// FIXME this should probably be implemented better
 	public static long NPC_REMOVE_DELAY = 60l;
 
-    private static final Pattern pattern = Pattern.compile("#[a-fA-F0-9]{6}");
+	public static final String NPC_SCOREBOARD_TEAM_NAME = "zzzzzzzzzzNMNPCs";
 
-	private static final NPCManager manager = NPCMain.instance.npc;
-    
+    private static final Pattern pattern = Pattern.compile("#[a-fA-F0-9]{6}");
+	
     /**
 	 * Translate colour codes and hex codes into a coloured string.
 	 * @param msg The message to translate.
@@ -83,7 +83,7 @@ public class PluginUtils {
 	}
 
 	public static boolean npcExists(String name) {
-		return manager.getNPCHashMap().containsKey(name);
+		return NPCMain.instance.npc.getNPCHashMap().containsKey(name);
 	}
 
 	/**
@@ -93,7 +93,7 @@ public class PluginUtils {
 	 * @return Entity ID of NPC with name, or null.
 	 */
 	public static int getNPCIDByName(String name) {
-		return npcExists(name)?manager.getNPCHashMap().get(name).getNPCEntityID():null;
+		return npcExists(name)?NPCMain.instance.npc.getNPCHashMap().get(name).getNPCEntityID():null;
 	}
 
 	/**
@@ -103,7 +103,7 @@ public class PluginUtils {
 	 * @return NPCData object defined by name, or null.
 	 */
 	public static NPCData getNPCDataByName(String name) {
-		return npcExists(name)?manager.getNPCHashMap().get(name).getNPCData():null;
+		return npcExists(name)?NPCMain.instance.npc.getNPCHashMap().get(name).getNPCData():null;
 	}
 
 	/**
@@ -111,7 +111,7 @@ public class PluginUtils {
 	 * @return the value of NPCs#isEmpty()
 	 */
 	public static boolean noNPCs() {
-		return manager.getNPCHashMap().isEmpty();
+		return NPCMain.instance.npc.getNPCHashMap().isEmpty();
 	}
 
 	/**
@@ -119,7 +119,7 @@ public class PluginUtils {
 	 * @return the value of NPCs#size()
 	 */
 	public static int getNumberOfNPCs() {
-		return manager.getNPCHashMap().size();
+		return NPCMain.instance.npc.getNPCHashMap().size();
 	}
 
 	/**
@@ -127,7 +127,7 @@ public class PluginUtils {
 	 * @return value of NPCs#keySet()
 	 */
 	public static Set<String> getAllNPCNames() {
-		return manager.getNPCHashMap().keySet();
+		return NPCMain.instance.npc.getNPCHashMap().keySet();
 	}
 
 	public static boolean isAlphanumeric(String s) {
