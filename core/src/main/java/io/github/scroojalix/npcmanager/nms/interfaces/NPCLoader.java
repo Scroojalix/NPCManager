@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -31,8 +30,6 @@ import com.comphenix.protocol.wrappers.Pair;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedDataValue;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
-import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.common.PluginUtils;
@@ -165,18 +162,10 @@ public class NPCLoader implements Runnable {
 
 		//Holograms
 		if (npcContainer.isNameHoloEnabled()) {
-			addHologramPackets(
-				npcContainer.getNameHoloID(),
-				npcContainer.getNameHoloLocation(),
-				WrappedChatComponent.fromText(PluginUtils.format(npcContainer.getNPCData().getTraits().getDisplayName()))
-			);
+			addHologramPackets(npcContainer.getNameHolo());
 		}
 		if (npcContainer.isSubtitleHoloEnabled()) {
-			addHologramPackets(
-				npcContainer.getSubtitleHoloID(),
-				npcContainer.getSubtitleHoloLocation(),
-				WrappedChatComponent.fromText(PluginUtils.format(npcContainer.getNPCData().getTraits().getSubtitle()))
-			);
+			addHologramPackets(npcContainer.getSubtitleHolo());
 		}
 
 		//Equipment
@@ -213,56 +202,21 @@ public class NPCLoader implements Runnable {
 
 	}
 
-	private void addHologramPackets(int id, Location loc, WrappedChatComponent text) {
+	private void addHologramPackets(HologramContainer holo) {
 		PacketContainer addHologram = pm.createPacket(PacketType.Play.Server.SPAWN_ENTITY);
 		addHologram.getIntegers()
-			.write(0, id)
+			.write(0, holo.getID())
 			.write(1, 1);
 		addHologram.getEntityTypeModifier().write(0, EntityType.ARMOR_STAND);
-		addHologram.getUUIDs().write(0, UUID.randomUUID());
+		addHologram.getUUIDs().write(0, holo.getUUID());
 		addHologram.getDoubles()
-			.write(0, loc.getX())
-			.write(1, loc.getY())
-			.write(2, loc.getZ());
+			.write(0, holo.getLocation().getX())
+			.write(1, holo.getLocation().getY())
+			.write(2, holo.getLocation().getZ());
 
 		PacketContainer hologramData = pm.createPacket(PacketType.Play.Server.ENTITY_METADATA);
-		hologramData.getIntegers().write(0, id);
-
-		// TODO tidy this code up
-		// could create the datawatcher in another class
-		WrappedDataWatcher watcher = new WrappedDataWatcher();
-
-		//Serializers
-		WrappedDataWatcher.Serializer byteSerializer = WrappedDataWatcher.Registry.get(Byte.class);
-		WrappedDataWatcher.Serializer chatCompSerializer = WrappedDataWatcher.Registry.getChatComponentSerializer(true);
-		WrappedDataWatcher.Serializer booleanSerializer = WrappedDataWatcher.Registry.get(Boolean.class);
-
-		watcher.setObject(0, byteSerializer, (byte)0x20);
-		watcher.setObject(2, chatCompSerializer, Optional.of(text.getHandle()));
-		watcher.setObject(new WrappedDataWatcher.
-			WrappedDataWatcherObject(3, booleanSerializer),
-			text != null && !text.toString().isEmpty());
-		watcher.setObject(new WrappedDataWatcher.
-			WrappedDataWatcherObject(5, booleanSerializer),
-			true);
-		watcher.setObject(15, byteSerializer, (byte)(0x01 | 0x08 | 0x10));
-
-		// Convert to List of WrappedDataValue
-		final List<WrappedDataValue> wrappedDataValueList = new ArrayList<>();
-		for(final WrappedWatchableObject entry : watcher.getWatchableObjects()) {
-			if(entry == null) continue;
-
-			final WrappedDataWatcherObject watcherObject = entry.getWatcherObject();
-			wrappedDataValueList.add(
-				new WrappedDataValue(
-					watcherObject.getIndex(),
-					watcherObject.getSerializer(),
-					entry.getRawValue()
-				)
-			);
-		}
-
-		hologramData.getDataValueCollectionModifier().write(0, wrappedDataValueList);
+		hologramData.getIntegers().write(0, holo.getID());
+		hologramData.getDataValueCollectionModifier().write(0, holo.getDataValueList());
 
 		loadPackets.add(addHologram);
 		loadPackets.add(hologramData);
@@ -371,10 +325,10 @@ public class NPCLoader implements Runnable {
 		ids.add(npcContainer.getNPCEntityID());
 
 		if (npcContainer.isNameHoloEnabled()) {
-			ids.add(npcContainer.getNameHoloID());
+			ids.add(npcContainer.getNameHolo().getID());
 		}
 		if (npcContainer.isSubtitleHoloEnabled()) {
-			ids.add(npcContainer.getSubtitleHoloID());
+			ids.add(npcContainer.getSubtitleHolo().getID());
 		}
 
 		removeEntities.getIntLists().write(0, ids);

@@ -1,7 +1,5 @@
 package io.github.scroojalix.npcmanager.nms.interfaces;
 
-import org.bukkit.Location;
-
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 
 import io.github.scroojalix.npcmanager.common.npc.NPCData;
@@ -15,14 +13,8 @@ public class NPCContainer {
 
     //Holograms
     //TODO make this into an array to allow multiple lines
-
-    private boolean nameHoloEnabled;
-    private int nameHoloId;
-    private Location nameHoloLoc;
-
-    private boolean subtitleHoloEnabled;
-    private int subtitleHoloId;
-    private Location subtitleHoloLoc;
+    private HologramContainer nameHolo;
+    private HologramContainer subtitleHolo;
     
     //Loader Task Info
     private int loaderTaskId;
@@ -56,53 +48,28 @@ public class NPCContainer {
     }
 
     // Holograms
-
-    public void disableNameHolo() {
-        this.nameHoloEnabled = false;
-        this.nameHoloId = 0;
-        this.nameHoloLoc = null;
-    }
-
-    public void setNameHolo(boolean enabled, int id, Location loc) {
-        this.nameHoloEnabled = enabled;
-        this.nameHoloId = id;
-        this.nameHoloLoc = loc;
-    }
-
-    public void disableSubtitleHolo() {
-        this.subtitleHoloEnabled = false;
-        this.subtitleHoloId = 0;
-        this.subtitleHoloLoc = null;
+    public void setNameHolo(HologramContainer hologramContainer) {
+        this.nameHolo = hologramContainer;
     }
     
-    public void setSubtitleHolo(boolean enabled, int id, Location loc) {
-        this.subtitleHoloEnabled = enabled;
-        this.subtitleHoloId = id;
-        this.subtitleHoloLoc = loc;
+    public void setSubtitleHolo(HologramContainer hologramContainer) {
+        this.subtitleHolo = hologramContainer;
+    }
+
+    public HologramContainer getNameHolo() {
+        return nameHolo;
+    }
+
+    public HologramContainer getSubtitleHolo() {
+        return subtitleHolo;
     }
 
     public boolean isNameHoloEnabled() {
-        return this.nameHoloEnabled;
-    }
-    
-    public int getNameHoloID() {
-        return nameHoloId;
-    }
-    
-    public Location getNameHoloLocation() {
-        return nameHoloLoc;
+        return this.nameHolo != null;
     }
 
     public boolean isSubtitleHoloEnabled() {
-        return this.subtitleHoloEnabled;
-    }
-
-    public int getSubtitleHoloID() {
-        return subtitleHoloId;
-    }
-
-    public Location getSubtitleHoloLocation() {
-        return subtitleHoloLoc;
+        return this.subtitleHolo != null;
     }
 
     // Loader Task

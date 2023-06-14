@@ -200,17 +200,17 @@ public class NPCManager {
 		Location upperLoc = new Location(loc.getWorld(), loc.getX(), loc.getY() + 1.95, loc.getZ());
 		Location lowerLoc = new Location(loc.getWorld(), loc.getX(), loc.getY() + 1.7, loc.getZ());
 		if (hasDisplayName && hasSubtitle) {
-			container.setNameHolo(true, nextEntityId(), upperLoc);
-			container.setSubtitleHolo(true, nextEntityId(), lowerLoc);
+			container.setNameHolo(new HologramContainer(nextEntityId(), upperLoc, displayName));
+			container.setSubtitleHolo(new HologramContainer(nextEntityId(), lowerLoc, subtitle));
 		} else if (hasDisplayName && !hasSubtitle) {
-			container.setNameHolo(true, nextEntityId(), lowerLoc);
-			container.disableSubtitleHolo();
+			container.setNameHolo(new HologramContainer(nextEntityId(), lowerLoc, displayName));
+			container.setSubtitleHolo(null);
 		} else if (!hasDisplayName && hasSubtitle) {
-			container.disableNameHolo();
-			container.setSubtitleHolo(true, nextEntityId(), lowerLoc);
+			container.setNameHolo(null);
+			container.setSubtitleHolo(new HologramContainer(nextEntityId(), lowerLoc, subtitle));
 		} else {
-			container.disableNameHolo();
-			container.disableSubtitleHolo();
+			container.setNameHolo(null);
+			container.setSubtitleHolo(null);
 		}
 
 		return container;
