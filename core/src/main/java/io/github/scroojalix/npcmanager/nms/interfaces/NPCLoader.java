@@ -52,6 +52,8 @@ public class NPCLoader implements Runnable {
 	private double headRotationRange;
 	private boolean resetRotation;
 	private boolean perfectOrientation;
+
+	private Location npcLoc;
 	
 	public NPCLoader(NPCMain main, NPCContainer npcContainer, ProtocolManager protocolManger) {
 		this.main = main;
@@ -62,6 +64,8 @@ public class NPCLoader implements Runnable {
 		this.headRotationRange = main.getConfig().getDouble("npc-headrotation-range");
 		this.resetRotation = main.getConfig().getBoolean("reset-headrotation");
 		this.perfectOrientation = main.getConfig().getBoolean("perfect-npc-orientation");
+
+		npcLoc = npcContainer.getNPCData().getLoc();
 
 		generatePackets();
 	}
@@ -78,8 +82,6 @@ public class NPCLoader implements Runnable {
 	 * Generate all packets required to spawn an NPC, and store them in a LinkedHashSet.
 	 */
 	private void generatePackets() {
-		Location loc = npcContainer.getNPCData().getLoc();
-
 		PacketContainer add = pm.createPacket(PacketType.Play.Server.PLAYER_INFO);
 		// TODO For older servers
 		// packet1.getPlayerInfoAction().write(0, PlayerInfoAction.ADD_PLAYER);
@@ -92,12 +94,12 @@ public class NPCLoader implements Runnable {
 		spawn.getIntegers().write(0, npcContainer.getNPCEntityID());
 		spawn.getUUIDs().write(0, npcContainer.getPlayerInfo().getProfileId());
 		spawn.getDoubles()
-			.write(0, loc.getX())
-			.write(1, loc.getY())
-			.write(2, loc.getZ());
+			.write(0, npcLoc.getX())
+			.write(1, npcLoc.getY())
+			.write(2, npcLoc.getZ());
 		spawn.getBytes()
-			.write(0, (byte)(loc.getYaw() * 256.0F / 360.0F))
-			.write(1, (byte)(loc.getPitch() * 256.0F / 360.0F));
+			.write(0, toByteAngle(npcLoc.getYaw()))
+			.write(1, toByteAngle(npcLoc.getPitch()));
 		loadPackets.add(spawn);
 
 		PacketContainer meta = pm.createPacket(PacketType.Play.Server.ENTITY_METADATA);
@@ -113,7 +115,7 @@ public class NPCLoader implements Runnable {
 
 		PacketContainer rotate = pm.createPacket(PacketType.Play.Server.ENTITY_HEAD_ROTATION);
 		rotate.getIntegers().write(0, npcContainer.getNPCEntityID());
-		rotate.getBytes().write(0, (byte)(loc.getYaw() * 256.0F / 360.0F));
+		rotate.getBytes().write(0, toByteAngle(npcLoc.getYaw()));
 		loadPackets.add(rotate);
 
 		//Scoreboards
@@ -157,7 +159,7 @@ public class NPCLoader implements Runnable {
 				.write(0, npcContainer.getNPCEntityID())
 				.write(1, 0);			
 			
-			loadPackets.add(orient);	
+			loadPackets.add(orient);
 		}
 
 		//Holograms
@@ -275,37 +277,31 @@ public class NPCLoader implements Runnable {
 	 * Method that loops to update NPC's.
 	 */
 	public void run() {
-		Location loc = npcContainer.getNPCData().getLoc();
-
-		if (loc != null) {
-			for (Player player : Bukkit.getOnlinePlayers()) {
-				if (player.getWorld().getName().equalsIgnoreCase(loc.getWorld().getName())) {
-					double distance = calculateDistance(loc, player.getLocation());
-					if (distance <= range) {
-						if (!loadedForPlayers.containsKey(player)) {
-							sendLoadPackets(player);
-						}
-						if (hasHeadRotation) {
-							if (distance <= headRotationRange && distance > 0) {
-								lookInDirection(player);
-								if (outsideHeadRotationRange.contains(player)) {
-									outsideHeadRotationRange.remove(player);
-								}
-							} else if (resetRotation) {
-								if (!outsideHeadRotationRange.contains(player)) {
-									resetLookDirection(player);
-									outsideHeadRotationRange.add(player);
-								}
+		for (Player player : Bukkit.getOnlinePlayers()) {
+			if (player.getWorld().getName().equalsIgnoreCase(npcLoc.getWorld().getName())) {
+				double distance = calculateDistance(npcLoc, player.getLocation());
+				if (distance <= range) {
+					if (!loadedForPlayers.containsKey(player)) {
+						sendLoadPackets(player);
+					}
+					if (hasHeadRotation) {
+						if (distance <= headRotationRange && distance > 0) {
+							lookInDirection(player);
+							if (outsideHeadRotationRange.contains(player)) {
+								outsideHeadRotationRange.remove(player);
+							}
+						} else if (resetRotation) {
+							if (!outsideHeadRotationRange.contains(player)) {
+								resetLookDirection(player);
+								outsideHeadRotationRange.add(player);
 							}
 						}
-					} else {
-						if (loadedForPlayers.containsKey(player)) {
-							sendDeletePackets(player);
-						}
 					}
-				} else if (loadedForPlayers.containsKey(player)) loadedForPlayers.remove(player);
-			}
-		} else main.npc.removeNPC(npcContainer.getNPCData().getName(), true);
+				} else if (loadedForPlayers.containsKey(player)) {
+					sendDeletePackets(player);
+				}
+			} else if (loadedForPlayers.containsKey(player)) loadedForPlayers.remove(player);
+		}
 	}
 	
 	/**
@@ -313,11 +309,11 @@ public class NPCLoader implements Runnable {
 	 * @param player The player to look at.
 	 */
 	private void lookInDirection(Player player) {
-		Vector difference = player.getLocation().subtract(npcContainer.getNPCData().getLoc()).toVector().normalize();
+		Vector difference = player.getLocation().clone().subtract(npcLoc).toVector().normalize();
         float degrees = (float) Math.toDegrees(Math.atan2(difference.getZ(), difference.getX()) - Math.PI / 2);
-        byte angle = (byte) Math.floor((degrees * 256.0F) / 360.0F);
-        Vector height = npcContainer.getNPCData().getLoc().subtract(player.getLocation()).toVector().normalize();
-        byte pitch = (byte) Math.floor((Math.toDegrees(Math.atan(height.getY())) * 256.0F) / 360.0F);
+        byte angle = toByteAngle(degrees);
+        Vector height = npcLoc.clone().subtract(player.getLocation()).toVector().normalize();
+		byte pitch = toByteAngle((float)Math.toDegrees(Math.atan(height.getY())));
 
 		setLookDirection(player, angle, pitch);
 	}
@@ -327,10 +323,9 @@ public class NPCLoader implements Runnable {
 	 * @param player The player to reset head rotation for.
 	 */
 	private void resetLookDirection(Player player) {
-		byte yaw = (byte) (npcContainer.getNPCData().getLoc().getYaw() * 255 / 360);
-        byte pitch = (byte) (npcContainer.getNPCData().getLoc().getPitch() * 255 / 360);
-
-		setLookDirection(player, yaw, pitch);		
+		byte yaw = toByteAngle(npcLoc.getYaw());
+        byte pitch = toByteAngle(npcLoc.getPitch());
+		setLookDirection(player, yaw, pitch);
 	}
 
 	private void setLookDirection(Player player, byte yaw, byte pitch) {
@@ -414,4 +409,8 @@ public class NPCLoader implements Runnable {
 	private double calculateDistance(Location loc1, Location loc2) {
         return Math.sqrt(Math.pow(loc1.getX() - loc2.getX(), 2) + Math.pow(loc1.getY() - loc2.getY(), 2) + Math.pow(loc1.getZ() - loc2.getZ(), 2));
     }
+
+	private byte toByteAngle(float angle) {
+		return (byte) (angle * 256.0F / 360.0F);
+	}
 }
