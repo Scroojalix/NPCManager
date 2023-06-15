@@ -80,6 +80,8 @@ public class NPCLoader implements Runnable {
 	 * Generate all packets required to spawn an NPC, and store them in a LinkedHashSet.
 	 */
 	private void generatePackets() {
+		// FIXME may not need to send all of these packets every time.
+
 		PacketContainer add = pm.createPacket(PacketType.Play.Server.PLAYER_INFO);
 		if (PluginUtils.ServerVersion.v1_19_R2.atOrAbove()) {
 			add.getPlayerInfoActions().write(0, EnumSet.of(EnumWrappers.PlayerInfoAction.ADD_PLAYER));
@@ -145,7 +147,6 @@ public class NPCLoader implements Runnable {
 
 		InternalStructure struct = addTeam.getOptionalStructures().read(0).get();
 		struct.getChatComponents()
-			// .write(0, WrappedChatComponent.fromText(""))
 			.write(1, WrappedChatComponent.fromText(PluginUtils.format("&8[NPC] ")));
 		struct.getStrings()
 			.write(0, "never")  // Visibility
@@ -356,6 +357,7 @@ public class NPCLoader implements Runnable {
 		pm.sendServerPacket(player, removeInfo);
 	}
 
+	@SuppressWarnings("deprecation")
 	private PacketContainer getPlayerInfoRemovePacket() {
 		PacketContainer removeInfo;
 		if (PluginUtils.ServerVersion.v1_19_R2.atOrAbove()) {
@@ -363,7 +365,7 @@ public class NPCLoader implements Runnable {
 			removeInfo.getUUIDLists().write(0, Collections.singletonList(npcContainer.getNPCData().getUUID()));
 		} else {
 			removeInfo = pm.createPacket(PacketType.Play.Server.PLAYER_INFO);
-			removeInfo.getPlayerInfoAction().write(0, EnumWrappers.PlayerInfoAction.ADD_PLAYER);
+			removeInfo.getPlayerInfoAction().write(0, EnumWrappers.PlayerInfoAction.REMOVE_PLAYER);
 			removeInfo.getPlayerInfoDataLists().write(0, Collections.singletonList(npcContainer.getPlayerInfo()));
 		}
 		return removeInfo;
