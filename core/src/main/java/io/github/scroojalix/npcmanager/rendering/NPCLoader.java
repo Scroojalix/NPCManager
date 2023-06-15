@@ -104,7 +104,7 @@ public class NPCLoader implements Runnable {
 		meta.getIntegers().write(0, npcContainer.getNPCEntityID());
 		final List<WrappedDataValue> wrappedDataValueList = new ArrayList<>();
 		wrappedDataValueList.add(new WrappedDataValue(
-			17,  //TODO get per versionskin byte index
+			NPCMain.serverVersion.getSkinLayersByteIndex(),
 			WrappedDataWatcher.Registry.get(Byte.class), 
 			npcContainer.getNPCData().getTraits().getSkinLayersByte()));
 		

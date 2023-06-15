@@ -224,5 +224,39 @@ public class PluginUtils {
 			else if (versionId <= 6) return 1;
 			else return 2;
 		}
+
+		public int getSkinLayersByteIndex() {
+			switch(this) {
+				case v1_8_R2:
+				case v1_8_R3:
+					return 10;
+				case v1_9_R1:
+				case v1_9_R2:
+					return 12;
+				case v1_10_R1:
+				case v1_11_R1:
+				case v1_12_R1:
+				case v1_13_R1:
+				case v1_13_R2:
+					return 13;
+				case v1_14_R1:
+					return 15;
+				case v1_15_R1:
+				case v1_16_R1:
+				case v1_16_R2:
+				case v1_16_R3:
+					return 16;
+				case v1_17_R1:
+				case v1_18_R1:
+				case v1_18_R2:
+				case v1_19_R1:
+				case v1_19_R2:
+				case v1_19_R3:
+				case v1_20_R1:
+					return 17;
+				default:
+					throw new IllegalArgumentException("Unknown Enum Value for ServerVersion: " + this.toString());
+			}
+		}
 	}
 }
