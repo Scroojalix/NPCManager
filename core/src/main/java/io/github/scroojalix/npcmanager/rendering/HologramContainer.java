@@ -11,10 +11,9 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedDataValue;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
+import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
-
-import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 
 public class HologramContainer {
 
@@ -22,17 +21,15 @@ public class HologramContainer {
     private final UUID uuid;
     private final Location loc;
     private final WrappedChatComponent text;
-    private final List<WrappedDataValue> dataWatcherList;
     
     public HologramContainer(int id, Location loc, String text) {
         this.id = id;
         this.uuid = UUID.randomUUID();
         this.loc = loc;
         this.text = WrappedChatComponent.fromText(PluginUtils.format(text));
-        this.dataWatcherList = generateDataWatcher();
     }
 
-    private List<WrappedDataValue> generateDataWatcher() {
+    public WrappedDataWatcher getDataWatcher() {
         WrappedDataWatcher watcher = new WrappedDataWatcher();
 
 		//Serializers
@@ -50,8 +47,12 @@ public class HologramContainer {
 			true);
 		watcher.setObject(15, byteSerializer, (byte)(0x01 | 0x08 | 0x10));
 
-		// Convert to List of WrappedDataValue
-		final List<WrappedDataValue> wrappedDataValueList = new ArrayList<>();
+        return watcher;
+    }
+
+    public List<WrappedDataValue> getDataWatcherAsList() {
+        WrappedDataWatcher watcher = getDataWatcher();
+        final List<WrappedDataValue> wrappedDataValueList = new ArrayList<>();
 		for(final WrappedWatchableObject entry : watcher.getWatchableObjects()) {
 			if(entry == null) continue;
 
@@ -64,7 +65,6 @@ public class HologramContainer {
 				)
 			);
 		}
-
         return wrappedDataValueList;
     }
 
@@ -85,10 +85,5 @@ public class HologramContainer {
 
     public WrappedChatComponent getFormattedText() {
         return this.text;
-    }
-
-
-    public List<WrappedDataValue> getDataValueList() {
-        return this.dataWatcherList;
     }
 }

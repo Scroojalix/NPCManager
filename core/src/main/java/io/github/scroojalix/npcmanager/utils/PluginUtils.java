@@ -258,5 +258,9 @@ public class PluginUtils {
 					throw new IllegalArgumentException("Unknown Enum Value for ServerVersion: " + this.toString());
 			}
 		}
+
+		public boolean atOrAbove() {
+			return NPCMain.serverVersion.versionId >= this.versionId;
+		}
 	}
 }

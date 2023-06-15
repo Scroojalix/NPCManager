@@ -81,11 +81,14 @@ public class NPCLoader implements Runnable {
 	 */
 	private void generatePackets() {
 		PacketContainer add = pm.createPacket(PacketType.Play.Server.PLAYER_INFO);
-		// TODO For older servers
-		// packet1.getPlayerInfoAction().write(0, PlayerInfoAction.ADD_PLAYER);
-		// For servers that use EnumSet implementation
-		add.getPlayerInfoActions().write(0, EnumSet.of(EnumWrappers.PlayerInfoAction.ADD_PLAYER));
-		add.getPlayerInfoDataLists().write(1, Collections.singletonList(npcContainer.getPlayerInfo()));
+		if (PluginUtils.ServerVersion.v1_19_R2.atOrAbove()) {
+			add.getPlayerInfoActions().write(0, EnumSet.of(EnumWrappers.PlayerInfoAction.ADD_PLAYER));
+			add.getPlayerInfoDataLists().write(1, Collections.singletonList(npcContainer.getPlayerInfo()));
+			
+		} else {
+			add.getPlayerInfoAction().write(0, EnumWrappers.PlayerInfoAction.ADD_PLAYER);
+			add.getPlayerInfoDataLists().write(0, Collections.singletonList(npcContainer.getPlayerInfo()));
+		}
 		loadPackets.add(add);
 		
 		PacketContainer spawn = pm.createPacket(PacketType.Play.Server.NAMED_ENTITY_SPAWN);
@@ -102,13 +105,24 @@ public class NPCLoader implements Runnable {
 
 		PacketContainer meta = pm.createPacket(PacketType.Play.Server.ENTITY_METADATA);
 		meta.getIntegers().write(0, npcContainer.getNPCEntityID());
-		final List<WrappedDataValue> wrappedDataValueList = new ArrayList<>();
-		wrappedDataValueList.add(new WrappedDataValue(
-			NPCMain.serverVersion.getSkinLayersByteIndex(),
-			WrappedDataWatcher.Registry.get(Byte.class), 
-			npcContainer.getNPCData().getTraits().getSkinLayersByte()));
+
+		if (PluginUtils.ServerVersion.v1_19_R2.atOrAbove()) {
+			final List<WrappedDataValue> wrappedDataValueList = new ArrayList<>();
+			wrappedDataValueList.add(new WrappedDataValue(
+				NPCMain.serverVersion.getSkinLayersByteIndex(),
+				WrappedDataWatcher.Registry.get(Byte.class), 
+				npcContainer.getNPCData().getTraits().getSkinLayersByte()));
 		
-		meta.getDataValueCollectionModifier().write(0, wrappedDataValueList);
+			meta.getDataValueCollectionModifier().write(0, wrappedDataValueList);
+		} else {
+			WrappedDataWatcher watcher = new WrappedDataWatcher();
+			watcher.setObject(
+				NPCMain.serverVersion.getSkinLayersByteIndex(),
+				WrappedDataWatcher.Registry.get(Byte.class), 
+				npcContainer.getNPCData().getTraits().getSkinLayersByte());
+			
+			meta.getWatchableCollectionModifier().write(0, watcher.getWatchableObjects());
+		}
 		loadPackets.add(meta);
 
 		PacketContainer rotate = pm.createPacket(PacketType.Play.Server.ENTITY_HEAD_ROTATION);
@@ -216,7 +230,12 @@ public class NPCLoader implements Runnable {
 
 		PacketContainer hologramData = pm.createPacket(PacketType.Play.Server.ENTITY_METADATA);
 		hologramData.getIntegers().write(0, holo.getID());
-		hologramData.getDataValueCollectionModifier().write(0, holo.getDataValueList());
+
+		if (PluginUtils.ServerVersion.v1_19_R2.atOrAbove()) {
+			hologramData.getDataValueCollectionModifier().write(0, holo.getDataWatcherAsList());
+		} else {
+			hologramData.getWatchableCollectionModifier().write(0, holo.getDataWatcher().getWatchableObjects());
+		}
 
 		loadPackets.add(addHologram);
 		loadPackets.add(hologramData);
@@ -306,12 +325,10 @@ public class NPCLoader implements Runnable {
 		for (PacketContainer container : loadPackets) {
 			pm.sendServerPacket(player, container);
 		}
-		// FIXME npc does not need to be removed on newer servers, as they are not shown in player list anymore
 		loadedForPlayers.put(player, Bukkit.getScheduler().scheduleSyncDelayedTask(main, new Runnable() {
 			@Override
 			public void run() {
-				PacketContainer remove = pm.createPacket(PacketType.Play.Server.PLAYER_INFO_REMOVE);
-				remove.getUUIDLists().write(0, Collections.singletonList(npcContainer.getNPCData().getUUID()));
+				PacketContainer remove = getPlayerInfoRemovePacket();
 				pm.sendServerPacket(player, remove);
 			}
 		}, PluginUtils.NPC_REMOVE_DELAY));
@@ -333,11 +350,23 @@ public class NPCLoader implements Runnable {
 		}
 		removeEntities.getIntLists().write(0, ids);
 
-		PacketContainer removeInfo = pm.createPacket(PacketType.Play.Server.PLAYER_INFO_REMOVE);
-		removeInfo.getUUIDLists().write(0, Collections.singletonList(npcContainer.getNPCData().getUUID()));
-		
+		PacketContainer removeInfo = getPlayerInfoRemovePacket();
+
 		pm.sendServerPacket(player, removeEntities);
 		pm.sendServerPacket(player, removeInfo);
+	}
+
+	private PacketContainer getPlayerInfoRemovePacket() {
+		PacketContainer removeInfo;
+		if (PluginUtils.ServerVersion.v1_19_R2.atOrAbove()) {
+			removeInfo = pm.createPacket(PacketType.Play.Server.PLAYER_INFO_REMOVE);
+			removeInfo.getUUIDLists().write(0, Collections.singletonList(npcContainer.getNPCData().getUUID()));
+		} else {
+			removeInfo = pm.createPacket(PacketType.Play.Server.PLAYER_INFO);
+			removeInfo.getPlayerInfoAction().write(0, EnumWrappers.PlayerInfoAction.ADD_PLAYER);
+			removeInfo.getPlayerInfoDataLists().write(0, Collections.singletonList(npcContainer.getPlayerInfo()));
+		}
+		return removeInfo;
 	}
 	
 	/**
