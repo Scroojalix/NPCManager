@@ -38,7 +38,7 @@ public class PluginUtils {
 	 * @return The translated string.
 	 */
 	public static String format(String msg) {
-		if (NPCMain.serverVersion.hasHexSupport) {
+		if (NPCMain.serverVersion.hasHexSupport()) {
 			Matcher match = pattern.matcher(msg);
 			while (match.find()) {
 				String colour = msg.substring(match.start(), match.end());
@@ -178,25 +178,51 @@ public class PluginUtils {
 	 * @author Scroojalix
 	 */
 	public enum ServerVersion {
-		//TODO simplify this using a version id
-		v1_8_R2(false, true, 0), v1_8_R3(false, true, 0), v1_9_R1(false, true, 1),
-		v1_9_R2(false, true, 1), v1_10_R1(false, true, 1), v1_11_R1(false, true, 1),
-		v1_12_R1(false, true, 1), v1_13_R1(false, false, 2), v1_13_R2(false, false, 2),
-		v1_14_R1(false, false, 2), v1_15_R1(false, false, 2), v1_16_R1(true, false, 2),
-		v1_16_R2(true, false, 2), v1_16_R3(true, false, 2), v1_17_R1(true, false, 2),
-		v1_18_R1(true, false, 2), v1_18_R2(true, false, 2), v1_19_R1(true, false, 2),
-		v1_19_R2(true, false, 2), v1_19_R3(true, false, 2);
+		v1_8_R2,	// 0
+		v1_8_R3,	// 1
+		v1_9_R1,	// 2
+		v1_9_R2,	// 3
+		v1_10_R1,	// 4
+		v1_11_R1,	// 5
+		v1_12_R1,	// 6
+		v1_13_R1,	// 7
+		v1_13_R2,	// 8
+		v1_14_R1,	// 9
+		v1_15_R1,	// 10
+		v1_16_R1,	// 11
+		v1_16_R2,	// 12
+		v1_16_R3,	// 13
+		v1_17_R1,	// 14
+		v1_18_R1,	// 15
+		v1_18_R2,	// 16
+		v1_19_R1,	// 17
+		v1_19_R2,	// 18
+		v1_19_R3,	// 19
+		v1_20_R1;	// 20
 
-		public final boolean hasHexSupport;
-		public final boolean usesDamageForColouredMaterials;
-		public final boolean hasOffHand;
-		public final int errorSoundId;
+		private final int versionId;
 
-		private ServerVersion(boolean hexSupport, boolean usesDamageForColouredMaterials, int errorSoundId) {
-			this.hasHexSupport = hexSupport;
-			this.usesDamageForColouredMaterials = usesDamageForColouredMaterials;
-			this.hasOffHand = errorSoundId != 0;
-			this.errorSoundId = errorSoundId;
+		private ServerVersion() {
+			this.versionId = this.ordinal();
+
+		}
+
+		public boolean hasHexSupport() {
+			return (versionId >= 11);
+		}
+
+		public boolean usesDamageForColouredMaterials() {
+			return (versionId <= 6);
+		}
+
+		public boolean hasOffHand() {
+			return (versionId >= 2);
+		}
+
+		public int getErrorSoundId() {
+			if (versionId <= 1) return 0;
+			else if (versionId <= 6) return 1;
+			else return 2;
 		}
 	}
 }

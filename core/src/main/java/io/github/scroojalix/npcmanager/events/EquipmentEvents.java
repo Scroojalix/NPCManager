@@ -62,7 +62,7 @@ public class EquipmentEvents implements Listener {
 
                 for (int i = 0; i < slots.length; i++) {
                     if (e.getRawSlot() == slots[i]) {
-                        if (e.getRawSlot() == 32 && !NPCMain.serverVersion.hasOffHand) {
+                        if (e.getRawSlot() == 32 && !NPCMain.serverVersion.hasOffHand()) {
                             p.playSound(p.getLocation(), Sound.valueOf(CommandUtils.getErrorSound()), 5f, 0.5f);
                             p.sendMessage(ChatColor.RED+"That slot is disabled in this version of Minecraft!");
                             break;

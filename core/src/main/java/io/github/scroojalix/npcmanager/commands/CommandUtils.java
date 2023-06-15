@@ -163,7 +163,7 @@ public class CommandUtils {
 	}
 
 	public static String getErrorSound() {
-		switch(NPCMain.serverVersion.errorSoundId) {
+		switch(NPCMain.serverVersion.getErrorSoundId()) {
 			case 0:
 				return "ENDERMAN_TELEPORT";
 			case 1:

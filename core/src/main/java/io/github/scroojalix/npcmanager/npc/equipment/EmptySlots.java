@@ -36,8 +36,8 @@ public class EmptySlots {
     private static ItemStack getFillerItem(String name, boolean itemSlotFiller) {
         ItemStack emptySlot;
         if (itemSlotFiller) {
-            if (!name.equalsIgnoreCase("Off Hand") || NPCMain.serverVersion.hasOffHand) {
-                if (NPCMain.serverVersion.usesDamageForColouredMaterials) {
+            if (!name.equalsIgnoreCase("Off Hand") || NPCMain.serverVersion.hasOffHand()) {
+                if (NPCMain.serverVersion.usesDamageForColouredMaterials()) {
                     emptySlot = new ItemStack(Material.valueOf("STAINED_GLASS_PANE"));
                     emptySlot.setDurability((short) 5);
                 } else {
@@ -61,7 +61,7 @@ public class EmptySlots {
                 emptySlot.setItemMeta(tempMeta);
             }
         } else {
-            if (NPCMain.serverVersion.usesDamageForColouredMaterials) {
+            if (NPCMain.serverVersion.usesDamageForColouredMaterials()) {
                 emptySlot = new ItemStack(Material.valueOf("STAINED_GLASS_PANE"));
                 emptySlot.setDurability((short) 7);
             } else {
