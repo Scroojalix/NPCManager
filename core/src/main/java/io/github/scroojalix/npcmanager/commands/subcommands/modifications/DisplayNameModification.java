@@ -7,8 +7,8 @@ import org.bukkit.command.CommandSender;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.SubCommand;
-import io.github.scroojalix.npcmanager.common.PluginUtils;
-import io.github.scroojalix.npcmanager.common.npc.NPCData;
+import io.github.scroojalix.npcmanager.npc.NPCData;
+import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class DisplayNameModification extends SubCommand {
 

@@ -7,17 +7,17 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import io.github.scroojalix.npcmanager.commands.CommandManager;
-import io.github.scroojalix.npcmanager.common.PluginUtils;
-import io.github.scroojalix.npcmanager.common.PluginUtils.ServerVersion;
-import io.github.scroojalix.npcmanager.common.dependencies.DependencyManager;
-import io.github.scroojalix.npcmanager.common.npc.equipment.EmptySlots;
-import io.github.scroojalix.npcmanager.common.npc.equipment.EquipmentInventory;
-import io.github.scroojalix.npcmanager.common.storage.Storage;
-import io.github.scroojalix.npcmanager.common.storage.StorageFactory;
+import io.github.scroojalix.npcmanager.dependencies.DependencyManager;
 import io.github.scroojalix.npcmanager.events.EquipmentEvents;
 import io.github.scroojalix.npcmanager.events.NPCEvents;
-import io.github.scroojalix.npcmanager.nms.interfaces.NPCManager;
-import io.github.scroojalix.npcmanager.nms.interfaces.PacketReader;
+import io.github.scroojalix.npcmanager.npc.equipment.EmptySlots;
+import io.github.scroojalix.npcmanager.npc.equipment.EquipmentInventory;
+import io.github.scroojalix.npcmanager.rendering.NPCManager;
+import io.github.scroojalix.npcmanager.rendering.PacketReader;
+import io.github.scroojalix.npcmanager.storage.Storage;
+import io.github.scroojalix.npcmanager.storage.StorageFactory;
+import io.github.scroojalix.npcmanager.utils.PluginUtils;
+import io.github.scroojalix.npcmanager.utils.PluginUtils.ServerVersion;
 
 /**
  * Main class for the NPCManager plugin.

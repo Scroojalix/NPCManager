@@ -6,7 +6,7 @@ import java.util.List;
 import org.bukkit.command.CommandSender;
 
 import io.github.scroojalix.npcmanager.NPCMain;
-import io.github.scroojalix.npcmanager.common.PluginUtils;
+import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public abstract class SubCommand {
 

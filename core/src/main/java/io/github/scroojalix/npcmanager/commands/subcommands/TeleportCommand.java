@@ -9,9 +9,9 @@ import org.bukkit.entity.Player;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.SubCommand;
-import io.github.scroojalix.npcmanager.common.PluginUtils;
-import io.github.scroojalix.npcmanager.common.chatutils.Messages;
-import io.github.scroojalix.npcmanager.common.npc.NPCData;
+import io.github.scroojalix.npcmanager.npc.NPCData;
+import io.github.scroojalix.npcmanager.utils.Messages;
+import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class TeleportCommand extends SubCommand {
 
