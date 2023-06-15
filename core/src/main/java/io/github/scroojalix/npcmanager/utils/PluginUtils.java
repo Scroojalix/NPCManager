@@ -87,23 +87,25 @@ public class PluginUtils {
 	}
 
 	/**
-	 * Gets NPC entity ID by name
-	 * Returns null if NPC doesn't exist
+	 * Gets NPC Entity ID by name
+	 * Throws Null Pointer Exception if NPC does not exist, so use carefully.
 	 * @param name name of npc
-	 * @return Entity ID of NPC with name, or null.
+	 * @return NPC Entity ID
+	 * @throws NullPointerException if NPC does not exist.
 	 */
-	public static int getNPCIDByName(String name) {
-		return npcExists(name)?NPCMain.instance.npc.getNPCHashMap().get(name).getNPCEntityID():null;
+	public static int getNPCIDByName(String name) throws NullPointerException {
+		return NPCMain.instance.npc.getNPCHashMap().get(name).getNPCEntityID();
 	}
 
 	/**
 	 * Gets NPCData object by name
-	 * Returns null if NPC doesn't exist
+	 * Throws Null Pointer Exception if NPC does not exist, so use carefully.
 	 * @param name name of npc
-	 * @return NPCData object defined by name, or null.
+	 * @return NPCData object defined by name.
+	 * @throws NullPointerException if NPC does not exist.
 	 */
-	public static NPCData getNPCDataByName(String name) {
-		return npcExists(name)?NPCMain.instance.npc.getNPCHashMap().get(name).getNPCData():null;
+	public static NPCData getNPCDataByName(String name) throws NullPointerException {
+		return NPCMain.instance.npc.getNPCHashMap().get(name).getNPCData();
 	}
 
 	/**
