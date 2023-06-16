@@ -121,6 +121,7 @@ public class NPCMain extends JavaPlugin {
 			this.getLogger().severe(version + " is not a supported version!");
 			return false;
 		}
+		getLogger().info(String.format("Running on NMS version %s", serverVersion));
 		return true;
 	}
 	
