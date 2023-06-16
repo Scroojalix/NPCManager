@@ -125,7 +125,7 @@ public class NPCLoader implements Runnable {
 		rotate.getIntegers().write(0, npcContainer.getNPCEntityID());
 		rotate.getBytes().write(0, toByteAngle(npcLoc.getYaw()));
 		loadPackets.add(rotate);
-		
+
 		if (perfectOrientation) {
 
 			PacketContainer orient = pm.createPacket(PacketType.Play.Server.ANIMATION);
@@ -310,7 +310,12 @@ public class NPCLoader implements Runnable {
 		if (npcContainer.isSubtitleHoloEnabled()) {
 			ids.add(npcContainer.getSubtitleHolo().getID());
 		}
-		removeEntities.getIntLists().write(0, ids);
+
+		if (PluginUtils.ServerVersion.v1_17_R1.atOrAbove()) {
+			removeEntities.getIntLists().write(0, ids);
+		} else {
+			removeEntities.getIntegerArrays().write(0, ids.stream().mapToInt(Integer::intValue).toArray());
+		}
 
 		PacketContainer removeInfo = getPlayerInfoRemovePacket();
 

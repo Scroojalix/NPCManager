@@ -48,7 +48,12 @@ public class PacketReader {
 
 				// Get values from packet
 				int id = packet.getIntegers().read(0);
-				EntityUseAction action = packet.getEnumEntityUseActions().read(0).getAction();
+				EntityUseAction action;
+				if (PluginUtils.ServerVersion.v1_17_R1.atOrAbove()) {
+					action = packet.getEnumEntityUseActions().read(0).getAction();				
+				} else {
+					action = packet.getEntityUseActions().read(0);
+				}
 				boolean crouched = packet.getBooleans().read(0);
 
 				for (String npcName : PluginUtils.getAllNPCNames()) {
