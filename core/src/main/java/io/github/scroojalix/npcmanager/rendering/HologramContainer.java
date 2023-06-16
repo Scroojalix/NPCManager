@@ -36,16 +36,30 @@ public class HologramContainer {
 		WrappedDataWatcher.Serializer byteSerializer = WrappedDataWatcher.Registry.get(Byte.class);
 		WrappedDataWatcher.Serializer chatCompSerializer = WrappedDataWatcher.Registry.getChatComponentSerializer(true);
 		WrappedDataWatcher.Serializer booleanSerializer = WrappedDataWatcher.Registry.get(Boolean.class);
-
+        
+        //Set invisible
 		watcher.setObject(0, byteSerializer, (byte)0x20);
+        
+        //Set custom name
 		watcher.setObject(2, chatCompSerializer, Optional.of(text.getHandle()));
+        
+        //Set custom name visible
 		watcher.setObject(new WrappedDataWatcher.
 			WrappedDataWatcherObject(3, booleanSerializer),
 			text != null && !text.toString().isEmpty());
+        
+        //Set no gravity
 		watcher.setObject(new WrappedDataWatcher.
 			WrappedDataWatcherObject(5, booleanSerializer),
 			true);
-		watcher.setObject(15, byteSerializer, (byte)(0x01 | 0x08 | 0x10));
+        
+        //Set armor stand metadata
+        //Small | has no base plate | marker
+        int armorStandMetaIndex = 14;
+        if (PluginUtils.ServerVersion.v1_17_R1.atOrAbove()) {
+            armorStandMetaIndex = 15;
+        }
+		watcher.setObject(armorStandMetaIndex, byteSerializer, (byte)(0x01 | 0x08 | 0x10));
 
         return watcher;
     }
