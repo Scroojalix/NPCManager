@@ -29,7 +29,6 @@ import com.comphenix.protocol.wrappers.WrappedDataValue;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 
 import io.github.scroojalix.npcmanager.NPCMain;
-import io.github.scroojalix.npcmanager.npc.equipment.NPCEquipment;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class NPCLoader implements Runnable {
@@ -185,33 +184,23 @@ public class NPCLoader implements Runnable {
 
 		//Equipment
 		if (npcContainer.getNPCData().getTraits().getEquipment(false) != null) {
-			final List<Pair<ItemSlot, ItemStack>> equipmentList = new ArrayList<>();
-			NPCEquipment equipment = npcContainer.getNPCData().getTraits().getEquipment(false);
-			if (equipment.getMainhandItem() != null) {
-				equipmentList.add(new Pair<>(ItemSlot.MAINHAND, equipment.getMainhandItem()));
-			}
-			if (equipment.getOffhandItem() != null) {
-				equipmentList.add(new Pair<>(ItemSlot.OFFHAND, equipment.getOffhandItem()));
-			}
-			if (equipment.getHelmet() != null) {
-				equipmentList.add(new Pair<>(ItemSlot.HEAD, equipment.getHelmet()));
-			}
-			if (equipment.getChestplate() != null) {
-				equipmentList.add(new Pair<>(ItemSlot.CHEST, equipment.getChestplate()));
-			}
-			if (equipment.getLeggings() != null) {
-				equipmentList.add(new Pair<>(ItemSlot.LEGS, equipment.getLeggings()));
-			}
-			if (equipment.getBoots() != null) {
-				equipmentList.add(new Pair<>(ItemSlot.FEET, equipment.getBoots()));
-			}
+			final List<Pair<ItemSlot, ItemStack>> equipmentList = 
+				npcContainer.getNPCData().getTraits().getEquipment(false).getSlotStackPaitList();
 			if (!equipmentList.isEmpty()) {
-
-				PacketContainer equipmentPacket = pm.createPacket(PacketType.Play.Server.ENTITY_EQUIPMENT);
-				equipmentPacket.getIntegers().write(0, npcContainer.getNPCEntityID());
-				equipmentPacket.getSlotStackPairLists().write(0, equipmentList);
-
-				loadPackets.add(equipmentPacket);
+				if (PluginUtils.ServerVersion.v1_16_R1.atOrAbove()) {
+					PacketContainer equipmentPacket = pm.createPacket(PacketType.Play.Server.ENTITY_EQUIPMENT);
+					equipmentPacket.getIntegers().write(0, npcContainer.getNPCEntityID());
+					equipmentPacket.getSlotStackPairLists().write(0, equipmentList);
+					loadPackets.add(equipmentPacket);
+				} else {
+					for (Pair<ItemSlot, ItemStack> pair : equipmentList) {
+						PacketContainer equipmentPacket = pm.createPacket(PacketType.Play.Server.ENTITY_EQUIPMENT);
+						equipmentPacket.getIntegers().write(0, npcContainer.getNPCEntityID());
+						equipmentPacket.getItemSlots().write(0, pair.getFirst());
+						equipmentPacket.getItemModifier().write(0, pair.getSecond());
+						loadPackets.add(equipmentPacket);
+					}
+				}
 			}
 		}
 
