@@ -12,15 +12,13 @@ public class InteractAtNPCEvent extends Event implements Cancellable{
 	private final Player player;
 	private final NPCData data;
 	private final NPCAction action;
-	private final boolean crouched;
 	private boolean isCancelled;
 	private static final HandlerList HANDLERS = new HandlerList();
 	
-	public InteractAtNPCEvent(Player player, NPCData data, NPCAction action, boolean crouched) {
+	public InteractAtNPCEvent(Player player, NPCData data, NPCAction action) {
 		this.player = player;
 		this.data = data;
 		this.action = action;
-		this.crouched = crouched;
 	}
 	
 	/**
@@ -45,13 +43,6 @@ public class InteractAtNPCEvent extends Event implements Cancellable{
 	public NPCAction getAction() {
 		return action;
 	}
-
-	/**
-	 * @return whether the player is crouched when interacting with the NPC.
-	 */
-	public boolean isCrouched() {
-		return crouched;
-	}
 	
 	@Override
 	public HandlerList getHandlers() {
@@ -72,11 +63,37 @@ public class InteractAtNPCEvent extends Event implements Cancellable{
 		isCancelled = arg0;
 	}
 
+	@Override
+	public String toString() {
+		return String.format("[Player=%s, NPC=%s, Action=%s]",
+			player.getName(),
+			data.getName(),
+			action.toString()
+		);
+	}
+
 	/**
 	 * Enum containing the types of interactions involved in an {@link InteractAtNPCEvent}
 	 */
 	public enum NPCAction {
 		LEFT_CLICK,
-		RIGHT_CLICK;
+		RIGHT_CLICK,
+		SECONDARY_LEFT_CLICK,
+		SECONDARY_RIGHT_CLICK;
+
+		public static NPCAction get(boolean isLeft, Boolean secondary) {
+			if (secondary == null || !secondary.booleanValue()) {
+				return isLeft ? LEFT_CLICK : RIGHT_CLICK;
+			}
+			return isLeft ? SECONDARY_LEFT_CLICK : SECONDARY_RIGHT_CLICK;
+		}
+
+		public boolean isLeftClick() {
+			return this == LEFT_CLICK || this == SECONDARY_LEFT_CLICK;
+		}
+
+		public boolean isRightClick() {
+			return this == RIGHT_CLICK || this == SECONDARY_RIGHT_CLICK;
+		}
 	}
 }

@@ -54,12 +54,17 @@ public class PacketReader {
 				} else {
 					action = packet.getEntityUseActions().read(0);
 				}
-				boolean crouched = packet.getBooleans().read(0);
+
+				// Prior to 1.16, there were no secondary actions
+				Boolean secondary = null;
+				if (PluginUtils.ServerVersion.v1_16_R1.atOrAbove()) {
+					secondary = packet.getBooleans().read(0);
+				}
 
 				for (String npcName : PluginUtils.getAllNPCNames()) {
 					// Check if entity is NPC created by NPCManager
 					if (PluginUtils.getNPCIDByName(npcName) == id) {
-						handleInteraction(p, PluginUtils.getNPCDataByName(npcName), action, crouched);
+						handleInteraction(p, PluginUtils.getNPCDataByName(npcName), action, secondary);
 						break;
 					}
 				}
@@ -71,17 +76,17 @@ public class PacketReader {
 		manager.removePacketListeners(main);
 	}
 
-	private void handleInteraction(Player p, NPCData data, EntityUseAction action, boolean crouched) {
+	private void handleInteraction(Player p, NPCData data, EntityUseAction action, Boolean secondary) {
 		if (recentInteractors.contains(p.getUniqueId())) return;
 		switch(action) {
 			case ATTACK: // Left Click
 			Bukkit.getScheduler().scheduleSyncDelayedTask(main, () -> {	
-				Bukkit.getPluginManager().callEvent(new InteractAtNPCEvent(p, data, NPCAction.LEFT_CLICK, crouched));
+				Bukkit.getPluginManager().callEvent(new InteractAtNPCEvent(p, data, NPCAction.get(true, secondary)));
 			});
 			break;
 			case INTERACT_AT: // Right Click
 			Bukkit.getScheduler().scheduleSyncDelayedTask(main, () -> {
-				Bukkit.getPluginManager().callEvent(new InteractAtNPCEvent(p, data, NPCAction.RIGHT_CLICK, crouched));
+				Bukkit.getPluginManager().callEvent(new InteractAtNPCEvent(p, data, NPCAction.get(false, secondary)));
 			});
 			recentInteractors.add(p.getUniqueId());
 			Bukkit.getScheduler().runTaskLater(main, new Runnable() {
