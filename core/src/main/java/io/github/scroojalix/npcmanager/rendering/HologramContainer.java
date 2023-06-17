@@ -26,7 +26,7 @@ public class HologramContainer {
         this.id = id;
         this.uuid = UUID.randomUUID();
         this.loc = loc;
-        this.text = WrappedChatComponent.fromText(PluginUtils.format(text));
+        this.text = WrappedChatComponent.fromChatMessage(PluginUtils.format(text))[0];
     }
 
     public WrappedDataWatcher getDataWatcher() {
@@ -41,7 +41,7 @@ public class HologramContainer {
 		watcher.setObject(0, byteSerializer, (byte)0x20);
         
         //Set custom name
-		watcher.setObject(2, chatCompSerializer, Optional.of(text.getHandle()));
+		watcher.setObject(2, chatCompSerializer, Optional.of(text));
         
         //Set custom name visible
 		watcher.setObject(new WrappedDataWatcher.
