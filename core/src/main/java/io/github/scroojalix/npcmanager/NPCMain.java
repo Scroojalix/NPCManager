@@ -66,11 +66,6 @@ public class NPCMain extends JavaPlugin {
 			this.setEnabled(false);
 			return;
 		}
-
-		for (Player p : Bukkit.getOnlinePlayers()) {
-			p.setScoreboard(npc.getNPCScoreboard());
-		}
-
 		this.saveDefaultConfig();
 		EmptySlots.generateItems();
 		long npcRemoveDelay = getConfig().getLong("npc-remove-delay");

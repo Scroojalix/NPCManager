@@ -9,8 +9,6 @@ import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.Team;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
@@ -40,9 +38,6 @@ public class NPCManager {
 	private int npcNameLength;
 	private ProtocolManager protocolManager;
 
-	private final Team npcTeam;
-	private final Scoreboard npcScoreboard;
-
 	private Random random;
 
 	public NPCManager(NPCMain main) {
@@ -56,20 +51,11 @@ public class NPCManager {
 			npcNameLength = 3;
 		main.log(Level.INFO, "Set NPC tab list name length to " + npcNameLength);
 
-		this.npcScoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-		this.npcTeam = npcScoreboard.registerNewTeam(PluginUtils.NPC_SCOREBOARD_TEAM_NAME);
-		npcTeam.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER);
-		npcTeam.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.NEVER);
-
 		this.random = new Random(6878);
 	}
 
 	public void setNPCNameLength(int npcNameLength) {
 		this.npcNameLength = npcNameLength;
-	}
-
-	public Scoreboard getNPCScoreboard() {
-		return this.npcScoreboard;
 	}
 
 	/**
@@ -110,7 +96,6 @@ public class NPCManager {
 		NPCs.put(data.getName(), npcContainer);
 		startLoaderTask(npcContainer);
 		SkinManager.updateSkin(data);
-		npcTeam.addEntry(npcContainer.getPlayerInfo().getProfile().getName());
 	}
 
 	/**
@@ -164,7 +149,6 @@ public class NPCManager {
 		if (fromStorage && container.getNPCData().isStored()) {
 			main.storage.removeNPC(container.getNPCData().getName());
 		}
-		npcTeam.removeEntry(container.getPlayerInfo().getProfile().getName());
 	}
 
 	/**
