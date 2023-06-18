@@ -13,7 +13,6 @@ import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
@@ -176,10 +175,10 @@ public class NPCLoader implements Runnable {
 
 		//Holograms
 		if (npcContainer.isNameHoloEnabled()) {
-			addHologramPackets(npcContainer.getNameHolo());
+			loadPackets.addAll(npcContainer.getNameHolo().getHologramPackets());
 		}
 		if (npcContainer.isSubtitleHoloEnabled()) {
-			addHologramPackets(npcContainer.getSubtitleHolo());
+			loadPackets.addAll(npcContainer.getSubtitleHolo().getHologramPackets());
 		}
 
 		//Equipment
@@ -206,31 +205,6 @@ public class NPCLoader implements Runnable {
 
 	}
 
-	private void addHologramPackets(HologramContainer holo) {
-		PacketContainer addHologram = pm.createPacket(PacketType.Play.Server.SPAWN_ENTITY);
-		addHologram.getIntegers()
-			.write(0, holo.getID())
-			.write(1, 1);
-		addHologram.getEntityTypeModifier().write(0, EntityType.ARMOR_STAND);
-		addHologram.getUUIDs().write(0, holo.getUUID());
-		addHologram.getDoubles()
-			.write(0, holo.getLocation().getX())
-			.write(1, holo.getLocation().getY())
-			.write(2, holo.getLocation().getZ());
-
-		PacketContainer hologramData = pm.createPacket(PacketType.Play.Server.ENTITY_METADATA);
-		hologramData.getIntegers().write(0, holo.getID());
-
-		if (PluginUtils.ServerVersion.v1_19_R2.atOrAbove()) {
-			hologramData.getDataValueCollectionModifier().write(0, holo.getDataWatcherAsList());
-		} else {
-			hologramData.getWatchableCollectionModifier().write(0, holo.getDataWatcher().getWatchableObjects());
-		}
-
-		loadPackets.add(addHologram);
-		loadPackets.add(hologramData);
-	}
-	
 	/**
 	 * Method that loops to update NPC's.
 	 */

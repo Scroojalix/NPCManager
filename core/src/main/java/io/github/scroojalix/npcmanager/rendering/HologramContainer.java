@@ -1,12 +1,18 @@
 package io.github.scroojalix.npcmanager.rendering;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Location;
+import org.bukkit.entity.EntityType;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedDataValue;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
@@ -28,6 +34,49 @@ public class HologramContainer {
         this.uuid = UUID.randomUUID();
         this.loc = loc;
         this.text = WrappedChatComponent.fromChatMessage(PluginUtils.format(text))[0];
+    }
+
+    // TODO move this, and all other packets to a PacketRegistry class
+    @SuppressWarnings("deprecation")
+    public LinkedHashSet<PacketContainer> getHologramPackets() {
+        final LinkedHashSet<PacketContainer> packets = new LinkedHashSet<>();
+        ProtocolManager pm = ProtocolLibrary.getProtocolManager();
+
+        if (PluginUtils.ServerVersion.v1_14_R1.atOrAbove()) {
+            PacketContainer createHologram = pm.createPacket(PacketType.Play.Server.SPAWN_ENTITY);
+			createHologram.getIntegers().write(0, id);
+			createHologram.getUUIDs().write(0, uuid);
+			createHologram.getDoubles()
+				.write(0, loc.getX())
+				.write(1, loc.getY())
+				.write(2, loc.getZ());
+			createHologram.getEntityTypeModifier().write(0, EntityType.ARMOR_STAND);
+            packets.add(createHologram);
+			
+            PacketContainer hologramData = pm.createPacket(PacketType.Play.Server.ENTITY_METADATA);
+            hologramData.getIntegers().write(0, id);
+            if (PluginUtils.ServerVersion.v1_19_R2.atOrAbove()) {
+                hologramData.getDataValueCollectionModifier().write(0, getDataWatcherAsList());
+            } else {
+                hologramData.getWatchableCollectionModifier().write(0, getDataWatcher().getWatchableObjects());
+            }
+            packets.add(hologramData);
+        } else {
+            PacketContainer createHologram = pm.createPacket(PacketType.Play.Server.SPAWN_ENTITY_LIVING);
+            createHologram.getIntegers()
+            .write(0, id)
+            .write(1, 1); // Set to armor stand
+            createHologram.getUUIDs().write(0, uuid);
+            createHologram.getDoubles()
+                .write(0, loc.getX())
+                .write(1, loc.getY())
+                .write(2, loc.getZ());
+
+            createHologram.getDataWatcherModifier().write(0, getDataWatcher());
+            packets.add(createHologram);
+        }
+
+        return packets;
     }
 
     public WrappedDataWatcher getDataWatcher() {
@@ -63,9 +112,8 @@ public class HologramContainer {
     }
 
     public List<WrappedDataValue> getDataWatcherAsList() {
-        WrappedDataWatcher watcher = getDataWatcher();
         final List<WrappedDataValue> wrappedDataValueList = new ArrayList<>();
-		for(final WrappedWatchableObject entry : watcher.getWatchableObjects()) {
+		for(final WrappedWatchableObject entry : getDataWatcher().getWatchableObjects()) {
 			if(entry == null) continue;
 
 			final WrappedDataWatcherObject watcherObject = entry.getWatcherObject();
