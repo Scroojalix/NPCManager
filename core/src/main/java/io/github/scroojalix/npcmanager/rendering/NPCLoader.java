@@ -244,21 +244,21 @@ public class NPCLoader implements Runnable {
 					}
 					if (hasHeadRotation) {
 						if (distance <= headRotationRange && distance > 0) {
-							lookInDirection(player);
 							if (outsideHeadRotationRange.contains(player)) {
 								outsideHeadRotationRange.remove(player);
 							}
+							lookInDirection(player);
 						} else if (resetRotation) {
 							if (!outsideHeadRotationRange.contains(player)) {
-								resetLookDirection(player);
 								outsideHeadRotationRange.add(player);
+								resetLookDirection(player);
 							}
 						}
 					}
 				} else if (loadedForPlayers.containsKey(player)) {
-					sendDeletePackets(player);
 					Bukkit.getScheduler().cancelTask(loadedForPlayers.get(player));
 					loadedForPlayers.remove(player);
+					sendDeletePackets(player);
 				}
 			} else if (loadedForPlayers.containsKey(player)) loadedForPlayers.remove(player);
 		}
@@ -300,8 +300,7 @@ public class NPCLoader implements Runnable {
 			.write(1, pitch);
 		move.getBooleans()
 			.write(0, true)
-			.write(1, true)
-			.write(2, false);
+			.write(1, true);
 		
 		pm.sendServerPacket(player, rotate);
 		pm.sendServerPacket(player, move);
