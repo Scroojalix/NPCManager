@@ -13,6 +13,7 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 
+import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class HologramContainer {
@@ -54,12 +55,9 @@ public class HologramContainer {
 			true);
         
         //Set armor stand metadata
-        //Small | has no base plate | marker
-        int armorStandMetaIndex = 14;
-        if (PluginUtils.ServerVersion.v1_17_R1.atOrAbove()) {
-            armorStandMetaIndex = 15;
-        }
-		watcher.setObject(armorStandMetaIndex, byteSerializer, (byte)(0x01 | 0x08 | 0x10));
+		watcher.setObject(NPCMain.serverVersion.getArmorStandMetaIndex(),
+            byteSerializer,
+            (byte)(0x01 | 0x08 | 0x10)); //Small | has no base plate | marker
 
         return watcher;
     }

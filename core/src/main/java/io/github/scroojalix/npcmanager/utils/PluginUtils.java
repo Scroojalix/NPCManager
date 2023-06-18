@@ -225,6 +225,12 @@ public class PluginUtils {
 			else return 2;
 		}
 
+		public int getArmorStandMetaIndex() {
+			if (versionId <= 9) return 13;
+			else if (versionId <= 13) return 14;
+			else return 15;
+		}
+
 		public int getSkinLayersByteIndex() {
 			switch(this) {
 				case v1_8_R2:
