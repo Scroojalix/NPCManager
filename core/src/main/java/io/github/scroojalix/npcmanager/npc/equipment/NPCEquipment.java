@@ -40,7 +40,7 @@ public class NPCEquipment implements Serialisable {
         if (chestplate != null) {
             equipmentList.add(new Pair<>(ItemSlot.CHEST, chestplate));
         }
-        if (chestplate != null) {
+        if (leggings != null) {
             equipmentList.add(new Pair<>(ItemSlot.LEGS, leggings));
         }
         if (boots != null) {
