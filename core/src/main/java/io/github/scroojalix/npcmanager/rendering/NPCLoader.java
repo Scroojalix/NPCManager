@@ -195,6 +195,8 @@ public class NPCLoader implements Runnable {
 					loadPackets.add(equipmentPacket);
 				} else {
 					for (Pair<ItemSlot, ItemStack> pair : equipmentList) {
+						if (pair.getFirst() == ItemSlot.OFFHAND && !NPCMain.serverVersion.hasOffHand()) continue;
+						
 						PacketContainer equipmentPacket = pm.createPacket(PacketType.Play.Server.ENTITY_EQUIPMENT);
 						equipmentPacket.getIntegers().write(0, npcContainer.getNPCEntityID());
 						equipmentPacket.getItemSlots().write(0, pair.getFirst());
