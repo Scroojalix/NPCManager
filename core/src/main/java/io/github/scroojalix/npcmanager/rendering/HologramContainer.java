@@ -27,13 +27,13 @@ public class HologramContainer {
     private final int id;
     private final UUID uuid;
     private final Location loc;
-    private final WrappedChatComponent text;
+    private final String formattedText;
     
     public HologramContainer(int id, Location loc, String text) {
         this.id = id;
         this.uuid = UUID.randomUUID();
         this.loc = loc;
-        this.text = WrappedChatComponent.fromChatMessage(PluginUtils.format(text))[0];
+        this.formattedText = PluginUtils.format(text);
     }
 
     // TODO move this, and all other packets to a PacketRegistry class
@@ -65,7 +65,8 @@ public class HologramContainer {
             PacketContainer createHologram = pm.createPacket(PacketType.Play.Server.SPAWN_ENTITY_LIVING);
             createHologram.getIntegers()
             .write(0, id)
-            .write(1, 1); // Set to armor stand
+            // Set to armor stand
+            .write(1, PluginUtils.ServerVersion.v1_13_R1.atOrAbove()? 1 : 30); 
             createHologram.getUUIDs().write(0, uuid);
             createHologram.getDoubles()
                 .write(0, loc.getX())
@@ -84,19 +85,26 @@ public class HologramContainer {
 
 		//Serializers
 		WrappedDataWatcher.Serializer byteSerializer = WrappedDataWatcher.Registry.get(Byte.class);
-		WrappedDataWatcher.Serializer chatCompSerializer = WrappedDataWatcher.Registry.getChatComponentSerializer(true);
 		WrappedDataWatcher.Serializer booleanSerializer = WrappedDataWatcher.Registry.get(Boolean.class);
         
         //Set invisible
 		watcher.setObject(0, byteSerializer, (byte)0x20);
         
         //Set custom name
-		watcher.setObject(2, chatCompSerializer, Optional.of(text));
+        if (PluginUtils.ServerVersion.v1_13_R1.atOrAbove()) {
+            WrappedDataWatcher.Serializer chatCompSerializer = WrappedDataWatcher.Registry.getChatComponentSerializer(true);
+            watcher.setObject(2, chatCompSerializer, Optional.of(
+                WrappedChatComponent.fromChatMessage(formattedText)[0]
+            ));
+        } else {
+            WrappedDataWatcher.Serializer stringSerializer = WrappedDataWatcher.Registry.get(String.class);
+            watcher.setObject(2, stringSerializer, formattedText);
+        }
         
         //Set custom name visible
 		watcher.setObject(new WrappedDataWatcher.
 			WrappedDataWatcherObject(3, booleanSerializer),
-			text != null && !text.toString().isEmpty());
+			formattedText != null && !formattedText.isEmpty());
         
         //Set no gravity
 		watcher.setObject(new WrappedDataWatcher.
@@ -143,7 +151,7 @@ public class HologramContainer {
     }
 
 
-    public WrappedChatComponent getFormattedText() {
-        return this.text;
+    public String getFormattedText() {
+        return this.formattedText;
     }
 }
