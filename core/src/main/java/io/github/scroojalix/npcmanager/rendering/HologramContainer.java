@@ -107,9 +107,11 @@ public class HologramContainer {
 			formattedText != null && !formattedText.isEmpty());
         
         //Set no gravity
-		watcher.setObject(new WrappedDataWatcher.
-			WrappedDataWatcherObject(5, booleanSerializer),
-			true);
+        if (PluginUtils.ServerVersion.v1_10_R1.atOrAbove()) {
+            watcher.setObject(new WrappedDataWatcher.
+                WrappedDataWatcherObject(5, booleanSerializer),
+                true);
+        }
         
         //Set armor stand metadata
 		watcher.setObject(NPCMain.serverVersion.getArmorStandMetaIndex(),
