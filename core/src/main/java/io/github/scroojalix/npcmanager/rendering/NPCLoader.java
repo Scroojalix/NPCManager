@@ -148,15 +148,17 @@ public class NPCLoader implements Runnable {
 			loadPackets.add(addNPCToTeam);
 		} else {
 			PacketContainer createTeam = pm.createPacket(PacketType.Play.Server.SCOREBOARD_TEAM);
+			int teamSettingIndex = PluginUtils.ServerVersion.v1_13_R1.atOrAbove() ? 1 : 4;
 			createTeam.getStrings()
 				.write(0, PluginUtils.NPC_SCOREBOARD_TEAM_NAME)
-				.write(1, "never")
-				.write(2, "never");
+				.write(teamSettingIndex, "never")
+				.write(teamSettingIndex + 1, "never");
 			loadPackets.add(createTeam);
 
 			PacketContainer addNPCToTeam = pm.createPacket(PacketType.Play.Server.SCOREBOARD_TEAM);
 			addNPCToTeam.getStrings().write(0, PluginUtils.NPC_SCOREBOARD_TEAM_NAME);
-			addNPCToTeam.getIntegers().write(0, 3);
+			int teamPacketModeIndex = PluginUtils.ServerVersion.v1_13_R1.atOrAbove() ? 0 : 1;
+			addNPCToTeam.getIntegers().write(teamPacketModeIndex, 3);
 			addNPCToTeam.getModifier().write(7, Collections.singletonList(
 				npcContainer.getPlayerInfo().getProfile().getName()
 			));
