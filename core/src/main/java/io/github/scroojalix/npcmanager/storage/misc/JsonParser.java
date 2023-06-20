@@ -33,7 +33,7 @@ public final class JsonParser {
 			
 			Map<String, Object> obj = builder.create().fromJson(json, new TypeToken<Map<String, Object>>() {}.getType());
 
-            //Check location
+            //Check location TODO abstract this
             @SuppressWarnings("unchecked")
             Map<String, Object> loc = (Map<String, Object>)obj.get("loc");
 			String world = loc.get("world").toString();
