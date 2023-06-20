@@ -1,6 +1,6 @@
-## Lightweight NPC Manager Plugin
+## NPC Manager Plugin With ProtocolLib
 
-This plugin provides support for spawning NPC's, and has many customisation options, such as modifying the skin, display name, interact event and more. 
+This plugin provides support for spawning NPC's, and has many customisation options, such as modifying the skin, display name, interact event and more. [ProtocolLib](https://www.spigotmc.org/resources/protocollib.1997/) is required to run the plugin.
 
 Also has support for using a MySQL database to store NPC data (Configured in the config.yml).
 
@@ -40,7 +40,7 @@ The accepted values for `<key>` are:
 
 ### Supported Versions
 
-This plugin supports a wide range of Spigot versions, from 1.8.3 to 1.19.3.
+This plugin supports a wide range of Spigot versions, from 1.8.3 to 1.20.1.
 
 ### How to build
 

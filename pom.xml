@@ -9,7 +9,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- Change version here -->
-        <revision>1.5.3</revision>
+        <revision>2.0.0</revision>
     </properties>
     <modules>
         <module>core</module>

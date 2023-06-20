@@ -2,9 +2,15 @@
 
 This file is here in the hopes of recording all changes made throughout the plugins history and future, to make it easier for users and developers to understand the changes between versions.
 
-This project uses the versioning format {phase}.{major}.{minor}, where phase is pretty much never going to change, major is for backwards incompatible changes, and minor is for backwards compatible bug fixes. There may be some versions that are named incorrectly, as I was a bit careless at the start of this project.
+This project uses the versioning format {phase}.{major}.{minor}, where phase is almost never going to change, major is for backwards incompatible changes, and minor is for backwards compatible bug fixes. There may be some versions that are named incorrectly, as I was a bit careless at the start of this project.
 
 ## [Unreleased]
+
+## [2.0.0] - 2023-06-20
+### Added
+- support for 1.20
+### Changed
+- the plugin has been rewritten to work with ProtocolLib
 
 ## [1.5.3] - 2022-12-26
 ### Added
@@ -227,7 +233,8 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 ## [1.0.0] - 2020-10-27
 Initial Commit. No Changes.
 
-[Unreleased]: https://github.com/Scroojalix/NPCManager/compare/v1.5.3...master
+[Unreleased]: https://github.com/Scroojalix/NPCManager/compare/v2.0.0...master
+[2.0.0]: https://github.com/Scroojalix/NPCManager/compare/v1.5.3...v2.0.0
 [1.5.3]: https://github.com/Scroojalix/NPCManager/compare/v1.5.2...v1.5.3
 [1.5.2]: https://github.com/Scroojalix/NPCManager/compare/v1.5.1...v1.5.2
 [1.5.1]: https://github.com/Scroojalix/NPCManager/compare/v1.5.0...v1.5.1
