@@ -188,11 +188,9 @@ public class NPCManager {
 				case CUSTOM:
 					if (InteractionsManager.getInteractEvents().containsKey(interactEvent.getValue())) {
 						container.setInteractEvent(InteractionsManager.getInteractEvents().get(interactEvent.getValue()));
-						break;
+					} else {
+						NPCMain.instance.sendDebugMessage(Level.WARNING, "Error restoring an NPC: Unknown interact event '"+interactEvent.getValue()+"'");
 					}
-				default:
-					NPCMain.instance.sendDebugMessage(Level.WARNING, "Error restoring an NPC: Unknown interact event '"+interactEvent.getValue()+"'");
-					// data.getTraits().removeInteractEvent(); TODO is this needed
 				break;
 			}
 		}
