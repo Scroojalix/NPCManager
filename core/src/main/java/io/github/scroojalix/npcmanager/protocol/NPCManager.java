@@ -118,9 +118,8 @@ public class NPCManager {
 	 * Removes all NPCs.
 	 */
 	public void removeAllNPCs() {
-		// FIXME removeNPC() should take in npcContainer as input, not name.
 		for (NPCContainer container : NPCs.values()) {
-			removeNPCInternal(container.getNPCData().getName(), false);
+			removeNPCInternal(container, false);
 		}
 		NPCs.clear();
 	}
@@ -133,7 +132,7 @@ public class NPCManager {
 	 * @param fromStorage Whether or not to remove the NPC from storage.
 	 */
 	public void removeNPC(String npc, boolean fromStorage) {
-		removeNPCInternal(npc, fromStorage);
+		removeNPCInternal(PluginUtils.getNPCContainerByName(npc), fromStorage);
 		NPCs.remove(npc);
 	}
 
@@ -143,8 +142,7 @@ public class NPCManager {
 	 * @param npc
 	 * @param fromStorage
 	 */
-	private void removeNPCInternal(String npc, boolean fromStorage) {
-		NPCContainer container = NPCs.get(npc);
+	private void removeNPCInternal(NPCContainer container, boolean fromStorage) {
 		Bukkit.getScheduler().cancelTask(container.getLoaderTaskID());
 		container.getLoaderTask().clearAllTasks();
 		for (Player p : Bukkit.getOnlinePlayers()) {
