@@ -7,10 +7,10 @@ import org.bukkit.command.CommandSender;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.SubCommand;
-import io.github.scroojalix.npcmanager.common.PluginUtils;
-import io.github.scroojalix.npcmanager.common.interactions.CommandInteraction;
-import io.github.scroojalix.npcmanager.common.interactions.InteractionsManager;
-import io.github.scroojalix.npcmanager.common.npc.NPCData;
+import io.github.scroojalix.npcmanager.npc.NPCData;
+import io.github.scroojalix.npcmanager.npc.interactions.CommandInteraction;
+import io.github.scroojalix.npcmanager.npc.interactions.InteractionsManager;
+import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class InteractEventModification extends SubCommand {
 
@@ -40,7 +40,7 @@ public class InteractEventModification extends SubCommand {
 
     @Override
     public boolean execute(NPCMain main, CommandSender sender, String[] args) {
-        NPCData data = main.npc.getNPCs().get(args[1]);
+        NPCData data = PluginUtils.getNPCDataByName(args[1]);
         if (args.length > 3) {
             if (args[3].equalsIgnoreCase("command") && args.length > 4) {
                 String command = args[4];
@@ -67,7 +67,7 @@ public class InteractEventModification extends SubCommand {
                 data.setInteractEvent(null);
                 main.storage.saveNPC(data);
                 sender.sendMessage(PluginUtils.format("&6Removed the Interact Event for &F" + data.getName()));
-                return true;                
+                return true;
             }
         }
         return false;
@@ -77,7 +77,8 @@ public class InteractEventModification extends SubCommand {
     public List<String> onTabComplete(String[] args) {
         List<String> result = new ArrayList<String>();
         if (args.length == 4) {
-            result.add("command"); result.add("custom");
+            result.add("command");
+            result.add("custom");
             result.add("none");
         } else if (args.length == 5 && args[3].equalsIgnoreCase("custom")) {
             for (String interaction : InteractionsManager.getInteractEvents().keySet()) {
@@ -86,5 +87,5 @@ public class InteractEventModification extends SubCommand {
         }
         return result;
     }
-    
+
 }

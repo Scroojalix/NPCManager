@@ -10,13 +10,13 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import io.github.scroojalix.npcmanager.NPCMain;
-import io.github.scroojalix.npcmanager.common.PluginUtils;
-import io.github.scroojalix.npcmanager.common.chatutils.Messages;
-import io.github.scroojalix.npcmanager.common.chatutils.TextComponentWrapper;
-import io.github.scroojalix.npcmanager.common.npc.NPCData;
-import io.github.scroojalix.npcmanager.common.npc.equipment.EmptySlots;
-import io.github.scroojalix.npcmanager.common.npc.equipment.EquipmentInventory;
-import io.github.scroojalix.npcmanager.common.npc.equipment.NPCEquipment;
+import io.github.scroojalix.npcmanager.npc.NPCData;
+import io.github.scroojalix.npcmanager.npc.equipment.EmptySlots;
+import io.github.scroojalix.npcmanager.npc.equipment.EquipmentInventory;
+import io.github.scroojalix.npcmanager.npc.equipment.NPCEquipment;
+import io.github.scroojalix.npcmanager.utils.Messages;
+import io.github.scroojalix.npcmanager.utils.PluginUtils;
+import io.github.scroojalix.npcmanager.utils.TextComponentWrapper;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -26,7 +26,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 public class CommandUtils {
 
 	public static boolean npcExists(String name, CommandSender sender) {
-		if (NPCMain.instance.npc.getNPCs().containsKey(name)) {
+		if (PluginUtils.npcExists(name)) {
 			return true;
 		} else {
 			sender.sendMessage(ChatColor.RED+Messages.UNKNOWN_NPC);
@@ -163,7 +163,7 @@ public class CommandUtils {
 	}
 
 	public static String getErrorSound() {
-		switch(NPCMain.serverVersion.errorSoundId) {
+		switch(NPCMain.serverVersion.getErrorSoundId()) {
 			case 0:
 				return "ENDERMAN_TELEPORT";
 			case 1:

@@ -9,8 +9,8 @@ import org.bukkit.entity.Player;
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.CommandUtils;
 import io.github.scroojalix.npcmanager.commands.SubCommand;
-import io.github.scroojalix.npcmanager.common.PluginUtils;
-import io.github.scroojalix.npcmanager.common.npc.NPCData;
+import io.github.scroojalix.npcmanager.npc.NPCData;
+import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class MoveCommand extends SubCommand {
 
@@ -40,7 +40,7 @@ public class MoveCommand extends SubCommand {
             return false;
         String name = args[1];
         if (CommandUtils.npcExists(name, sender)) {
-            NPCData data = main.npc.getNPCs().get(name);
+            NPCData data = PluginUtils.getNPCDataByName(name);
             main.npc.moveNPC(data, ((Player) sender).getLocation());
             sender.sendMessage(PluginUtils.format("&6Moved &F") + name + PluginUtils.format("&6 to your position."));
             return true;
@@ -56,5 +56,5 @@ public class MoveCommand extends SubCommand {
             return new ArrayList<String>();
         }
     }
-    
+
 }

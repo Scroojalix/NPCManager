@@ -8,15 +8,15 @@ import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
 import io.github.scroojalix.npcmanager.NPCMain;
-import io.github.scroojalix.npcmanager.common.PluginUtils;
-import io.github.scroojalix.npcmanager.common.interactions.CommandInteraction;
-import io.github.scroojalix.npcmanager.common.interactions.InteractEventType;
-import io.github.scroojalix.npcmanager.common.interactions.InteractionsManager;
-import io.github.scroojalix.npcmanager.common.npc.NPCData;
-import io.github.scroojalix.npcmanager.common.npc.skin.NPCSkinLayers;
-import io.github.scroojalix.npcmanager.common.npc.skin.SkinLayer;
-import io.github.scroojalix.npcmanager.common.npc.skin.SkinManager;
-import io.github.scroojalix.npcmanager.common.npc.skin.SkinType;
+import io.github.scroojalix.npcmanager.npc.NPCData;
+import io.github.scroojalix.npcmanager.npc.interactions.CommandInteraction;
+import io.github.scroojalix.npcmanager.npc.interactions.InteractEventType;
+import io.github.scroojalix.npcmanager.npc.interactions.InteractionsManager;
+import io.github.scroojalix.npcmanager.npc.skin.NPCSkinLayers;
+import io.github.scroojalix.npcmanager.npc.skin.SkinLayer;
+import io.github.scroojalix.npcmanager.npc.skin.SkinManager;
+import io.github.scroojalix.npcmanager.npc.skin.SkinType;
+import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class NPCBuilder {
 

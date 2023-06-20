@@ -11,9 +11,9 @@ import org.bukkit.inventory.ItemStack;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.CommandUtils;
-import io.github.scroojalix.npcmanager.common.PluginUtils;
-import io.github.scroojalix.npcmanager.common.npc.NPCData;
-import io.github.scroojalix.npcmanager.common.npc.equipment.*;
+import io.github.scroojalix.npcmanager.npc.NPCData;
+import io.github.scroojalix.npcmanager.npc.equipment.*;
+import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class EquipmentEvents implements Listener {
 
@@ -50,7 +50,7 @@ public class EquipmentEvents implements Listener {
     public void onInventoryClick(InventoryClickEvent e) {
         if (e.getCurrentItem() == null) return;
         if (e.getInventory().getHolder() instanceof EquipmentInventory) {
-            NPCData data = main.npc.getNPCs().get(e.getView().getTitle().replace("'s Equipment", ""));
+            NPCData data = PluginUtils.getNPCDataByName(e.getView().getTitle().replace("'s Equipment", ""));
             if (e.getClickedInventory().equals(e.getView().getTopInventory())) {
                 //Temp Variables
                 Player p = (Player) e.getWhoClicked();
@@ -62,7 +62,7 @@ public class EquipmentEvents implements Listener {
 
                 for (int i = 0; i < slots.length; i++) {
                     if (e.getRawSlot() == slots[i]) {
-                        if (e.getRawSlot() == 32 && !NPCMain.serverVersion.hasOffHand) {
+                        if (e.getRawSlot() == 32 && !NPCMain.serverVersion.hasOffHand()) {
                             p.playSound(p.getLocation(), Sound.valueOf(CommandUtils.getErrorSound()), 5f, 0.5f);
                             p.sendMessage(ChatColor.RED+"That slot is disabled in this version of Minecraft!");
                             break;

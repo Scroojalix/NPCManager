@@ -7,17 +7,17 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import io.github.scroojalix.npcmanager.NPCMain;
-import io.github.scroojalix.npcmanager.common.PluginUtils;
-import io.github.scroojalix.npcmanager.common.chatutils.Messages;
-import io.github.scroojalix.npcmanager.common.interactions.CommandInteraction;
-import io.github.scroojalix.npcmanager.common.interactions.InteractEventType;
-import io.github.scroojalix.npcmanager.common.interactions.InteractionsManager;
-import io.github.scroojalix.npcmanager.common.npc.NPCData;
-import io.github.scroojalix.npcmanager.common.npc.NPCTrait;
-import io.github.scroojalix.npcmanager.common.npc.skin.NPCSkinLayers;
-import io.github.scroojalix.npcmanager.common.npc.skin.SkinLayer;
-import io.github.scroojalix.npcmanager.common.npc.skin.SkinManager;
-import io.github.scroojalix.npcmanager.common.npc.skin.SkinType;
+import io.github.scroojalix.npcmanager.npc.NPCData;
+import io.github.scroojalix.npcmanager.npc.NPCTrait;
+import io.github.scroojalix.npcmanager.npc.interactions.CommandInteraction;
+import io.github.scroojalix.npcmanager.npc.interactions.InteractEventType;
+import io.github.scroojalix.npcmanager.npc.interactions.InteractionsManager;
+import io.github.scroojalix.npcmanager.npc.skin.NPCSkinLayers;
+import io.github.scroojalix.npcmanager.npc.skin.SkinLayer;
+import io.github.scroojalix.npcmanager.npc.skin.SkinManager;
+import io.github.scroojalix.npcmanager.npc.skin.SkinType;
+import io.github.scroojalix.npcmanager.utils.Messages;
+import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class NPCManagerAPI {
 
@@ -26,7 +26,7 @@ public class NPCManagerAPI {
 	 * @param data The data of the NPC to spawn.
 	 */
 	public static void spawnNPC(NPCData data) {
-		if (!NPCMain.instance.npc.getNPCs().containsKey(data.getName())) {
+		if (!PluginUtils.npcExists(data.getName())) {
 			if (data.getLoc() != null) {
 				data.setLoaded(true);
 				NPCMain.instance.storage.saveNPC(data);
@@ -66,22 +66,20 @@ public class NPCManagerAPI {
 				throw new IllegalArgumentException(Messages.LONG_NAME);
 			}
 		} else {
-			throw new IllegalArgumentException("An NPC with the name '"+name+"' already exists.");
+			throw new IllegalArgumentException("An NPC with the name '" + name + "' already exists.");
 		}
 	}
 
 	public static void renameNPC(String name, String newName) {
 		if (PluginUtils.npcExists(name)) {
-			NPCData data = NPCMain.instance.npc.getNPCs().get(name);
+			NPCData data = PluginUtils.getNPCDataByName(name);
 			if (name.equals(newName)) {
 				throw new IllegalArgumentException("You cannot rename an NPC to its previous name");
 			}
 			if (PluginUtils.isAlphanumeric(newName)) {
 				NPCMain.instance.npc.removeNPC(data.getName(), true);
-				NPCMain.instance.npc.getNPCs().remove(data.getName());
 				data.setName(newName);
 				NPCMain.instance.storage.saveNPC(data);
-				NPCMain.instance.npc.getNPCs().put(data.getName(), data);
 				NPCMain.instance.npc.spawnNPC(data);
 			} else {
 				throw new IllegalArgumentException(Messages.NOT_ALPHANUMERIC);
@@ -90,7 +88,7 @@ public class NPCManagerAPI {
 			throw new IllegalArgumentException(Messages.UNKNOWN_NPC);
 		}
 	}
-	
+
 	/**
 	 * Modify an NPC's equipment.
 	 * 
@@ -100,43 +98,55 @@ public class NPCManagerAPI {
 	 */
 	public static void changeEquipment(String name, EquipmentSlot slot, ItemStack item) {
 		if (PluginUtils.npcExists(name)) {
-			NPCData data = NPCMain.instance.npc.getNPCs().get(name);
+			NPCData data = PluginUtils.getNPCDataByName(name);
 			NPCTrait traits = data.getTraits();
 			boolean update = true;
 			switch (slot) {
-			case HAND:
-				if (PluginUtils.isSuitableItem(item, "mainhand", null)) {
-					traits.getEquipment(true).setMainhandItem(item);
-				} else { update = false; }
-				break;
-			case OFF_HAND:
-				if (PluginUtils.isSuitableItem(item, "offhand", null)) {
-					traits.getEquipment(true).setOffhandItem(item);
-				} else { update = false; }
-				break;
-			case FEET:
-				if (PluginUtils.isSuitableItem(item, "boots", null)) {
-					traits.getEquipment(true).setBoots(item);
-				} else { update = false; }
-				break;
-			case LEGS:
-				if (PluginUtils.isSuitableItem(item, "leggings", null)) {
-					traits.getEquipment(true).setLeggings(item);
-				} else { update = false; }
-				break;
-			case CHEST:
-				if (PluginUtils.isSuitableItem(item, "chestplate", null)) {
-					traits.getEquipment(true).setChestplate(item);
-				} else { update = false; }
-				break;
-			case HEAD:
-				if (PluginUtils.isSuitableItem(item, "helmet", null)) {
-					traits.getEquipment(true).setHelmet(item);
-				} else { update = false; }
-				break;
-			default:
-				update = false;
-				throw new IllegalArgumentException("The equipment slot '"+slot+"' is invalid.");
+				case HAND:
+					if (PluginUtils.isSuitableItem(item, "mainhand", null)) {
+						traits.getEquipment(true).setMainhandItem(item);
+					} else {
+						update = false;
+					}
+					break;
+				case OFF_HAND:
+					if (PluginUtils.isSuitableItem(item, "offhand", null)) {
+						traits.getEquipment(true).setOffhandItem(item);
+					} else {
+						update = false;
+					}
+					break;
+				case FEET:
+					if (PluginUtils.isSuitableItem(item, "boots", null)) {
+						traits.getEquipment(true).setBoots(item);
+					} else {
+						update = false;
+					}
+					break;
+				case LEGS:
+					if (PluginUtils.isSuitableItem(item, "leggings", null)) {
+						traits.getEquipment(true).setLeggings(item);
+					} else {
+						update = false;
+					}
+					break;
+				case CHEST:
+					if (PluginUtils.isSuitableItem(item, "chestplate", null)) {
+						traits.getEquipment(true).setChestplate(item);
+					} else {
+						update = false;
+					}
+					break;
+				case HEAD:
+					if (PluginUtils.isSuitableItem(item, "helmet", null)) {
+						traits.getEquipment(true).setHelmet(item);
+					} else {
+						update = false;
+					}
+					break;
+				default:
+					update = false;
+					throw new IllegalArgumentException("The equipment slot '" + slot + "' is invalid.");
 			}
 			if (update) {
 				NPCMain.instance.storage.saveNPC(data);
@@ -149,7 +159,7 @@ public class NPCManagerAPI {
 
 	public static void setDisplayName(String name, String newDisplayName) {
 		if (PluginUtils.npcExists(name)) {
-			NPCData data = NPCMain.instance.npc.getNPCs().get(name); 
+			NPCData data = PluginUtils.getNPCDataByName(name);
 			data.getTraits().setDisplayName(newDisplayName);
 			NPCMain.instance.storage.saveNPC(data);
 			NPCMain.instance.npc.updateNPC(data);
@@ -157,10 +167,10 @@ public class NPCManagerAPI {
 			throw new IllegalArgumentException(Messages.UNKNOWN_NPC);
 		}
 	}
-	
+
 	public static void setSubtitle(String name, String newSubtitle) {
 		if (PluginUtils.npcExists(name)) {
-			NPCData data = NPCMain.instance.npc.getNPCs().get(name); 
+			NPCData data = PluginUtils.getNPCDataByName(name);
 			data.getTraits().setSubtitle(newSubtitle);
 			NPCMain.instance.storage.saveNPC(data);
 			NPCMain.instance.npc.updateNPC(data);
@@ -168,10 +178,10 @@ public class NPCManagerAPI {
 			throw new IllegalArgumentException(Messages.UNKNOWN_NPC);
 		}
 	}
-	
+
 	public static void setHeadRotation(String name, boolean headRotation) {
 		if (PluginUtils.npcExists(name)) {
-			NPCData data = NPCMain.instance.npc.getNPCs().get(name); 
+			NPCData data = PluginUtils.getNPCDataByName(name);
 			data.getTraits().setHeadRotation(headRotation);
 			NPCMain.instance.storage.saveNPC(data);
 			NPCMain.instance.npc.updateNPC(data);
@@ -182,7 +192,7 @@ public class NPCManagerAPI {
 
 	public static void setRange(String name, int range) {
 		if (PluginUtils.npcExists(name)) {
-			NPCData data = NPCMain.instance.npc.getNPCs().get(name); 
+			NPCData data = PluginUtils.getNPCDataByName(name);
 			if (range <= 0) {
 				throw new IllegalArgumentException("NPC range cannot be set to 0");
 			}
@@ -193,10 +203,10 @@ public class NPCManagerAPI {
 			throw new IllegalArgumentException(Messages.UNKNOWN_NPC);
 		}
 	}
-	
+
 	public static void setSkinLayers(String name, Map<SkinLayer, Boolean> layers) {
 		if (PluginUtils.npcExists(name)) {
-			NPCData data = NPCMain.instance.npc.getNPCs().get(name); 
+			NPCData data = PluginUtils.getNPCDataByName(name);
 			if (!layers.isEmpty()) {
 				NPCSkinLayers newLayers;
 				if (data.getTraits().getSkinLayers() != null) {
@@ -208,26 +218,26 @@ public class NPCManagerAPI {
 					if (layer.getValue() != null) {
 						switch (layer.getKey()) {
 							case CAPE:
-							newLayers.setCape(layer.getValue());
-							break;
+								newLayers.setCape(layer.getValue());
+								break;
 							case JACKET:
-							newLayers.setJacket(layer.getValue());
-							break;
+								newLayers.setJacket(layer.getValue());
+								break;
 							case LEFT_SLEEVE:
-							newLayers.setLeftSleeve(layer.getValue());
-							break;
+								newLayers.setLeftSleeve(layer.getValue());
+								break;
 							case RIGHT_SLEEVE:
-							newLayers.setRightSleeve(layer.getValue());
-							break;
+								newLayers.setRightSleeve(layer.getValue());
+								break;
 							case LEFT_LEG:
-							newLayers.setLeftLeg(layer.getValue());
-							break;
+								newLayers.setLeftLeg(layer.getValue());
+								break;
 							case RIGHT_LEG:
-							newLayers.setRightLeg(layer.getValue());
-							break;
+								newLayers.setRightLeg(layer.getValue());
+								break;
 							case HAT:
-							newLayers.setHat(layer.getValue());
-							break;
+								newLayers.setHat(layer.getValue());
+								break;
 						}
 					}
 				}
@@ -239,7 +249,7 @@ public class NPCManagerAPI {
 			throw new IllegalArgumentException(Messages.UNKNOWN_NPC);
 		}
 	}
-	
+
 	/**
 	 * Use this method to customise the interact event of an NPC.
 	 * @param name The name of the NPC to modify.
@@ -248,17 +258,18 @@ public class NPCManagerAPI {
 	 */
 	public static void setInteractEvent(String name, InteractEventType type, String interaction) {
 		if (PluginUtils.npcExists(name)) {
-			NPCData data = NPCMain.instance.npc.getNPCs().get(name);
+			NPCData data = PluginUtils.getNPCDataByName(name);
 			if (type == InteractEventType.COMMAND) {
 				data.setInteractEvent(new CommandInteraction(interaction));
 			} else if (type == InteractEventType.CUSTOM) {
 				if (InteractionsManager.getInteractEvents().containsKey(interaction)) {
 					data.setInteractEvent(InteractionsManager.getInteractEvents().get(interaction));
 				} else {
-					throw new IllegalArgumentException("The custom interact event '"+interaction+"' does not exist.");
+					throw new IllegalArgumentException(
+							"The custom interact event '" + interaction + "' does not exist.");
 				}
 			} else {
-				throw new IllegalArgumentException("The interaction type '"+type+"' is invalid.");
+				throw new IllegalArgumentException("The interaction type '" + type + "' is invalid.");
 			}
 		} else {
 			throw new IllegalArgumentException(Messages.UNKNOWN_NPC);
@@ -282,7 +293,7 @@ public class NPCManagerAPI {
 	 */
 	public static void setSkin(String name, SkinType type, String value, boolean optionalArg) {
 		if (PluginUtils.npcExists(name)) {
-			NPCData data = NPCMain.instance.npc.getNPCs().get(name);
+			NPCData data = PluginUtils.getNPCDataByName(name);
 			if (type == SkinType.URL) {
 				SkinManager.setSkinFromURL(null, data, value, optionalArg);
 			} else if (type == SkinType.PLAYER) {
@@ -291,8 +302,8 @@ public class NPCManagerAPI {
 		} else {
 			throw new IllegalArgumentException(Messages.UNKNOWN_NPC);
 		}
-    }
-	
+	}
+
 	/**
 	 * Changes the location of an NPC.
 	 * @param name The name of the NPC that is being moved.
@@ -300,13 +311,13 @@ public class NPCManagerAPI {
 	 */
 	public static void moveNPC(String name, Location newLocation) {
 		if (PluginUtils.npcExists(name)) {
-			NPCData data = NPCMain.instance.npc.getNPCs().get(name);
+			NPCData data = PluginUtils.getNPCDataByName(name);
 			NPCMain.instance.npc.moveNPC(data, newLocation);
 		} else {
 			throw new IllegalArgumentException(Messages.UNKNOWN_NPC);
 		}
 	}
-	
+
 	/**
 	 * Removes an NPC.
 	 * @param name The NPC to be removed.
@@ -314,19 +325,17 @@ public class NPCManagerAPI {
 	public static void removeNPC(String name) {
 		if (PluginUtils.npcExists(name)) {
 			NPCMain.instance.npc.removeNPC(name, true);
-			NPCMain.instance.npc.getNPCs().remove(name);
 		} else {
 			throw new IllegalArgumentException(Messages.UNKNOWN_NPC);
 		}
 	}
-	
+
 	/**
 	 * Removes all NPC's.
 	 */
 	public static void removeAllNPCs() {
-		for (String npc : NPCMain.instance.npc.getNPCs().keySet()) {
+		for (String npc : PluginUtils.getAllNPCNames()) {
 			NPCMain.instance.npc.removeNPC(npc, true);
 		}
-		NPCMain.instance.npc.getNPCs().clear();
 	}
 }

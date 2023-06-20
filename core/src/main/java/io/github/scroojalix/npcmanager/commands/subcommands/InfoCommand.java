@@ -10,12 +10,12 @@ import org.bukkit.entity.Player;
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.CommandUtils;
 import io.github.scroojalix.npcmanager.commands.SubCommand;
-import io.github.scroojalix.npcmanager.common.PluginUtils;
-import io.github.scroojalix.npcmanager.common.interactions.NPCInteractionData;
-import io.github.scroojalix.npcmanager.common.npc.NPCData;
-import io.github.scroojalix.npcmanager.common.npc.NPCTrait;
-import io.github.scroojalix.npcmanager.common.npc.skin.NPCSkinLayers;
-import io.github.scroojalix.npcmanager.common.npc.skin.SkinData;
+import io.github.scroojalix.npcmanager.npc.NPCData;
+import io.github.scroojalix.npcmanager.npc.NPCTrait;
+import io.github.scroojalix.npcmanager.npc.interactions.NPCInteractionData;
+import io.github.scroojalix.npcmanager.npc.skin.NPCSkinLayers;
+import io.github.scroojalix.npcmanager.npc.skin.SkinData;
+import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class InfoCommand extends SubCommand {
 
@@ -42,9 +42,9 @@ public class InfoCommand extends SubCommand {
     @Override
     public boolean execute(NPCMain main, CommandSender sender, String[] args) {
         if (args.length < 2)
-        return false;
+            return false;
         if (CommandUtils.npcExists(args[1], sender)) {
-            NPCData data = main.npc.getNPCs().get(args[1]);
+            NPCData data = PluginUtils.getNPCDataByName(args[1]);
             NPCTrait traits = data.getTraits();
             if (args.length == 2 || args[2].equalsIgnoreCase("1")) {
                 CommandUtils.sendJSONMessage(sender, CommandUtils.getTitleMessage("NPC Info"));
@@ -57,18 +57,21 @@ public class InfoCommand extends SubCommand {
                 CommandUtils.sendJSONMessage(sender, CommandUtils.getEquipmentComponents(data.getName()));
                 if (data.getInteractEvent() != null) {
                     NPCInteractionData interactEvent = traits.getInteractEvent();
-                    sender.sendMessage(PluginUtils.format("&6Interact Event: "+interactEvent.getType().infoPrefix
-                        +traits.getInteractEvent().getValue()));
+                    sender.sendMessage(PluginUtils.format("&6Interact Event: " + interactEvent.getType().infoPrefix
+                            + traits.getInteractEvent().getValue()));
                 } else {
                     sender.sendMessage(PluginUtils.format("&6Interact Event: &fnull"));
                 }
-                CommandUtils.sendJSONMessage(sender, CommandUtils.getPageTurnerMessage("/npc info " + data.getName(), 2, 1));
+                CommandUtils.sendJSONMessage(sender,
+                        CommandUtils.getPageTurnerMessage("/npc info " + data.getName(), 2, 1));
             } else if (args[2].equalsIgnoreCase("2")) {
                 CommandUtils.sendJSONMessage(sender, CommandUtils.getTitleMessage("NPC Info"));
                 SkinData skinData = traits.getSkinData();
-                sender.sendMessage(PluginUtils.format("&6Skin Name: &F"+(skinData==null?null:skinData.getSkinName())));
+                sender.sendMessage(
+                        PluginUtils.format("&6Skin Name: &F" + (skinData == null ? null : skinData.getSkinName())));
                 NPCSkinLayers layers = traits.getSkinLayers();
-                sender.sendMessage(ChatColor.GOLD+"Skin Layers: "+(layers==null?new NPCSkinLayers():layers).getCurrentConfiguration());
+                sender.sendMessage(ChatColor.GOLD + "Skin Layers: "
+                        + (layers == null ? new NPCSkinLayers() : layers).getCurrentConfiguration());
                 if (sender instanceof Player) {
                     sender.sendMessage("");
                     sender.sendMessage("");
@@ -76,7 +79,8 @@ public class InfoCommand extends SubCommand {
                     sender.sendMessage("");
                     sender.sendMessage("");
                 }
-                CommandUtils.sendJSONMessage(sender, CommandUtils.getPageTurnerMessage("/npc info " + data.getName(), 2, 2));
+                CommandUtils.sendJSONMessage(sender,
+                        CommandUtils.getPageTurnerMessage("/npc info " + data.getName(), 2, 2));
             } else {
                 sender.sendMessage(ChatColor.RED + "That is not a valid page number.");
             }
@@ -93,5 +97,5 @@ public class InfoCommand extends SubCommand {
             return new ArrayList<String>();
         }
     }
-    
+
 }

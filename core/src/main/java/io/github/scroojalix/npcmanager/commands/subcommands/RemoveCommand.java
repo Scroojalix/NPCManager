@@ -39,7 +39,6 @@ public class RemoveCommand extends SubCommand {
         String name = args[1];
         if (CommandUtils.npcExists(name, sender)) {
             main.npc.removeNPC(name, true);
-            main.npc.getNPCs().remove(name);
             sender.sendMessage(ChatColor.GOLD+"Removed "+ChatColor.WHITE+name);
             return true;
         }

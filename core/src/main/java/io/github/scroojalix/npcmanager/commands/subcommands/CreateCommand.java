@@ -9,8 +9,8 @@ import org.bukkit.entity.Player;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.SubCommand;
-import io.github.scroojalix.npcmanager.common.PluginUtils;
-import io.github.scroojalix.npcmanager.common.chatutils.Messages;
+import io.github.scroojalix.npcmanager.utils.Messages;
+import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class CreateCommand extends SubCommand {
 
@@ -40,7 +40,7 @@ public class CreateCommand extends SubCommand {
             return false;
 
         String name = args[1];
-        if (main.npc.getNPCs().containsKey(name)) {
+        if (PluginUtils.npcExists(name)) {
             sender.sendMessage(ChatColor.RED+Messages.NPC_EXISTS);
             return true;
         } else if (name.length() > 16) {

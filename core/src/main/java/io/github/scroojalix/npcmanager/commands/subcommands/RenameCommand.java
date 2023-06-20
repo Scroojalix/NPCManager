@@ -9,9 +9,9 @@ import org.bukkit.command.CommandSender;
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.CommandUtils;
 import io.github.scroojalix.npcmanager.commands.SubCommand;
-import io.github.scroojalix.npcmanager.common.PluginUtils;
-import io.github.scroojalix.npcmanager.common.chatutils.Messages;
-import io.github.scroojalix.npcmanager.common.npc.NPCData;
+import io.github.scroojalix.npcmanager.npc.NPCData;
+import io.github.scroojalix.npcmanager.utils.Messages;
+import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class RenameCommand extends SubCommand {
 
@@ -24,7 +24,7 @@ public class RenameCommand extends SubCommand {
     public String getDescription() {
         return "Rename an NPC.";
     }
-    
+
     @Override
     public String getSyntax() {
         return "/npc rename <npc> <name>";
@@ -40,26 +40,24 @@ public class RenameCommand extends SubCommand {
         if (args.length < 3)
             return false;
         if (CommandUtils.npcExists(args[1], sender)) {
-            NPCData data = main.npc.getNPCs().get(args[1]);
+            NPCData data = PluginUtils.getNPCDataByName(args[1]);
             if (args[1].equals(args[2])) {
-                sender.sendMessage(ChatColor.RED+"You cannot rename an NPC to its previous name!");
+                sender.sendMessage(ChatColor.RED + "You cannot rename an NPC to its previous name!");
                 return false;
             }
-            if (!main.npc.getNPCs().containsKey(args[2])) {
+            if (!PluginUtils.npcExists(args[2])) {
                 if (PluginUtils.isAlphanumeric(args[2])) {
                     main.npc.removeNPC(data.getName(), true);
-                    main.npc.getNPCs().remove(data.getName());
                     data.setName(args[2]);
                     main.storage.saveNPC(data);
-                    main.npc.getNPCs().put(data.getName(), data);
                     main.npc.spawnNPC(data);
-                    sender.sendMessage(PluginUtils.format("&6Renamed &f"+args[1]+" &6to &f"+args[2]));
+                    sender.sendMessage(PluginUtils.format("&6Renamed &f" + args[1] + " &6to &f" + args[2]));
                     return true;
                 } else {
-                    sender.sendMessage(ChatColor.RED+Messages.NOT_ALPHANUMERIC);
+                    sender.sendMessage(ChatColor.RED + Messages.NOT_ALPHANUMERIC);
                 }
             } else {
-                sender.sendMessage(ChatColor.RED+Messages.NPC_EXISTS);
+                sender.sendMessage(ChatColor.RED + Messages.NPC_EXISTS);
             }
         }
         return false;

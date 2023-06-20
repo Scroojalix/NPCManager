@@ -1,0 +1,188 @@
+package io.github.scroojalix.npcmanager.protocol;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
+
+import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.PacketContainer;
+
+import io.github.scroojalix.npcmanager.NPCMain;
+import io.github.scroojalix.npcmanager.npc.NPCContainer;
+import io.github.scroojalix.npcmanager.utils.PluginUtils;
+
+public class NPCLoader implements Runnable {
+
+	private NPCMain main;
+	private final NPCContainer npcContainer;
+	private ProtocolManager pm;
+
+	private HashMap<Player, Integer> loadedForPlayers = new HashMap<Player, Integer>();
+	private HashSet<Player> outsideHeadRotationRange = new HashSet<Player>();
+	private LinkedHashSet<PacketContainer> loadPackets = new LinkedHashSet<PacketContainer>();
+
+	private final double range;
+	private final boolean hasHeadRotation;
+	private final double headRotationRange;
+	private final boolean resetRotation;
+	private final boolean perfectOrientation;
+	private final Location npcLoc;
+
+	public NPCLoader(NPCMain main, NPCContainer npcContainer, ProtocolManager protocolManger) {
+		this.main = main;
+		this.npcContainer = npcContainer;
+		this.pm = protocolManger;
+		this.range = npcContainer.getNPCData().getTraits().getRange();
+		this.hasHeadRotation = npcContainer.getNPCData().getTraits().hasHeadRotation();
+		this.headRotationRange = main.getConfig().getDouble("npc-headrotation-range");
+		this.resetRotation = main.getConfig().getBoolean("reset-headrotation");
+		this.perfectOrientation = main.getConfig().getBoolean("perfect-npc-orientation");
+
+		npcLoc = npcContainer.getNPCData().getLoc();
+
+		generatePackets();
+	}
+
+	/**
+	 * Terminates all Bukkit Runnable tasks so this NPCLoader task can be terminated.
+	 */
+	public void clearAllTasks() {
+		for (int id : loadedForPlayers.values()) {
+			Bukkit.getScheduler().cancelTask(id);
+		}
+		loadedForPlayers.clear();
+		outsideHeadRotationRange.clear();
+	}
+
+	/**
+	 * Generate all packets required to spawn an NPC, and store them in a LinkedHashSet.
+	 */
+	private void generatePackets() {
+		loadPackets.add(PacketRegistry.NPC_ADD_INFO.get(npcContainer));
+		loadPackets.add(PacketRegistry.NPC_SPAWN.get(npcContainer));
+		loadPackets.add(PacketRegistry.NPC_UPDATE_METADATA.get(npcContainer));
+		loadPackets.addAll(PacketRegistry.NPC_RESET_HEAD_ROTATION.get(npcContainer));
+
+		//Scoreboards
+		// FIXME these packets don't need to be sent every time an NPC is loaded
+		loadPackets.add(PacketRegistry.SCOREBOARD_CREATE.get());
+		loadPackets.add(PacketRegistry.SCOREBOARD_ADD_NPC.get(npcContainer));
+		
+		if (perfectOrientation) {
+			loadPackets.add(PacketRegistry.NPC_PLAY_ANIMATION.get(npcContainer));
+		}
+
+		//Holograms
+		if (npcContainer.isNameHoloEnabled()) {
+			loadPackets.addAll(PacketRegistry.HOLOGRAM_CREATE.get(npcContainer.getNameHolo()));
+		}
+		if (npcContainer.isSubtitleHoloEnabled()) {
+			loadPackets.addAll(PacketRegistry.HOLOGRAM_CREATE.get(npcContainer.getSubtitleHolo()));
+		}
+
+		//Equipment
+		if (npcContainer.getNPCData().getTraits().getEquipment(false) != null) {
+			loadPackets.addAll(PacketRegistry.NPC_SET_EQUIPMENT.get(npcContainer));
+		}
+	}
+
+	/**
+	 * Method that loops to update NPC's.
+	 */
+	public void run() {
+		for (Player player : Bukkit.getOnlinePlayers()) {
+			if (player.getWorld().getName().equalsIgnoreCase(npcLoc.getWorld().getName())) {
+				double distance = calculateDistance(npcLoc, player.getLocation());
+				if (distance <= range) {
+					if (!loadedForPlayers.containsKey(player)) {
+						sendLoadPackets(player);
+					}
+					if (hasHeadRotation) {
+						if (distance <= headRotationRange && distance > 0) {
+							if (outsideHeadRotationRange.contains(player)) {
+								outsideHeadRotationRange.remove(player);
+							}
+							lookInDirection(player);
+						} else if (resetRotation) {
+							if (!outsideHeadRotationRange.contains(player)) {
+								outsideHeadRotationRange.add(player);
+								resetLookDirection(player);
+							}
+						}
+					}
+				} else if (loadedForPlayers.containsKey(player)) {
+					Bukkit.getScheduler().cancelTask(loadedForPlayers.get(player));
+					loadedForPlayers.remove(player);
+					sendDeletePackets(player);
+				}
+			} else if (loadedForPlayers.containsKey(player)) loadedForPlayers.remove(player);
+		}
+	}
+
+	/**
+	 * Makes an NPC look towards a player.
+	 * @param player The player to look at.
+	 */
+	private void lookInDirection(Player player) {
+		// FIXME range of pitch values is limited (cant look straight up)
+		Vector difference = player.getLocation().clone().subtract(npcLoc).toVector().normalize();
+		float degrees = (float) Math.toDegrees(Math.atan2(difference.getZ(), difference.getX()) - Math.PI / 2);
+		byte yaw = PluginUtils.toByteAngle(degrees);
+		Vector height = npcLoc.clone().subtract(player.getLocation()).toVector().normalize();
+		byte pitch = PluginUtils.toByteAngle((float)Math.toDegrees(Math.atan(height.getY())));
+
+		for (PacketContainer container : PacketRegistry.getHeadRotationPackets(npcContainer, yaw, pitch)) {
+			pm.sendServerPacket(player, container);
+		}
+	}
+
+	/**
+	 * Reset an NPC's head rotation for a player.
+	 * @param player The player to reset head rotation for.
+	 */
+	private void resetLookDirection(Player player) {
+		for (PacketContainer container : PacketRegistry.NPC_RESET_HEAD_ROTATION.get(npcContainer)) {
+			pm.sendServerPacket(player, container);
+		}	
+	}
+
+	/**
+	 * Send packets that spawn the NPC to a player.
+	 * @param player The player to send packets to.
+	 */
+	private void sendLoadPackets(Player player) {
+		for (PacketContainer container : loadPackets) {
+			pm.sendServerPacket(player, container);
+		}
+		loadedForPlayers.put(player, Bukkit.getScheduler().scheduleSyncDelayedTask(main, new Runnable() {
+			@Override
+			public void run() {
+				pm.sendServerPacket(player, PacketRegistry.NPC_REMOVE_INFO.get(npcContainer));
+			}
+		}, PluginUtils.NPC_REMOVE_DELAY));
+	}
+
+	/**
+	 * Send packets to a player to delete/hide an NPC.
+	 * @param player
+	 */
+	public void sendDeletePackets(Player player) {
+		pm.sendServerPacket(player, PacketRegistry.NPC_DESTROY.get(npcContainer));
+		pm.sendServerPacket(player, PacketRegistry.NPC_REMOVE_INFO.get(npcContainer));
+	}
+
+	/**
+	 * Calculate the distance between two locations.
+	 * @param loc1 Location of NPC.
+	 * @param loc2 Location of Player.
+	 * @return The distance between an NPC and a Player.
+	 */
+	private double calculateDistance(Location loc1, Location loc2) {
+        return Math.sqrt(Math.pow(loc1.getX() - loc2.getX(), 2) + Math.pow(loc1.getY() - loc2.getY(), 2) + Math.pow(loc1.getZ() - loc2.getZ(), 2));
+	}
+}

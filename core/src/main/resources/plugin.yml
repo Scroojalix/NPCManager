@@ -3,6 +3,7 @@ version: ${version}
 main: io.github.scroojalix.npcmanager.NPCMain
 name: ${project.name}
 description: ${description}
+depend: [ ProtocolLib ]
 api-version: 1.13
 permission-message: &noperms "\u00A7cYou do not have permission to use this command."
 

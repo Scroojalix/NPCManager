@@ -7,8 +7,8 @@ import org.bukkit.command.CommandSender;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.SubCommand;
-import io.github.scroojalix.npcmanager.common.PluginUtils;
-import io.github.scroojalix.npcmanager.common.npc.NPCData;
+import io.github.scroojalix.npcmanager.npc.NPCData;
+import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class DisplayNameModification extends SubCommand {
 
@@ -35,13 +35,14 @@ public class DisplayNameModification extends SubCommand {
     @Override
     public boolean execute(NPCMain main, CommandSender sender, String[] args) {
         if (args.length >= 4) {
-            NPCData data = main.npc.getNPCs().get(args[1]);
+            NPCData data = PluginUtils.getNPCDataByName(args[1]);
             String value = args[3];
             for (int arg = 4; arg < args.length; arg++) {
                 value += " " + args[arg];
             }
             data.getTraits().setDisplayName(value);
-            sender.sendMessage(PluginUtils.format("&6Set the display name of &F"+data.getName()+"&6 to &F"+value));
+            sender.sendMessage(
+                    PluginUtils.format("&6Set the display name of &F" + data.getName() + "&6 to &F" + value));
             main.storage.saveNPC(data);
             main.npc.updateNPC(data);
             return true;
@@ -52,10 +53,10 @@ public class DisplayNameModification extends SubCommand {
     @Override
     public List<String> onTabComplete(String[] args) {
         List<String> result = new ArrayList<String>();
-        if(args.length == 4) {
+        if (args.length == 4) {
             result.add("null");
         }
         return result;
     }
-    
+
 }
