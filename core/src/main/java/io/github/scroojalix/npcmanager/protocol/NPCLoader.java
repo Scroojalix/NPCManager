@@ -1,31 +1,16 @@
 package io.github.scroojalix.npcmanager.protocol;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.InternalStructure;
 import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.wrappers.EnumWrappers;
-import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
-import com.comphenix.protocol.wrappers.Pair;
-import com.comphenix.protocol.wrappers.WrappedDataValue;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.npc.NPCContainer;
@@ -34,20 +19,19 @@ import io.github.scroojalix.npcmanager.utils.PluginUtils;
 public class NPCLoader implements Runnable {
 
 	private NPCMain main;
-	private NPCContainer npcContainer;
+	private final NPCContainer npcContainer;
 	private ProtocolManager pm;
 
-	private Map<Player, Integer> loadedForPlayers = new HashMap<Player, Integer>();
-	private Set<Player> outsideHeadRotationRange = new HashSet<Player>();
-	private Set<PacketContainer> loadPackets = new LinkedHashSet<PacketContainer>();
+	private HashMap<Player, Integer> loadedForPlayers = new HashMap<Player, Integer>();
+	private HashSet<Player> outsideHeadRotationRange = new HashSet<Player>();
+	private LinkedHashSet<PacketContainer> loadPackets = new LinkedHashSet<PacketContainer>();
 
-	private double range;
-	private boolean hasHeadRotation;
-	private double headRotationRange;
-	private boolean resetRotation;
-	private boolean perfectOrientation;
-
-	private Location npcLoc;
+	private final double range;
+	private final boolean hasHeadRotation;
+	private final double headRotationRange;
+	private final boolean resetRotation;
+	private final boolean perfectOrientation;
+	private final Location npcLoc;
 
 	public NPCLoader(NPCMain main, NPCContainer npcContainer, ProtocolManager protocolManger) {
 		this.main = main;
@@ -64,6 +48,9 @@ public class NPCLoader implements Runnable {
 		generatePackets();
 	}
 
+	/**
+	 * Terminates all Bukkit Runnable tasks so this NPCLoader task can be terminated.
+	 */
 	public void clearAllTasks() {
 		for (int id : loadedForPlayers.values()) {
 			Bukkit.getScheduler().cancelTask(id);
@@ -76,165 +63,32 @@ public class NPCLoader implements Runnable {
 	 * Generate all packets required to spawn an NPC, and store them in a LinkedHashSet.
 	 */
 	private void generatePackets() {
-		// FIXME may not need to send all of these packets every time.
-
-		PacketContainer add = pm.createPacket(PacketType.Play.Server.PLAYER_INFO);
-		if (PluginUtils.ServerVersion.v1_19_R2.atOrAbove()) {
-			add.getPlayerInfoActions().write(0, EnumSet.of(EnumWrappers.PlayerInfoAction.ADD_PLAYER));
-			add.getPlayerInfoDataLists().write(1, Collections.singletonList(npcContainer.getPlayerInfo()));
-		} else {
-			add.getPlayerInfoAction().write(0, EnumWrappers.PlayerInfoAction.ADD_PLAYER);
-			add.getPlayerInfoDataLists().write(0, Collections.singletonList(npcContainer.getPlayerInfo()));
-		}
-		loadPackets.add(add);
-
-		PacketContainer spawn = pm.createPacket(PacketType.Play.Server.NAMED_ENTITY_SPAWN);
-		spawn.getIntegers().write(0, npcContainer.getNPCEntityID());
-		spawn.getUUIDs().write(0, npcContainer.getPlayerInfo().getProfileId());
-		if (PluginUtils.ServerVersion.v1_9_R1.atOrAbove()) {
-			spawn.getDoubles()
-					.write(0, npcLoc.getX())
-					.write(1, npcLoc.getY())
-					.write(2, npcLoc.getZ());
-		} else {
-			spawn.getIntegers()
-				.write(1, PluginUtils.get1_8LocInt(npcLoc.getX()))
-				.write(2, PluginUtils.get1_8LocInt(npcLoc.getY()))
-				.write(3, PluginUtils.get1_8LocInt(npcLoc.getZ()));
-		}
-		spawn.getBytes()
-			.write(0, toByteAngle(npcLoc.getYaw()))
-			.write(1, toByteAngle(npcLoc.getPitch()));
-		loadPackets.add(spawn);
-
-		PacketContainer meta = pm.createPacket(PacketType.Play.Server.ENTITY_METADATA);
-		meta.getIntegers().write(0, npcContainer.getNPCEntityID());
-
-		if (PluginUtils.ServerVersion.v1_19_R2.atOrAbove()) {
-			final List<WrappedDataValue> wrappedDataValueList = new ArrayList<>();
-			wrappedDataValueList.add(new WrappedDataValue(
-					NPCMain.serverVersion.getSkinLayersByteIndex(),
-					WrappedDataWatcher.Registry.get(Byte.class),
-					npcContainer.getNPCData().getTraits().getSkinLayersByte()));
-
-			meta.getDataValueCollectionModifier().write(0, wrappedDataValueList);
-		} else {
-			WrappedDataWatcher watcher = new WrappedDataWatcher();
-			if (PluginUtils.ServerVersion.v1_9_R1.atOrAbove()) {
-				watcher.setObject(
-						NPCMain.serverVersion.getSkinLayersByteIndex(),
-						WrappedDataWatcher.Registry.get(Byte.class),
-						npcContainer.getNPCData().getTraits().getSkinLayersByte());
-			} else {
-				watcher.setObject(
-						NPCMain.serverVersion.getSkinLayersByteIndex(),
-						npcContainer.getNPCData().getTraits().getSkinLayersByte());
-			}
-
-			meta.getWatchableCollectionModifier().write(0, watcher.getWatchableObjects());
-		}
-		loadPackets.add(meta);
-
-		PacketContainer rotate = pm.createPacket(PacketType.Play.Server.ENTITY_HEAD_ROTATION);
-		rotate.getIntegers().write(0, npcContainer.getNPCEntityID());
-		rotate.getBytes().write(0, toByteAngle(npcLoc.getYaw()));
-		loadPackets.add(rotate);
+		loadPackets.add(PacketRegistry.NPC_ADD_INFO.get(npcContainer));
+		loadPackets.add(PacketRegistry.NPC_SPAWN.get(npcContainer));
+		loadPackets.add(PacketRegistry.NPC_UPDATE_METADATA.get(npcContainer));
+		loadPackets.addAll(PacketRegistry.NPC_RESET_HEAD_ROTATION.get(npcContainer));
 
 		//Scoreboards
-		// TODO these packets don't need to be sent every time an NPC is loaded
-
-		if (PluginUtils.ServerVersion.v1_17_R1.atOrAbove()) {
-			PacketContainer createTeam = pm.createPacket(PacketType.Play.Server.SCOREBOARD_TEAM);
-			createTeam.getStrings().write(0, PluginUtils.NPC_SCOREBOARD_TEAM_NAME);
-			InternalStructure struct = createTeam.getOptionalStructures().read(0).get();
-			struct.getStrings()
-				.write(0, "never")  // Visibility
-				.write(1, "never"); // Collision
-			createTeam.getOptionalStructures().write(0, Optional.of(struct));
-			loadPackets.add(createTeam);
-
-			PacketContainer addNPCToTeam = pm.createPacket(PacketType.Play.Server.SCOREBOARD_TEAM);
-			addNPCToTeam.getStrings().write(0, PluginUtils.NPC_SCOREBOARD_TEAM_NAME);
-			addNPCToTeam.getIntegers().write(0, 3);
-			addNPCToTeam.getModifier().write(2, Collections.singletonList(
-				npcContainer.getPlayerInfo().getProfile().getName()
-			));
-			loadPackets.add(addNPCToTeam);
-		} else {
-			boolean above1_8 = PluginUtils.ServerVersion.v1_9_R1.atOrAbove();
-			PacketContainer createTeam = pm.createPacket(PacketType.Play.Server.SCOREBOARD_TEAM);
-			int teamSettingIndex = PluginUtils.ServerVersion.v1_13_R1.atOrAbove() ? 1 : 4;
-			createTeam.getStrings()
-					.write(0, PluginUtils.NPC_SCOREBOARD_TEAM_NAME)
-					.write(teamSettingIndex, "never");
-			if (above1_8) {
-				createTeam.getStrings().write(teamSettingIndex + 1, "never");
-			}
-			loadPackets.add(createTeam);
-
-			PacketContainer addNPCToTeam = pm.createPacket(PacketType.Play.Server.SCOREBOARD_TEAM);
-			addNPCToTeam.getStrings().write(0, PluginUtils.NPC_SCOREBOARD_TEAM_NAME);
-			int teamPacketModeIndex = PluginUtils.ServerVersion.v1_13_R1.atOrAbove() ? 0 : 1;
-			addNPCToTeam.getIntegers().write(teamPacketModeIndex, 3);
-			addNPCToTeam.getModifier().write(above1_8 ? 7 : 6, Collections.singletonList(
-				npcContainer.getPlayerInfo().getProfile().getName()
-			));
-			loadPackets.add(addNPCToTeam);
-		}
-
+		// FIXME these packets don't need to be sent every time an NPC is loaded
+		loadPackets.add(PacketRegistry.SCOREBOARD_CREATE.get());
+		loadPackets.add(PacketRegistry.SCOREBOARD_ADD_NPC.get(npcContainer));
+		
 		if (perfectOrientation) {
-			PacketContainer orient = pm.createPacket(PacketType.Play.Server.ANIMATION);
-			orient.getIntegers()
-					.write(0, npcContainer.getNPCEntityID())
-					.write(1, 0);
-
-			loadPackets.add(orient);
+			loadPackets.add(PacketRegistry.NPC_PLAY_ANIMATION.get(npcContainer));
 		}
 
 		//Holograms
 		if (npcContainer.isNameHoloEnabled()) {
-			loadPackets.addAll(npcContainer.getNameHolo().getHologramPackets());
+			loadPackets.addAll(PacketRegistry.HOLOGRAM_CREATE.get(npcContainer.getNameHolo()));
 		}
 		if (npcContainer.isSubtitleHoloEnabled()) {
-			loadPackets.addAll(npcContainer.getSubtitleHolo().getHologramPackets());
+			loadPackets.addAll(PacketRegistry.HOLOGRAM_CREATE.get(npcContainer.getSubtitleHolo()));
 		}
 
 		//Equipment
 		if (npcContainer.getNPCData().getTraits().getEquipment(false) != null) {
-			final List<Pair<ItemSlot, ItemStack>> equipmentList = 
-				npcContainer.getNPCData().getTraits().getEquipment(false).getSlotStackPaitList();
-			if (!equipmentList.isEmpty()) {
-				if (PluginUtils.ServerVersion.v1_16_R1.atOrAbove()) {
-					PacketContainer equipmentPacket = pm.createPacket(PacketType.Play.Server.ENTITY_EQUIPMENT);
-					equipmentPacket.getIntegers().write(0, npcContainer.getNPCEntityID());
-					equipmentPacket.getSlotStackPairLists().write(0, equipmentList);
-					loadPackets.add(equipmentPacket);
-				} else {
-					for (Pair<ItemSlot, ItemStack> pair : equipmentList) {
-						PacketContainer equipmentPacket = pm.createPacket(PacketType.Play.Server.ENTITY_EQUIPMENT);
-						equipmentPacket.getIntegers().write(0, npcContainer.getNPCEntityID());
-						if (PluginUtils.ServerVersion.v1_9_R1.atOrAbove()) {
-							equipmentPacket.getItemSlots().write(0, pair.getFirst());
-						} else {
-							int equipmentSlot;
-							switch(pair.getFirst()) {
-								case MAINHAND: equipmentSlot = 0; break;
-								case FEET: equipmentSlot = 1; break;
-								case LEGS: equipmentSlot = 2; break;
-								case CHEST: equipmentSlot = 3; break;
-								case HEAD: equipmentSlot = 4; break;
-								default:
-									continue;
-							}
-							equipmentPacket.getIntegers().write(1, equipmentSlot);
-						}						
-						equipmentPacket.getItemModifier().write(0, pair.getSecond());
-						loadPackets.add(equipmentPacket);
-					}
-				}
-			}
+			loadPackets.addAll(PacketRegistry.NPC_SET_EQUIPMENT.get(npcContainer));
 		}
-
 	}
 
 	/**
@@ -275,14 +129,16 @@ public class NPCLoader implements Runnable {
 	 * @param player The player to look at.
 	 */
 	private void lookInDirection(Player player) {
-		// FIXME this math isn't the best, it makes the head rotation look quite jittery
+		// FIXME range of pitch values is limited (cant look straight up)
 		Vector difference = player.getLocation().clone().subtract(npcLoc).toVector().normalize();
 		float degrees = (float) Math.toDegrees(Math.atan2(difference.getZ(), difference.getX()) - Math.PI / 2);
-		byte angle = toByteAngle(degrees);
+		byte yaw = PluginUtils.toByteAngle(degrees);
 		Vector height = npcLoc.clone().subtract(player.getLocation()).toVector().normalize();
-		byte pitch = toByteAngle((float)Math.toDegrees(Math.atan(height.getY())));
+		byte pitch = PluginUtils.toByteAngle((float)Math.toDegrees(Math.atan(height.getY())));
 
-		setLookDirection(player, angle, pitch);
+		for (PacketContainer container : PacketRegistry.getHeadRotationPackets(npcContainer, yaw, pitch)) {
+			pm.sendServerPacket(player, container);
+		}
 	}
 
 	/**
@@ -290,28 +146,9 @@ public class NPCLoader implements Runnable {
 	 * @param player The player to reset head rotation for.
 	 */
 	private void resetLookDirection(Player player) {
-		byte yaw = toByteAngle(npcLoc.getYaw());
-		byte pitch = toByteAngle(npcLoc.getPitch());
-		setLookDirection(player, yaw, pitch);
-	}
-
-	private void setLookDirection(Player player, byte yaw, byte pitch) {
-		PacketContainer rotate = pm.createPacket(PacketType.Play.Server.ENTITY_HEAD_ROTATION);
-		rotate.getIntegers().write(0, npcContainer.getNPCEntityID());
-		rotate.getBytes().write(0, yaw);
-
-		PacketContainer move = pm.createPacket(PacketType.Play.Server.ENTITY_LOOK);
-		move.getIntegers().write(0, npcContainer.getNPCEntityID());
-		int yawIndex = PluginUtils.ServerVersion.v1_9_R1.atOrAbove() ? 0 : 3;
-		move.getBytes()
-				.write(yawIndex, yaw)
-				.write(yawIndex + 1, pitch);
-		move.getBooleans()
-				.write(0, true)
-				.write(1, true);
-
-		pm.sendServerPacket(player, rotate);
-		pm.sendServerPacket(player, move);
+		for (PacketContainer container : PacketRegistry.NPC_RESET_HEAD_ROTATION.get(npcContainer)) {
+			pm.sendServerPacket(player, container);
+		}	
 	}
 
 	/**
@@ -325,8 +162,7 @@ public class NPCLoader implements Runnable {
 		loadedForPlayers.put(player, Bukkit.getScheduler().scheduleSyncDelayedTask(main, new Runnable() {
 			@Override
 			public void run() {
-				PacketContainer remove = getPlayerInfoRemovePacket();
-				pm.sendServerPacket(player, remove);
+				pm.sendServerPacket(player, PacketRegistry.NPC_REMOVE_INFO.get(npcContainer));
 			}
 		}, PluginUtils.NPC_REMOVE_DELAY));
 	}
@@ -336,40 +172,8 @@ public class NPCLoader implements Runnable {
 	 * @param player
 	 */
 	public void sendDeletePackets(Player player) {
-		PacketContainer removeEntities = pm.createPacket(PacketType.Play.Server.ENTITY_DESTROY);
-		List<Integer> ids = new ArrayList<Integer>();
-		ids.add(npcContainer.getNPCEntityID());
-		if (npcContainer.isNameHoloEnabled()) {
-			ids.add(npcContainer.getNameHolo().getID());
-		}
-		if (npcContainer.isSubtitleHoloEnabled()) {
-			ids.add(npcContainer.getSubtitleHolo().getID());
-		}
-
-		if (PluginUtils.ServerVersion.v1_17_R1.atOrAbove()) {
-			removeEntities.getIntLists().write(0, ids);
-		} else {
-			removeEntities.getIntegerArrays().write(0, ids.stream().mapToInt(Integer::intValue).toArray());
-		}
-
-		PacketContainer removeInfo = getPlayerInfoRemovePacket();
-
-		pm.sendServerPacket(player, removeEntities);
-		pm.sendServerPacket(player, removeInfo);
-	}
-
-	@SuppressWarnings("deprecation")
-	private PacketContainer getPlayerInfoRemovePacket() {
-		PacketContainer removeInfo;
-		if (PluginUtils.ServerVersion.v1_19_R2.atOrAbove()) {
-			removeInfo = pm.createPacket(PacketType.Play.Server.PLAYER_INFO_REMOVE);
-			removeInfo.getUUIDLists().write(0, Collections.singletonList(npcContainer.getNPCData().getUUID()));
-		} else {
-			removeInfo = pm.createPacket(PacketType.Play.Server.PLAYER_INFO);
-			removeInfo.getPlayerInfoAction().write(0, EnumWrappers.PlayerInfoAction.REMOVE_PLAYER);
-			removeInfo.getPlayerInfoDataLists().write(0, Collections.singletonList(npcContainer.getPlayerInfo()));
-		}
-		return removeInfo;
+		pm.sendServerPacket(player, PacketRegistry.NPC_DESTROY.get(npcContainer));
+		pm.sendServerPacket(player, PacketRegistry.NPC_REMOVE_INFO.get(npcContainer));
 	}
 
 	/**
@@ -380,9 +184,5 @@ public class NPCLoader implements Runnable {
 	 */
 	private double calculateDistance(Location loc1, Location loc2) {
         return Math.sqrt(Math.pow(loc1.getX() - loc2.getX(), 2) + Math.pow(loc1.getY() - loc2.getY(), 2) + Math.pow(loc1.getZ() - loc2.getZ(), 2));
-	}
-
-	private byte toByteAngle(float angle) {
-		return (byte) (angle * 256.0F / 360.0F);
 	}
 }

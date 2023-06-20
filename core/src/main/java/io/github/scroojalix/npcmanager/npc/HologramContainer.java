@@ -1,18 +1,12 @@
 package io.github.scroojalix.npcmanager.npc;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedDataValue;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
@@ -34,59 +28,6 @@ public class HologramContainer {
         this.uuid = UUID.randomUUID();
         this.loc = loc;
         this.formattedText = PluginUtils.format(text);
-    }
-
-    // TODO move this, and all other packets to a PacketRegistry class
-    @SuppressWarnings("deprecation")
-    public LinkedHashSet<PacketContainer> getHologramPackets() {
-        final LinkedHashSet<PacketContainer> packets = new LinkedHashSet<>();
-        ProtocolManager pm = ProtocolLibrary.getProtocolManager();
-
-        if (PluginUtils.ServerVersion.v1_14_R1.atOrAbove()) {
-            PacketContainer createHologram = pm.createPacket(PacketType.Play.Server.SPAWN_ENTITY);
-            createHologram.getIntegers().write(0, id);
-            createHologram.getUUIDs().write(0, uuid);
-            createHologram.getEntityTypeModifier().write(0, EntityType.ARMOR_STAND);
-            createHologram.getDoubles()
-                .write(0, loc.getX())
-                .write(1, loc.getY())
-                .write(2, loc.getZ());
-            packets.add(createHologram);
-
-            PacketContainer hologramData = pm.createPacket(PacketType.Play.Server.ENTITY_METADATA);
-            hologramData.getIntegers().write(0, id);
-            if (PluginUtils.ServerVersion.v1_19_R2.atOrAbove()) {
-                hologramData.getDataValueCollectionModifier().write(0, getDataWatcherAsList());
-            } else {
-                hologramData.getWatchableCollectionModifier().write(0, getDataWatcher().getWatchableObjects());
-            }
-            packets.add(hologramData);
-        } else {
-            PacketContainer createHologram = pm.createPacket(PacketType.Play.Server.SPAWN_ENTITY_LIVING);
-            createHologram.getIntegers()
-                .write(0, id)
-                // Set to armor stand
-                .write(1, PluginUtils.ServerVersion.v1_13_R1.atOrAbove() ? 1 : 30);
-
-            if (PluginUtils.ServerVersion.v1_9_R1.atOrAbove()) {
-                createHologram.getUUIDs().write(0, uuid);
-                createHologram.getDoubles()
-                    .write(0, loc.getX())
-                    .write(1, loc.getY())
-                    .write(2, loc.getZ());
-                createHologram.getDataWatcherModifier().write(0, getDataWatcher());
-            } else {
-                createHologram.getIntegers()
-                    .write(2, PluginUtils.get1_8LocInt(loc.getX()))
-                    .write(3, PluginUtils.get1_8LocInt(loc.getY()))
-                    .write(4, PluginUtils.get1_8LocInt(loc.getZ()));
-                createHologram.getDataWatcherModifier().write(0, getDataWatcherOld());
-            }
-
-            packets.add(createHologram);
-        }
-
-        return packets;
     }
 
     public WrappedDataWatcher getDataWatcher() {
@@ -113,17 +54,17 @@ public class HologramContainer {
         //Set custom name visible
 		watcher.setObject(new WrappedDataWatcher.
 			WrappedDataWatcherObject(3, booleanSerializer),
-            formattedText != null && !formattedText.isEmpty());
-        
+                formattedText != null && !formattedText.isEmpty());
+
         //Set no gravity
         if (PluginUtils.ServerVersion.v1_10_R1.atOrAbove()) {
             watcher.setObject(new WrappedDataWatcher.
                 WrappedDataWatcherObject(5, booleanSerializer),
-                true);
+                    true);
         }
 
         //Set armor stand metadata
-		watcher.setObject(NPCMain.serverVersion.getArmorStandMetaIndex(),
+        watcher.setObject(NPCMain.serverVersion.getArmorStandMetaIndex(),
             byteSerializer,
             (byte)(0x01 | 0x08 | 0x10)); //Small | has no base plate | marker
 
@@ -136,13 +77,11 @@ public class HologramContainer {
 			if(entry == null) continue;
 
             final WrappedDataWatcherObject watcherObject = entry.getWatcherObject();
-                wrappedDataValueList.add(
-                    new WrappedDataValue(
+            wrappedDataValueList.add(
+                new WrappedDataValue(
                     watcherObject.getIndex(),
                     watcherObject.getSerializer(),
-					entry.getRawValue()
-				)
-			);
+                    entry.getRawValue()));
         }
         return wrappedDataValueList;
     }
@@ -152,7 +91,7 @@ public class HologramContainer {
      * the data watcher on these versions do not include serialisers
      * @return WrappedDataWatcher for 1.8 servers only
      */
-    public WrappedDataWatcher getDataWatcherOld() {
+    public WrappedDataWatcher getLegacyDataWatcher() {
         WrappedDataWatcher watcher = new WrappedDataWatcher();
 
         //Set invisible

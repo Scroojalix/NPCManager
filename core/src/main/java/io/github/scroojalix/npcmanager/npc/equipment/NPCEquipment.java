@@ -26,7 +26,7 @@ public class NPCEquipment implements Serialisable {
     @Expose
     private ItemStack offhand;
 
-    public List<Pair<ItemSlot, ItemStack>> getSlotStackPaitList() {
+    public List<Pair<ItemSlot, ItemStack>> getSlotStackPairList() {
         final List<Pair<ItemSlot, ItemStack>> equipmentList = new ArrayList<>();
         if (mainhand != null) {
             equipmentList.add(new Pair<>(ItemSlot.MAINHAND, mainhand));

@@ -146,6 +146,13 @@ public class PluginUtils {
 		return (paramTranslated < i) ? (i - 1) : i;
 	}
 
+	/**
+	 * Converts a float angle to a byte angle.
+	 */
+	public static byte toByteAngle(float angle) {
+        return (byte) (angle * 256.0F / 360.0F);
+    }
+
 	@SuppressWarnings("deprecation")
 	public static boolean isSuitableItem(ItemStack item, String type, Player p) {
 		if (item.getType() == Material.AIR)
