@@ -23,6 +23,10 @@ public class Base64Serialisation {
         }
     }
 
+    // FIXME cannot read ItemStacks from newer versions.
+    // throws java.lang.IllegalArgumentException: 
+    // Newer version! Server downgrades are not supported!
+    // May need to rework ItemStack serialisation
     public static Object fromBase64(String data) throws IOException {
     	try {
             ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64Coder.decodeLines(data));
