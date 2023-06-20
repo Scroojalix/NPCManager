@@ -1,4 +1,4 @@
-package io.github.scroojalix.npcmanager.rendering;
+package io.github.scroojalix.npcmanager.protocol;
 
 import java.util.HashSet;
 import java.util.Set;

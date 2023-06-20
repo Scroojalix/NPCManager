@@ -1,4 +1,4 @@
-package io.github.scroojalix.npcmanager.rendering;
+package io.github.scroojalix.npcmanager.protocol;
 
 import java.security.SecureRandom;
 import java.util.LinkedHashMap;
