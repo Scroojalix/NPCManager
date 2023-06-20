@@ -47,7 +47,7 @@ public class NPCLoader implements Runnable {
 	private boolean perfectOrientation;
 
 	private Location npcLoc;
-	
+
 	public NPCLoader(NPCMain main, NPCContainer npcContainer, ProtocolManager protocolManger) {
 		this.main = main;
 		this.npcContainer = npcContainer;
@@ -70,7 +70,7 @@ public class NPCLoader implements Runnable {
 		loadedForPlayers.clear();
 		outsideHeadRotationRange.clear();
 	}
-	
+
 	/**
 	 * Generate all packets required to spawn an NPC, and store them in a LinkedHashSet.
 	 */
@@ -86,14 +86,21 @@ public class NPCLoader implements Runnable {
 			add.getPlayerInfoDataLists().write(0, Collections.singletonList(npcContainer.getPlayerInfo()));
 		}
 		loadPackets.add(add);
-		
+
 		PacketContainer spawn = pm.createPacket(PacketType.Play.Server.NAMED_ENTITY_SPAWN);
 		spawn.getIntegers().write(0, npcContainer.getNPCEntityID());
 		spawn.getUUIDs().write(0, npcContainer.getPlayerInfo().getProfileId());
-		spawn.getDoubles()
-			.write(0, npcLoc.getX())
-			.write(1, npcLoc.getY())
-			.write(2, npcLoc.getZ());
+		if (PluginUtils.ServerVersion.v1_9_R1.atOrAbove()) {
+			spawn.getDoubles()
+					.write(0, npcLoc.getX())
+					.write(1, npcLoc.getY())
+					.write(2, npcLoc.getZ());
+		} else {
+			spawn.getIntegers()
+				.write(1, PluginUtils.get1_8LocInt(npcLoc.getX()))
+				.write(2, PluginUtils.get1_8LocInt(npcLoc.getY()))
+				.write(3, PluginUtils.get1_8LocInt(npcLoc.getZ()));
+		}
 		spawn.getBytes()
 			.write(0, toByteAngle(npcLoc.getYaw()))
 			.write(1, toByteAngle(npcLoc.getPitch()));
@@ -105,18 +112,24 @@ public class NPCLoader implements Runnable {
 		if (PluginUtils.ServerVersion.v1_19_R2.atOrAbove()) {
 			final List<WrappedDataValue> wrappedDataValueList = new ArrayList<>();
 			wrappedDataValueList.add(new WrappedDataValue(
-				NPCMain.serverVersion.getSkinLayersByteIndex(),
-				WrappedDataWatcher.Registry.get(Byte.class), 
-				npcContainer.getNPCData().getTraits().getSkinLayersByte()));
-		
+					NPCMain.serverVersion.getSkinLayersByteIndex(),
+					WrappedDataWatcher.Registry.get(Byte.class),
+					npcContainer.getNPCData().getTraits().getSkinLayersByte()));
+
 			meta.getDataValueCollectionModifier().write(0, wrappedDataValueList);
 		} else {
 			WrappedDataWatcher watcher = new WrappedDataWatcher();
-			watcher.setObject(
-				NPCMain.serverVersion.getSkinLayersByteIndex(),
-				WrappedDataWatcher.Registry.get(Byte.class), 
-				npcContainer.getNPCData().getTraits().getSkinLayersByte());
-			
+			if (PluginUtils.ServerVersion.v1_9_R1.atOrAbove()) {
+				watcher.setObject(
+						NPCMain.serverVersion.getSkinLayersByteIndex(),
+						WrappedDataWatcher.Registry.get(Byte.class),
+						npcContainer.getNPCData().getTraits().getSkinLayersByte());
+			} else {
+				watcher.setObject(
+						NPCMain.serverVersion.getSkinLayersByteIndex(),
+						npcContainer.getNPCData().getTraits().getSkinLayersByte());
+			}
+
 			meta.getWatchableCollectionModifier().write(0, watcher.getWatchableObjects());
 		}
 		loadPackets.add(meta);
@@ -147,12 +160,15 @@ public class NPCLoader implements Runnable {
 			));
 			loadPackets.add(addNPCToTeam);
 		} else {
+			boolean above1_8 = PluginUtils.ServerVersion.v1_9_R1.atOrAbove();
 			PacketContainer createTeam = pm.createPacket(PacketType.Play.Server.SCOREBOARD_TEAM);
 			int teamSettingIndex = PluginUtils.ServerVersion.v1_13_R1.atOrAbove() ? 1 : 4;
 			createTeam.getStrings()
-				.write(0, PluginUtils.NPC_SCOREBOARD_TEAM_NAME)
-				.write(teamSettingIndex, "never")
-				.write(teamSettingIndex + 1, "never");
+					.write(0, PluginUtils.NPC_SCOREBOARD_TEAM_NAME)
+					.write(teamSettingIndex, "never");
+			if (above1_8) {
+				createTeam.getStrings().write(teamSettingIndex + 1, "never");
+			}
 			loadPackets.add(createTeam);
 
 			PacketContainer addNPCToTeam = pm.createPacket(PacketType.Play.Server.SCOREBOARD_TEAM);
@@ -166,12 +182,11 @@ public class NPCLoader implements Runnable {
 		}
 
 		if (perfectOrientation) {
-
 			PacketContainer orient = pm.createPacket(PacketType.Play.Server.ANIMATION);
 			orient.getIntegers()
-				.write(0, npcContainer.getNPCEntityID())
-				.write(1, 0);			
-			
+					.write(0, npcContainer.getNPCEntityID())
+					.write(1, 0);
+
 			loadPackets.add(orient);
 		}
 
@@ -196,7 +211,7 @@ public class NPCLoader implements Runnable {
 				} else {
 					for (Pair<ItemSlot, ItemStack> pair : equipmentList) {
 						if (pair.getFirst() == ItemSlot.OFFHAND && !NPCMain.serverVersion.hasOffHand()) continue;
-						
+
 						PacketContainer equipmentPacket = pm.createPacket(PacketType.Play.Server.ENTITY_EQUIPMENT);
 						equipmentPacket.getIntegers().write(0, npcContainer.getNPCEntityID());
 						equipmentPacket.getItemSlots().write(0, pair.getFirst());
@@ -241,28 +256,28 @@ public class NPCLoader implements Runnable {
 			} else if (loadedForPlayers.containsKey(player)) loadedForPlayers.remove(player);
 		}
 	}
-	
+
 	/**
 	 * Makes an NPC look towards a player.
 	 * @param player The player to look at.
 	 */
 	private void lookInDirection(Player player) {
 		Vector difference = player.getLocation().clone().subtract(npcLoc).toVector().normalize();
-        float degrees = (float) Math.toDegrees(Math.atan2(difference.getZ(), difference.getX()) - Math.PI / 2);
-        byte angle = toByteAngle(degrees);
-        Vector height = npcLoc.clone().subtract(player.getLocation()).toVector().normalize();
+		float degrees = (float) Math.toDegrees(Math.atan2(difference.getZ(), difference.getX()) - Math.PI / 2);
+		byte angle = toByteAngle(degrees);
+		Vector height = npcLoc.clone().subtract(player.getLocation()).toVector().normalize();
 		byte pitch = toByteAngle((float)Math.toDegrees(Math.atan(height.getY())));
 
 		setLookDirection(player, angle, pitch);
 	}
-	
+
 	/**
 	 * Reset an NPC's head rotation for a player.
 	 * @param player The player to reset head rotation for.
 	 */
 	private void resetLookDirection(Player player) {
 		byte yaw = toByteAngle(npcLoc.getYaw());
-        byte pitch = toByteAngle(npcLoc.getPitch());
+		byte pitch = toByteAngle(npcLoc.getPitch());
 		setLookDirection(player, yaw, pitch);
 	}
 
@@ -274,16 +289,16 @@ public class NPCLoader implements Runnable {
 		PacketContainer move = pm.createPacket(PacketType.Play.Server.ENTITY_LOOK);
 		move.getIntegers().write(0, npcContainer.getNPCEntityID());
 		move.getBytes()
-			.write(0, yaw)
-			.write(1, pitch);
+				.write(0, yaw)
+				.write(1, pitch);
 		move.getBooleans()
-			.write(0, true)
-			.write(1, true);
-		
+				.write(0, true)
+				.write(1, true);
+
 		pm.sendServerPacket(player, rotate);
 		pm.sendServerPacket(player, move);
 	}
-	
+
 	/**
 	 * Send packets that spawn the NPC to a player.
 	 * @param player The player to send packets to.
@@ -341,7 +356,7 @@ public class NPCLoader implements Runnable {
 		}
 		return removeInfo;
 	}
-	
+
 	/**
 	 * Calculate the distance between two locations.
 	 * @param loc1 Location of NPC.
@@ -350,7 +365,7 @@ public class NPCLoader implements Runnable {
 	 */
 	private double calculateDistance(Location loc1, Location loc2) {
         return Math.sqrt(Math.pow(loc1.getX() - loc2.getX(), 2) + Math.pow(loc1.getY() - loc2.getY(), 2) + Math.pow(loc1.getZ() - loc2.getZ(), 2));
-    }
+	}
 
 	private byte toByteAngle(float angle) {
 		return (byte) (angle * 256.0F / 360.0F);

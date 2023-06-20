@@ -30,9 +30,9 @@ public class PluginUtils {
 
 	public static final String NPC_SCOREBOARD_TEAM_NAME = "zzzzzzzzzzNMNPCs";
 
-    private static final Pattern pattern = Pattern.compile("#[a-fA-F0-9]{6}");
-	
-    /**
+	private static final Pattern pattern = Pattern.compile("#[a-fA-F0-9]{6}");
+
+	/**
 	 * Translate colour codes and hex codes into a coloured string.
 	 * @param msg The message to translate.
 	 * @return The translated string.
@@ -133,7 +133,11 @@ public class PluginUtils {
 	}
 
 	public static boolean isAlphanumeric(String s) {
-        return s != null && s.matches("^[a-zA-Z0-9_]+$");
+		return s != null && s.matches("^[a-zA-Z0-9_]+$");
+	}
+
+	public static int get1_8LocInt(double loc) {
+		return (int) Math.floor(loc * 32.0D);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -150,29 +154,29 @@ public class PluginUtils {
 		if (item.getType().name().toLowerCase().contains(type.toLowerCase()))
 			return true;
 		switch(type) {
-		case "helmet":
-		case "mainhand":
-		case "offhand":
-			try {
-				return item.getType().isItem();
-			} catch (NoSuchMethodError e) {
+			case "helmet":
+			case "mainhand":
+			case "offhand":
 				try {
+					return item.getType().isItem();
+				} catch (NoSuchMethodError e) {
+					try {
 					Class<?> c = Class.forName("net.minecraft.server."+NPCMain.serverVersion.toString()+".Item");
-					Method m = c.getDeclaredMethod("getById", int.class);
-					return m.invoke(null, item.getType().getId()) != null;
-				} catch (Exception ex) {
-					ex.printStackTrace();
+						Method m = c.getDeclaredMethod("getById", int.class);
+						return m.invoke(null, item.getType().getId()) != null;
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+					return false;
 				}
-				return false;
-			}
 		}
 		if (p != null) {
 			p.playSound(p.getLocation(), Sound.valueOf(CommandUtils.getErrorSound()), 5f, 0.5f);
 			p.sendMessage(ChatColor.RED+"That item cannot be placed in this slot!");
 		}
-        return false;
+		return false;
 	}
-	
+
 	/**
 	 * Version that the server is running.
 	 * @author Scroojalix
