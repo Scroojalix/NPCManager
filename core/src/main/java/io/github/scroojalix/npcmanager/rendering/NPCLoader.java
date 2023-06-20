@@ -175,7 +175,7 @@ public class NPCLoader implements Runnable {
 			addNPCToTeam.getStrings().write(0, PluginUtils.NPC_SCOREBOARD_TEAM_NAME);
 			int teamPacketModeIndex = PluginUtils.ServerVersion.v1_13_R1.atOrAbove() ? 0 : 1;
 			addNPCToTeam.getIntegers().write(teamPacketModeIndex, 3);
-			addNPCToTeam.getModifier().write(7, Collections.singletonList(
+			addNPCToTeam.getModifier().write(above1_8 ? 7 : 6, Collections.singletonList(
 				npcContainer.getPlayerInfo().getProfile().getName()
 			));
 			loadPackets.add(addNPCToTeam);
