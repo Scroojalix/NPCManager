@@ -76,7 +76,6 @@ public class NPCManager {
 		NPCData data = new NPCData(name, loc, store);
 		main.storage.saveNPC(data);
 		spawnNPC(data);
-		// FIXME skin manager stuff called twice? see spawnNPC()
 		if (fetchDefaultSkins) {
 			SkinManager.setSkinFromUsername(null, data, name, false, true);
 		}
