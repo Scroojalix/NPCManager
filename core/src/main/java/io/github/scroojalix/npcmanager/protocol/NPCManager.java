@@ -23,6 +23,9 @@ import io.github.scroojalix.npcmanager.npc.HologramContainer;
 import io.github.scroojalix.npcmanager.npc.NPCContainer;
 import io.github.scroojalix.npcmanager.npc.NPCData;
 import io.github.scroojalix.npcmanager.npc.NPCTrait;
+import io.github.scroojalix.npcmanager.npc.interactions.CommandInteraction;
+import io.github.scroojalix.npcmanager.npc.interactions.InteractionsManager;
+import io.github.scroojalix.npcmanager.npc.interactions.NPCInteractionData;
 import io.github.scroojalix.npcmanager.npc.skin.SkinData;
 import io.github.scroojalix.npcmanager.npc.skin.SkinManager;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
@@ -175,6 +178,25 @@ public class NPCManager {
 			WrappedChatComponent.fromText(
 				PluginUtils.format("&8[NPC] "+profile.getName())));
 		container.setPlayerInfo(infoData);
+
+		//Interact Event
+		if (data.getTraits().getInteractEvent() != null) {
+			NPCInteractionData interactEvent = data.getTraits().getInteractEvent();
+			switch(interactEvent.getType()) {
+				case COMMAND:
+					container.setInteractEvent(new CommandInteraction(interactEvent.getValue()));
+				break;
+				case CUSTOM:
+					if (InteractionsManager.getInteractEvents().containsKey(interactEvent.getValue())) {
+						container.setInteractEvent(InteractionsManager.getInteractEvents().get(interactEvent.getValue()));
+						break;
+					}
+				default:
+					NPCMain.instance.sendDebugMessage(Level.WARNING, "Error restoring an NPC: Unknown interact event '"+interactEvent.getValue()+"'");
+					// data.getTraits().removeInteractEvent(); TODO is this needed
+				break;
+			}
+		}
 
 		//Holograms
 		String displayName = data.getTraits().getDisplayName();

@@ -11,10 +11,6 @@ import org.bukkit.Bukkit;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.npc.NPCData;
-import io.github.scroojalix.npcmanager.npc.interactions.CommandInteraction;
-import io.github.scroojalix.npcmanager.npc.interactions.InteractEventType;
-import io.github.scroojalix.npcmanager.npc.interactions.InteractionsManager;
-import io.github.scroojalix.npcmanager.npc.interactions.NPCInteractionData;
 
 public final class JsonParser {
 
@@ -50,20 +46,6 @@ public final class JsonParser {
 
 			NPCData data = Serialisable.deserialise(obj, NPCData.class);
 			data.setStored(true);
-
-			//Restore Interact Event
-			if (data.getTraits().getInteractEvent() != null) {
-				NPCInteractionData interactEvent = data.getTraits().getInteractEvent();
-				if (interactEvent.getType() == InteractEventType.COMMAND) {
-					data.setInteractEvent(new CommandInteraction(interactEvent.getValue()));
-				} else if (InteractionsManager.getInteractEvents().containsKey(interactEvent.getValue())) {
-					data.setInteractEvent(InteractionsManager.getInteractEvents().get(interactEvent.getValue()));
-				} else {
-					NPCMain.instance.sendDebugMessage(Level.WARNING, "Error restoring an NPC: Unknown interact event '"+interactEvent.getValue()+"'");
-					data.getTraits().removeInteractEvent();
-				}
-			}
-
 			return data;
 		} catch (JsonSyntaxException | IllegalStateException e) {
 			NPCMain.instance.sendDebugMessage(Level.SEVERE, "Error restoring an NPC: Invalid JSON");

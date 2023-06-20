@@ -21,6 +21,7 @@ import com.google.gson.JsonParser;
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.CommandUtils;
 import io.github.scroojalix.npcmanager.npc.NPCData;
+import io.github.scroojalix.npcmanager.npc.NPCContainer;
 import net.md_5.bungee.api.ChatColor;
 
 public class PluginUtils {
@@ -106,6 +107,17 @@ public class PluginUtils {
 	 */
 	public static NPCData getNPCDataByName(String name) throws NullPointerException {
 		return NPCMain.instance.npc.getNPCHashMap().get(name).getNPCData();
+	}
+
+	/**
+	 * Gets NPCContainer object by name
+	 * Throws Null Pointer Exception if container does not exist, so use carefully.
+	 * @param name name of npc
+	 * @return NPCData object defined by name.
+	 * @throws NullPointerException if NPC does not exist.
+	 */
+	public static NPCContainer getNPCContainerByName(String name) throws NullPointerException {
+		return NPCMain.instance.npc.getNPCHashMap().get(name);
 	}
 
 	/**

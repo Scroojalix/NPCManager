@@ -3,6 +3,7 @@ package io.github.scroojalix.npcmanager.npc;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 
 import io.github.scroojalix.npcmanager.protocol.NPCLoader;
+import io.github.scroojalix.npcmanager.npc.interactions.InteractEvent;
 
 public class NPCContainer {
 
@@ -10,6 +11,9 @@ public class NPCContainer {
     private NPCData npcData;
     private PlayerInfoData playerInfo;
     private final int entityId;
+
+    //Interact Event
+    private InteractEvent interactEvent;
 
     //Holograms
     //TODO make this into an array to allow multiple lines
@@ -46,6 +50,29 @@ public class NPCContainer {
     public void setPlayerInfo(PlayerInfoData playerInfo) {
         this.playerInfo = playerInfo;
     }
+
+    /**
+	 * Sets the Interact Event of this NPC.
+	 * @param interactEvent New InteractEvent
+	 */
+	public void setInteractEvent(InteractEvent interactEvent) {
+		this.interactEvent = interactEvent;
+        // TODO do i need this? It should already be set?
+        // if (interactEvent != null) {
+        //     if (interactEvent instanceof CommandInteraction) {
+		// 		npcData.getTraits().setInteractEvent(InteractEventType.COMMAND, ((CommandInteraction)interactEvent).getCommand());
+		// 	} else {
+		// 		npcData.getTraits().setInteractEvent(InteractEventType.CUSTOM, interactEvent.getInteractionName());
+		// 	}
+        // }
+	}
+	
+	/**
+	 * @return The Interact Event of this NPC.
+	 */
+	public InteractEvent getInteractEvent() {
+		return interactEvent;
+	}
 
     // Holograms
     public void setNameHolo(HologramContainer hologramContainer) {

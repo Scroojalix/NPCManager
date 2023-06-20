@@ -3,13 +3,10 @@ package io.github.scroojalix.npcmanager.npc;
 import java.util.Map;
 import java.util.UUID;
 
-import com.google.gson.annotations.Expose;
-
 import org.bukkit.Location;
 
-import io.github.scroojalix.npcmanager.npc.interactions.CommandInteraction;
-import io.github.scroojalix.npcmanager.npc.interactions.InteractEvent;
-import io.github.scroojalix.npcmanager.npc.interactions.InteractEventType;
+import com.google.gson.annotations.Expose;
+
 import io.github.scroojalix.npcmanager.storage.misc.Serialisable;
 
 /**
@@ -30,9 +27,7 @@ public class NPCData implements Serialisable {
 	private String uuid;
 	@Expose
 	private NPCTrait traits;
-	
-	//TODO move to NPCContainer
-	private InteractEvent interactEvent;
+		
 	private boolean store;
 	private boolean loaded;
 
@@ -91,30 +86,6 @@ public class NPCData implements Serialisable {
 		newLoc.put("yaw", (float)((int)(((float)newLoc.get("yaw"))*100))/100);
 		newLoc.put("pitch", (float)((int)(((float)newLoc.get("pitch"))*100))/100);
 		this.loc = Location.deserialize(newLoc);
-	}
-	
-	/**
-	 * Sets the Interact Event of this NPC.
-	 * @param interactEvent New InteractEvent
-	 */
-	public void setInteractEvent(InteractEvent interactEvent) {
-		this.interactEvent = interactEvent;
-		if (interactEvent != null) {
-			if (interactEvent instanceof CommandInteraction) {
-				traits.setInteractEvent(InteractEventType.COMMAND, ((CommandInteraction)interactEvent).getCommand());
-			} else {
-				traits.setInteractEvent(InteractEventType.CUSTOM, interactEvent.getInteractionName());
-			}
-		} else {
-			traits.removeInteractEvent();;
-		}
-	}
-	
-	/**
-	 * @return The Interact Event of this NPC.
-	 */
-	public InteractEvent getInteractEvent() {
-		return interactEvent;
 	}
 	
 	public boolean isStored() {

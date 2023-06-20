@@ -9,7 +9,6 @@ import org.bukkit.inventory.ItemStack;
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.npc.NPCData;
 import io.github.scroojalix.npcmanager.npc.NPCTrait;
-import io.github.scroojalix.npcmanager.npc.interactions.CommandInteraction;
 import io.github.scroojalix.npcmanager.npc.interactions.InteractEventType;
 import io.github.scroojalix.npcmanager.npc.interactions.InteractionsManager;
 import io.github.scroojalix.npcmanager.npc.skin.NPCSkinLayers;
@@ -242,6 +241,9 @@ public class NPCManagerAPI {
 					}
 				}
 				data.getTraits().setSkinLayers(newLayers);
+
+				// FIXME these two functions should be abstracted,
+                // as they are called repetitively.
 				NPCMain.instance.storage.saveNPC(data);
 				NPCMain.instance.npc.updateNPC(data);
 			}
@@ -260,10 +262,14 @@ public class NPCManagerAPI {
 		if (PluginUtils.npcExists(name)) {
 			NPCData data = PluginUtils.getNPCDataByName(name);
 			if (type == InteractEventType.COMMAND) {
-				data.setInteractEvent(new CommandInteraction(interaction));
+				data.getTraits().setInteractEvent(type, interaction);
+				NPCMain.instance.storage.saveNPC(data);
+				NPCMain.instance.npc.updateNPC(data);
 			} else if (type == InteractEventType.CUSTOM) {
 				if (InteractionsManager.getInteractEvents().containsKey(interaction)) {
-					data.setInteractEvent(InteractionsManager.getInteractEvents().get(interaction));
+					data.getTraits().setInteractEvent(type, interaction);
+					NPCMain.instance.storage.saveNPC(data);
+					NPCMain.instance.npc.updateNPC(data);
 				} else {
 					throw new IllegalArgumentException(
 							"The custom interact event '" + interaction + "' does not exist.");

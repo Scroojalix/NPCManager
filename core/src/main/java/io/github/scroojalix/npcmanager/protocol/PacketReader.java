@@ -17,7 +17,7 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers.EntityUseAction;
 
 import io.github.scroojalix.npcmanager.NPCMain;
-import io.github.scroojalix.npcmanager.npc.NPCData;
+import io.github.scroojalix.npcmanager.npc.NPCContainer;
 import io.github.scroojalix.npcmanager.npc.interactions.InteractAtNPCEvent;
 import io.github.scroojalix.npcmanager.npc.interactions.InteractAtNPCEvent.NPCAction;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
@@ -64,7 +64,7 @@ public class PacketReader {
 				for (String npcName : PluginUtils.getAllNPCNames()) {
 					// Check if entity is NPC created by NPCManager
 					if (PluginUtils.getNPCIDByName(npcName) == id) {
-						handleInteraction(p, PluginUtils.getNPCDataByName(npcName), action, secondary);
+						handleInteraction(p, PluginUtils.getNPCContainerByName(npcName), action, secondary);
 						break;
 					}
 				}
@@ -76,7 +76,7 @@ public class PacketReader {
 		manager.removePacketListeners(main);
 	}
 
-	private void handleInteraction(Player p, NPCData data, EntityUseAction action, Boolean secondary) {
+	private void handleInteraction(Player p, NPCContainer data, EntityUseAction action, Boolean secondary) {
 		if (recentInteractors.contains(p.getUniqueId())) return;
 		switch(action) {
 			case ATTACK: // Left Click
