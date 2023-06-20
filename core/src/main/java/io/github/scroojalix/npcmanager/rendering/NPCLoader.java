@@ -262,6 +262,7 @@ public class NPCLoader implements Runnable {
 	 * @param player The player to look at.
 	 */
 	private void lookInDirection(Player player) {
+		// FIXME this math isn't the best, it makes the head rotation look quite jittery
 		Vector difference = player.getLocation().clone().subtract(npcLoc).toVector().normalize();
 		float degrees = (float) Math.toDegrees(Math.atan2(difference.getZ(), difference.getX()) - Math.PI / 2);
 		byte angle = toByteAngle(degrees);
@@ -288,9 +289,10 @@ public class NPCLoader implements Runnable {
 
 		PacketContainer move = pm.createPacket(PacketType.Play.Server.ENTITY_LOOK);
 		move.getIntegers().write(0, npcContainer.getNPCEntityID());
+		int yawIndex = PluginUtils.ServerVersion.v1_9_R1.atOrAbove() ? 0 : 3;
 		move.getBytes()
-				.write(0, yaw)
-				.write(1, pitch);
+				.write(yawIndex, yaw)
+				.write(yawIndex + 1, pitch);
 		move.getBooleans()
 				.write(0, true)
 				.write(1, true);
