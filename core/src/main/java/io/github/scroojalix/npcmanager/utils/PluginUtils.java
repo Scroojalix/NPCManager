@@ -136,8 +136,14 @@ public class PluginUtils {
 		return s != null && s.matches("^[a-zA-Z0-9_]+$");
 	}
 
-	public static int get1_8LocInt(double loc) {
-		return (int) Math.floor(loc * 32.0D);
+	/**
+	 * Used only in 1.8 servers, as an int is required for position,
+	 * rather than a double.
+	 */
+	public static int get1_8LocInt(double param) {
+		double paramTranslated = param * 32.0D;
+		int i = (int) (paramTranslated);
+		return (paramTranslated < i) ? (i - 1) : i;
 	}
 
 	@SuppressWarnings("deprecation")
