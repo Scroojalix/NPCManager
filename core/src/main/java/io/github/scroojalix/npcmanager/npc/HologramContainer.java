@@ -1,4 +1,4 @@
-package io.github.scroojalix.npcmanager.rendering;
+package io.github.scroojalix.npcmanager.npc;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;

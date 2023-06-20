@@ -19,6 +19,8 @@ import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.WrappedSignedProperty;
 
 import io.github.scroojalix.npcmanager.NPCMain;
+import io.github.scroojalix.npcmanager.npc.HologramContainer;
+import io.github.scroojalix.npcmanager.npc.NPCContainer;
 import io.github.scroojalix.npcmanager.npc.NPCData;
 import io.github.scroojalix.npcmanager.npc.NPCTrait;
 import io.github.scroojalix.npcmanager.npc.skin.SkinData;

@@ -1,8 +1,8 @@
-package io.github.scroojalix.npcmanager.rendering;
+package io.github.scroojalix.npcmanager.npc;
 
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 
-import io.github.scroojalix.npcmanager.npc.NPCData;
+import io.github.scroojalix.npcmanager.rendering.NPCLoader;
 
 public class NPCContainer {
 

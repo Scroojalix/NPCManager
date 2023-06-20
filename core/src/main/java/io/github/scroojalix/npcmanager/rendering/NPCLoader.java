@@ -28,6 +28,7 @@ import com.comphenix.protocol.wrappers.WrappedDataValue;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 
 import io.github.scroojalix.npcmanager.NPCMain;
+import io.github.scroojalix.npcmanager.npc.NPCContainer;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class NPCLoader implements Runnable {
