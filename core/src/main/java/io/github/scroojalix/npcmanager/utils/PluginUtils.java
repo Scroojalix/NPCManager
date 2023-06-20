@@ -59,7 +59,7 @@ public class PluginUtils {
 		Bukkit.getScheduler().runTaskLaterAsynchronously(NPCMain.instance, new Runnable() {
 			@Override
 			public void run() {
-				NPCMain.instance.log(Level.INFO, "Checking if you have the latest version of the plugin...");
+				NPCMain.instance.sendDebugMessage(Level.INFO, "Checking if you have the latest version of the plugin...");
 				String current = NPCMain.instance.getDescription().getVersion();
 				try {
 					URL url = new URL("https://api.github.com/repos/Scroojalix/NPCManager/releases/latest");
@@ -73,7 +73,7 @@ public class PluginUtils {
 						logger.info("https://github.com/Scroojalix/NPCManager/releases/latest");
 						logger.info("--------------------------------------------------------");
 					} else {
-						NPCMain.instance.log(Level.INFO, "You have the latest version of the plugin.");
+						NPCMain.instance.sendDebugMessage(Level.INFO, "You have the latest version of the plugin.");
 					}
 				} catch (IOException e) {
 					e.printStackTrace();

@@ -82,7 +82,7 @@ public abstract interface Serialisable {
 								} catch(ClassCastException e) {
 									//User is updating from version with old serialisation system to new one.
 									value = null;
-									NPCMain.instance.log(Level.SEVERE, "Could not deserialise ItemStack for an NPC. You may have to customise this NPC's equipment again.");
+									NPCMain.instance.sendDebugMessage(Level.SEVERE, "Could not deserialise ItemStack for an NPC. You may have to customise this NPC's equipment again.");
 								} 
 							} else {
 								Map<String, Object> map = (Map<String, Object>) value;

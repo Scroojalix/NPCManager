@@ -1,5 +1,7 @@
 package io.github.scroojalix.npcmanager.events;
 
+import java.util.logging.Level;
+
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -10,7 +12,7 @@ public class NPCEvents implements Listener {
 	
 	@EventHandler
 	public void onNPCInteract(InteractAtNPCEvent event) {
-		if (NPCMain.instance.showDebugMessages) NPCMain.instance.getLogger().info(String.format("%s occurred: %s", event.getEventName(), event.toString()));
+		NPCMain.instance.sendDebugMessage(Level.INFO, String.format("%s occurred: %s", event.getEventName(), event.toString()));
 		if (event.getNPCData().getInteractEvent() != null) event.getNPCData().getInteractEvent().onInteract(event);
 	}
 }

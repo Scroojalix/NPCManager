@@ -24,7 +24,7 @@ public class StorageFactory {
     }
 
     public Storage getInstance() {
-        this.main.log(Level.INFO, "Loading storage provider... [" + type.getName() + "]");
+        this.main.sendDebugMessage(Level.INFO, "Loading storage provider... [" + type.getName() + "]");
         Storage storage = new Storage(this.main, createNewImplementation(type));
         storage.init();
         return storage;

@@ -30,19 +30,15 @@ public class Storage {
     
     public void init() {
         if (remote) {
-            this.main.log(Level.INFO, "Initialising storage implementation");
+            this.main.sendDebugMessage(Level.INFO, "Initialising storage implementation");
             Bukkit.getScheduler().runTaskAsynchronously(main, new Runnable() {
                 @Override
                 public void run() {
                     try {
                         ((RemoteStorage) implementation).init();
-                        main.log(Level.INFO, "Successfully connected to database.");
+                        main.sendDebugMessage(Level.INFO, "Successfully connected to database.");
                     } catch(Throwable t) {
-                        if (main.showDebugMessages) {
-                            main.getLogger().log(Level.SEVERE, Messages.DATABASE_NOT_CONNECTED, t);
-                        } else {
-                            main.getLogger().severe(Messages.DATABASE_NOT_CONNECTED);
-                        }
+                        main.getLogger().severe(Messages.DATABASE_NOT_CONNECTED);
                         main.getLogger().severe("Temp storage will be used instead.");
                     }
                     restoreNPCs();
@@ -58,7 +54,7 @@ public class Storage {
         if (remote) {
             try {
                 ((RemoteStorage) implementation).shutdown();
-                this.main.log(Level.INFO, "Sucessfully shut down storage implementation");
+                this.main.sendDebugMessage(Level.INFO, "Sucessfully shut down storage implementation");
             } catch(Throwable t) {
                 this.main.getLogger().log(Level.SEVERE, "Failed to shutdown storage implementation", t);
             }
@@ -137,7 +133,7 @@ public class Storage {
                     if (remote) {
                         File tempDir = new File(main.getDataFolder()+"/json-storage/temp-"+implementation.getImplementationName());
                         if (tempDir.exists()) {
-                            main.log(Level.INFO, "Restoring NPC's from temp storage...");
+                            main.sendDebugMessage(Level.INFO, "Restoring NPC's from temp storage...");
                             restoreTempNPCs();
                         }
                     }
@@ -162,7 +158,7 @@ public class Storage {
                                 if (!((RemoteStorage)implementation).exists(data.getName())) {
                                     saveNPC(data);
                                 } else {
-                                    main.log(Level.WARNING, "Could not merge NPC from temp storage to the database because an NPC with the same name already exists in the database.");
+                                    main.sendDebugMessage(Level.WARNING, "Could not merge NPC from temp storage to the database because an NPC with the same name already exists in the database.");
                                     restore = false;
                                 }
                                 current.delete();

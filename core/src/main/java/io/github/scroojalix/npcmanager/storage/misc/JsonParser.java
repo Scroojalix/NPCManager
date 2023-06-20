@@ -43,8 +43,8 @@ public final class JsonParser {
 			String world = loc.get("world").toString();
 			if (Bukkit.getWorld(world) == null) {
 				NPCMain.instance.storage.removeNPC(name);
-				NPCMain.instance.log(Level.SEVERE, "Error restoring an NPC: The world it's in does not exist.");
-				NPCMain.instance.log(Level.SEVERE, "The NPC will be removed from storage.");
+				NPCMain.instance.sendDebugMessage(Level.SEVERE, "Error restoring an NPC: The world it's in does not exist.");
+				NPCMain.instance.sendDebugMessage(Level.SEVERE, "The NPC will be removed from storage.");
 				return null;
 			}
 
@@ -59,15 +59,15 @@ public final class JsonParser {
 				} else if (InteractionsManager.getInteractEvents().containsKey(interactEvent.getValue())) {
 					data.setInteractEvent(InteractionsManager.getInteractEvents().get(interactEvent.getValue()));
 				} else {
-					NPCMain.instance.log(Level.WARNING, "Error restoring an NPC: Unknown interact event '"+interactEvent.getValue()+"'");
+					NPCMain.instance.sendDebugMessage(Level.WARNING, "Error restoring an NPC: Unknown interact event '"+interactEvent.getValue()+"'");
 					data.getTraits().removeInteractEvent();
 				}
 			}
 
 			return data;
 		} catch (JsonSyntaxException | IllegalStateException e) {
-			NPCMain.instance.log(Level.SEVERE, "Error restoring an NPC: Invalid JSON");
-			NPCMain.instance.log(Level.SEVERE, "The NPC will be removed from storage.");
+			NPCMain.instance.sendDebugMessage(Level.SEVERE, "Error restoring an NPC: Invalid JSON");
+			NPCMain.instance.sendDebugMessage(Level.SEVERE, "The NPC will be removed from storage.");
 			NPCMain.instance.storage.removeNPC(name);
 			return null;
 		}

@@ -114,7 +114,7 @@ public class MongoStorage implements StorageImplementation, RemoteStorage {
         //Small temporary workaround for when SLF4J is in the classpath - usually on paper servers.
         try {
             Class.forName("org.slf4j.Logger");
-            main.log(Level.WARNING, "Could not disable logging for MongoDB as slf4j is in the classpath.");
+            main.sendDebugMessage(Level.WARNING, "Could not disable logging for MongoDB as slf4j is in the classpath.");
         } catch (ClassNotFoundException e) {
             Logger.getLogger("org.mongodb.driver.cluster").setLevel(java.util.logging.Level.OFF);
             Logger.getLogger("org.mongodb.driver.connection").setLevel(java.util.logging.Level.OFF);

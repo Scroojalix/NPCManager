@@ -31,11 +31,11 @@ public class NPCMain extends JavaPlugin {
 	public static ServerVersion serverVersion;
 	
 	public NPCManager npc;
-	private PacketReader reader;
 	public DependencyManager dependencyManager;
 	public Storage storage;
-	public boolean showDebugMessages;
 	
+	private PacketReader reader;
+	private boolean showDebugMessages;
 	private boolean validVersion = true;
 	
 	@Override
@@ -116,11 +116,11 @@ public class NPCMain extends JavaPlugin {
 			this.getLogger().severe(version + " is not a supported version!");
 			return false;
 		}
-		getLogger().info(String.format("Running on NMS version %s", serverVersion));
+		sendDebugMessage(Level.INFO, String.format("Running on NMS version %s", serverVersion));
 		return true;
 	}
 	
-	public void log(Level level, String msg) {
+	public void sendDebugMessage(Level level, String msg) {
 		if (showDebugMessages) {
 			getLogger().log(level, msg);
 		}
@@ -138,7 +138,7 @@ public class NPCMain extends JavaPlugin {
 		int newNPCNameLength = this.getConfig().getInt("npc-name-length");
 		if (newNPCNameLength > 16) newNPCNameLength = 16;
 		if (newNPCNameLength < 3) newNPCNameLength = 3;
-		log(Level.INFO, "Set NPC tab list name length to "+newNPCNameLength);
+		sendDebugMessage(Level.INFO, "Set NPC tab list name length to "+newNPCNameLength);
 		npc.setNPCNameLength(newNPCNameLength);
 		long npcRemoveDelay = getConfig().getLong("npc-remove-delay");
 		if (npcRemoveDelay < 1) npcRemoveDelay = 1;

@@ -51,7 +51,7 @@ public class NPCManager {
 			npcNameLength = 16;
 		if (npcNameLength < 3)
 			npcNameLength = 3;
-		main.log(Level.INFO, "Set NPC tab list name length to " + npcNameLength);
+		main.sendDebugMessage(Level.INFO, "Set NPC tab list name length to " + npcNameLength);
 
 		this.random = new Random(6878);
 	}

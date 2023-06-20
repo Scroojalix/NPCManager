@@ -3,7 +3,7 @@
 #
 
 # Show debug messages in console
-show-debug-messages: true
+show-debug-messages: false
 
 # The range at which NPCs will start looking towards the player
 npc-headrotation-range: 6

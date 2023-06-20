@@ -37,7 +37,7 @@ public class NPCBuilder {
             if (InteractionsManager.getInteractEvents().containsKey(interaction)) {
                 data.setInteractEvent(InteractionsManager.getInteractEvents().get(interaction));
             } else {
-                NPCMain.instance.log(Level.WARNING, "Could not set the interact event of "+data.getName()+". The interact event '"+interaction+"' does not exist.");
+                NPCMain.instance.sendDebugMessage(Level.WARNING, "Could not set the interact event of "+data.getName()+". The interact event '"+interaction+"' does not exist.");
             }
         }
         return this;
