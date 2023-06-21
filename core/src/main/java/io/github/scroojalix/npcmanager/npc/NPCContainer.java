@@ -57,14 +57,6 @@ public class NPCContainer {
 	 */
 	public void setInteractEvent(InteractEvent interactEvent) {
 		this.interactEvent = interactEvent;
-        // TODO do i need this? It should already be set?
-        // if (interactEvent != null) {
-        //     if (interactEvent instanceof CommandInteraction) {
-		// 		npcData.getTraits().setInteractEvent(InteractEventType.COMMAND, ((CommandInteraction)interactEvent).getCommand());
-		// 	} else {
-		// 		npcData.getTraits().setInteractEvent(InteractEventType.CUSTOM, interactEvent.getInteractionName());
-		// 	}
-        // }
 	}
 	
 	/**
