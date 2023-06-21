@@ -28,6 +28,7 @@ import io.github.scroojalix.npcmanager.npc.interactions.InteractionsManager;
 import io.github.scroojalix.npcmanager.npc.interactions.NPCInteractionData;
 import io.github.scroojalix.npcmanager.npc.skin.SkinData;
 import io.github.scroojalix.npcmanager.npc.skin.SkinManager;
+import io.github.scroojalix.npcmanager.utils.Messages;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 /**
@@ -149,7 +150,10 @@ public class NPCManager {
 			container.getLoaderTask().sendDeletePackets(p);
 		}
 		if (fromStorage && container.getNPCData().isStored()) {
-			main.storage.removeNPC(container.getNPCData().getName());
+			// Do this to comply with Nonnull
+			String name = container.getNPCData().getName();
+			if (name == null) return;
+			main.storage.removeNPC(name);
 		}
 	}
 
@@ -187,7 +191,8 @@ public class NPCManager {
 					if (InteractionsManager.getInteractEvents().containsKey(interactEvent.getValue())) {
 						container.setInteractEvent(InteractionsManager.getInteractEvents().get(interactEvent.getValue()));
 					} else {
-						NPCMain.instance.sendDebugMessage(Level.WARNING, "Error restoring an NPC: Unknown interact event '"+interactEvent.getValue()+"'");
+						Messages.printNPCRestoreError(main, data.getName(), 
+						"Error restoring an NPC: Unknown interact event '"+interactEvent.getValue()+"'");
 					}
 				break;
 			}

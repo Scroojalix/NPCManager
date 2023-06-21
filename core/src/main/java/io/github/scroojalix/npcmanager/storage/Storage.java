@@ -157,10 +157,11 @@ public class Storage {
 					try {
 						String json = new String(Files.readAllBytes(Paths.get(current.getPath())));
 						NPCData data = JsonParser.fromJson(current.getName().replace(".json", ""), json, true);
-                        if (data.getName() == null) continue;
+                        String name = data.getName();
+                        if (name == null) continue;
                         boolean restore = true;
                         if (((RemoteStorage)implementation).isConnected()) {
-                            if (!((RemoteStorage)implementation).exists(data.getName())) {
+                            if (!((RemoteStorage)implementation).exists(name)) {
                                 saveNPC(data);
                             } else {
                                 main.sendDebugMessage(Level.WARNING, "Could not merge NPC from temp storage to the database because an NPC with the same name already exists in the database.");
