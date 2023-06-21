@@ -84,11 +84,25 @@ public class NPCManager {
 
 	/**
 	 * Updates an NPC with the NPCData {@code data}
+	 * Also updates the saved value in storage
 	 * 
 	 * @param data The NPCData assigned to an NPC.
 	 */
 	public void updateNPC(NPCData data) {
+		main.storage.saveNPC(data);
 		removeNPC(data.getName(), false);
+		spawnNPC(data);
+	}
+
+	/**
+	 * Rename an NPC
+	 * @param data
+	 * @param newName
+	 */
+	public void renameNPC(NPCData data, String newName) {
+		removeNPC(data.getName(), true);
+		data.setName(newName);
+		main.storage.saveNPC(data);
 		spawnNPC(data);
 	}
 
@@ -111,7 +125,6 @@ public class NPCManager {
 	 */
 	public void moveNPC(NPCData data, Location loc) {
 		data.setLoc(loc);
-		main.storage.saveNPC(data);
 		updateNPC(data);
 	}
 

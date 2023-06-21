@@ -48,19 +48,13 @@ public class InteractEventModification extends SubCommand {
                     command += " " + args[arg];
                 }
                 data.getTraits().setInteractEvent(InteractEventType.COMMAND, command);
-
-                // FIXME these two functions should be abstracted,
-                // as they are called repetitively.
-                main.storage.saveNPC(data);
                 main.npc.updateNPC(data);
-
                 sender.sendMessage(PluginUtils.format(
                         "&6Set &F" + data.getName() + "'s &6Interact Event to the command &F/" + command));
                 return true;
             } else if (args[3].equalsIgnoreCase("custom") && args.length > 4) {
                 if (InteractionsManager.getInteractEvents().containsKey(args[4])) {
                     data.getTraits().setInteractEvent(InteractEventType.CUSTOM, args[4]);
-                    main.storage.saveNPC(data);
                     main.npc.updateNPC(data);
                     sender.sendMessage(PluginUtils
                             .format("&6Set &F" + data.getName() + "'s &6Interact Event to &F" + args[3]));
@@ -71,7 +65,6 @@ public class InteractEventModification extends SubCommand {
                 return true;
             } else if (args[3].equalsIgnoreCase("none")) {
                 data.getTraits().removeInteractEvent();
-                main.storage.saveNPC(data);
                 main.npc.updateNPC(data);
                 sender.sendMessage(PluginUtils.format("&6Removed the Interact Event for &F" + data.getName()));
                 return true;
