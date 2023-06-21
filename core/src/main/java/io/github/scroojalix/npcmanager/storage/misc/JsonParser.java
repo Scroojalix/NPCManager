@@ -1,16 +1,16 @@
 package io.github.scroojalix.npcmanager.storage.misc;
 
 import java.util.Map;
-import java.util.logging.Level;
+
+import javax.annotation.Nullable;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
-import org.bukkit.Bukkit;
-
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.npc.NPCData;
+import io.github.scroojalix.npcmanager.utils.Messages;
 
 public final class JsonParser {
 
@@ -23,7 +23,7 @@ public final class JsonParser {
 		return builder.create().toJson(data.serialise());
     }
 
-    public static NPCData fromJson(String name, String json, boolean prettyPrinting) {
+    public static @Nullable NPCData fromJson(String name, String json, boolean prettyPrinting) {
         try {
 			GsonBuilder builder = new GsonBuilder()
 			.disableHtmlEscaping();
@@ -32,25 +32,19 @@ public final class JsonParser {
 			}
 			
 			Map<String, Object> obj = builder.create().fromJson(json, new TypeToken<Map<String, Object>>() {}.getType());
-
-            //Check location TODO abstract this
-            @SuppressWarnings("unchecked")
-            Map<String, Object> loc = (Map<String, Object>)obj.get("loc");
-			String world = loc.get("world").toString();
-			if (Bukkit.getWorld(world) == null) {
-				NPCMain.instance.storage.removeNPC(name);
-				NPCMain.instance.sendDebugMessage(Level.SEVERE, "Error restoring an NPC: The world it's in does not exist.");
-				NPCMain.instance.sendDebugMessage(Level.SEVERE, "The NPC will be removed from storage.");
-				return null;
-			}
-
 			NPCData data = Serialisable.deserialise(obj, NPCData.class);
 			data.setStored(true);
 			return data;
-		} catch (JsonSyntaxException | IllegalStateException e) {
-			NPCMain.instance.sendDebugMessage(Level.SEVERE, "Error restoring an NPC: Invalid JSON");
-			NPCMain.instance.sendDebugMessage(Level.SEVERE, "The NPC will be removed from storage.");
-			NPCMain.instance.storage.removeNPC(name);
+		} catch (JsonSyntaxException e) {
+			NPCMain.instance.getLogger().severe(Messages.getNPCRestoreError(name, "Invalid JSON"));
+			NPCMain.instance.getLogger().severe(Messages.RESOLVE_ERRORS);
+			return null;
+		} catch (IllegalArgumentException | NullPointerException e) {
+			NPCMain.instance.getLogger().severe(Messages.getNPCRestoreError(name, e.getMessage()));
+			NPCMain.instance.getLogger().severe(Messages.RESOLVE_ERRORS);
+			return null;
+		} catch (Exception e) {
+			e.printStackTrace();
 			return null;
 		}
     }
