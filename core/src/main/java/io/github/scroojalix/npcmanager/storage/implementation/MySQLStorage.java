@@ -6,15 +6,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.annotation.Nonnull;
+
 import org.bukkit.configuration.file.FileConfiguration;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.npc.NPCData;
-import io.github.scroojalix.npcmanager.storage.implementation.interfaces.RemoteStorage;
-import io.github.scroojalix.npcmanager.storage.implementation.interfaces.StorageImplementation;
 import io.github.scroojalix.npcmanager.storage.misc.JsonParser;
+import io.github.scroojalix.npcmanager.storage.misc.StorageImplementation;
+import io.github.scroojalix.npcmanager.utils.Messages;
 
-public class MySQLStorage implements StorageImplementation, RemoteStorage {
+public class MySQLStorage implements StorageImplementation.RemoteStorage {
 
     private final NPCMain main;
     private final String address;
@@ -44,7 +46,7 @@ public class MySQLStorage implements StorageImplementation, RemoteStorage {
     }
 
     @Override
-    public String getImplementationName() {
+    public @Nonnull String getImplementationName() {
         return "MySQL";
     }
 
@@ -54,7 +56,7 @@ public class MySQLStorage implements StorageImplementation, RemoteStorage {
     }
 
     @Override
-    public boolean exists(String name) {
+    public boolean exists(@Nonnull String name) {
         if (!isConnected())
             return false;
         try {
@@ -63,61 +65,87 @@ public class MySQLStorage implements StorageImplementation, RemoteStorage {
 			ResultSet results = ps.executeQuery();
 			return results.next();
 		} catch(Exception e) {
+            main.getLogger().severe(e.getMessage());
             return false;
 		}
     }
 
     @Override
-    public void init() throws Throwable {
-        DriverManager.setLoginTimeout(connectionTimeout);
-        connection = DriverManager.getConnection("jdbc:mysql://"+address+"/"+database+"?useSSL="+useSSL, username, password);
-        this.createTable();
+    public boolean init() {
+        try {
+            DriverManager.setLoginTimeout(connectionTimeout);
+            connection = DriverManager.getConnection("jdbc:mysql://"+address+"/"+database+"?useSSL="+useSSL, username, password);
+            return this.createTable();
+        } catch(SQLException e) {
+            main.getLogger().severe(e.getMessage());
+            return false;
+        }
     }
 
-    private void createTable() {
-		try {
-			PreparedStatement ps = connection.prepareStatement("CREATE TABLE IF NOT EXISTS "+tableName+
-					" (NAME VARCHAR(16) BINARY,DATA TEXT BINARY,PRIMARY KEY (NAME))");
-			ps.executeUpdate();
-		} catch(SQLException e) {
-			e.printStackTrace();
-		}
+    private boolean createTable() throws SQLException {
+        PreparedStatement ps = connection.prepareStatement("CREATE TABLE IF NOT EXISTS "+tableName+
+                " (NAME VARCHAR(16) BINARY,DATA TEXT BINARY,PRIMARY KEY (NAME))");
+        return ps.executeUpdate() > 0;
 	}
 
     @Override
-    public void shutdown() throws Throwable {
-        if (connection != null) {
-            connection.close();
-        }
-    }
-
-    //TODO save NPCData in better format than in json.
-    @Override
-    public void saveNPC(NPCData data) throws Throwable {
-        PreparedStatement ps = connection.prepareStatement("REPLACE INTO "+tableName+" (NAME,DATA) VALUES (?,?)");
-        ps.setString(1, data.getName());
-        ps.setString(2, JsonParser.toJson(data, false));
-        ps.executeUpdate();
-    }
-
-    @Override
-    public void removeNPC(String name) throws Throwable {
-        if (exists(name)) {
-            PreparedStatement ps = connection.prepareStatement("DELETE FROM "+tableName+" WHERE NAME=?");
-			ps.setString(1, name);
-			ps.executeUpdate();
-        }
-    }
-
-    @Override
-    public void restoreNPCs() throws Throwable {
-        PreparedStatement ps = connection.prepareStatement("SELECT * FROM "+tableName);
-        ResultSet rs = ps.executeQuery();
-        while(rs.next()) {
-            NPCData data = JsonParser.fromJson(rs.getString(1), rs.getString(2), false);
-            if (data != null) {
-                main.npc.spawnNPC(data);
+    public boolean shutdown() {
+        try {
+            if (connection != null) {
+                connection.close();
             }
+            return connection.isClosed();
+        } catch (SQLException e) {
+            main.getLogger().severe(e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public boolean saveNPC(@Nonnull NPCData data) {
+        try {
+            PreparedStatement ps = connection.prepareStatement("REPLACE INTO "+tableName+" (NAME,DATA) VALUES (?,?)");
+            ps.setString(1, data.getName());
+            ps.setString(2, JsonParser.toJson(data, false));
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            main.getLogger().severe(e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public boolean removeNPC(@Nonnull String name) {
+        if (!exists(name)) return false;
+        try {
+            PreparedStatement ps = connection.prepareStatement("DELETE FROM "+tableName+" WHERE NAME=?");
+            ps.setString(1, name);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            main.getLogger().severe(e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public boolean restoreAllNPCs() {
+        try {
+            PreparedStatement ps = connection.prepareStatement("SELECT * FROM "+tableName);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()) {
+                try {
+                    NPCData data = JsonParser.fromJson(rs.getString(1), rs.getString(2), false);
+                    if (data != null) {
+                        main.npc.spawnNPC(data);
+                    }
+                } catch (Exception e) {
+                    Messages.printNPCRestoreError(main, rs.getString(1), e.getMessage());
+                }
+            }
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 }

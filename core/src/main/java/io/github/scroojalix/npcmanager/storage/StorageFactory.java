@@ -7,7 +7,7 @@ import io.github.scroojalix.npcmanager.storage.implementation.JsonStorage;
 import io.github.scroojalix.npcmanager.storage.implementation.MongoStorage;
 import io.github.scroojalix.npcmanager.storage.implementation.MySQLStorage;
 import io.github.scroojalix.npcmanager.storage.implementation.TomlStorage;
-import io.github.scroojalix.npcmanager.storage.implementation.interfaces.StorageImplementation;
+import io.github.scroojalix.npcmanager.storage.misc.StorageImplementation;
 
 public class StorageFactory {
     

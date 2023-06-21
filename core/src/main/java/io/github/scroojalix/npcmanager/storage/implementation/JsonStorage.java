@@ -6,12 +6,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import javax.annotation.Nonnull;
+
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.npc.NPCData;
-import io.github.scroojalix.npcmanager.storage.implementation.interfaces.StorageImplementation;
 import io.github.scroojalix.npcmanager.storage.misc.JsonParser;
+import io.github.scroojalix.npcmanager.storage.misc.StorageImplementation;
+import io.github.scroojalix.npcmanager.utils.Messages;
 
-public class JsonStorage implements StorageImplementation {
+public class JsonStorage implements StorageImplementation.LocalStorage {
 
     private NPCMain main;
 
@@ -20,57 +23,45 @@ public class JsonStorage implements StorageImplementation {
     }
 
     @Override
-    public String getImplementationName() {
+    public @Nonnull String getImplementationName() {
         return "JSON";
     }
 
     @Override
-    public void saveNPC(NPCData data) {
+    public boolean saveNPC(@Nonnull NPCData data) {
         File jsonFile = new File(main.getDataFolder()+"/json-storage", data.getName()+".json");
 		try {
 			jsonFile.getParentFile().mkdirs();
 			jsonFile.createNewFile();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		try {
 			FileWriter writer = new FileWriter(jsonFile);
 			writer.write(JsonParser.toJson(data, true));
 			writer.close();
+            return true;
 		} catch (IOException e) {
-			e.printStackTrace();
+			main.getLogger().severe(e.getMessage());
+            return false;
 		}
     }
     
     @Override
-    public void removeNPC(String name) {
+    public boolean removeNPC(@Nonnull String name) {
         File jsonFile = new File(main.getDataFolder()+"/json-storage", name+".json");
-        if (jsonFile.exists()) {
-            jsonFile.delete();
-        }
+        if (!jsonFile.exists()) return false;
+        return jsonFile.delete();
     }
 
     @Override
-    public void restoreNPCs() {
-        if (new File(main.getDataFolder()+"/json-storage").exists()) {
-            File jsonStorage = new File(main.getDataFolder() + "/json-storage");
-            File[] npcFiles = jsonStorage.listFiles();
-            if (npcFiles != null) {
-                for (int i = 0; i < npcFiles.length; i++) {
-                    File current = npcFiles[i];
-                    if (current.isFile() && current.getName().endsWith(".json")) {
-                        try {
-                            String json = new String(Files.readAllBytes(Paths.get(current.getPath())));
-                            NPCData data = JsonParser.fromJson(current.getName().replaceFirst("[.][^.]+$", ""), json, true);
-                            if (data != null)
-                                main.npc.spawnNPC(data);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
+    public boolean restoreNPC(File file) {
+        try {
+            String json = new String(Files.readAllBytes(Paths.get(file.getPath())));
+            NPCData data = JsonParser.fromJson(file.getName().replaceFirst("[.][^.]+$", ""), json, true);
+            if (data == null) return false;
+
+            main.npc.spawnNPC(data);
+            return true;
+        } catch (Exception e) {
+            Messages.printNPCRestoreError(main, file.getName(), e.getMessage());
+            return false;
         }
     }
 }
