@@ -3,8 +3,6 @@ package io.github.scroojalix.npcmanager.protocol;
 import java.security.SecureRandom;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
@@ -13,9 +11,6 @@ import org.bukkit.entity.Player;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.reflect.accessors.Accessors;
-import com.comphenix.protocol.reflect.accessors.FieldAccessor;
-import com.comphenix.protocol.utility.MinecraftReflection;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
@@ -175,7 +170,7 @@ public class NPCManager {
 	 * @param data The {@link NPCData} to create NMS data from.
 	 */
 	public NPCContainer createNPCData(NPCData data) {
-		NPCContainer container = new NPCContainer(data, nextEntityId());
+		NPCContainer container = new NPCContainer(data);
 
 		//NPC
 		NPCTrait traits = data.getTraits();
@@ -221,58 +216,20 @@ public class NPCManager {
 		Location upperLoc = new Location(loc.getWorld(), loc.getX(), loc.getY() + 1.95, loc.getZ());
 		Location lowerLoc = new Location(loc.getWorld(), loc.getX(), loc.getY() + 1.7, loc.getZ());
 		if (hasDisplayName && hasSubtitle) {
-			container.setNameHolo(new HologramContainer(nextEntityId(), upperLoc, displayName));
-			container.setSubtitleHolo(new HologramContainer(nextEntityId(), lowerLoc, subtitle));
+			container.setNameHolo(new HologramContainer(upperLoc, displayName));
+			container.setSubtitleHolo(new HologramContainer(lowerLoc, subtitle));
 		} else if (hasDisplayName && !hasSubtitle) {
-			container.setNameHolo(new HologramContainer(nextEntityId(), lowerLoc, displayName));
+			container.setNameHolo(new HologramContainer(lowerLoc, displayName));
 			container.setSubtitleHolo(null);
 		} else if (!hasDisplayName && hasSubtitle) {
 			container.setNameHolo(null);
-			container.setSubtitleHolo(new HologramContainer(nextEntityId(), lowerLoc, subtitle));
+			container.setSubtitleHolo(new HologramContainer(lowerLoc, subtitle));
 		} else {
 			container.setNameHolo(null);
 			container.setSubtitleHolo(null);
 		}
 
 		return container;
-	}
-
-	/**
-	 * Generate an Entity ID using reflection. For 1.14+ servers, this
-	 * functions calls the {@code getAndIncrement} function on an 
-	 * {@code AtomicInteger} object stored in the {@code Entity} class.
-	 * <p>
-	 * For servers below 1.14, this function gets the integer
-	 * value for the field named {@code entityCount}, then increments it
-	 * using reflection.
-	 * <p>
-	 * If this for some reason fails, a random positive integer is returned
-	 * and the stack trace is printed to the console.
-	 * @return next entity id.
-	 */
-	private int nextEntityId() {
-		try {
-			if (PluginUtils.ServerVersion.v1_14_R1.atOrAbove()) {
-				FieldAccessor ENTITY_ID = 
-				Accessors.getFieldAccessor(
-					MinecraftReflection.getEntityClass(), 
-					AtomicInteger.class, 
-					true
-				);
-				return ((AtomicInteger) ENTITY_ID.get(null)).getAndIncrement();
-			} else {
-				FieldAccessor ENTITY_ID = Accessors.getFieldAccessorOrNull(
-            		MinecraftReflection.getEntityClass(), "entityCount", int.class);
-
-				int value = (int) ENTITY_ID.get(null);
-				ENTITY_ID.set(null, value + 1);
-				return value;
-			}
-		} catch(Exception e) {
-			main.getLogger().warning("Could not use reflection to generate an entity ID. Using random integer instead.");
-			e.printStackTrace();
-			return new Random().nextInt() & Integer.MAX_VALUE;
-		}
 	}
 
 	/**
@@ -285,7 +242,12 @@ public class NPCManager {
 		container.setLoaderTask(loader, taskId);
 	}
 
-	public String getRandomNPCName() {
+	/**
+	 * Generate a random string of characters to be used for NPC
+	 * Profile names
+	 * @return random string of characters with length {@code npcNameLength}
+	 */
+	private String getRandomNPCName() {
 		char[] chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_".toCharArray();
 		SecureRandom rand = new SecureRandom();
 		char[] result = new char[npcNameLength];

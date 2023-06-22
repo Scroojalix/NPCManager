@@ -3,6 +3,7 @@ package io.github.scroojalix.npcmanager.npc;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 
 import io.github.scroojalix.npcmanager.protocol.NPCLoader;
+import io.github.scroojalix.npcmanager.utils.PluginUtils;
 import io.github.scroojalix.npcmanager.npc.interactions.InteractEvent;
 
 public class NPCContainer {
@@ -24,9 +25,9 @@ public class NPCContainer {
     private int loaderTaskId;
     private NPCLoader loaderTask;
 
-    public NPCContainer(NPCData data, int id) {
+    public NPCContainer(NPCData data) {
         this.npcData = data;
-        this.entityId = id;
+        this.entityId = PluginUtils.nextEntityId();
     }
 
     // NPC

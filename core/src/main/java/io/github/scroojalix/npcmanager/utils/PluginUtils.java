@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -16,6 +18,9 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import com.comphenix.protocol.reflect.accessors.Accessors;
+import com.comphenix.protocol.reflect.accessors.FieldAccessor;
+import com.comphenix.protocol.utility.MinecraftReflection;
 import com.google.gson.JsonParser;
 
 import io.github.scroojalix.npcmanager.NPCMain;
@@ -164,6 +169,44 @@ public class PluginUtils {
 	public static byte toByteAngle(float angle) {
         return (byte) (angle * 256.0F / 360.0F);
     }
+
+	/**
+	 * Generate an Entity ID using reflection. For 1.14+ servers, this
+	 * functions calls the {@code getAndIncrement} function on an 
+	 * {@code AtomicInteger} object stored in the {@code Entity} class.
+	 * <p>
+	 * For servers below 1.14, this function gets the integer
+	 * value for the field named {@code entityCount}, then increments it
+	 * using reflection.
+	 * <p>
+	 * If this for some reason fails, a random positive integer is returned
+	 * and the stack trace is printed to the console.
+	 * @return next entity id.
+	 */
+	public static int nextEntityId() {
+		try {
+			if (PluginUtils.ServerVersion.v1_14_R1.atOrAbove()) {
+				FieldAccessor ENTITY_ID = 
+				Accessors.getFieldAccessor(
+					MinecraftReflection.getEntityClass(), 
+					AtomicInteger.class, 
+					true
+				);
+				return ((AtomicInteger) ENTITY_ID.get(null)).getAndIncrement();
+			} else {
+				FieldAccessor ENTITY_ID = Accessors.getFieldAccessorOrNull(
+            		MinecraftReflection.getEntityClass(), "entityCount", int.class);
+
+				int value = (int) ENTITY_ID.get(null);
+				ENTITY_ID.set(null, value + 1);
+				return value;
+			}
+		} catch(Exception e) {
+			NPCMain.instance.getLogger().warning("Could not use reflection to generate an entity ID. Using random integer instead.");
+			e.printStackTrace();
+			return new Random().nextInt() & Integer.MAX_VALUE;
+		}
+	}
 
 	@SuppressWarnings("deprecation")
 	public static boolean isSuitableItem(ItemStack item, String type, Player p) {
