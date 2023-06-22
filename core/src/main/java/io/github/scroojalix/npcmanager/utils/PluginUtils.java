@@ -31,9 +31,6 @@ import net.md_5.bungee.api.ChatColor;
 
 public class PluginUtils {
 
-	// FIXME this should probably be implemented better
-	public static long NPC_REMOVE_DELAY = 60l;
-
 	public static final String NPC_SCOREBOARD_TEAM_NAME = "zzzzzzzzzzNMNPCs";
 
 	private static final Pattern pattern = Pattern.compile("#[a-fA-F0-9]{6}");

@@ -8,6 +8,7 @@ import io.github.scroojalix.npcmanager.storage.implementation.MongoStorage;
 import io.github.scroojalix.npcmanager.storage.implementation.MySQLStorage;
 import io.github.scroojalix.npcmanager.storage.implementation.TomlStorage;
 import io.github.scroojalix.npcmanager.storage.misc.StorageImplementation;
+import io.github.scroojalix.npcmanager.utils.Settings;
 
 public class StorageFactory {
     
@@ -16,7 +17,7 @@ public class StorageFactory {
 
     public StorageFactory(NPCMain main) {
         this.main = main;
-        this.type = StorageType.parse(main.getConfig().getString("save-method"));
+        this.type = StorageType.parse(Settings.STORAGE_METHOD.get());
     }
 
     public StorageType getType() {

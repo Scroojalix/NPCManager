@@ -8,13 +8,12 @@ import java.sql.SQLException;
 
 import javax.annotation.Nonnull;
 
-import org.bukkit.configuration.file.FileConfiguration;
-
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.npc.NPCData;
 import io.github.scroojalix.npcmanager.storage.misc.JsonParser;
 import io.github.scroojalix.npcmanager.storage.misc.StorageImplementation;
 import io.github.scroojalix.npcmanager.utils.Messages;
+import io.github.scroojalix.npcmanager.utils.Settings;
 
 public class MySQLStorage implements StorageImplementation.RemoteStorage {
 
@@ -33,16 +32,15 @@ public class MySQLStorage implements StorageImplementation.RemoteStorage {
 
     public MySQLStorage(NPCMain main) {
         this.main = main;
-        FileConfiguration config = main.getConfig();
-		this.address = config.getString("data.address");
-		this.database = config.getString("data.database");
-		this.username = config.getString("data.username");
-        this.password = config.getString("data.password");
+		this.address = Settings.DATABASE_ADDRESS.get();
+		this.database = Settings.DATABASE_NAME.get();
+		this.username = Settings.DATABASE_USERNAME.get();
+        this.password = Settings.DATABASE_PASSWORD.get();
 
-        this.tableName = config.getString("data.table-name");
+        this.tableName = Settings.DATABASE_TABLE_NAME.get();
         
-        this.connectionTimeout = config.getInt("data.connection-timeout");
-        this.useSSL = config.getBoolean("data.useSSL");        
+        this.connectionTimeout = Settings.DATABASE_CONNECTION_TIMEOUT.get();
+        this.useSSL = Settings.DATABASE_USE_SSL.get();
     }
 
     @Override

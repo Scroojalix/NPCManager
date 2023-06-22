@@ -17,6 +17,7 @@ import io.github.scroojalix.npcmanager.protocol.PacketReader;
 import io.github.scroojalix.npcmanager.storage.Storage;
 import io.github.scroojalix.npcmanager.storage.StorageFactory;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
+import io.github.scroojalix.npcmanager.utils.Settings;
 import io.github.scroojalix.npcmanager.utils.PluginUtils.ServerVersion;
 
 /**
@@ -35,13 +36,11 @@ public class NPCMain extends JavaPlugin {
 	public Storage storage;
 	
 	private PacketReader reader;
-	private boolean showDebugMessages;
 	private boolean validVersion = true;
 	
 	@Override
 	public void onEnable() {
 		NPCMain.instance = this;
-		this.showDebugMessages = this.getConfig().getBoolean("show-debug-messages");
 		if (!validVersion()) {
 			getLogger().severe("Disabling the plugin.");
 			NPCMain.instance = null;
@@ -68,9 +67,6 @@ public class NPCMain extends JavaPlugin {
 		}
 		this.saveDefaultConfig();
 		EmptySlots.generateItems();
-		long npcRemoveDelay = getConfig().getLong("npc-remove-delay");
-		if (npcRemoveDelay < 1) npcRemoveDelay = 1;
-		PluginUtils.NPC_REMOVE_DELAY = npcRemoveDelay;
 
 		StorageFactory factory = new StorageFactory(this);
 		this.dependencyManager = new DependencyManager(this);
@@ -121,7 +117,7 @@ public class NPCMain extends JavaPlugin {
 	}
 	
 	public void sendDebugMessage(Level level, String msg) {
-		if (showDebugMessages) {
+		if (Settings.SHOW_DEBUG_MESSAGES.get()) {
 			getLogger().log(level, msg);
 		}
 	}
@@ -134,15 +130,7 @@ public class NPCMain extends JavaPlugin {
 		npc.removeAllNPCs();
 		this.saveDefaultConfig();
 		reloadConfig();
-		showDebugMessages = getConfig().getBoolean("show-debug-messages");
-		int newNPCNameLength = this.getConfig().getInt("npc-name-length");
-		if (newNPCNameLength > 16) newNPCNameLength = 16;
-		if (newNPCNameLength < 3) newNPCNameLength = 3;
-		sendDebugMessage(Level.INFO, "Set NPC tab list name length to "+newNPCNameLength);
-		npc.setNPCNameLength(newNPCNameLength);
-		long npcRemoveDelay = getConfig().getLong("npc-remove-delay");
-		if (npcRemoveDelay < 1) npcRemoveDelay = 1;
-		PluginUtils.NPC_REMOVE_DELAY = npcRemoveDelay;
+		sendDebugMessage(Level.INFO, "NPC tab list name length set to " + Settings.NPC_NAME_LENGTH.get());
 		this.storage.shutdown();
 
 		StorageFactory factory = new StorageFactory(this);

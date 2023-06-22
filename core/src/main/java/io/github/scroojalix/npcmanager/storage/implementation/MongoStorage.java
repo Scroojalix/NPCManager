@@ -6,7 +6,6 @@ import java.util.logging.Logger;
 import javax.annotation.Nonnull;
 
 import org.bson.Document;
-import org.bukkit.configuration.file.FileConfiguration;
 
 import com.google.common.base.Strings;
 import com.mongodb.MongoClient;
@@ -23,6 +22,7 @@ import io.github.scroojalix.npcmanager.npc.NPCData;
 import io.github.scroojalix.npcmanager.storage.misc.JsonParser;
 import io.github.scroojalix.npcmanager.storage.misc.StorageImplementation;
 import io.github.scroojalix.npcmanager.utils.Messages;
+import io.github.scroojalix.npcmanager.utils.Settings;
 
 public class MongoStorage implements StorageImplementation.RemoteStorage {
     
@@ -42,16 +42,16 @@ public class MongoStorage implements StorageImplementation.RemoteStorage {
 
     public MongoStorage(NPCMain main) {
         this.main = main;
-        FileConfiguration config = main.getConfig();
-        this.address = config.getString("data.address");
-        this.databaseName = config.getString("data.database");
-        this.collectionName = config.getString("data.table-name");
-        this.username = config.getString("data.username");
-        this.password = config.getString("data.password");
+        this.address = Settings.DATABASE_ADDRESS.get();
+		this.databaseName = Settings.DATABASE_NAME.get();
+        this.collectionName = Settings.DATABASE_TABLE_NAME.get();
+		this.username = Settings.DATABASE_USERNAME.get();
+        this.password = Settings.DATABASE_PASSWORD.get();
+        
+        this.connectionTimeout = Settings.DATABASE_CONNECTION_TIMEOUT.get();
+        this.useSSL = Settings.DATABASE_USE_SSL.get();
 
-        this.connectionTimeout = config.getInt("data.connection-timeout");
-        this.useSSL = config.getBoolean("data.useSSL");
-        this.connectionString = config.getString("data.mongodb-connection-string");
+        this.connectionString = Settings.MONGODB_CONNECTION_STRING.get();
     }
 
     @Override

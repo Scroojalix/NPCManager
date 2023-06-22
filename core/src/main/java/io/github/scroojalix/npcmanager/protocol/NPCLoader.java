@@ -15,6 +15,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.npc.NPCContainer;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
+import io.github.scroojalix.npcmanager.utils.Settings;
 
 public class NPCLoader implements Runnable {
 
@@ -31,19 +32,21 @@ public class NPCLoader implements Runnable {
 	private final double headRotationRange;
 	private final boolean resetRotation;
 	private final boolean perfectOrientation;
+	private final long npcRemoveDelay;
 	private final Location npcLoc;
 
-	public NPCLoader(NPCMain main, NPCContainer npcContainer, ProtocolManager protocolManger) {
+	public NPCLoader(NPCMain main, NPCContainer npcContainer, ProtocolManager protocolManager) {
 		this.main = main;
 		this.npcContainer = npcContainer;
-		this.pm = protocolManger;
+		this.pm = protocolManager;
 		this.range = npcContainer.getNPCData().getTraits().getRange();
 		this.hasHeadRotation = npcContainer.getNPCData().getTraits().hasHeadRotation();
-		this.headRotationRange = main.getConfig().getDouble("npc-headrotation-range");
-		this.resetRotation = main.getConfig().getBoolean("reset-headrotation");
-		this.perfectOrientation = main.getConfig().getBoolean("perfect-npc-orientation");
+		this.npcLoc = npcContainer.getNPCData().getLoc();
 
-		npcLoc = npcContainer.getNPCData().getLoc();
+		this.headRotationRange = Settings.HEAD_ROTATION_RANGE.get();
+		this.resetRotation = Settings.RESET_HEAD_ROTATION.get();
+		this.perfectOrientation = Settings.PERFECT_HEAD_ROTATION.get();
+		this.npcRemoveDelay = Settings.NPC_REMOVE_DELAY.get();
 
 		generatePackets();
 	}
@@ -164,7 +167,7 @@ public class NPCLoader implements Runnable {
 			public void run() {
 				pm.sendServerPacket(player, PacketRegistry.NPC_REMOVE_INFO.get(npcContainer));
 			}
-		}, PluginUtils.NPC_REMOVE_DELAY));
+		}, npcRemoveDelay));
 	}
 
 	/**

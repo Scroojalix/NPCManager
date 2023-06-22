@@ -29,6 +29,7 @@ import io.github.scroojalix.npcmanager.npc.skin.SkinData;
 import io.github.scroojalix.npcmanager.npc.skin.SkinManager;
 import io.github.scroojalix.npcmanager.utils.Messages;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
+import io.github.scroojalix.npcmanager.utils.Settings;
 
 /**
  * The interface that contains all methods to be used in an NPCManger class
@@ -39,24 +40,12 @@ public class NPCManager {
 
 	private NPCMain main;
 	private Map<String, NPCContainer> NPCs = new LinkedHashMap<String, NPCContainer>();
-	private boolean fetchDefaultSkins;
-	private int npcNameLength;
 	private ProtocolManager protocolManager;
 
 	public NPCManager(NPCMain main) {
 		this.main = main;
 		this.protocolManager = ProtocolLibrary.getProtocolManager();
-		fetchDefaultSkins = main.getConfig().getBoolean("fetch-default-skins");
-		npcNameLength = main.getConfig().getInt("npc-name-length");
-		if (npcNameLength > 16)
-			npcNameLength = 16;
-		if (npcNameLength < 3)
-			npcNameLength = 3;
-		main.sendDebugMessage(Level.INFO, "Set NPC tab list name length to " + npcNameLength);
-	}
-
-	public void setNPCNameLength(int npcNameLength) {
-		this.npcNameLength = npcNameLength;
+		main.sendDebugMessage(Level.INFO, "NPC tab list name length set to " + Settings.NPC_NAME_LENGTH.get());
 	}
 
 	/**
@@ -72,7 +61,7 @@ public class NPCManager {
 		NPCData data = new NPCData(name, loc, store);
 		main.storage.saveNPC(data);
 		spawnNPC(data);
-		if (fetchDefaultSkins) {
+		if (Settings.FETCH_DEFAULT_SKINS.get()) {
 			SkinManager.setSkinFromUsername(null, data, name, false, true);
 		}
 	}
@@ -250,7 +239,7 @@ public class NPCManager {
 	private String getRandomNPCName() {
 		char[] chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_".toCharArray();
 		SecureRandom rand = new SecureRandom();
-		char[] result = new char[npcNameLength];
+		char[] result = new char[Settings.NPC_NAME_LENGTH.get()];
 		for (int i = 0; i < result.length; i++) {
 			result[i] = chars[rand.nextInt(chars.length)];
 		}
