@@ -140,7 +140,7 @@ public class Storage {
                     if (storage.restoreNPC(current)) {
                         main.sendDebugMessage(Level.INFO, "Successfully restored NPC Data from " + current.getName());
                     } else {
-
+                        main.sendDebugMessage(Level.SEVERE, "An issue arose when restoring NPC Data from " + current.getName());
                     }
                 }
             }
