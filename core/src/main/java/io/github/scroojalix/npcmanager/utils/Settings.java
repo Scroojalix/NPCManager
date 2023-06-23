@@ -29,9 +29,7 @@ public class Settings {
     };
 
     public static ConfigEntry<Long> NPC_REMOVE_DELAY = () -> {
-        long removeDelay = getConfig().getLong("npc-remove-delay", 60);
-        if (removeDelay < 1) removeDelay = 1;
-        return removeDelay;
+        return getConfig().getLong("npc-remove-delay", 60);
     };
 
     public static ConfigEntry<Integer> NPC_NAME_LENGTH = () -> {

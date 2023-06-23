@@ -34,6 +34,8 @@ public class NPCLoader implements Runnable {
 	private final long npcRemoveDelay;
 	private final Location npcLoc;
 
+	private final boolean removeInfoEnabled;
+
 	public NPCLoader(NPCMain main, NPCContainer npcContainer, ProtocolManager protocolManager) {
 		this.main = main;
 		this.npcContainer = npcContainer;
@@ -46,6 +48,8 @@ public class NPCLoader implements Runnable {
 		this.resetRotation = Settings.RESET_HEAD_ROTATION.get();
 		this.perfectOrientation = Settings.PERFECT_HEAD_ROTATION.get();
 		this.npcRemoveDelay = Settings.NPC_REMOVE_DELAY.get();
+
+		this.removeInfoEnabled = this.npcRemoveDelay >= 0;
 
 		generatePackets();
 	}
@@ -118,7 +122,9 @@ public class NPCLoader implements Runnable {
 						}
 					}
 				} else if (loadedForPlayers.containsKey(player)) {
-					Bukkit.getScheduler().cancelTask(loadedForPlayers.get(player));
+					if (removeInfoEnabled) {
+						Bukkit.getScheduler().cancelTask(loadedForPlayers.get(player));
+					}
 					loadedForPlayers.remove(player);
 					sendDeletePackets(player);
 				}
@@ -165,12 +171,16 @@ public class NPCLoader implements Runnable {
 		for (PacketContainer container : loadPackets) {
 			pm.sendServerPacket(player, container);
 		}
-		loadedForPlayers.put(player, Bukkit.getScheduler().scheduleSyncDelayedTask(main, new Runnable() {
-			@Override
-			public void run() {
-				pm.sendServerPacket(player, PacketRegistry.NPC_REMOVE_INFO.get(npcContainer));
-			}
-		}, npcRemoveDelay));
+		if (removeInfoEnabled) {
+			loadedForPlayers.put(player, Bukkit.getScheduler().scheduleSyncDelayedTask(main, new Runnable() {
+				@Override
+				public void run() {
+					pm.sendServerPacket(player, PacketRegistry.NPC_REMOVE_INFO.get(npcContainer));
+				}
+			}, npcRemoveDelay));
+		} else {
+			loadedForPlayers.put(player, 0);
+		}
 	}
 
 	/**
