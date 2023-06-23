@@ -99,6 +99,7 @@ public class NPCManager {
 		NPCs.put(data.getName(), npcContainer);
 		startLoaderTask(npcContainer);
 		SkinManager.updateSkin(data);
+		main.sendDebugMessage(Level.INFO, String.format("Spawned %s with entity id %s", data.getName(), npcContainer.getNPCEntityID()));
 	}
 
 	/**

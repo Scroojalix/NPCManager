@@ -137,9 +137,7 @@ public class Storage {
             for (int i = 0; i < npcFiles.length; i++) {
                 File current = npcFiles[i];
                 if (current.isFile() && current.getName().endsWith("."+storage.getFileExtension())) {
-                    if (storage.restoreNPC(current)) {
-                        main.sendDebugMessage(Level.INFO, "Successfully restored NPC Data from " + current.getName());
-                    } else {
+                    if (!storage.restoreNPC(current)) {
                         main.sendDebugMessage(Level.SEVERE, "An issue arose when restoring NPC Data from " + current.getName());
                     }
                 }
