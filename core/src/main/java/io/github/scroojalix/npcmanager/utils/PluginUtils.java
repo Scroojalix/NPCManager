@@ -161,10 +161,17 @@ public class PluginUtils {
 	}
 
 	/**
-	 * Converts a float angle to a byte angle.
+	 * Converts a float angle (in degrees) to a byte angle.
 	 */
 	public static byte toByteAngle(float angle) {
         return (byte) (angle * 256.0F / 360.0F);
+    }
+
+	/**
+	 * Converts a double angle (in degrees) to a byte angle.
+	 */
+	public static byte toByteAngle(double angle) {
+        return (byte) (angle * 256.0D / 360.0D);
     }
 
 	/**
@@ -181,6 +188,8 @@ public class PluginUtils {
 	 * @return next entity id.
 	 */
 	public static int nextEntityId() {
+		// FIXME this can produce an entity Id which is already in use
+		// This in turn gives the NPC ai and it walks around.
 		try {
 			if (PluginUtils.ServerVersion.v1_14_R1.atOrAbove()) {
 				FieldAccessor ENTITY_ID = 
