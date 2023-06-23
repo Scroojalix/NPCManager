@@ -188,8 +188,6 @@ public class PluginUtils {
 	 * @return next entity id.
 	 */
 	public static int nextEntityId() {
-		// FIXME this can produce an entity Id which is already in use
-		// This in turn gives the NPC ai and it walks around.
 		try {
 			if (PluginUtils.ServerVersion.v1_14_R1.atOrAbove()) {
 				FieldAccessor ENTITY_ID = 
@@ -198,7 +196,7 @@ public class PluginUtils {
 					AtomicInteger.class, 
 					true
 				);
-				return ((AtomicInteger) ENTITY_ID.get(null)).getAndIncrement();
+				return ((AtomicInteger) ENTITY_ID.get(null)).incrementAndGet();
 			} else {
 				FieldAccessor ENTITY_ID = Accessors.getFieldAccessorOrNull(
             		MinecraftReflection.getEntityClass(), "entityCount", int.class);
