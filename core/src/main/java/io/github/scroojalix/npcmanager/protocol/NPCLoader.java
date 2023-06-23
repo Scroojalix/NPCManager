@@ -7,7 +7,6 @@ import java.util.LinkedHashSet;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
@@ -132,12 +131,16 @@ public class NPCLoader implements Runnable {
 	 * @param player The player to look at.
 	 */
 	private void lookInDirection(Player player) {
-		// FIXME range of pitch values is limited (cant look straight up)
-		Vector difference = player.getLocation().clone().subtract(npcLoc).toVector().normalize();
-		float degrees = (float) Math.toDegrees(Math.atan2(difference.getZ(), difference.getX()) - Math.PI / 2);
-		byte yaw = PluginUtils.toByteAngle(degrees);
-		Vector height = npcLoc.clone().subtract(player.getLocation()).toVector().normalize();
-		byte pitch = PluginUtils.toByteAngle((float)Math.toDegrees(Math.atan(height.getY())));
+		// Source: https://stackoverflow.com/a/18185407
+		double dX = player.getLocation().getX() - npcLoc.getX();
+		double dY = player.getEyeLocation().getY() - (npcLoc.getY() + 1.62);
+		double dZ = player.getLocation().getZ() - npcLoc.getZ();
+
+		double yaw_temp = Math.atan2(dZ, dX);
+		byte yaw = PluginUtils.toByteAngle(Math.toDegrees(yaw_temp) - 90);
+
+		double pitch_temp = Math.atan2(Math.sqrt(dZ * dZ + dX * dX), dY);
+		byte pitch = PluginUtils.toByteAngle(Math.toDegrees(pitch_temp) - 90);
 
 		for (PacketContainer container : PacketRegistry.getHeadRotationPackets(npcContainer, yaw, pitch)) {
 			pm.sendServerPacket(player, container);
