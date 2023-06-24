@@ -2,8 +2,11 @@ package io.github.scroojalix.npcmanager.protocol;
 
 import java.security.SecureRandom;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -11,6 +14,7 @@ import org.bukkit.entity.Player;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
@@ -41,11 +45,17 @@ public class NPCManager {
 	private NPCMain main;
 	private Map<String, NPCContainer> NPCs = new LinkedHashMap<String, NPCContainer>();
 	private ProtocolManager protocolManager;
+	
+	private ProtocolManager pm;
+	private final LinkedHashSet<PacketContainer> scoreboardPackets;
 
 	public NPCManager(NPCMain main) {
 		this.main = main;
 		this.protocolManager = ProtocolLibrary.getProtocolManager();
 		main.sendDebugMessage(Level.INFO, "NPC tab list name length set to " + Settings.NPC_NAME_LENGTH.get());
+
+		pm = ProtocolLibrary.getProtocolManager();
+		scoreboardPackets = new LinkedHashSet<>();
 	}
 
 	/**
@@ -64,6 +74,7 @@ public class NPCManager {
 		if (Settings.FETCH_DEFAULT_SKINS.get()) {
 			SkinManager.setSkinFromUsername(null, data, name, false, true);
 		}
+		updateAndSendScoreboardPackets();
 	}
 
 	/**
@@ -76,6 +87,7 @@ public class NPCManager {
 		main.storage.saveNPC(data);
 		removeNPC(data.getName(), false);
 		spawnNPC(data);
+		updateAndSendScoreboardPackets();
 	}
 
 	/**
@@ -121,6 +133,7 @@ public class NPCManager {
 			removeNPCInternal(container, false);
 		}
 		NPCs.clear();
+		updateScoreboardPackets();
 	}
 
 	/**
@@ -133,6 +146,7 @@ public class NPCManager {
 	public void removeNPC(String npc, boolean fromStorage) {
 		removeNPCInternal(PluginUtils.getNPCContainerByName(npc), fromStorage);
 		NPCs.remove(npc);
+		updateScoreboardPackets();
 	}
 
 	/**
@@ -230,6 +244,29 @@ public class NPCManager {
 		NPCLoader loader = new NPCLoader(main, container, protocolManager);
 		int taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(main, loader, 0l, 1l);
 		container.setLoaderTask(loader, taskId);
+	}
+
+	private void updateScoreboardPackets() {
+		scoreboardPackets.clear();
+
+		List<String> npcNames = NPCs.values().stream()
+			.map(npc -> npc.getPlayerInfo().getProfile().getName())
+			.collect(Collectors.toList());
+
+		scoreboardPackets.addAll(PacketRegistry.SCOREBOARD_CREATE_AND_ADD.get(npcNames));
+	}
+
+	public void sendScoreboardPackets(Player receiver) {
+		for (PacketContainer packet : scoreboardPackets) {
+			pm.sendServerPacket(receiver, packet);
+		}
+	}
+
+	public void updateAndSendScoreboardPackets() {
+		updateScoreboardPackets();
+		for (Player p : Bukkit.getOnlinePlayers()) {
+			sendScoreboardPackets(p);
+		}
 	}
 
 	/**

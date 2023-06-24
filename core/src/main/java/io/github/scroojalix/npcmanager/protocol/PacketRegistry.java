@@ -232,17 +232,36 @@ public final class PacketRegistry {
         return packets;
     };
 
-    public static final StaticPacket SCOREBOARD_CREATE = () -> {
-        if (PluginUtils.ServerVersion.v1_17_R1.atOrAbove()) {
-            PacketContainer createTeam = createPacket(PacketType.Play.Server.SCOREBOARD_TEAM);
-            createTeam.getStrings().write(0, PluginUtils.NPC_SCOREBOARD_TEAM_NAME);
-            InternalStructure struct = createTeam.getOptionalStructures().read(0).get();
-            struct.getStrings()
-                .write(0, "never") // Visibility
-                .write(1, "never"); // Collision
-            createTeam.getOptionalStructures().write(0, Optional.of(struct));
-            return createTeam;
-        } else {
+    public static final PacketList<List<String>> SCOREBOARD_CREATE_AND_ADD = (List<String> npcNames) -> {
+        final LinkedHashSet<PacketContainer> scoreboardPackets = new LinkedHashSet<>();
+        
+		if (PluginUtils.ServerVersion.v1_17_R1.atOrAbove()) {
+			PacketContainer createTeam = createPacket(PacketType.Play.Server.SCOREBOARD_TEAM);
+			createTeam.getStrings().write(0, PluginUtils.NPC_SCOREBOARD_TEAM_NAME);
+			InternalStructure struct = createTeam.getOptionalStructures().read(0).get();
+			struct.getStrings()
+				.write(0, "never")  // Visibility
+				.write(1, "never"); // Collision
+			createTeam.getOptionalStructures().write(0, Optional.of(struct));
+
+			if (PluginUtils.ServerVersion.v1_18_R1.atOrAbove()) {
+				// Above 1.18, only one packet is needed, which includes
+				// the team settings and NPC names in one.
+				createTeam.getModifier().write(2, npcNames);
+				scoreboardPackets.add(createTeam);
+			} else {
+				// For 1.17 servers, two packets are necessary, with
+				// team settings and NPC names in separate packets.
+				scoreboardPackets.add(createTeam);
+				PacketContainer addNPCsToTeam = createPacket(PacketType.Play.Server.SCOREBOARD_TEAM);
+				addNPCsToTeam.getStrings().write(0, PluginUtils.NPC_SCOREBOARD_TEAM_NAME);
+				addNPCsToTeam.getIntegers().write(0, 3); // Set packet mode to MODIFY_TEAM
+				addNPCsToTeam.getModifier().write(2, npcNames);
+				scoreboardPackets.add(addNPCsToTeam);
+			}
+		} else {
+			// For servers prior to 1.17, a completely different packet
+			// structure is used.
             PacketContainer createTeam = createPacket(PacketType.Play.Server.SCOREBOARD_TEAM);
             int teamSettingIndex = PluginUtils.ServerVersion.v1_13_R1.atOrAbove() ? 1 : 4;
             createTeam.getStrings()
@@ -251,28 +270,18 @@ public final class PacketRegistry {
             if (PluginUtils.ServerVersion.v1_9_R1.atOrAbove()) {
                 createTeam.getStrings().write(teamSettingIndex + 1, "never");
             }
-            return createTeam;
-        }
-    };
+            scoreboardPackets.add(createTeam);
 
-    public static final Packet<NPCContainer> SCOREBOARD_ADD_NPC = (NPCContainer container) -> {
-        if (PluginUtils.ServerVersion.v1_17_R1.atOrAbove()) {
-            PacketContainer addNPCToTeam = createPacket(PacketType.Play.Server.SCOREBOARD_TEAM);
-            addNPCToTeam.getStrings().write(0, PluginUtils.NPC_SCOREBOARD_TEAM_NAME);
-            addNPCToTeam.getIntegers().write(0, 3);
-            addNPCToTeam.getModifier().write(2, Collections.singletonList(
-                container.getPlayerInfo().getProfile().getName()));
-            return addNPCToTeam;
-        } else {
-            PacketContainer addNPCToTeam = createPacket(PacketType.Play.Server.SCOREBOARD_TEAM);
-            addNPCToTeam.getStrings().write(0, PluginUtils.NPC_SCOREBOARD_TEAM_NAME);
+            PacketContainer addNPCsToTeam = createPacket(PacketType.Play.Server.SCOREBOARD_TEAM);
+            addNPCsToTeam.getStrings().write(0, PluginUtils.NPC_SCOREBOARD_TEAM_NAME);
             int teamPacketModeIndex = PluginUtils.ServerVersion.v1_13_R1.atOrAbove() ? 0 : 1;
-            addNPCToTeam.getIntegers().write(teamPacketModeIndex, 3);
-            addNPCToTeam.getModifier().write(PluginUtils.ServerVersion.v1_9_R1.atOrAbove() ? 7 : 6,
-                Collections.singletonList(
-                    container.getPlayerInfo().getProfile().getName()));
-            return addNPCToTeam;
-        }
+            addNPCsToTeam.getIntegers().write(teamPacketModeIndex, 3);
+            addNPCsToTeam.getModifier().write(PluginUtils.ServerVersion.v1_9_R1.atOrAbove() ? 7 : 6,
+                npcNames);
+            scoreboardPackets.add(addNPCsToTeam);
+		}
+
+        return scoreboardPackets;
     };
 
     // DYNAMIC PACKETS
@@ -307,10 +316,6 @@ public final class PacketRegistry {
     }
 
     // INTERFACES
-
-    public interface StaticPacket {
-        public PacketContainer get();
-    }
 
     public interface Packet<T> {
         public PacketContainer get(T container);

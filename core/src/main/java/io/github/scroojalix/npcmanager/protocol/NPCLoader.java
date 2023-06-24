@@ -73,11 +73,6 @@ public class NPCLoader implements Runnable {
 		loadPackets.add(PacketRegistry.NPC_SPAWN.get(npcContainer));
 		loadPackets.add(PacketRegistry.NPC_UPDATE_METADATA.get(npcContainer));
 		loadPackets.addAll(PacketRegistry.NPC_RESET_HEAD_ROTATION.get(npcContainer));
-
-		//Scoreboards
-		// FIXME these packets don't need to be sent every time an NPC is loaded
-		loadPackets.add(PacketRegistry.SCOREBOARD_CREATE.get());
-		loadPackets.add(PacketRegistry.SCOREBOARD_ADD_NPC.get(npcContainer));
 		
 		if (perfectOrientation) {
 			loadPackets.add(PacketRegistry.NPC_PLAY_ANIMATION.get(npcContainer));

@@ -75,7 +75,7 @@ public class NPCMain extends JavaPlugin {
 		this.storage = factory.getInstance();
 		
 		this.getCommand("npc").setExecutor(new CommandManager(this));
-		this.getServer().getPluginManager().registerEvents(new NPCEvents(), this);
+		this.getServer().getPluginManager().registerEvents(new NPCEvents(this), this);
 		this.getServer().getPluginManager().registerEvents(new EquipmentEvents(this), this);
 		PluginUtils.checkForUpdate();
 	}
