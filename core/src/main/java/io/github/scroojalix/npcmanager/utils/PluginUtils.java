@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -16,17 +18,18 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import com.comphenix.protocol.reflect.accessors.Accessors;
+import com.comphenix.protocol.reflect.accessors.FieldAccessor;
+import com.comphenix.protocol.utility.MinecraftReflection;
 import com.google.gson.JsonParser;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.CommandUtils;
 import io.github.scroojalix.npcmanager.npc.NPCData;
+import io.github.scroojalix.npcmanager.npc.NPCContainer;
 import net.md_5.bungee.api.ChatColor;
 
 public class PluginUtils {
-
-	// FIXME this should probably be implemented better
-	public static long NPC_REMOVE_DELAY = 60l;
 
 	public static final String NPC_SCOREBOARD_TEAM_NAME = "zzzzzzzzzzNMNPCs";
 
@@ -59,7 +62,7 @@ public class PluginUtils {
 		Bukkit.getScheduler().runTaskLaterAsynchronously(NPCMain.instance, new Runnable() {
 			@Override
 			public void run() {
-				NPCMain.instance.log(Level.INFO, "Checking if you have the latest version of the plugin...");
+				NPCMain.instance.sendDebugMessage(Level.INFO, "Checking if you have the latest version of the plugin...");
 				String current = NPCMain.instance.getDescription().getVersion();
 				try {
 					URL url = new URL("https://api.github.com/repos/Scroojalix/NPCManager/releases/latest");
@@ -73,7 +76,7 @@ public class PluginUtils {
 						logger.info("https://github.com/Scroojalix/NPCManager/releases/latest");
 						logger.info("--------------------------------------------------------");
 					} else {
-						NPCMain.instance.log(Level.INFO, "You have the latest version of the plugin.");
+						NPCMain.instance.sendDebugMessage(Level.INFO, "You have the latest version of the plugin.");
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -106,6 +109,17 @@ public class PluginUtils {
 	 */
 	public static NPCData getNPCDataByName(String name) throws NullPointerException {
 		return NPCMain.instance.npc.getNPCHashMap().get(name).getNPCData();
+	}
+
+	/**
+	 * Gets NPCContainer object by name
+	 * Throws Null Pointer Exception if container does not exist, so use carefully.
+	 * @param name name of npc
+	 * @return NPCData object defined by name.
+	 * @throws NullPointerException if NPC does not exist.
+	 */
+	public static NPCContainer getNPCContainerByName(String name) throws NullPointerException {
+		return NPCMain.instance.npc.getNPCHashMap().get(name);
 	}
 
 	/**
@@ -147,11 +161,56 @@ public class PluginUtils {
 	}
 
 	/**
-	 * Converts a float angle to a byte angle.
+	 * Converts a float angle (in degrees) to a byte angle.
 	 */
 	public static byte toByteAngle(float angle) {
         return (byte) (angle * 256.0F / 360.0F);
     }
+
+	/**
+	 * Converts a double angle (in degrees) to a byte angle.
+	 */
+	public static byte toByteAngle(double angle) {
+        return (byte) (angle * 256.0D / 360.0D);
+    }
+
+	/**
+	 * Generate an Entity ID using reflection. For 1.14+ servers, this
+	 * functions calls the {@code getAndIncrement} function on an 
+	 * {@code AtomicInteger} object stored in the {@code Entity} class.
+	 * <p>
+	 * For servers below 1.14, this function gets the integer
+	 * value for the field named {@code entityCount}, then increments it
+	 * using reflection.
+	 * <p>
+	 * If this for some reason fails, a random positive integer is returned
+	 * and the stack trace is printed to the console.
+	 * @return next entity id.
+	 */
+	public static int nextEntityId() {
+		try {
+			if (PluginUtils.ServerVersion.v1_14_R1.atOrAbove()) {
+				FieldAccessor ENTITY_ID = 
+				Accessors.getFieldAccessor(
+					MinecraftReflection.getEntityClass(), 
+					AtomicInteger.class, 
+					true
+				);
+				return ((AtomicInteger) ENTITY_ID.get(null)).incrementAndGet();
+			} else {
+				FieldAccessor ENTITY_ID = Accessors.getFieldAccessorOrNull(
+            		MinecraftReflection.getEntityClass(), "entityCount", int.class);
+
+				int value = (int) ENTITY_ID.get(null);
+				ENTITY_ID.set(null, value + 1);
+				return value;
+			}
+		} catch(Exception e) {
+			NPCMain.instance.getLogger().warning("Could not use reflection to generate an entity ID. Using random integer instead.");
+			e.printStackTrace();
+			return new Random().nextInt() & Integer.MAX_VALUE;
+		}
+	}
 
 	@SuppressWarnings("deprecation")
 	public static boolean isSuitableItem(ItemStack item, String type, Player p) {

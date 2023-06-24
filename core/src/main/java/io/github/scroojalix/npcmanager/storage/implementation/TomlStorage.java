@@ -2,17 +2,19 @@ package io.github.scroojalix.npcmanager.storage.implementation;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
+
+import javax.annotation.Nonnull;
 
 import com.moandjiezana.toml.Toml;
 import com.moandjiezana.toml.TomlWriter;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.npc.NPCData;
-import io.github.scroojalix.npcmanager.storage.implementation.interfaces.StorageImplementation;
 import io.github.scroojalix.npcmanager.storage.misc.Serialisable;
+import io.github.scroojalix.npcmanager.storage.misc.StorageImplementation;
+import io.github.scroojalix.npcmanager.utils.Messages;
 
-public class TomlStorage implements StorageImplementation {
+public class TomlStorage implements StorageImplementation.LocalStorage {
 
     private NPCMain main;
 
@@ -21,12 +23,12 @@ public class TomlStorage implements StorageImplementation {
     }
 
     @Override
-    public String getImplementationName() {
+    public @Nonnull String getImplementationName() {
         return "TOML";
     }
 
     @Override
-    public void saveNPC(NPCData data) throws Throwable {
+    public boolean saveNPC(@Nonnull NPCData data) {
         TomlWriter writer = new TomlWriter.Builder()
             .indentValuesBy(2)
             .build();
@@ -34,45 +36,33 @@ public class TomlStorage implements StorageImplementation {
         try {
 			file.getParentFile().mkdirs();
 			file.createNewFile();
+            writer.write(data.serialise(), file);
+            return true;
 		} catch (IOException e) {
-			e.printStackTrace();
+            main.getLogger().severe(e.getMessage());
+            return false;
 		}
-        writer.write(data.serialise(), file);
     }
 
     @Override
-    public void removeNPC(String name) throws Throwable {
+    public boolean removeNPC(@Nonnull String name) {
         File file = new File(main.getDataFolder()+"/toml-storage", name+".toml");
-        if (file.exists()) {
-            file.delete();
-        }
+        if (!file.exists()) return false;
+        return file.delete();
     }
 
-    //TODO abstract this out. It is very repetitive code.
     @Override
-    @SuppressWarnings("unchecked")
-    public void restoreNPCs() throws Throwable {
-        if (new File(main.getDataFolder()+"/toml-storage").exists()) {
-            File folder = new File(main.getDataFolder() + "/toml-storage");
-            File[] npcFiles = folder.listFiles();
-            if (npcFiles != null) {
-                for (int i = 0; i < npcFiles.length; i++) {
-                    File current = npcFiles[i];
-                    if (current.isFile() && current.getName().endsWith(".toml")) {
-                        try {   
-                            Toml toml = new Toml().read(current);
-                            NPCData data = Serialisable.deserialise(toml.to(Map.class), NPCData.class);
-                            data.setStored(true);
-                            if (data != null && data.getTraits() != null)
-                                main.npc.spawnNPC(data);
-                        } catch (IllegalStateException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
+    public boolean restoreNPC(File current) {
+        try {
+            Toml toml = new Toml().read(current);
+            NPCData data = Serialisable.deserialise(toml.toMap(), NPCData.class);
+            data.setStored(true);
+            if (data != null && data.getTraits() != null)
+                main.npc.spawnNPC(data);
+            return true;
+        } catch (Exception e) {
+            Messages.printNPCRestoreError(main, current.getName(), e.getMessage());
         }
-        
+        return false;
     }
-    
 }

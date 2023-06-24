@@ -15,6 +15,7 @@ public class ReflectionClassLoader {
             () -> URLClassLoaderAccess.create((URLClassLoader) NPCMain.class.getClassLoader()));
 
     public static void addJarToClasspath(Path file) {
+        if (file == null) return;
         try {
             URL_INJECTOR.get().addURL(file.toUri().toURL());
         } catch (Exception e) {

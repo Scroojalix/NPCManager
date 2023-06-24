@@ -47,10 +47,7 @@ public class RenameCommand extends SubCommand {
             }
             if (!PluginUtils.npcExists(args[2])) {
                 if (PluginUtils.isAlphanumeric(args[2])) {
-                    main.npc.removeNPC(data.getName(), true);
-                    data.setName(args[2]);
-                    main.storage.saveNPC(data);
-                    main.npc.spawnNPC(data);
+                    main.npc.renameNPC(data, args[2]);
                     sender.sendMessage(PluginUtils.format("&6Renamed &f" + args[1] + " &6to &f" + args[2]));
                     return true;
                 } else {

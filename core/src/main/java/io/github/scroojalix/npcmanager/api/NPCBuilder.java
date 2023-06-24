@@ -9,7 +9,6 @@ import org.bukkit.inventory.ItemStack;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.npc.NPCData;
-import io.github.scroojalix.npcmanager.npc.interactions.CommandInteraction;
 import io.github.scroojalix.npcmanager.npc.interactions.InteractEventType;
 import io.github.scroojalix.npcmanager.npc.interactions.InteractionsManager;
 import io.github.scroojalix.npcmanager.npc.skin.NPCSkinLayers;
@@ -32,12 +31,12 @@ public class NPCBuilder {
 
     public NPCBuilder setInteractEvent(InteractEventType type, String interaction) {
         if (type == InteractEventType.COMMAND) {
-            data.setInteractEvent(new CommandInteraction(interaction));
+            data.getTraits().setInteractEvent(type, interaction);
         } else if (type == InteractEventType.CUSTOM) {
             if (InteractionsManager.getInteractEvents().containsKey(interaction)) {
-                data.setInteractEvent(InteractionsManager.getInteractEvents().get(interaction));
+                data.getTraits().setInteractEvent(type, interaction);
             } else {
-                NPCMain.instance.log(Level.WARNING, "Could not set the interact event of "+data.getName()+". The interact event '"+interaction+"' does not exist.");
+                NPCMain.instance.sendDebugMessage(Level.WARNING, "Could not set the interact event of "+data.getName()+". The interact event '"+interaction+"' does not exist.");
             }
         }
         return this;

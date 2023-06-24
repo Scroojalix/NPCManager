@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender;
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.SubCommand;
 import io.github.scroojalix.npcmanager.npc.NPCData;
-import io.github.scroojalix.npcmanager.npc.interactions.CommandInteraction;
+import io.github.scroojalix.npcmanager.npc.interactions.InteractEventType;
 import io.github.scroojalix.npcmanager.npc.interactions.InteractionsManager;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
@@ -47,15 +47,15 @@ public class InteractEventModification extends SubCommand {
                 for (int arg = 5; arg < args.length; arg++) {
                     command += " " + args[arg];
                 }
-                data.setInteractEvent(new CommandInteraction(command));
-                main.storage.saveNPC(data);
+                data.getTraits().setInteractEvent(InteractEventType.COMMAND, command);
+                main.npc.updateNPC(data);
                 sender.sendMessage(PluginUtils.format(
                         "&6Set &F" + data.getName() + "'s &6Interact Event to the command &F/" + command));
                 return true;
             } else if (args[3].equalsIgnoreCase("custom") && args.length > 4) {
                 if (InteractionsManager.getInteractEvents().containsKey(args[4])) {
-                    data.setInteractEvent(InteractionsManager.getInteractEvents().get(args[4]));
-                    main.storage.saveNPC(data);
+                    data.getTraits().setInteractEvent(InteractEventType.CUSTOM, args[4]);
+                    main.npc.updateNPC(data);
                     sender.sendMessage(PluginUtils
                             .format("&6Set &F" + data.getName() + "'s &6Interact Event to &F" + args[3]));
                 } else {
@@ -64,8 +64,8 @@ public class InteractEventModification extends SubCommand {
                 }
                 return true;
             } else if (args[3].equalsIgnoreCase("none")) {
-                data.setInteractEvent(null);
-                main.storage.saveNPC(data);
+                data.getTraits().removeInteractEvent();
+                main.npc.updateNPC(data);
                 sender.sendMessage(PluginUtils.format("&6Removed the Interact Event for &F" + data.getName()));
                 return true;
             }

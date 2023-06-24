@@ -3,6 +3,8 @@ package io.github.scroojalix.npcmanager.npc;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 
 import io.github.scroojalix.npcmanager.protocol.NPCLoader;
+import io.github.scroojalix.npcmanager.utils.PluginUtils;
+import io.github.scroojalix.npcmanager.npc.interactions.InteractEvent;
 
 public class NPCContainer {
 
@@ -10,6 +12,9 @@ public class NPCContainer {
     private NPCData npcData;
     private PlayerInfoData playerInfo;
     private final int entityId;
+
+    //Interact Event
+    private InteractEvent interactEvent;
 
     //Holograms
     //TODO make this into an array to allow multiple lines
@@ -20,9 +25,9 @@ public class NPCContainer {
     private int loaderTaskId;
     private NPCLoader loaderTask;
 
-    public NPCContainer(NPCData data, int id) {
+    public NPCContainer(NPCData data) {
         this.npcData = data;
-        this.entityId = id;
+        this.entityId = PluginUtils.nextEntityId();
     }
 
     // NPC
@@ -46,6 +51,21 @@ public class NPCContainer {
     public void setPlayerInfo(PlayerInfoData playerInfo) {
         this.playerInfo = playerInfo;
     }
+
+    /**
+	 * Sets the Interact Event of this NPC.
+	 * @param interactEvent New InteractEvent
+	 */
+	public void setInteractEvent(InteractEvent interactEvent) {
+		this.interactEvent = interactEvent;
+	}
+	
+	/**
+	 * @return The Interact Event of this NPC.
+	 */
+	public InteractEvent getInteractEvent() {
+		return interactEvent;
+	}
 
     // Holograms
     public void setNameHolo(HologramContainer hologramContainer) {

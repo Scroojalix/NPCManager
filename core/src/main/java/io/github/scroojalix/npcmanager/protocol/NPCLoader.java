@@ -7,7 +7,6 @@ import java.util.LinkedHashSet;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
@@ -15,6 +14,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.npc.NPCContainer;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
+import io.github.scroojalix.npcmanager.utils.Settings;
 
 public class NPCLoader implements Runnable {
 
@@ -31,19 +31,25 @@ public class NPCLoader implements Runnable {
 	private final double headRotationRange;
 	private final boolean resetRotation;
 	private final boolean perfectOrientation;
+	private final long npcRemoveDelay;
 	private final Location npcLoc;
 
-	public NPCLoader(NPCMain main, NPCContainer npcContainer, ProtocolManager protocolManger) {
+	private final boolean removeInfoEnabled;
+
+	public NPCLoader(NPCMain main, NPCContainer npcContainer, ProtocolManager protocolManager) {
 		this.main = main;
 		this.npcContainer = npcContainer;
-		this.pm = protocolManger;
+		this.pm = protocolManager;
 		this.range = npcContainer.getNPCData().getTraits().getRange();
 		this.hasHeadRotation = npcContainer.getNPCData().getTraits().hasHeadRotation();
-		this.headRotationRange = main.getConfig().getDouble("npc-headrotation-range");
-		this.resetRotation = main.getConfig().getBoolean("reset-headrotation");
-		this.perfectOrientation = main.getConfig().getBoolean("perfect-npc-orientation");
+		this.npcLoc = npcContainer.getNPCData().getLoc();
 
-		npcLoc = npcContainer.getNPCData().getLoc();
+		this.headRotationRange = Settings.HEAD_ROTATION_RANGE.get();
+		this.resetRotation = Settings.RESET_HEAD_ROTATION.get();
+		this.perfectOrientation = Settings.PERFECT_HEAD_ROTATION.get();
+		this.npcRemoveDelay = Settings.NPC_REMOVE_DELAY.get();
+
+		this.removeInfoEnabled = this.npcRemoveDelay >= 0;
 
 		generatePackets();
 	}
@@ -67,11 +73,6 @@ public class NPCLoader implements Runnable {
 		loadPackets.add(PacketRegistry.NPC_SPAWN.get(npcContainer));
 		loadPackets.add(PacketRegistry.NPC_UPDATE_METADATA.get(npcContainer));
 		loadPackets.addAll(PacketRegistry.NPC_RESET_HEAD_ROTATION.get(npcContainer));
-
-		//Scoreboards
-		// FIXME these packets don't need to be sent every time an NPC is loaded
-		loadPackets.add(PacketRegistry.SCOREBOARD_CREATE.get());
-		loadPackets.add(PacketRegistry.SCOREBOARD_ADD_NPC.get(npcContainer));
 		
 		if (perfectOrientation) {
 			loadPackets.add(PacketRegistry.NPC_PLAY_ANIMATION.get(npcContainer));
@@ -116,7 +117,9 @@ public class NPCLoader implements Runnable {
 						}
 					}
 				} else if (loadedForPlayers.containsKey(player)) {
-					Bukkit.getScheduler().cancelTask(loadedForPlayers.get(player));
+					if (removeInfoEnabled) {
+						Bukkit.getScheduler().cancelTask(loadedForPlayers.get(player));
+					}
 					loadedForPlayers.remove(player);
 					sendDeletePackets(player);
 				}
@@ -129,12 +132,16 @@ public class NPCLoader implements Runnable {
 	 * @param player The player to look at.
 	 */
 	private void lookInDirection(Player player) {
-		// FIXME range of pitch values is limited (cant look straight up)
-		Vector difference = player.getLocation().clone().subtract(npcLoc).toVector().normalize();
-		float degrees = (float) Math.toDegrees(Math.atan2(difference.getZ(), difference.getX()) - Math.PI / 2);
-		byte yaw = PluginUtils.toByteAngle(degrees);
-		Vector height = npcLoc.clone().subtract(player.getLocation()).toVector().normalize();
-		byte pitch = PluginUtils.toByteAngle((float)Math.toDegrees(Math.atan(height.getY())));
+		// Source: https://stackoverflow.com/a/18185407
+		double dX = player.getLocation().getX() - npcLoc.getX();
+		double dY = player.getEyeLocation().getY() - (npcLoc.getY() + 1.62);
+		double dZ = player.getLocation().getZ() - npcLoc.getZ();
+
+		double yaw_temp = Math.atan2(dZ, dX);
+		byte yaw = PluginUtils.toByteAngle(Math.toDegrees(yaw_temp) - 90);
+
+		double pitch_temp = Math.atan2(Math.sqrt(dZ * dZ + dX * dX), dY);
+		byte pitch = PluginUtils.toByteAngle(Math.toDegrees(pitch_temp) - 90);
 
 		for (PacketContainer container : PacketRegistry.getHeadRotationPackets(npcContainer, yaw, pitch)) {
 			pm.sendServerPacket(player, container);
@@ -159,12 +166,16 @@ public class NPCLoader implements Runnable {
 		for (PacketContainer container : loadPackets) {
 			pm.sendServerPacket(player, container);
 		}
-		loadedForPlayers.put(player, Bukkit.getScheduler().scheduleSyncDelayedTask(main, new Runnable() {
-			@Override
-			public void run() {
-				pm.sendServerPacket(player, PacketRegistry.NPC_REMOVE_INFO.get(npcContainer));
-			}
-		}, PluginUtils.NPC_REMOVE_DELAY));
+		if (removeInfoEnabled) {
+			loadedForPlayers.put(player, Bukkit.getScheduler().scheduleSyncDelayedTask(main, new Runnable() {
+				@Override
+				public void run() {
+					pm.sendServerPacket(player, PacketRegistry.NPC_REMOVE_INFO.get(npcContainer));
+				}
+			}, npcRemoveDelay));
+		} else {
+			loadedForPlayers.put(player, 0);
+		}
 	}
 
 	/**

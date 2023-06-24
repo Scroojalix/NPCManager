@@ -9,7 +9,6 @@ import org.bukkit.inventory.ItemStack;
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.npc.NPCData;
 import io.github.scroojalix.npcmanager.npc.NPCTrait;
-import io.github.scroojalix.npcmanager.npc.interactions.CommandInteraction;
 import io.github.scroojalix.npcmanager.npc.interactions.InteractEventType;
 import io.github.scroojalix.npcmanager.npc.interactions.InteractionsManager;
 import io.github.scroojalix.npcmanager.npc.skin.NPCSkinLayers;
@@ -77,10 +76,7 @@ public class NPCManagerAPI {
 				throw new IllegalArgumentException("You cannot rename an NPC to its previous name");
 			}
 			if (PluginUtils.isAlphanumeric(newName)) {
-				NPCMain.instance.npc.removeNPC(data.getName(), true);
-				data.setName(newName);
-				NPCMain.instance.storage.saveNPC(data);
-				NPCMain.instance.npc.spawnNPC(data);
+				NPCMain.instance.npc.renameNPC(data, newName);
 			} else {
 				throw new IllegalArgumentException(Messages.NOT_ALPHANUMERIC);
 			}
@@ -149,7 +145,6 @@ public class NPCManagerAPI {
 					throw new IllegalArgumentException("The equipment slot '" + slot + "' is invalid.");
 			}
 			if (update) {
-				NPCMain.instance.storage.saveNPC(data);
 				NPCMain.instance.npc.updateNPC(data);
 			}
 		} else {
@@ -161,7 +156,6 @@ public class NPCManagerAPI {
 		if (PluginUtils.npcExists(name)) {
 			NPCData data = PluginUtils.getNPCDataByName(name);
 			data.getTraits().setDisplayName(newDisplayName);
-			NPCMain.instance.storage.saveNPC(data);
 			NPCMain.instance.npc.updateNPC(data);
 		} else {
 			throw new IllegalArgumentException(Messages.UNKNOWN_NPC);
@@ -172,7 +166,6 @@ public class NPCManagerAPI {
 		if (PluginUtils.npcExists(name)) {
 			NPCData data = PluginUtils.getNPCDataByName(name);
 			data.getTraits().setSubtitle(newSubtitle);
-			NPCMain.instance.storage.saveNPC(data);
 			NPCMain.instance.npc.updateNPC(data);
 		} else {
 			throw new IllegalArgumentException(Messages.UNKNOWN_NPC);
@@ -183,7 +176,6 @@ public class NPCManagerAPI {
 		if (PluginUtils.npcExists(name)) {
 			NPCData data = PluginUtils.getNPCDataByName(name);
 			data.getTraits().setHeadRotation(headRotation);
-			NPCMain.instance.storage.saveNPC(data);
 			NPCMain.instance.npc.updateNPC(data);
 		} else {
 			throw new IllegalArgumentException(Messages.UNKNOWN_NPC);
@@ -197,7 +189,6 @@ public class NPCManagerAPI {
 				throw new IllegalArgumentException("NPC range cannot be set to 0");
 			}
 			data.getTraits().setRange(range);
-			NPCMain.instance.storage.saveNPC(data);
 			NPCMain.instance.npc.updateNPC(data);
 		} else {
 			throw new IllegalArgumentException(Messages.UNKNOWN_NPC);
@@ -242,7 +233,7 @@ public class NPCManagerAPI {
 					}
 				}
 				data.getTraits().setSkinLayers(newLayers);
-				NPCMain.instance.storage.saveNPC(data);
+
 				NPCMain.instance.npc.updateNPC(data);
 			}
 		} else {
@@ -260,10 +251,12 @@ public class NPCManagerAPI {
 		if (PluginUtils.npcExists(name)) {
 			NPCData data = PluginUtils.getNPCDataByName(name);
 			if (type == InteractEventType.COMMAND) {
-				data.setInteractEvent(new CommandInteraction(interaction));
+				data.getTraits().setInteractEvent(type, interaction);
+				NPCMain.instance.npc.updateNPC(data);
 			} else if (type == InteractEventType.CUSTOM) {
 				if (InteractionsManager.getInteractEvents().containsKey(interaction)) {
-					data.setInteractEvent(InteractionsManager.getInteractEvents().get(interaction));
+					data.getTraits().setInteractEvent(type, interaction);
+					NPCMain.instance.npc.updateNPC(data);
 				} else {
 					throw new IllegalArgumentException(
 							"The custom interact event '" + interaction + "' does not exist.");

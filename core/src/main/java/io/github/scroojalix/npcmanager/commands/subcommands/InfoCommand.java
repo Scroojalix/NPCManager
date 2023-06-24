@@ -55,7 +55,7 @@ public class InfoCommand extends SubCommand {
                 sender.sendMessage(PluginUtils.format("&6Range: &F" + traits.getRange()));
                 sender.sendMessage(PluginUtils.format("&6Head Rotation: &F" + traits.hasHeadRotation()));
                 CommandUtils.sendJSONMessage(sender, CommandUtils.getEquipmentComponents(data.getName()));
-                if (data.getInteractEvent() != null) {
+                if (traits.getInteractEvent() != null) {
                     NPCInteractionData interactEvent = traits.getInteractEvent();
                     sender.sendMessage(PluginUtils.format("&6Interact Event: " + interactEvent.getType().infoPrefix
                             + traits.getInteractEvent().getValue()));

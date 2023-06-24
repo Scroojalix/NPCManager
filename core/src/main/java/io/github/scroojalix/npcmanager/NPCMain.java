@@ -17,6 +17,7 @@ import io.github.scroojalix.npcmanager.protocol.PacketReader;
 import io.github.scroojalix.npcmanager.storage.Storage;
 import io.github.scroojalix.npcmanager.storage.StorageFactory;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
+import io.github.scroojalix.npcmanager.utils.Settings;
 import io.github.scroojalix.npcmanager.utils.PluginUtils.ServerVersion;
 
 /**
@@ -31,17 +32,15 @@ public class NPCMain extends JavaPlugin {
 	public static ServerVersion serverVersion;
 	
 	public NPCManager npc;
-	private PacketReader reader;
 	public DependencyManager dependencyManager;
 	public Storage storage;
-	public boolean showDebugMessages;
 	
+	private PacketReader reader;
 	private boolean validVersion = true;
 	
 	@Override
 	public void onEnable() {
 		NPCMain.instance = this;
-		this.showDebugMessages = this.getConfig().getBoolean("show-debug-messages");
 		if (!validVersion()) {
 			getLogger().severe("Disabling the plugin.");
 			NPCMain.instance = null;
@@ -68,9 +67,6 @@ public class NPCMain extends JavaPlugin {
 		}
 		this.saveDefaultConfig();
 		EmptySlots.generateItems();
-		long npcRemoveDelay = getConfig().getLong("npc-remove-delay");
-		if (npcRemoveDelay < 1) npcRemoveDelay = 1;
-		PluginUtils.NPC_REMOVE_DELAY = npcRemoveDelay;
 
 		StorageFactory factory = new StorageFactory(this);
 		this.dependencyManager = new DependencyManager(this);
@@ -79,7 +75,7 @@ public class NPCMain extends JavaPlugin {
 		this.storage = factory.getInstance();
 		
 		this.getCommand("npc").setExecutor(new CommandManager(this));
-		this.getServer().getPluginManager().registerEvents(new NPCEvents(), this);
+		this.getServer().getPluginManager().registerEvents(new NPCEvents(this), this);
 		this.getServer().getPluginManager().registerEvents(new EquipmentEvents(this), this);
 		PluginUtils.checkForUpdate();
 	}
@@ -89,7 +85,7 @@ public class NPCMain extends JavaPlugin {
 		if (validVersion) {
 			reader.deregisterPacketListeners();
 			if (!PluginUtils.noNPCs()) {
-				npc.removeAllNPCs();
+				npc.removeAllNPCs(false);
 			}
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				if (player.getOpenInventory().getTopInventory().getHolder() instanceof EquipmentInventory) 
@@ -116,12 +112,12 @@ public class NPCMain extends JavaPlugin {
 			this.getLogger().severe(version + " is not a supported version!");
 			return false;
 		}
-		getLogger().info(String.format("Running on NMS version %s", serverVersion));
+		sendDebugMessage(Level.INFO, String.format("Running on NMS version %s", serverVersion));
 		return true;
 	}
 	
-	public void log(Level level, String msg) {
-		if (showDebugMessages) {
+	public void sendDebugMessage(Level level, String msg) {
+		if (Settings.SHOW_DEBUG_MESSAGES.get()) {
 			getLogger().log(level, msg);
 		}
 	}
@@ -131,18 +127,10 @@ public class NPCMain extends JavaPlugin {
 			if (player.getOpenInventory().getTopInventory().getHolder() instanceof EquipmentInventory) 
 				player.closeInventory();
 		}
-		npc.removeAllNPCs();
+		npc.removeAllNPCs(false);
 		this.saveDefaultConfig();
 		reloadConfig();
-		showDebugMessages = getConfig().getBoolean("show-debug-messages");
-		int newNPCNameLength = this.getConfig().getInt("npc-name-length");
-		if (newNPCNameLength > 16) newNPCNameLength = 16;
-		if (newNPCNameLength < 3) newNPCNameLength = 3;
-		log(Level.INFO, "Set NPC tab list name length to "+newNPCNameLength);
-		npc.setNPCNameLength(newNPCNameLength);
-		long npcRemoveDelay = getConfig().getLong("npc-remove-delay");
-		if (npcRemoveDelay < 1) npcRemoveDelay = 1;
-		PluginUtils.NPC_REMOVE_DELAY = npcRemoveDelay;
+		sendDebugMessage(Level.INFO, "NPC tab list name length set to " + Settings.NPC_NAME_LENGTH.get());
 		this.storage.shutdown();
 
 		StorageFactory factory = new StorageFactory(this);

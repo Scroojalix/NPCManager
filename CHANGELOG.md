@@ -6,6 +6,21 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 
 ## [Unreleased]
 
+## [2.0.1] - 2023-06-24
+### Changed
+- more robust storage implementation
+- better configuration settings implementation
+- better head rotation (can look higher than 45 degrees)
+- scoreboard packets now only sent when necessary, slightly improving performance
+### Added
+- nextEntityId function to ensure that every NPC id is unique
+- ability to disable removing NPC's from tablist
+### Fixed
+- more consistent debug messages (disabled by default)
+- interact events not working for storage options other than JSON
+- better serialisation of locations
+- clear command throwing ConcurrentModificationException
+
 ## [2.0.0] - 2023-06-20
 ### Added
 - support for 1.20
@@ -233,7 +248,8 @@ This project uses the versioning format {phase}.{major}.{minor}, where phase is 
 ## [1.0.0] - 2020-10-27
 Initial Commit. No Changes.
 
-[Unreleased]: https://github.com/Scroojalix/NPCManager/compare/v2.0.0...master
+[Unreleased]: https://github.com/Scroojalix/NPCManager/compare/v2.0.1...master
+[2.0.1]: https://github.com/Scroojalix/NPCManager/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/Scroojalix/NPCManager/compare/v1.5.3...v2.0.0
 [1.5.3]: https://github.com/Scroojalix/NPCManager/compare/v1.5.2...v1.5.3
 [1.5.2]: https://github.com/Scroojalix/NPCManager/compare/v1.5.1...v1.5.2

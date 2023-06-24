@@ -31,7 +31,7 @@ public enum StorageType {
                 if (id.equalsIgnoreCase(name)) return type;
             }
         }
-        NPCMain.instance.log(Level.WARNING, "Unknown storage type '"+name+"'. Defaulting to JSON.");
+        NPCMain.instance.sendDebugMessage(Level.WARNING, "Unknown storage type '"+name+"'. Defaulting to JSON.");
         return StorageType.JSON;
     }
 

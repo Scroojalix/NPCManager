@@ -3,23 +3,25 @@
 #
 
 # Show debug messages in console
-show-debug-messages: true
+show-debug-messages: false
 
 # The range at which NPCs will start looking towards the player
-npc-headrotation-range: 6
+# Negative values are not allowed.
+head-rotation-range: 6
 
 # Reset head rotation when further than the range set in the above field.
-reset-headrotation: true
+reset-head-rotation: true
+
+# If true, NPC's will perform the punch animation for perfect NPC orientation.
+perfect-head-rotation: true
 
 # When creating an NPC, use the name of the NPC to get skin data.
 fetch-default-skins: true
 
-# If true, NPC's will perform the punch animation for perfect NPC orientation.
-perfect-npc-orientation: true
-
 # How long in ticks to wait before removing an NPC from the tablist.
 # It is recommended to keep this at the default setting.
 # Setting this too low will cause skins to sometimes not be rendered.
+# Set to -1 to disable this.
 npc-remove-delay: 60
 
 # The length of an NPC's name to be used in the tablist.
@@ -36,10 +38,10 @@ npc-name-length: 16
 # Readable and editable text files
 #   - JSON
 #   - TOML
-save-method: JSON
+storage-method: JSON
 
 # Database Settings. Only applies if using a remote storage type such as MySQL or MongoDB
-data:
+database:
   
   # Define the address and port for the database.
   # - Standard DB engine port is used by default.
@@ -48,7 +50,7 @@ data:
   address: localhost
   
   # The name of the database. Has to be created already.
-  database: database
+  name: database
 
   # Credentials for the database.
   username: ""
@@ -67,4 +69,4 @@ data:
   # MongoDB ClientConnectionURI for use with replica sets and custom connection options
   # - See https://docs.mongodb.com/manual/reference/connection-string/
   # Only change this if you know what your doing and want increased customisation.
-  mongodb-connection-string: ''
+  mongodb-connection-string: ""

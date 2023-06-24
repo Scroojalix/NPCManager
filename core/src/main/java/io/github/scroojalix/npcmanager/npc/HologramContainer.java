@@ -23,8 +23,8 @@ public class HologramContainer {
     private final Location loc;
     private final String formattedText;
 
-    public HologramContainer(int id, Location loc, String text) {
-        this.id = id;
+    public HologramContainer(Location loc, String text) {
+        this.id = PluginUtils.nextEntityId();
         this.uuid = UUID.randomUUID();
         this.loc = loc;
         this.formattedText = PluginUtils.format(text);

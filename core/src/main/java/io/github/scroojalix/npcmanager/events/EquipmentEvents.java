@@ -77,13 +77,13 @@ public class EquipmentEvents implements Listener {
                                 }
                                 p.updateInventory();
                                 updateEquipment(data, cursor, types[i]);
-                                main.storage.saveNPC(data); main.npc.updateNPC(data);
+                                main.npc.updateNPC(data);
                             }
                         } else if (!current.isSimilar(EmptySlots.getArray().get(i))) {
                             e.getClickedInventory().setItem(slots[i], EmptySlots.getArray().get(i));
                             p.setItemOnCursor(current); p.updateInventory();
                             updateEquipment(data, null, types[i]);
-                            main.storage.saveNPC(data); main.npc.updateNPC(data);
+                            main.npc.updateNPC(data);
                         }
                         break;
                     }

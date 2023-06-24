@@ -3,6 +3,10 @@ package io.github.scroojalix.npcmanager.storage.implementation;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.annotation.Nonnull;
+
+import org.bson.Document;
+
 import com.google.common.base.Strings;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
@@ -13,16 +17,14 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.ReplaceOptions;
 
-import org.bson.Document;
-import org.bukkit.configuration.file.FileConfiguration;
-
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.npc.NPCData;
-import io.github.scroojalix.npcmanager.storage.implementation.interfaces.RemoteStorage;
-import io.github.scroojalix.npcmanager.storage.implementation.interfaces.StorageImplementation;
 import io.github.scroojalix.npcmanager.storage.misc.JsonParser;
+import io.github.scroojalix.npcmanager.storage.misc.StorageImplementation;
+import io.github.scroojalix.npcmanager.utils.Messages;
+import io.github.scroojalix.npcmanager.utils.Settings;
 
-public class MongoStorage implements StorageImplementation, RemoteStorage {
+public class MongoStorage implements StorageImplementation.RemoteStorage {
     
     private final NPCMain main;
     private final String address;
@@ -40,20 +42,20 @@ public class MongoStorage implements StorageImplementation, RemoteStorage {
 
     public MongoStorage(NPCMain main) {
         this.main = main;
-        FileConfiguration config = main.getConfig();
-        this.address = config.getString("data.address");
-        this.databaseName = config.getString("data.database");
-        this.collectionName = config.getString("data.table-name");
-        this.username = config.getString("data.username");
-        this.password = config.getString("data.password");
+        this.address = Settings.DATABASE_ADDRESS.get();
+		this.databaseName = Settings.DATABASE_NAME.get();
+        this.collectionName = Settings.DATABASE_TABLE_NAME.get();
+		this.username = Settings.DATABASE_USERNAME.get();
+        this.password = Settings.DATABASE_PASSWORD.get();
+        
+        this.connectionTimeout = Settings.DATABASE_CONNECTION_TIMEOUT.get();
+        this.useSSL = Settings.DATABASE_USE_SSL.get();
 
-        this.connectionTimeout = config.getInt("data.connection-timeout");
-        this.useSSL = config.getBoolean("data.useSSL");
-        this.connectionString = config.getString("data.mongodb-connection-string");
+        this.connectionString = Settings.MONGODB_CONNECTION_STRING.get();
     }
 
     @Override
-    public String getImplementationName() {
+    public @Nonnull String getImplementationName() {
         return "MongoDB";
     }
 
@@ -63,9 +65,8 @@ public class MongoStorage implements StorageImplementation, RemoteStorage {
     }
 
     @Override
-    public boolean exists(String name) {
-        if (!isConnected())
-            return false;
+    public boolean exists(@Nonnull String name) {
+        if (!isConnected()) return false;
         try {
             MongoCollection<Document> c = this.database.getCollection(this.collectionName);
             return c.countDocuments(new Document("name", name)) == 1;
@@ -75,7 +76,7 @@ public class MongoStorage implements StorageImplementation, RemoteStorage {
     }
     
     @Override
-    public void init() {
+    public boolean init() {
         disableLogging();
         if (!Strings.isNullOrEmpty(this.connectionString)) {
             this.client = new MongoClient(new MongoClientURI(this.connectionString));
@@ -108,13 +109,14 @@ public class MongoStorage implements StorageImplementation, RemoteStorage {
         }
             
         this.database = this.client.getDatabase(databaseName);
+        return this.database != null;
     }
         
     private void disableLogging() {
         //Small temporary workaround for when SLF4J is in the classpath - usually on paper servers.
         try {
             Class.forName("org.slf4j.Logger");
-            main.log(Level.WARNING, "Could not disable logging for MongoDB as slf4j is in the classpath.");
+            main.sendDebugMessage(Level.WARNING, "Could not disable logging for MongoDB as slf4j is in the classpath.");
         } catch (ClassNotFoundException e) {
             Logger.getLogger("org.mongodb.driver.cluster").setLevel(java.util.logging.Level.OFF);
             Logger.getLogger("org.mongodb.driver.connection").setLevel(java.util.logging.Level.OFF);
@@ -122,34 +124,39 @@ public class MongoStorage implements StorageImplementation, RemoteStorage {
     }
 
     @Override
-    public void shutdown() {
-        if (this.client != null) {
-            this.client.close();
-        }
+    public boolean shutdown() {
+        if (this.client == null) return false;
+        this.client.close();
+        return true;
     }
 
     @Override
-    public void saveNPC(NPCData data) {
+    public boolean saveNPC(@Nonnull NPCData data) {
         MongoCollection<Document> c = this.database.getCollection(this.collectionName);
         Document doc = Document.parse(JsonParser.toJson(data, true));
-        c.replaceOne(new Document("name", data.getName()), doc, new ReplaceOptions().upsert(true));
+        return c.replaceOne(new Document("name", data.getName()), doc, new ReplaceOptions().upsert(true)).wasAcknowledged();
     }
 
     @Override
-    public void removeNPC(String name) {
+    public boolean removeNPC(@Nonnull String name) {
         MongoCollection<Document> c = this.database.getCollection(collectionName);
-        c.deleteOne(new Document("name", name));
+        return c.deleteOne(new Document("name", name)).wasAcknowledged();
     }
 
     @Override
-    public void restoreNPCs() {
+    public boolean restoreAllNPCs() {
         MongoCollection<Document> c = this.database.getCollection(collectionName);
         for (Document doc : c.find()) {
-            NPCData data = JsonParser.fromJson(doc.get("name").toString(), doc.toJson(), true);
-            if (data != null) {
-                main.npc.spawnNPC(data);
+            try {
+                NPCData data = JsonParser.fromJson(doc.get("name").toString(), doc.toJson(), true);
+                if (data != null) {
+                    main.npc.spawnNPC(data);
+                }
+            } catch (Exception e) {
+                Messages.printNPCRestoreError(main, doc.get("name").toString(), e.getMessage());
             }
         }
+        return true;
     }
 
 }

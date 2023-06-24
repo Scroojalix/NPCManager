@@ -79,7 +79,6 @@ public class SkinModification extends SubCommand {
             } else if (args[3].equalsIgnoreCase("default")) {
                 data.getTraits().setSkinData(null);
                 data.getTraits().setSkinLayers(null);
-                main.storage.saveNPC(data);
                 main.npc.updateNPC(data);
                 sender.sendMessage(PluginUtils.format("&6Reset the skin of &F" + data.getName()));
                 return true;

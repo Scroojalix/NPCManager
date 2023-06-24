@@ -2,9 +2,11 @@ package io.github.scroojalix.npcmanager.protocol;
 
 import java.security.SecureRandom;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -12,6 +14,7 @@ import org.bukkit.entity.Player;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
@@ -23,9 +26,14 @@ import io.github.scroojalix.npcmanager.npc.HologramContainer;
 import io.github.scroojalix.npcmanager.npc.NPCContainer;
 import io.github.scroojalix.npcmanager.npc.NPCData;
 import io.github.scroojalix.npcmanager.npc.NPCTrait;
+import io.github.scroojalix.npcmanager.npc.interactions.CommandInteraction;
+import io.github.scroojalix.npcmanager.npc.interactions.InteractionsManager;
+import io.github.scroojalix.npcmanager.npc.interactions.NPCInteractionData;
 import io.github.scroojalix.npcmanager.npc.skin.SkinData;
 import io.github.scroojalix.npcmanager.npc.skin.SkinManager;
+import io.github.scroojalix.npcmanager.utils.Messages;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
+import io.github.scroojalix.npcmanager.utils.Settings;
 
 /**
  * The interface that contains all methods to be used in an NPCManger class
@@ -36,28 +44,18 @@ public class NPCManager {
 
 	private NPCMain main;
 	private Map<String, NPCContainer> NPCs = new LinkedHashMap<String, NPCContainer>();
-	private boolean fetchDefaultSkins;
-	private int npcNameLength;
 	private ProtocolManager protocolManager;
-
-	private Random random;
+	
+	private ProtocolManager pm;
+	private final LinkedHashSet<PacketContainer> scoreboardPackets;
 
 	public NPCManager(NPCMain main) {
 		this.main = main;
 		this.protocolManager = ProtocolLibrary.getProtocolManager();
-		fetchDefaultSkins = main.getConfig().getBoolean("fetch-default-skins");
-		npcNameLength = main.getConfig().getInt("npc-name-length");
-		if (npcNameLength > 16)
-			npcNameLength = 16;
-		if (npcNameLength < 3)
-			npcNameLength = 3;
-		main.log(Level.INFO, "Set NPC tab list name length to " + npcNameLength);
+		main.sendDebugMessage(Level.INFO, "NPC tab list name length set to " + Settings.NPC_NAME_LENGTH.get());
 
-		this.random = new Random(6878);
-	}
-
-	public void setNPCNameLength(int npcNameLength) {
-		this.npcNameLength = npcNameLength;
+		pm = ProtocolLibrary.getProtocolManager();
+		scoreboardPackets = new LinkedHashSet<>();
 	}
 
 	/**
@@ -73,19 +71,34 @@ public class NPCManager {
 		NPCData data = new NPCData(name, loc, store);
 		main.storage.saveNPC(data);
 		spawnNPC(data);
-		// FIXME skin manager stuff called twice? see spawnNPC()
-		if (fetchDefaultSkins) {
+		if (Settings.FETCH_DEFAULT_SKINS.get()) {
 			SkinManager.setSkinFromUsername(null, data, name, false, true);
 		}
+		updateAndSendScoreboardPackets();
 	}
 
 	/**
 	 * Updates an NPC with the NPCData {@code data}
+	 * Also updates the saved value in storage
 	 * 
 	 * @param data The NPCData assigned to an NPC.
 	 */
 	public void updateNPC(NPCData data) {
+		main.storage.saveNPC(data);
 		removeNPC(data.getName(), false);
+		spawnNPC(data);
+		updateAndSendScoreboardPackets();
+	}
+
+	/**
+	 * Rename an NPC
+	 * @param data
+	 * @param newName
+	 */
+	public void renameNPC(NPCData data, String newName) {
+		removeNPC(data.getName(), true);
+		data.setName(newName);
+		main.storage.saveNPC(data);
 		spawnNPC(data);
 	}
 
@@ -98,6 +111,7 @@ public class NPCManager {
 		NPCs.put(data.getName(), npcContainer);
 		startLoaderTask(npcContainer);
 		SkinManager.updateSkin(data);
+		main.sendDebugMessage(Level.INFO, String.format("Spawned %s with entity id %s", data.getName(), npcContainer.getNPCEntityID()));
 	}
 
 	/**
@@ -108,19 +122,18 @@ public class NPCManager {
 	 */
 	public void moveNPC(NPCData data, Location loc) {
 		data.setLoc(loc);
-		main.storage.saveNPC(data);
 		updateNPC(data);
 	}
 
 	/**
 	 * Removes all NPCs.
 	 */
-	public void removeAllNPCs() {
-		// FIXME removeNPC() should take in npcContainer as input, not name.
+	public void removeAllNPCs(boolean fromStorage) {
 		for (NPCContainer container : NPCs.values()) {
-			removeNPCInternal(container.getNPCData().getName(), false);
+			removeNPCInternal(container, fromStorage);
 		}
 		NPCs.clear();
+		updateScoreboardPackets();
 	}
 
 	/**
@@ -131,8 +144,9 @@ public class NPCManager {
 	 * @param fromStorage Whether or not to remove the NPC from storage.
 	 */
 	public void removeNPC(String npc, boolean fromStorage) {
-		removeNPCInternal(npc, fromStorage);
+		removeNPCInternal(PluginUtils.getNPCContainerByName(npc), fromStorage);
 		NPCs.remove(npc);
+		updateScoreboardPackets();
 	}
 
 	/**
@@ -141,15 +155,17 @@ public class NPCManager {
 	 * @param npc
 	 * @param fromStorage
 	 */
-	private void removeNPCInternal(String npc, boolean fromStorage) {
-		NPCContainer container = NPCs.get(npc);
+	private void removeNPCInternal(NPCContainer container, boolean fromStorage) {
 		Bukkit.getScheduler().cancelTask(container.getLoaderTaskID());
 		container.getLoaderTask().clearAllTasks();
 		for (Player p : Bukkit.getOnlinePlayers()) {
 			container.getLoaderTask().sendDeletePackets(p);
 		}
 		if (fromStorage && container.getNPCData().isStored()) {
-			main.storage.removeNPC(container.getNPCData().getName());
+			// Do this to comply with Nonnull
+			String name = container.getNPCData().getName();
+			if (name == null) return;
+			main.storage.removeNPC(name);
 		}
 	}
 
@@ -158,7 +174,7 @@ public class NPCManager {
 	 * @param data The {@link NPCData} to create NMS data from.
 	 */
 	public NPCContainer createNPCData(NPCData data) {
-		NPCContainer container = new NPCContainer(data, nextEntityId());
+		NPCContainer container = new NPCContainer(data);
 
 		//NPC
 		NPCTrait traits = data.getTraits();
@@ -176,6 +192,24 @@ public class NPCManager {
 				PluginUtils.format("&8[NPC] "+profile.getName())));
 		container.setPlayerInfo(infoData);
 
+		//Interact Event
+		if (data.getTraits().getInteractEvent() != null) {
+			NPCInteractionData interactEvent = data.getTraits().getInteractEvent();
+			switch(interactEvent.getType()) {
+				case COMMAND:
+					container.setInteractEvent(new CommandInteraction(interactEvent.getValue()));
+				break;
+				case CUSTOM:
+					if (InteractionsManager.getInteractEvents().containsKey(interactEvent.getValue())) {
+						container.setInteractEvent(InteractionsManager.getInteractEvents().get(interactEvent.getValue()));
+					} else {
+						Messages.printNPCRestoreError(main, data.getName(), 
+						"Error restoring an NPC: Unknown interact event '"+interactEvent.getValue()+"'");
+					}
+				break;
+			}
+		}
+
 		//Holograms
 		String displayName = data.getTraits().getDisplayName();
 		String subtitle = data.getTraits().getSubtitle();
@@ -186,28 +220,20 @@ public class NPCManager {
 		Location upperLoc = new Location(loc.getWorld(), loc.getX(), loc.getY() + 1.95, loc.getZ());
 		Location lowerLoc = new Location(loc.getWorld(), loc.getX(), loc.getY() + 1.7, loc.getZ());
 		if (hasDisplayName && hasSubtitle) {
-			container.setNameHolo(new HologramContainer(nextEntityId(), upperLoc, displayName));
-			container.setSubtitleHolo(new HologramContainer(nextEntityId(), lowerLoc, subtitle));
+			container.setNameHolo(new HologramContainer(upperLoc, displayName));
+			container.setSubtitleHolo(new HologramContainer(lowerLoc, subtitle));
 		} else if (hasDisplayName && !hasSubtitle) {
-			container.setNameHolo(new HologramContainer(nextEntityId(), lowerLoc, displayName));
+			container.setNameHolo(new HologramContainer(lowerLoc, displayName));
 			container.setSubtitleHolo(null);
 		} else if (!hasDisplayName && hasSubtitle) {
 			container.setNameHolo(null);
-			container.setSubtitleHolo(new HologramContainer(nextEntityId(), lowerLoc, subtitle));
+			container.setSubtitleHolo(new HologramContainer(lowerLoc, subtitle));
 		} else {
 			container.setNameHolo(null);
 			container.setSubtitleHolo(null);
 		}
 
 		return container;
-	}
-
-	// TODO need a function that gets the next Entity Id
-	// May need to use reflection on Entity#ENTITY_COUNTER
-	// https://www.spigotmc.org/threads/create-new-entityid.557198/
-	// For now, a random large integer will do
-	private int nextEntityId() {
-		return random.nextInt() & Integer.MAX_VALUE;
 	}
 
 	/**
@@ -220,10 +246,38 @@ public class NPCManager {
 		container.setLoaderTask(loader, taskId);
 	}
 
-	public String getRandomNPCName() {
+	private void updateScoreboardPackets() {
+		scoreboardPackets.clear();
+
+		List<String> npcNames = NPCs.values().stream()
+			.map(npc -> npc.getPlayerInfo().getProfile().getName())
+			.collect(Collectors.toList());
+
+		scoreboardPackets.addAll(PacketRegistry.SCOREBOARD_CREATE_AND_ADD.get(npcNames));
+	}
+
+	public void sendScoreboardPackets(Player receiver) {
+		for (PacketContainer packet : scoreboardPackets) {
+			pm.sendServerPacket(receiver, packet);
+		}
+	}
+
+	public void updateAndSendScoreboardPackets() {
+		updateScoreboardPackets();
+		for (Player p : Bukkit.getOnlinePlayers()) {
+			sendScoreboardPackets(p);
+		}
+	}
+
+	/**
+	 * Generate a random string of characters to be used for NPC
+	 * Profile names
+	 * @return random string of characters with length {@code npcNameLength}
+	 */
+	private String getRandomNPCName() {
 		char[] chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_".toCharArray();
 		SecureRandom rand = new SecureRandom();
-		char[] result = new char[npcNameLength];
+		char[] result = new char[Settings.NPC_NAME_LENGTH.get()];
 		for (int i = 0; i < result.length; i++) {
 			result[i] = chars[rand.nextInt(chars.length)];
 		}

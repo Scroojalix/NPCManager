@@ -36,9 +36,7 @@ public class ClearCommand extends SubCommand {
     @Override
     public boolean execute(NPCMain main, CommandSender sender, String[] args) {
         if (!PluginUtils.noNPCs()) {
-            for (String npc : PluginUtils.getAllNPCNames()) {
-                main.npc.removeNPC(npc, true);
-            }
+            main.npc.removeAllNPCs(true);
             sender.sendMessage(PluginUtils.format("&6Removed all NPC's."));
         } else {
             sender.sendMessage(ChatColor.RED+Messages.NO_NPCS);
