@@ -85,7 +85,7 @@ public class NPCMain extends JavaPlugin {
 		if (validVersion) {
 			reader.deregisterPacketListeners();
 			if (!PluginUtils.noNPCs()) {
-				npc.removeAllNPCs();
+				npc.removeAllNPCs(false);
 			}
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				if (player.getOpenInventory().getTopInventory().getHolder() instanceof EquipmentInventory) 
@@ -127,7 +127,7 @@ public class NPCMain extends JavaPlugin {
 			if (player.getOpenInventory().getTopInventory().getHolder() instanceof EquipmentInventory) 
 				player.closeInventory();
 		}
-		npc.removeAllNPCs();
+		npc.removeAllNPCs(false);
 		this.saveDefaultConfig();
 		reloadConfig();
 		sendDebugMessage(Level.INFO, "NPC tab list name length set to " + Settings.NPC_NAME_LENGTH.get());

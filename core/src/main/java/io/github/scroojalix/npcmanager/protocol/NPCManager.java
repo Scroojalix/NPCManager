@@ -128,9 +128,9 @@ public class NPCManager {
 	/**
 	 * Removes all NPCs.
 	 */
-	public void removeAllNPCs() {
+	public void removeAllNPCs(boolean fromStorage) {
 		for (NPCContainer container : NPCs.values()) {
-			removeNPCInternal(container, false);
+			removeNPCInternal(container, fromStorage);
 		}
 		NPCs.clear();
 		updateScoreboardPackets();
