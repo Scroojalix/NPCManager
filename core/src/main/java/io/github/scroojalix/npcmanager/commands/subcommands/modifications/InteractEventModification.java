@@ -18,24 +18,13 @@ public class InteractEventModification extends SubCommand {
     //option to execute command as console
     //add variables eg ${playername}
 
-    @Override
-    public String getName() {
-        return "interactEvent";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Customise the NPC's interact event.";
-    }
-
-    @Override
-    public String getSyntax() {
-        return "/npc modify <npc> interactEvent <command|custom|none> [args...]";
-    }
-
-    @Override
-    public boolean consoleCanRun() {
-        return true;
+    public InteractEventModification() {
+        super(
+            "interactEvent",
+            "Customise the NPC's interact event.",
+            "/npc modify <npc> interactEvent <command|custom|none> [args...]",
+            true
+        );
     }
 
     @Override

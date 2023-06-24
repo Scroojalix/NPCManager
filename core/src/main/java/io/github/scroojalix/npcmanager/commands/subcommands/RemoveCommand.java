@@ -12,24 +12,13 @@ import io.github.scroojalix.npcmanager.commands.SubCommand;
 
 public class RemoveCommand extends SubCommand {
 
-    @Override
-    public String getName() {
-        return "remove";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Removes an NPC.";
-    }
-
-    @Override
-    public String getSyntax() {
-        return "/npc remove <npc>";
-    }
-
-    @Override
-    public boolean consoleCanRun() {
-        return true;
+    public RemoveCommand() {
+        super(
+            "remove",
+            "Removes an NPC.",
+            "/npc remove <npc>",
+            true
+        );
     }
 
     @Override

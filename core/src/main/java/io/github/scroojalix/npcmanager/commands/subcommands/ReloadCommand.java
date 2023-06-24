@@ -13,24 +13,13 @@ import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class ReloadCommand extends SubCommand {
 
-    @Override
-    public String getName() {
-        return "reload";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Reloads the plugin, or a specific NPC.";
-    }
-
-    @Override
-    public String getSyntax() {
-        return "/npc reload [npc]";
-    }
-
-    @Override
-    public boolean consoleCanRun() {
-        return true;
+    public ReloadCommand() {
+        super(
+            "reload",
+            "Reloads the plugin, or a specific NPC.",
+            "/npc reload [npc]",
+            true
+        );
     }
 
     @Override

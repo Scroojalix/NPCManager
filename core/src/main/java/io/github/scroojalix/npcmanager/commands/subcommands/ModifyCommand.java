@@ -18,6 +18,14 @@ public class ModifyCommand extends SubCommand {
     private ArrayList<SubCommand> subcommands = new ArrayList<SubCommand>();
 
     public ModifyCommand() {
+        super(
+            "modify",
+            "Modifies an NPC.",
+            "/npc modify <npc> <key> [args...]",
+            true
+        );
+
+        // Add modification subcommands
         subcommands.add(new EquipmentModification());
         subcommands.add(new InteractEventModification());
         subcommands.add(new DisplayNameModification());
@@ -26,26 +34,6 @@ public class ModifyCommand extends SubCommand {
         subcommands.add(new RangeModification());
         subcommands.add(new SkinModification());
         subcommands.add(new SkinLayersModification());
-    }
-
-    @Override
-    public String getName() {
-        return "modify";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Modifies an NPC.";
-    }
-
-    @Override
-    public String getSyntax() {
-        return "/npc modify <npc> <key> [args...]";
-    }
-
-    @Override
-    public boolean consoleCanRun() {
-        return true;
     }
 
     //TODO add ability to customise pose.

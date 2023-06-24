@@ -15,24 +15,13 @@ import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class TeleportCommand extends SubCommand {
 
-    @Override
-    public String getName() {
-        return "tpto";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Teleport to an NPC.";
-    }
-
-    @Override
-    public String getSyntax() {
-        return "/npc tpto <npc>";
-    }
-
-    @Override
-    public boolean consoleCanRun() {
-        return false;
+    public TeleportCommand() {
+        super(
+            "tpto",
+            "Teleport to an NPC.",
+            "/npc tpto <npc>",
+            false
+        );
     }
 
     @Override

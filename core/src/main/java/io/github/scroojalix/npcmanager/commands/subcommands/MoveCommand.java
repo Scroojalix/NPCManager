@@ -14,6 +14,17 @@ import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class MoveCommand extends SubCommand {
 
+    // TODO allow use of this command by console
+
+    public MoveCommand() {
+        super(
+            "move",
+            "Moves an NPC to your current location.",
+            "/npc move <npc>",
+            false
+        );
+    }
+
     @Override
     public String getName() {
         return "move";

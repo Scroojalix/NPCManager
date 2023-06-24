@@ -17,24 +17,13 @@ import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class SkinLayersModification extends SubCommand {
 
-    @Override
-    public String getName() {
-        return "skinLayers";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Customise the visible layers of an NPC's skin.";
-    }
-
-    @Override
-    public String getSyntax() {
-        return "/npc modify <npc> skinLayers [--layer <true|false>]...";
-    }
-
-    @Override
-    public boolean consoleCanRun() {
-        return true;
+    public SkinLayersModification() {
+        super(
+            "skinLayers",
+            "Customise the visible layers of an NPC's skin.",
+            "/npc modify <npc> skinLayers [--layer <true|false>]...",
+            true
+        );
     }
 
     @Override

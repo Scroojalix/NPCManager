@@ -13,24 +13,13 @@ import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class RangeModification extends SubCommand {
 
-    @Override
-    public String getName() {
-        return "range";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Customise the NPC's range.";
-    }
-
-    @Override
-    public String getSyntax() {
-        return "/npc modify <npc> range <value>";
-    }
-
-    @Override
-    public boolean consoleCanRun() {
-        return true;
+    public RangeModification() {
+        super(
+            "range",
+            "Customise the NPC's range.",
+            "/npc modify <npc> range <value>",
+            true
+        );
     }
 
     @Override

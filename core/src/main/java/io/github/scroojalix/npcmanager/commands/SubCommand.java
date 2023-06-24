@@ -10,13 +10,33 @@ import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public abstract class SubCommand {
 
-    public abstract String getName();
+    private final String name;
+    private final String description;
+    private final String syntax;
+    private final boolean consoleCanRun;
 
-    public abstract String getDescription();
+    public SubCommand(String name, String description, String syntax, boolean consoleCanRun) {
+        this.name = name;
+        this.description = description;
+        this.syntax = syntax;
+        this.consoleCanRun = consoleCanRun;
+    }
 
-    public abstract String getSyntax();
+    public String getName() {
+        return name;
+    }
 
-    public abstract boolean consoleCanRun();
+    public String getDescription() {
+        return description;
+    }
+
+    public String getSyntax() {
+        return syntax;
+    }
+
+    public boolean consoleCanRun() {
+        return consoleCanRun;
+    }
 
     public abstract boolean execute(NPCMain main, CommandSender sender, String args[]);
 

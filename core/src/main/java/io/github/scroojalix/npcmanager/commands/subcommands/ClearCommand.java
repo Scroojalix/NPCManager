@@ -13,24 +13,13 @@ import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class ClearCommand extends SubCommand {
 
-    @Override
-    public String getName() {
-        return "clear";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Removes all NPC's on the server.";
-    }
-
-    @Override
-    public String getSyntax() {
-        return "/npc clear";
-    }
-
-    @Override
-    public boolean consoleCanRun() {
-        return true;
+    public ClearCommand() {
+        super(
+            "clear",
+            "Removes all NPC's on the server.",
+            "/npc clear",
+            true
+        );
     }
 
     @Override

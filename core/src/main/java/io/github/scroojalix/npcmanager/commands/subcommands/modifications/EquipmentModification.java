@@ -14,24 +14,13 @@ import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class EquipmentModification extends SubCommand {
 
-    @Override
-    public String getName() {
-        return "equipment";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Modify the equipment of an NPC.";
-    }
-
-    @Override
-    public String getSyntax() {
-        return "/npc modify <npc> equipment";
-    }
-
-    @Override
-    public boolean consoleCanRun() {
-        return false;
+    public EquipmentModification() {
+        super(
+            "equipment",
+            "Modify the equipment of an NPC.",
+            "/npc modify <npc> equipment",
+            false
+        );
     }
 
     @Override

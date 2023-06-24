@@ -19,24 +19,13 @@ import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class InfoCommand extends SubCommand {
 
-    @Override
-    public String getName() {
-        return "info";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Provides info on an NPC.";
-    }
-
-    @Override
-    public String getSyntax() {
-        return "/npc info <npc> [page]";
-    }
-
-    @Override
-    public boolean consoleCanRun() {
-        return true;
+    public InfoCommand() {
+        super(
+            "info",
+            "Provides info on an NPC.",
+            "/npc info <npc> [page]",
+            true
+        );
     }
 
     @Override
