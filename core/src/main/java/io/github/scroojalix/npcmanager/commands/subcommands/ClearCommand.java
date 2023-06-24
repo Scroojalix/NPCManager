@@ -17,14 +17,19 @@ public class ClearCommand extends SubCommand {
         super(
             "clear",
             "Removes all NPC's on the server.",
-            "/npc clear",
+            "/npc clear confirm",
             true
         );
     }
 
     @Override
     public boolean execute(NPCMain main, CommandSender sender, String[] args) {
-        if (!PluginUtils.noNPCs()) {
+        if (args.length == 1) {
+            sender.sendMessage(ChatColor.RED + "Are you sure you wish to do this? Type "
+                + ChatColor.YELLOW + "/npc clear confirm");
+            return true;
+        }
+        if (!PluginUtils.noNPCs() && args[1].equalsIgnoreCase("confirm")) {
             main.npc.removeAllNPCs(true);
             sender.sendMessage(PluginUtils.format("&6Removed all NPC's."));
         } else {
