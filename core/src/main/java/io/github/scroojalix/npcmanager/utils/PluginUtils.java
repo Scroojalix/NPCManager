@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -21,12 +23,16 @@ import org.bukkit.inventory.ItemStack;
 import com.comphenix.protocol.reflect.accessors.Accessors;
 import com.comphenix.protocol.reflect.accessors.FieldAccessor;
 import com.comphenix.protocol.utility.MinecraftReflection;
+import com.comphenix.protocol.wrappers.WrappedDataValue;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
+import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import com.google.gson.JsonParser;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.CommandUtils;
-import io.github.scroojalix.npcmanager.npc.NPCData;
 import io.github.scroojalix.npcmanager.npc.NPCContainer;
+import io.github.scroojalix.npcmanager.npc.NPCData;
 import net.md_5.bungee.api.ChatColor;
 
 public class PluginUtils {
@@ -40,7 +46,7 @@ public class PluginUtils {
 	 * @param msg The message to translate.
 	 * @return The translated string.
 	 */
-	public static String format(String msg) {
+	public static String format(String msg, Object... params) {
 		if (NPCMain.serverVersion.hasHexSupport()) {
 			Matcher match = pattern.matcher(msg);
 			while (match.find()) {
@@ -49,6 +55,7 @@ public class PluginUtils {
 				match = pattern.matcher(msg);
 			}
 		}
+		msg = String.format(msg, params);
 		return ChatColor.translateAlternateColorCodes('&', msg);
 	}
 
@@ -175,6 +182,27 @@ public class PluginUtils {
     }
 
 	/**
+	 * Convert a {@code WrappedDataWatcher} into a list of {@code WrappedDataValue}
+	 * for use in 1.19+ server versions 
+	 * @param dataWatcher the {@code WrappedDataWather} watcher to convert
+	 * @return the resulting {@code List<WrappedDataValue>}
+	 */
+	public static List<WrappedDataValue> getDataWatcherAsList(WrappedDataWatcher dataWatcher) {
+        final List<WrappedDataValue> wrappedDataValueList = new ArrayList<>();
+		for(final WrappedWatchableObject entry : dataWatcher.getWatchableObjects()) {
+			if(entry == null) continue;
+
+            final WrappedDataWatcherObject watcherObject = entry.getWatcherObject();
+            wrappedDataValueList.add(
+                new WrappedDataValue(
+                    watcherObject.getIndex(),
+                    watcherObject.getSerializer(),
+                    entry.getRawValue()));
+        }
+        return wrappedDataValueList;
+    }
+
+	/**
 	 * Generate an Entity ID using reflection. For 1.14+ servers, this
 	 * functions calls the {@code getAndIncrement} function on an 
 	 * {@code AtomicInteger} object stored in the {@code Entity} class.
@@ -212,6 +240,7 @@ public class PluginUtils {
 		}
 	}
 
+	// TODO redo this
 	@SuppressWarnings("deprecation")
 	public static boolean isSuitableItem(ItemStack item, String type, Player p) {
 		if (item.getType() == Material.AIR)
@@ -241,6 +270,9 @@ public class PluginUtils {
 					}
 					return false;
 				}
+			case "chestplate":
+				if (item.getType().name().contains("ELYTRA"))
+					return true;
 		}
 		if (p != null) {
 			p.playSound(p.getLocation(), Sound.valueOf(CommandUtils.getErrorSound()), 5f, 0.5f);
