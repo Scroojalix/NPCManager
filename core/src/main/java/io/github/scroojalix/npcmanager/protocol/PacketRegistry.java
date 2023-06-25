@@ -23,6 +23,8 @@ import com.comphenix.protocol.wrappers.Pair;
 
 import io.github.scroojalix.npcmanager.npc.HologramContainer;
 import io.github.scroojalix.npcmanager.npc.NPCContainer;
+import io.github.scroojalix.npcmanager.npc.meta.GlowColor;
+import io.github.scroojalix.npcmanager.npc.meta.NPCMetaInfo;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public final class PacketRegistry {
@@ -215,28 +217,43 @@ public final class PacketRegistry {
         return packets;
     };
 
-    public static final PacketList<List<String>> SCOREBOARD_CREATE_AND_ADD = (List<String> npcNames) -> {
+    public static final PacketList<NPCContainer> SCOREBOARD_CREATE_AND_ADD = (NPCContainer container) -> {
         final LinkedHashSet<PacketContainer> scoreboardPackets = new LinkedHashSet<>();
-        
+        final List<String> npcName = Collections.singletonList(container.getPlayerInfo().getProfile().getName());
+
+        NPCMetaInfo meta = container.getNPCData().getTraits().getMetaInfo();
+        boolean collision = meta.isCollisionEnabled();
+        boolean glowing = meta.isGlowingEnabled();
+        GlowColor glowColor = meta.getGlowColor();
+
 		if (PluginUtils.ServerVersion.v1_17_R1.atOrAbove()) {
 			PacketContainer createTeam = createPacket(PacketType.Play.Server.SCOREBOARD_TEAM);
 			createTeam.getStrings().write(0, PluginUtils.NPC_SCOREBOARD_TEAM_NAME);
 			InternalStructure struct = createTeam.getOptionalStructures().read(0).get();
-			struct.getStrings()
-				.write(0, "never")  // Visibility
-				.write(1, "never"); // Collision
 
-            // Set Colour TODO get from NPCPoseInfo
-            struct.getEnumModifier(ChatColor.class, 
-                MinecraftReflection.getMinecraftClass("EnumChatFormat"))
-                .write(0, ChatColor.RED);
+            // Name Tag Visibility
+			struct.getStrings().write(0, "never");
+
+            // Collision
+            if (!collision) {
+                struct.getStrings().write(1, "never");
+            } else {
+                // struct.getStrings().write(1, "always");
+            }
+
+            // Glowing
+            if (glowing) {
+                struct.getEnumModifier(ChatColor.class, 
+                    MinecraftReflection.getMinecraftClass("EnumChatFormat"))
+                    .write(0, glowColor.getBukkitColor());
+            }
 
 			createTeam.getOptionalStructures().write(0, Optional.of(struct));
 
 			if (PluginUtils.ServerVersion.v1_18_R1.atOrAbove()) {
 				// Above 1.18, only one packet is needed, which includes
 				// the team settings and NPC names in one.
-				createTeam.getModifier().write(2, npcNames);
+				createTeam.getModifier().write(2, npcName);
 				scoreboardPackets.add(createTeam);
 			} else {
 				// For 1.17 servers, two packets are necessary, with
@@ -245,7 +262,7 @@ public final class PacketRegistry {
 				PacketContainer addNPCsToTeam = createPacket(PacketType.Play.Server.SCOREBOARD_TEAM);
 				addNPCsToTeam.getStrings().write(0, PluginUtils.NPC_SCOREBOARD_TEAM_NAME);
 				addNPCsToTeam.getIntegers().write(0, 3); // Set packet mode to MODIFY_TEAM
-				addNPCsToTeam.getModifier().write(2, npcNames);
+				addNPCsToTeam.getModifier().write(2, npcName);
 				scoreboardPackets.add(addNPCsToTeam);
 			}
 		} else {
@@ -256,9 +273,21 @@ public final class PacketRegistry {
             createTeam.getStrings()
                 .write(0, PluginUtils.NPC_SCOREBOARD_TEAM_NAME)
                 .write(teamSettingIndex, "never");
-            if (PluginUtils.ServerVersion.v1_9_R1.atOrAbove()) {
+            if (PluginUtils.ServerVersion.v1_9_R1.atOrAbove() && !collision) {
                 createTeam.getStrings().write(teamSettingIndex + 1, "never");
             }
+
+            // Glowing
+            if (glowing) {
+                if (PluginUtils.ServerVersion.v1_13_R1.atOrAbove()) {
+                    createTeam.getEnumModifier(ChatColor.class, 
+                        MinecraftReflection.getMinecraftClass("EnumChatFormat"))
+                        .write(0, glowColor.getBukkitColor());
+                } else {
+                    createTeam.getIntegers().write(0, glowColor.ordinal());
+                }
+            }
+
             scoreboardPackets.add(createTeam);
 
             PacketContainer addNPCsToTeam = createPacket(PacketType.Play.Server.SCOREBOARD_TEAM);
@@ -266,7 +295,7 @@ public final class PacketRegistry {
             int teamPacketModeIndex = PluginUtils.ServerVersion.v1_13_R1.atOrAbove() ? 0 : 1;
             addNPCsToTeam.getIntegers().write(teamPacketModeIndex, 3);
             addNPCsToTeam.getModifier().write(PluginUtils.ServerVersion.v1_9_R1.atOrAbove() ? 7 : 6,
-                npcNames);
+                npcName);
             scoreboardPackets.add(addNPCsToTeam);
 		}
 

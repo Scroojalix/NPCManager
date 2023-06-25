@@ -1,8 +1,5 @@
-package io.github.scroojalix.npcmanager.npc;
+package io.github.scroojalix.npcmanager.npc.meta;
 
-import org.bukkit.ChatColor;
-
-import com.comphenix.protocol.wrappers.EnumWrappers.EntityPose;
 import com.comphenix.protocol.wrappers.EnumWrappers.Hand;
 import com.google.gson.annotations.Expose;
 
@@ -30,14 +27,14 @@ public class NPCMetaInfo implements Serialisable {
     private boolean shivering;
 
     @Expose
-    private ChatColor glowColor;
+    private GlowColor glowColor;
     @Expose
     private boolean collision;
 
-    NPCMetaInfo() {
+    public NPCMetaInfo() {
         this.pose = Pose.STANDING;
         this.handState = new HandState(false, Hand.MAIN_HAND, false);
-        this.glowColor = ChatColor.WHITE;
+        this.glowColor = GlowColor.WHITE;
     }
 
     public Pose getPose() {
@@ -86,72 +83,25 @@ public class NPCMetaInfo implements Serialisable {
         this.collision = value;
     }
 
-    public void setGlowColor(ChatColor glowColor) {
+    public void setGlowColor(GlowColor glowColor) {
         this.glowColor = glowColor;
     }
 
     // GETTERS
 
     public boolean isShivering() {
-        return shivering;
+        return this.shivering;
     }
 
-    public ChatColor getGlowColor() {
+    public boolean isGlowingEnabled() {
+        return this.glowing;
+    }
+
+    public GlowColor getGlowColor() {
         return this.glowColor;
     }
 
-    public enum Pose {
-        STANDING,
-        CROUCHING(EntityPose.CROUCHING),
-        SWIMMING(EntityPose.SWIMMING),
-        SLEEPING(EntityPose.SLEEPING);
-
-        private final EntityPose protocolValue;
-
-        private Pose() {
-            this(EntityPose.STANDING);
-        }
-
-        private Pose(EntityPose protocolValue) {
-            this.protocolValue = protocolValue;
-        }
-
-        public Object getNMSValue() {
-            return protocolValue.toNms();
-        }
-    }
-
-    public static class HandState implements Serialisable {
-
-        @Expose
-        private boolean active;
-        @Expose
-        private Hand hand;
-        @Expose
-        private boolean isRiptideSpinAttack;
-
-        HandState() {}
-
-        private HandState(boolean active, Hand hand, boolean riptide) {
-            this.active = active;
-            this.hand = hand;
-            this.isRiptideSpinAttack = riptide;
-        }
-
-        public void set(boolean active, Hand hand) {
-            this.active = active;
-            this.hand = hand;
-        }
-
-        public void setIsRiptideSpin(boolean isRiptideSpinAttack) {
-            this.isRiptideSpinAttack = isRiptideSpinAttack;
-        }
-
-        public byte getByteFlag() {
-            int flag1 = active ? 0x1 : 0;
-            int flag2 = hand.ordinal() == 0 ? 0 : 0x2;
-            int flag3 = isRiptideSpinAttack ? 0x4 : 0;
-            return (byte)(flag1 | flag2 | flag3);
-        }
+    public boolean isCollisionEnabled() {
+        return this.collision;
     }
 }

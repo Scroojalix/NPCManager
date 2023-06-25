@@ -74,6 +74,9 @@ public class NPCLoader implements Runnable {
 		loadPackets.add(PacketRegistry.NPC_UPDATE_METADATA.get(npcContainer));
 		loadPackets.addAll(PacketRegistry.NPC_RESET_HEAD_ROTATION.get(npcContainer));
 		
+		//Scoreboards
+		loadPackets.addAll(PacketRegistry.SCOREBOARD_CREATE_AND_ADD.get(npcContainer));
+
 		if (perfectOrientation) {
 			loadPackets.add(PacketRegistry.NPC_PLAY_ANIMATION.get(npcContainer));
 		}

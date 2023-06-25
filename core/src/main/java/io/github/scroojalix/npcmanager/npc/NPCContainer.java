@@ -6,6 +6,7 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.npc.interactions.InteractEvent;
+import io.github.scroojalix.npcmanager.npc.meta.NPCMetaInfo;
 import io.github.scroojalix.npcmanager.protocol.NPCLoader;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 

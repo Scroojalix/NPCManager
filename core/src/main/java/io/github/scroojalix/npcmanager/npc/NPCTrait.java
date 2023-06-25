@@ -7,6 +7,7 @@ import com.google.gson.annotations.Expose;
 import io.github.scroojalix.npcmanager.npc.equipment.NPCEquipment;
 import io.github.scroojalix.npcmanager.npc.interactions.InteractEventType;
 import io.github.scroojalix.npcmanager.npc.interactions.NPCInteractionData;
+import io.github.scroojalix.npcmanager.npc.meta.NPCMetaInfo;
 import io.github.scroojalix.npcmanager.npc.skin.NPCSkinLayers;
 import io.github.scroojalix.npcmanager.npc.skin.SkinData;
 import io.github.scroojalix.npcmanager.storage.misc.Serialisable;

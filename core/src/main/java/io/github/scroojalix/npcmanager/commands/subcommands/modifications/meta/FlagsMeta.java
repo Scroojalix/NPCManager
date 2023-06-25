@@ -11,6 +11,7 @@ import org.bukkit.command.CommandSender;
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.SubCommand;
 import io.github.scroojalix.npcmanager.npc.NPCData;
+import io.github.scroojalix.npcmanager.npc.meta.GlowColor;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class FlagsMeta extends SubCommand {
@@ -29,11 +30,13 @@ public class FlagsMeta extends SubCommand {
         if (args.length < 6) return false;
         NPCData npc = PluginUtils.getNPCDataByName(args[1]);
         boolean flag = false;
-        if (args[5].equalsIgnoreCase("true")) {
-            flag = true;
-        } else if (!args[5].equalsIgnoreCase("false")) {
-            sender.sendMessage(ChatColor.RED + "That is not a valid boolean value.");
-            return false;
+        if (!args[4].equalsIgnoreCase("glowColor")) {
+            if (args[5].equalsIgnoreCase("true")) {
+                flag = true;
+            } else if (!args[5].equalsIgnoreCase("false")) {
+                sender.sendMessage(ChatColor.RED + "That is not a valid boolean value.");
+                return false;
+            }
         }
         
         boolean successful = false;
@@ -64,9 +67,9 @@ public class FlagsMeta extends SubCommand {
                 break;
 
             case "glowcolor":
-                ChatColor color;
+                GlowColor color;
                 try {
-                    color = ChatColor.valueOf(args[4]);
+                    color = GlowColor.valueOf(args[5]);
                 } catch (IllegalArgumentException e) {
                     sender.sendMessage(ChatColor.RED + "That is not a valid glow color.");
                     return false;
@@ -110,14 +113,8 @@ public class FlagsMeta extends SubCommand {
                     result.add("false");
                 break;
                 case "glowcolor":
-                    result.addAll(Arrays.stream(ChatColor.values())
+                    result.addAll(Arrays.stream(GlowColor.values())
                     .map(f -> f.name()).collect(Collectors.toList()));
-                    result.remove("MAGIC");
-                    result.remove("BOLD");
-                    result.remove("STRIKETHROUGH");
-                    result.remove("UNDERLINE");
-                    result.remove("ITALIC");
-                    result.remove("RESET");
                 break;
             }
         }

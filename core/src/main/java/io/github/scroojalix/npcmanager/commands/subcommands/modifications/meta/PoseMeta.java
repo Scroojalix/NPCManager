@@ -11,7 +11,7 @@ import org.bukkit.command.CommandSender;
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.SubCommand;
 import io.github.scroojalix.npcmanager.npc.NPCData;
-import io.github.scroojalix.npcmanager.npc.NPCMetaInfo.Pose;
+import io.github.scroojalix.npcmanager.npc.meta.Pose;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class PoseMeta extends SubCommand {

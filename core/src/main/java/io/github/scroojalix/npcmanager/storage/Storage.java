@@ -125,7 +125,6 @@ public class Storage {
                     main.sendDebugMessage(Level.INFO, "Restoring NPC's from temp storage...");
                     restoreTempNPCs();
                 }
-                main.npc.updateAndSendScoreboardPackets();
             });
         } else {
             LocalStorage storage = (LocalStorage) implementation;
@@ -143,7 +142,6 @@ public class Storage {
                     }
                 }
             }
-            main.npc.updateAndSendScoreboardPackets();
         }
     }
 
