@@ -1,5 +1,7 @@
 package io.github.scroojalix.npcmanager.npc;
 
+import javax.annotation.Nonnull;
+
 import com.google.gson.annotations.Expose;
 
 import io.github.scroojalix.npcmanager.npc.equipment.NPCEquipment;
@@ -26,18 +28,23 @@ public class NPCTrait implements Serialisable {
     private SkinData skin;
     @Expose
     private NPCSkinLayers skinLayers;
-
     @Expose
     private NPCInteractionData interactEvent;
     @Expose
     private NPCEquipment equipment;
+    @Expose
+    private @Nonnull NPCMetaInfo metaInfo;
     
-    NPCTrait() {}
+    NPCTrait() {
+        //TODO do this for all fields & remove setters
+        this.metaInfo = new NPCMetaInfo();
+    }
 
     public NPCTrait(String displayName, int range, boolean headRotation) {
         this.displayName = displayName;
         this.range = range;
         this.headRotation = headRotation;
+        this.metaInfo = new NPCMetaInfo();
     }
 
     /**
@@ -152,5 +159,9 @@ public class NPCTrait implements Serialisable {
 
     public void removeInteractEvent() {
         this.interactEvent = null;
+    }
+
+    public @Nonnull NPCMetaInfo getMetaInfo() {
+        return metaInfo;
     }
 }

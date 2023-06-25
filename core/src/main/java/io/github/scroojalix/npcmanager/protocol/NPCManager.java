@@ -174,8 +174,6 @@ public class NPCManager {
 	 * @param data The {@link NPCData} to create NMS data from.
 	 */
 	public NPCContainer createNPCData(NPCData data) {
-		NPCContainer container = new NPCContainer(data);
-
 		//NPC
 		NPCTrait traits = data.getTraits();
 		WrappedGameProfile profile = new WrappedGameProfile(data.getUUID(), getRandomNPCName());
@@ -190,8 +188,9 @@ public class NPCManager {
 			EnumWrappers.NativeGameMode.SURVIVAL,
 			WrappedChatComponent.fromText(
 				PluginUtils.format("&8[NPC] "+profile.getName())));
-		container.setPlayerInfo(infoData);
-
+		
+		NPCContainer container = new NPCContainer(data, infoData);
+				
 		//Interact Event
 		if (data.getTraits().getInteractEvent() != null) {
 			NPCInteractionData interactEvent = data.getTraits().getInteractEvent();

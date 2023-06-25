@@ -7,6 +7,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
@@ -15,13 +16,11 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.InternalStructure;
 import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.utility.MinecraftReflection;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
 import com.comphenix.protocol.wrappers.Pair;
-import com.comphenix.protocol.wrappers.WrappedDataValue;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 
-import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.npc.HologramContainer;
 import io.github.scroojalix.npcmanager.npc.NPCContainer;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
@@ -84,27 +83,11 @@ public final class PacketRegistry {
         meta.getIntegers().write(0, container.getNPCEntityID());
 
         if (PluginUtils.ServerVersion.v1_19_R2.atOrAbove()) {
-            final List<WrappedDataValue> wrappedDataValueList = new ArrayList<>();
-            wrappedDataValueList.add(new WrappedDataValue(
-                    NPCMain.serverVersion.getSkinLayersByteIndex(),
-                    WrappedDataWatcher.Registry.get(Byte.class),
-                    container.getNPCData().getTraits().getSkinLayersByte()));
-
-            meta.getDataValueCollectionModifier().write(0, wrappedDataValueList);
+            meta.getDataValueCollectionModifier().write(0, 
+                PluginUtils.getDataWatcherAsList(container.getDataWatcher()));
         } else {
-            WrappedDataWatcher watcher = new WrappedDataWatcher();
-            if (PluginUtils.ServerVersion.v1_9_R1.atOrAbove()) {
-                watcher.setObject(
-                        NPCMain.serverVersion.getSkinLayersByteIndex(),
-                        WrappedDataWatcher.Registry.get(Byte.class),
-                        container.getNPCData().getTraits().getSkinLayersByte());
-            } else {
-                watcher.setObject(
-                        NPCMain.serverVersion.getSkinLayersByteIndex(),
-                        container.getNPCData().getTraits().getSkinLayersByte());
-            }
-
-            meta.getWatchableCollectionModifier().write(0, watcher.getWatchableObjects());
+            meta.getWatchableCollectionModifier().write(0, 
+                container.getDataWatcher().getWatchableObjects());
         }
         return meta;
     };
@@ -163,7 +146,7 @@ public final class PacketRegistry {
             PacketContainer hologramData = createPacket(PacketType.Play.Server.ENTITY_METADATA);
             hologramData.getIntegers().write(0, holo.getID());
             if (PluginUtils.ServerVersion.v1_19_R2.atOrAbove()) {
-                hologramData.getDataValueCollectionModifier().write(0, holo.getDataWatcherAsList());
+                hologramData.getDataValueCollectionModifier().write(0, PluginUtils.getDataWatcherAsList(holo.getDataWatcher()));
             } else {
                 hologramData.getWatchableCollectionModifier().write(0, holo.getDataWatcher().getWatchableObjects());
             }
@@ -242,6 +225,12 @@ public final class PacketRegistry {
 			struct.getStrings()
 				.write(0, "never")  // Visibility
 				.write(1, "never"); // Collision
+
+            // Set Colour TODO get from NPCPoseInfo
+            struct.getEnumModifier(ChatColor.class, 
+                MinecraftReflection.getMinecraftClass("EnumChatFormat"))
+                .write(0, ChatColor.RED);
+
 			createTeam.getOptionalStructures().write(0, Optional.of(struct));
 
 			if (PluginUtils.ServerVersion.v1_18_R1.atOrAbove()) {

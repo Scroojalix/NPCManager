@@ -1,16 +1,20 @@
 package io.github.scroojalix.npcmanager.npc;
 
+import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 
+import io.github.scroojalix.npcmanager.NPCMain;
+import io.github.scroojalix.npcmanager.npc.interactions.InteractEvent;
 import io.github.scroojalix.npcmanager.protocol.NPCLoader;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
-import io.github.scroojalix.npcmanager.npc.interactions.InteractEvent;
 
 public class NPCContainer {
 
     //NPC
-    private NPCData npcData;
-    private PlayerInfoData playerInfo;
+    private final NPCData npcData;
+    private final PlayerInfoData playerInfo;
+    private final WrappedDataWatcher dataWatcher;
     private final int entityId;
 
     //Interact Event
@@ -25,9 +29,61 @@ public class NPCContainer {
     private int loaderTaskId;
     private NPCLoader loaderTask;
 
-    public NPCContainer(NPCData data) {
+    public NPCContainer(NPCData data, PlayerInfoData playerInfo) {
         this.npcData = data;
+        this.playerInfo = playerInfo;
         this.entityId = PluginUtils.nextEntityId();
+        this.dataWatcher = generateDataWatcher();
+    }
+
+    private WrappedDataWatcher generateDataWatcher() {
+        //Skin layers and pose
+		WrappedDataWatcher watcher = new WrappedDataWatcher();
+		if (PluginUtils.ServerVersion.v1_9_R1.atOrAbove()) {
+			// Data values need serialisers
+            WrappedDataWatcher.Serializer byteSerialiser = WrappedDataWatcher.Registry.get(Byte.class);
+
+            if (npcData.getTraits().getMetaInfo() != null) {
+                NPCMetaInfo poseInfo = npcData.getTraits().getMetaInfo();
+                // Pose settings
+                watcher.setObject(
+                    0,
+                    byteSerialiser,
+                    poseInfo.getEntityMetaByte());
+
+                watcher.setObject(
+                    6,
+                    WrappedDataWatcher.Registry.get(EnumWrappers.getEntityPoseClass()),
+                    poseInfo.getPose().getNMSValue());
+
+                if (poseInfo.isShivering()) {
+                    watcher.setObject(
+                        7,
+                        WrappedDataWatcher.Registry.get(Integer.class),
+                        140);
+                }
+
+                // FIXME this doesn't set the hand state correctly
+                watcher.setObject(
+                    8, byteSerialiser,
+                    poseInfo.getHandState().getByteFlag());
+            }
+
+			// Active Skin Layers
+			watcher.setObject(
+				NPCMain.serverVersion.getSkinLayersByteIndex(),
+                byteSerialiser,
+				npcData.getTraits().getSkinLayersByte());
+		} else {
+			// Serialisers not needed
+            // TODO
+            // Active Skin Layers
+			watcher.setObject(
+				NPCMain.serverVersion.getSkinLayersByteIndex(),
+			    npcData.getTraits().getSkinLayersByte());
+		}
+
+        return watcher;
     }
 
     // NPC
@@ -40,16 +96,12 @@ public class NPCContainer {
         return this.npcData;
     }
 
-    public void setNPCData(NPCData npcData) {
-        this.npcData = npcData;
-    }
-
     public PlayerInfoData getPlayerInfo() {
         return this.playerInfo;
     }
 
-    public void setPlayerInfo(PlayerInfoData playerInfo) {
-        this.playerInfo = playerInfo;
+    public WrappedDataWatcher getDataWatcher() {
+        return dataWatcher;
     }
 
     /**
