@@ -26,14 +26,16 @@ public class ModifyCommand extends SubCommand {
         );
 
         // Add modification subcommands
-        subcommands.add(new EquipmentModification());
-        subcommands.add(new InteractEventModification());
         subcommands.add(new DisplayNameModification());
-        subcommands.add(new SubtitleModification());
+        subcommands.add(new EquipmentModification());
         subcommands.add(new HeadRotationModification());
+        subcommands.add(new InteractEventModification());
+        subcommands.add(new MetadataModification());
         subcommands.add(new RangeModification());
-        subcommands.add(new SkinModification());
+        // TODO combine skin and skin layers into one
         subcommands.add(new SkinLayersModification());
+        subcommands.add(new SkinModification());
+        subcommands.add(new SubtitleModification());
     }
 
     //TODO add ability to customise pose.
@@ -57,7 +59,7 @@ public class ModifyCommand extends SubCommand {
                         }
                         return true;
                     }
-                } 
+                }
             } else {
                 return false;
             }

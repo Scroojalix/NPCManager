@@ -1,0 +1,73 @@
+package io.github.scroojalix.npcmanager.commands.subcommands.modifications;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import io.github.scroojalix.npcmanager.NPCMain;
+import io.github.scroojalix.npcmanager.commands.SubCommand;
+import io.github.scroojalix.npcmanager.commands.subcommands.modifications.meta.*;
+import io.github.scroojalix.npcmanager.utils.PluginUtils;
+
+public class MetadataModification extends SubCommand {
+
+    //TODO incorporate skinlayers modification into this
+    private final ArrayList<SubCommand> subcommands = new ArrayList<>();
+
+    public MetadataModification() {
+        super(
+            "metadata",
+            "Customise the metadata of an NPC.",
+            "/npc modify <npc> metadata <pose | handState | flags | skinLayers | reset> [args...]",
+            true
+        );
+        subcommands.add(new PoseMeta());
+        subcommands.add(new HandStateMeta());
+        subcommands.add(new FlagsMeta());
+    }
+
+    @Override
+    public boolean execute(NPCMain main, CommandSender sender, String[] args) {
+        if (args.length >= 4) {
+            for (SubCommand command : subcommands) {
+                if (!args[3].equalsIgnoreCase(command.getName())) continue;
+                if (command.consoleCanRun() || sender instanceof Player) {
+                    if (!command.execute(main, sender, args)) {
+                        sender.sendMessage(ChatColor.RED + "Usage: " + command.getSyntax());
+                    }
+                } else {
+                    sender.sendMessage(ChatColor.RED + "Sorry console, but you can't do that.");
+                }
+                return true;
+            }
+            return false;
+        }
+        for (SubCommand sub : subcommands) {
+            sender.sendMessage(PluginUtils.format("&B" + sub.getSyntax() + " &F&L-&6 " + sub.getDescription()));
+        }
+        return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(String[] args) {
+        List<String> result = new ArrayList<String>();
+
+        if (args.length == 4) {
+            for (SubCommand sub : subcommands) {
+                result.add(sub.getName());
+            }
+        } else if (args.length >= 5) {
+            for (SubCommand sub : subcommands) {
+                if (args[3].equalsIgnoreCase(sub.getName())) {
+                    result = sub.onTabComplete(args);
+                    break;
+                }
+            }
+        }
+        return filter(args[args.length-1], result);
+    }
+    
+}
