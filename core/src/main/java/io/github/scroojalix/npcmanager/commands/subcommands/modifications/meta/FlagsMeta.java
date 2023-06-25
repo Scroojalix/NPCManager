@@ -45,6 +45,10 @@ public class FlagsMeta extends SubCommand {
                 npc.getTraits().getMetaInfo().setOnFire(flag);
                 successful = true;
                 break;
+            case "sprinting":
+                npc.getTraits().getMetaInfo().setSprinting(flag);
+                successful = true;
+                break;
             case "invisible":
                 npc.getTraits().getMetaInfo().setInvisible(flag);
                 successful = true;
@@ -95,6 +99,7 @@ public class FlagsMeta extends SubCommand {
 
         if (args.length == 5) {
             result.add("onFire");
+            result.add("sprinting");
             result.add("invisible");
             result.add("glowEnabled");
             result.add("elytraEnabled");
@@ -104,6 +109,7 @@ public class FlagsMeta extends SubCommand {
         } else if (args.length == 6) {
             switch(args[4].toLowerCase()) {
                 case "onfire":
+                case "sprinting":
                 case "invisible":
                 case "glowenabled":
                 case "elytraenabled":

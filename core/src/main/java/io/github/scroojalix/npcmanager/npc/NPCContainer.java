@@ -77,13 +77,34 @@ public class NPCContainer {
 				npcData.getTraits().getSkinLayersByte());
 		} else {
 			// Serialisers not needed
-            // TODO
-            // Active Skin Layers
+            // TODO indexes may be incorrect
+            if (npcData.getTraits().getMetaInfo() != null) {
+                NPCMetaInfo poseInfo = npcData.getTraits().getMetaInfo();
+                // Pose settings
+                watcher.setObject(
+                    0,
+                    poseInfo.getEntityMetaByte());
+
+                watcher.setObject(
+                    6,
+                    poseInfo.getPose().getNMSValue());
+
+                if (poseInfo.isShivering()) {
+                    watcher.setObject(
+                        7,
+                        140);
+                }
+
+                watcher.setObject(
+                    8,
+                    poseInfo.getHandState().getByteFlag());
+            }
+
+			// Active Skin Layers
 			watcher.setObject(
 				NPCMain.serverVersion.getSkinLayersByteIndex(),
-			    npcData.getTraits().getSkinLayersByte());
+				npcData.getTraits().getSkinLayersByte());
 		}
-
         return watcher;
     }
 

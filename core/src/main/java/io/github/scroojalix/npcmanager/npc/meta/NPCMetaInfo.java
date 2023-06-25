@@ -8,26 +8,37 @@ import com.google.gson.annotations.Expose;
 import io.github.scroojalix.npcmanager.storage.misc.Serialisable;
 
 public class NPCMetaInfo implements Serialisable {
-
-    @Expose
-    private @Nonnull Pose pose;
-    @Expose
-    private @Nonnull HandState handState;
     
+    // TODO may need to rethink this as there are lots of changes between 1.20 and 1.8
+    // Maybe create a Flags enum which contains all relevant info 
+
     // Entity Metadata
     // Source: https://wiki.vg/Entity_metadata#Entity
+    // Index 0
     @Expose
     private boolean onFire;     // 0x01
+    @Expose
+    private boolean sprinting;  // 0x08
     @Expose
     private boolean invisible;  // 0x20
     @Expose
     private boolean glowing;    // 0x40
     @Expose
     private boolean elytra;     // 0x80
+
+    // Index 6
+    @Expose
+    private @Nonnull Pose pose;
     
+    // Index 7 for 1.17+ servers
     @Expose
     private boolean shivering;
 
+    // Index 8 for 1.17+ servers, index 7 otherwise.
+    @Expose
+    private @Nonnull HandState handState;
+
+    // Sent as part of the Scoreboard team packet
     @Expose
     private @Nonnull GlowColor glowColor;
     @Expose
@@ -37,7 +48,6 @@ public class NPCMetaInfo implements Serialisable {
         this.pose = Pose.STANDING;
         this.handState = new HandState(false, Hand.MAIN_HAND, false);
         this.glowColor = GlowColor.WHITE;
-        collision = false;
     }
 
     public Pose getPose() {
@@ -49,11 +59,12 @@ public class NPCMetaInfo implements Serialisable {
     }
 
     public byte getEntityMetaByte() {
-        int fire  = onFire    ? 0x01 : 0;
-        int invis = invisible ? 0x20 : 0;
-        int glow  = glowing   ? 0x40 : 0;
-        int fly   = elytra    ? 0x80 : 0;
-        return (byte) (fire | invis | glow | fly);
+        int fire   = onFire    ? 0x01 : 0;
+        int sprint = sprinting ? 0x08 : 0;
+        int invis  = invisible ? 0x20 : 0;
+        int glow   = glowing   ? 0x40 : 0;
+        int fly    = elytra    ? 0x80 : 0;
+        return (byte) (fire | sprint | invis | glow | fly);
     }
 
     public HandState getHandState() {
@@ -64,6 +75,10 @@ public class NPCMetaInfo implements Serialisable {
 
     public void setOnFire(boolean value) {
         this.onFire = value;
+    }
+
+    public void setSprinting(boolean value) {
+        this.sprinting = value;
     }
 
     public void setInvisible(boolean value) {
