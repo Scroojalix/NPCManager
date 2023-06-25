@@ -37,8 +37,6 @@ import net.md_5.bungee.api.ChatColor;
 
 public class PluginUtils {
 
-	public static final String NPC_SCOREBOARD_TEAM_NAME = "zzzzzzzzzzNMNPCs";
-
 	private static final Pattern pattern = Pattern.compile("#[a-fA-F0-9]{6}");
 
 	/**

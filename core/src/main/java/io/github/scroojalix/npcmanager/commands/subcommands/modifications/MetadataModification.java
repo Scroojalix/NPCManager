@@ -9,7 +9,10 @@ import org.bukkit.entity.Player;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.SubCommand;
-import io.github.scroojalix.npcmanager.commands.subcommands.modifications.meta.*;
+import io.github.scroojalix.npcmanager.commands.subcommands.modifications.meta.FlagsMeta;
+import io.github.scroojalix.npcmanager.commands.subcommands.modifications.meta.HandStateMeta;
+import io.github.scroojalix.npcmanager.commands.subcommands.modifications.meta.PoseMeta;
+import io.github.scroojalix.npcmanager.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class MetadataModification extends SubCommand {
@@ -32,6 +35,13 @@ public class MetadataModification extends SubCommand {
     @Override
     public boolean execute(NPCMain main, CommandSender sender, String[] args) {
         if (args.length >= 4) {
+            if (args[3].equalsIgnoreCase("reset")) {
+                NPCData npc = PluginUtils.getNPCDataByName(args[1]);
+                npc.getTraits().clearMetaInfo();
+                main.npc.updateNPC(npc);
+                sender.sendMessage(PluginUtils.format("&6Reset metadata for &f%s", npc.getName()));
+                return true;
+            }
             for (SubCommand command : subcommands) {
                 if (!args[3].equalsIgnoreCase(command.getName())) continue;
                 if (command.consoleCanRun() || sender instanceof Player) {
@@ -59,6 +69,7 @@ public class MetadataModification extends SubCommand {
             for (SubCommand sub : subcommands) {
                 result.add(sub.getName());
             }
+            result.add("reset");
         } else if (args.length >= 5) {
             for (SubCommand sub : subcommands) {
                 if (args[3].equalsIgnoreCase(sub.getName())) {

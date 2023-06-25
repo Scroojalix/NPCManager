@@ -1,5 +1,7 @@
 package io.github.scroojalix.npcmanager.npc.meta;
 
+import javax.annotation.Nonnull;
+
 import com.comphenix.protocol.wrappers.EnumWrappers.Hand;
 import com.google.gson.annotations.Expose;
 
@@ -8,9 +10,9 @@ import io.github.scroojalix.npcmanager.storage.misc.Serialisable;
 public class NPCMetaInfo implements Serialisable {
 
     @Expose
-    private Pose pose;
+    private @Nonnull Pose pose;
     @Expose
-    private HandState handState;
+    private @Nonnull HandState handState;
     
     // Entity Metadata
     // Source: https://wiki.vg/Entity_metadata#Entity
@@ -27,7 +29,7 @@ public class NPCMetaInfo implements Serialisable {
     private boolean shivering;
 
     @Expose
-    private GlowColor glowColor;
+    private @Nonnull GlowColor glowColor;
     @Expose
     private boolean collision;
 
@@ -35,13 +37,14 @@ public class NPCMetaInfo implements Serialisable {
         this.pose = Pose.STANDING;
         this.handState = new HandState(false, Hand.MAIN_HAND, false);
         this.glowColor = GlowColor.WHITE;
+        collision = false;
     }
 
     public Pose getPose() {
         return this.pose;
     }
 
-    public void setPose(Pose pose) {
+    public void setPose(@Nonnull Pose pose) {
         this.pose = pose;
     }
 
@@ -83,7 +86,7 @@ public class NPCMetaInfo implements Serialisable {
         this.collision = value;
     }
 
-    public void setGlowColor(GlowColor glowColor) {
+    public void setGlowColor(@Nonnull GlowColor glowColor) {
         this.glowColor = glowColor;
     }
 

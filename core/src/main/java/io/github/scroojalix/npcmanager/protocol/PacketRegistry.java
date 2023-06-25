@@ -219,16 +219,17 @@ public final class PacketRegistry {
 
     public static final PacketList<NPCContainer> SCOREBOARD_CREATE_AND_ADD = (NPCContainer container) -> {
         final LinkedHashSet<PacketContainer> scoreboardPackets = new LinkedHashSet<>();
-        final List<String> npcName = Collections.singletonList(container.getPlayerInfo().getProfile().getName());
+        final String profileName = container.getPlayerInfo().getProfile().getName();
+        final List<String> nameAsList = Collections.singletonList(profileName);
 
-        NPCMetaInfo meta = container.getNPCData().getTraits().getMetaInfo();
-        boolean collision = meta.isCollisionEnabled();
-        boolean glowing = meta.isGlowingEnabled();
-        GlowColor glowColor = meta.getGlowColor();
+        final NPCMetaInfo meta = container.getNPCData().getTraits().getMetaInfo();
+        final boolean collision = meta.isCollisionEnabled();
+        final boolean glowing = meta.isGlowingEnabled();
+        final GlowColor glowColor = meta.getGlowColor();
 
 		if (PluginUtils.ServerVersion.v1_17_R1.atOrAbove()) {
 			PacketContainer createTeam = createPacket(PacketType.Play.Server.SCOREBOARD_TEAM);
-			createTeam.getStrings().write(0, PluginUtils.NPC_SCOREBOARD_TEAM_NAME);
+			createTeam.getStrings().write(0, profileName);
 			InternalStructure struct = createTeam.getOptionalStructures().read(0).get();
 
             // Name Tag Visibility
@@ -237,8 +238,6 @@ public final class PacketRegistry {
             // Collision
             if (!collision) {
                 struct.getStrings().write(1, "never");
-            } else {
-                // struct.getStrings().write(1, "always");
             }
 
             // Glowing
@@ -253,16 +252,16 @@ public final class PacketRegistry {
 			if (PluginUtils.ServerVersion.v1_18_R1.atOrAbove()) {
 				// Above 1.18, only one packet is needed, which includes
 				// the team settings and NPC names in one.
-				createTeam.getModifier().write(2, npcName);
+				createTeam.getModifier().write(2, nameAsList);
 				scoreboardPackets.add(createTeam);
 			} else {
 				// For 1.17 servers, two packets are necessary, with
 				// team settings and NPC names in separate packets.
 				scoreboardPackets.add(createTeam);
 				PacketContainer addNPCsToTeam = createPacket(PacketType.Play.Server.SCOREBOARD_TEAM);
-				addNPCsToTeam.getStrings().write(0, PluginUtils.NPC_SCOREBOARD_TEAM_NAME);
+				addNPCsToTeam.getStrings().write(0, profileName);
 				addNPCsToTeam.getIntegers().write(0, 3); // Set packet mode to MODIFY_TEAM
-				addNPCsToTeam.getModifier().write(2, npcName);
+				addNPCsToTeam.getModifier().write(2, nameAsList);
 				scoreboardPackets.add(addNPCsToTeam);
 			}
 		} else {
@@ -271,7 +270,7 @@ public final class PacketRegistry {
             PacketContainer createTeam = createPacket(PacketType.Play.Server.SCOREBOARD_TEAM);
             int teamSettingIndex = PluginUtils.ServerVersion.v1_13_R1.atOrAbove() ? 1 : 4;
             createTeam.getStrings()
-                .write(0, PluginUtils.NPC_SCOREBOARD_TEAM_NAME)
+                .write(0, profileName)
                 .write(teamSettingIndex, "never");
             if (PluginUtils.ServerVersion.v1_9_R1.atOrAbove() && !collision) {
                 createTeam.getStrings().write(teamSettingIndex + 1, "never");
@@ -291,11 +290,11 @@ public final class PacketRegistry {
             scoreboardPackets.add(createTeam);
 
             PacketContainer addNPCsToTeam = createPacket(PacketType.Play.Server.SCOREBOARD_TEAM);
-            addNPCsToTeam.getStrings().write(0, PluginUtils.NPC_SCOREBOARD_TEAM_NAME);
+            addNPCsToTeam.getStrings().write(0, profileName);
             int teamPacketModeIndex = PluginUtils.ServerVersion.v1_13_R1.atOrAbove() ? 0 : 1;
             addNPCsToTeam.getIntegers().write(teamPacketModeIndex, 3);
             addNPCsToTeam.getModifier().write(PluginUtils.ServerVersion.v1_9_R1.atOrAbove() ? 7 : 6,
-                npcName);
+                nameAsList);
             scoreboardPackets.add(addNPCsToTeam);
 		}
 

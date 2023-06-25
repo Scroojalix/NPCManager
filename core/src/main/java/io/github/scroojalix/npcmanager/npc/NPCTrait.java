@@ -165,4 +165,8 @@ public class NPCTrait implements Serialisable {
     public @Nonnull NPCMetaInfo getMetaInfo() {
         return metaInfo;
     }
+
+    public void clearMetaInfo() {
+        this.metaInfo = new NPCMetaInfo();
+    }
 }
