@@ -2,6 +2,13 @@ package io.github.scroojalix.npcmanager.npc.meta;
 
 import org.bukkit.ChatColor;
 
+/**
+ * All available glow colors and there corresponding Bukkit value.
+ * This is done to limit the colours that can be chosen from so the
+ * user cannot use an invalid value by mistake.
+ * 
+ * @author Scroojalix
+ */
 public enum GlowColor {
     BLACK(ChatColor.BLACK),
     DARK_BLUE(ChatColor.DARK_BLUE),
