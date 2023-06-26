@@ -4,9 +4,9 @@ import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 
-import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.npc.interactions.InteractEvent;
 import io.github.scroojalix.npcmanager.npc.meta.NPCMetaInfo;
+import io.github.scroojalix.npcmanager.npc.skin.SkinLayer;
 import io.github.scroojalix.npcmanager.protocol.NPCLoader;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
@@ -72,7 +72,7 @@ public class NPCContainer {
 
 			// Active Skin Layers
 			watcher.setObject(
-				NPCMain.serverVersion.getSkinLayersByteIndex(),
+				SkinLayer.getSkinLayersByteIndex(),
                 byteSerialiser,
 				npcData.getTraits().getSkinLayersByte());
 		} else {
@@ -102,7 +102,7 @@ public class NPCContainer {
 
 			// Active Skin Layers
 			watcher.setObject(
-				NPCMain.serverVersion.getSkinLayersByteIndex(),
+				SkinLayer.getSkinLayersByteIndex(),
 				npcData.getTraits().getSkinLayersByte());
 		}
         return watcher;
