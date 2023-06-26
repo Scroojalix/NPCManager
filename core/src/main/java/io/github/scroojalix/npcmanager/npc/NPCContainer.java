@@ -5,6 +5,7 @@ import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 
 import io.github.scroojalix.npcmanager.npc.interactions.InteractEvent;
+import io.github.scroojalix.npcmanager.npc.meta.HandState;
 import io.github.scroojalix.npcmanager.npc.meta.NPCMetaInfo;
 import io.github.scroojalix.npcmanager.npc.skin.SkinLayer;
 import io.github.scroojalix.npcmanager.protocol.NPCLoader;
@@ -34,77 +35,73 @@ public class NPCContainer {
         this.npcData = data;
         this.playerInfo = playerInfo;
         this.entityId = PluginUtils.nextEntityId();
-        this.dataWatcher = generateDataWatcher();
+        if (PluginUtils.ServerVersion.v1_9_R1.atOrAbove()) {
+            this.dataWatcher = generateDataWatcher();
+        } else {
+            this.dataWatcher = generateLegacyDataWatcher();
+        }
     }
 
+    /**
+     * Generate Data Watcher for 1.9+ servers
+     * @return {@code WrappedDataWatcher} for 1.9+ servers.
+     */
     private WrappedDataWatcher generateDataWatcher() {
-        //Skin layers and pose
-		WrappedDataWatcher watcher = new WrappedDataWatcher();
-		if (PluginUtils.ServerVersion.v1_9_R1.atOrAbove()) {
-			// Data values need serialisers
-            WrappedDataWatcher.Serializer byteSerialiser = WrappedDataWatcher.Registry.get(Byte.class);
+		final WrappedDataWatcher watcher = new WrappedDataWatcher();
+        final WrappedDataWatcher.Serializer byteSerialiser = WrappedDataWatcher.Registry.get(Byte.class);
+        final NPCMetaInfo metaInfo = npcData.getTraits().getMetaInfo();
 
-            if (npcData.getTraits().getMetaInfo() != null) {
-                NPCMetaInfo poseInfo = npcData.getTraits().getMetaInfo();
-                // Pose settings
-                watcher.setObject(
-                    0,
-                    byteSerialiser,
-                    poseInfo.getEntityMetaByte());
+        // Entity Base Metadata
+        watcher.setObject(0, byteSerialiser,
+            metaInfo.getEntityMetaByte());
 
-                watcher.setObject(
-                    6,
-                    WrappedDataWatcher.Registry.get(EnumWrappers.getEntityPoseClass()),
-                    poseInfo.getPose().getNMSValue());
+        // Pose
+        if (PluginUtils.ServerVersion.v1_14_R1.atOrAbove()) {
+            watcher.setObject(6,
+                WrappedDataWatcher.Registry.get(EnumWrappers.getEntityPoseClass()),
+                metaInfo.getPose().getNMSValue());
+        }
 
-                if (poseInfo.isShivering()) {
-                    watcher.setObject(
-                        7,
-                        WrappedDataWatcher.Registry.get(Integer.class),
-                        140);
-                }
+        // Shivering
+        if (metaInfo.isShivering() && PluginUtils.ServerVersion.v1_17_R1.atOrAbove()) {
+            watcher.setObject(7,
+                WrappedDataWatcher.Registry.get(Integer.class),
+                140);
+        }
 
-                // FIXME this doesn't set the hand state correctly
-                watcher.setObject(
-                    8, byteSerialiser,
-                    poseInfo.getHandState().getByteFlag());
-            }
+        // FIXME this doesn't set the hand state correctly
+        // May need to send a packet along with this
+        // Hand State
+        watcher.setObject(
+            HandState.getIndex(), byteSerialiser,
+            metaInfo.getHandState().getByteFlag());
 
-			// Active Skin Layers
-			watcher.setObject(
-				SkinLayer.getSkinLayersByteIndex(),
-                byteSerialiser,
-				npcData.getTraits().getSkinLayersByte());
-		} else {
-			// Serialisers not needed
-            // TODO indexes may be incorrect
-            if (npcData.getTraits().getMetaInfo() != null) {
-                NPCMetaInfo poseInfo = npcData.getTraits().getMetaInfo();
-                // Pose settings
-                watcher.setObject(
-                    0,
-                    poseInfo.getEntityMetaByte());
+        // Active Skin Layers
+        watcher.setObject(
+            SkinLayer.getSkinLayersByteIndex(),
+            byteSerialiser,
+            npcData.getTraits().getSkinLayersByte());
+        
+        return watcher;
+    }
 
-                watcher.setObject(
-                    6,
-                    poseInfo.getPose().getNMSValue());
+    /**
+     * Generate data watcher used in 1.8 servers.
+     * @return {@code WrappedDataWatcher} for 1.8 servers
+     */
+    private WrappedDataWatcher generateLegacyDataWatcher() {
+        final WrappedDataWatcher watcher = new WrappedDataWatcher();
 
-                if (poseInfo.isShivering()) {
-                    watcher.setObject(
-                        7,
-                        140);
-                }
-
-                watcher.setObject(
-                    8,
-                    poseInfo.getHandState().getByteFlag());
-            }
-
-			// Active Skin Layers
-			watcher.setObject(
-				SkinLayer.getSkinLayersByteIndex(),
-				npcData.getTraits().getSkinLayersByte());
-		}
+        // Metadata Settings
+        watcher.setObject(0,
+            npcData.getTraits().getMetaInfo()
+            .getEntityMetaByte());
+        
+        // Set Active Skin Layers
+        watcher.setObject(
+            SkinLayer.getSkinLayersByteIndex(),
+            npcData.getTraits().getSkinLayersByte());
+            
         return watcher;
     }
 
