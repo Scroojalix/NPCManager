@@ -51,7 +51,7 @@ public class PoseMeta extends SubCommand {
             result.addAll(Arrays.stream(Pose.values()).map(f -> f.name()).collect(Collectors.toList()));
         }
         
-        return filter(args[4], result);
+        return result;
     }
 
 }

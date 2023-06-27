@@ -88,7 +88,7 @@ public class HandStateMeta extends SubCommand {
             }
         }
 
-        return filter(args[args.length - 1], result);
+        return result;
     }
     
 }
