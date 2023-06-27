@@ -23,6 +23,7 @@ import com.comphenix.protocol.wrappers.Pair;
 
 import io.github.scroojalix.npcmanager.npc.HologramContainer;
 import io.github.scroojalix.npcmanager.npc.NPCContainer;
+import io.github.scroojalix.npcmanager.npc.meta.Flag;
 import io.github.scroojalix.npcmanager.npc.meta.GlowColor;
 import io.github.scroojalix.npcmanager.npc.meta.NPCMetaInfo;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
@@ -223,8 +224,8 @@ public final class PacketRegistry {
         final List<String> nameAsList = Collections.singletonList(profileName);
 
         final NPCMetaInfo meta = container.getNPCData().getTraits().getMetaInfo();
-        final boolean collision = meta.isCollisionEnabled();
-        final boolean glowing = meta.isGlowingEnabled();
+        final boolean collision = meta.hasFlag(Flag.COLLISION);
+        final boolean glowing = meta.hasFlag(Flag.GLOWING);
         final GlowColor glowColor = meta.getGlowColor();
 
 		if (PluginUtils.ServerVersion.v1_17_R1.atOrAbove()) {

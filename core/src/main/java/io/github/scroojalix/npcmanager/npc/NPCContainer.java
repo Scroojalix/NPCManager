@@ -5,6 +5,7 @@ import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 
 import io.github.scroojalix.npcmanager.npc.interactions.InteractEvent;
+import io.github.scroojalix.npcmanager.npc.meta.Flag;
 import io.github.scroojalix.npcmanager.npc.meta.HandState;
 import io.github.scroojalix.npcmanager.npc.meta.NPCMetaInfo;
 import io.github.scroojalix.npcmanager.npc.skin.SkinLayer;
@@ -63,7 +64,7 @@ public class NPCContainer {
         }
 
         // Shivering
-        if (metaInfo.isShivering() && PluginUtils.ServerVersion.v1_17_R1.atOrAbove()) {
+        if (metaInfo.hasFlag(Flag.SHIVERING) && PluginUtils.ServerVersion.v1_17_R1.atOrAbove()) {
             watcher.setObject(7,
                 WrappedDataWatcher.Registry.get(Integer.class),
                 140);

@@ -29,7 +29,8 @@ public class MetadataModification extends SubCommand {
         );
         subcommands.add(new PoseMeta());
         subcommands.add(new HandStateMeta());
-        subcommands.add(new FlagsMeta());
+        subcommands.add(new FlagsMeta.AddFlagMeta());
+        subcommands.add(new FlagsMeta.RemoveFlagMeta());
     }
 
     @Override

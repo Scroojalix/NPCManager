@@ -11,26 +11,19 @@ public enum Flag {
     GLOWING("glowingEnabled", ServerVersion.v1_9_R1),
     ELYTRA_ENABLED("elytraEnabled", ServerVersion.v1_9_R1),
     SHIVERING("shivering", ServerVersion.v1_17_R1),
-    COLLISION("collisionEnabled", ServerVersion.v1_9_R1),
-    GLOW_COLOR("glowColor", ServerVersion.v1_9_R1, GlowColor.class);
+    COLLISION("collisionEnabled", ServerVersion.v1_9_R1);
 
     private final String tag;
     private final ServerVersion minVer;
-    private final Class<?> valueClass;
 
     private Flag(String tag) {
         this(tag, ServerVersion.v1_8_R2);
     }
 
     private Flag(String tag, ServerVersion minVer) {
-        this(tag, minVer, Boolean.class);
-    }
-    
-    private Flag(String tag, ServerVersion minVer, Class<?> valueClass) {
         this.tag = tag;
         this.minVer = minVer;
-        this.valueClass = valueClass;
-    } 
+    }
 
     public String getCommandTag() {
         return tag;
@@ -38,10 +31,6 @@ public enum Flag {
 
     public boolean isEnabled() {
         return minVer.atOrAbove();
-    }
-
-    public Class<?> getValueClass() {
-        return valueClass;
     }
 
     public static @Nullable Flag getFlagFromTag(String tag) {
