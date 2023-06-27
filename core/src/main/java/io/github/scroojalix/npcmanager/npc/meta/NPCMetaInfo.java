@@ -170,41 +170,63 @@ public class NPCMetaInfo implements Serialisable {
         return this.handState;
     }
 
-    // FLAG SETTERS
+    public void setFlag(Flag flag, Object value) {
+        if (!value.getClass().equals(flag.getValueClass())) {
+            throw new IllegalArgumentException("Invalid value "+value+" for flag "+flag);
+        }
 
-    public void setOnFire(boolean value) {
-        this.onFire = value;
+        switch (flag) {
+            case COLLISION:
+                this.collisionEnabled = (boolean)value;
+                break;
+            case ELYTRA_ENABLED:
+                this.elytraEnabled = (boolean)value;
+                break;
+            case GLOWING:
+                this.glowing = (boolean)value;
+                break;
+            case GLOW_COLOR:
+                this.glowColor = (GlowColor)value;
+                break;
+            case INVISIBLE:
+                this.invisible = (boolean)value;
+                break;
+            case ON_FIRE:
+                this.onFire = (boolean)value;
+                break;
+            case SHIVERING:
+                this.shivering = (boolean)value;
+                break;
+            case SPRINTING:
+                this.sprinting = (boolean)value;
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid flag "+flag);
+        }
     }
 
-    public void setSprinting(boolean value) {
-        this.sprinting = value;
+    public Object getFlag(Flag flag) {
+        switch (flag) {
+            case COLLISION:
+                return collisionEnabled;
+            case ELYTRA_ENABLED:
+                return elytraEnabled;
+            case GLOWING:
+                return glowing;
+            case GLOW_COLOR:
+                return glowColor;
+            case INVISIBLE:
+                return invisible;
+            case ON_FIRE:
+                return onFire;
+            case SHIVERING:
+                return shivering;
+            case SPRINTING:
+                return sprinting;
+            default:
+                throw new IllegalArgumentException("Invalid flag "+flag);
+        }
     }
-
-    public void setInvisible(boolean value) {
-        this.invisible = value;
-    }
-
-    public void setGlowing(boolean value) {
-        this.glowing = value;
-    }
-
-    public void setElytraEnabled(boolean value) {
-        this.elytraEnabled = value;
-    }
-
-    public void setShivering(boolean value) {
-        this.shivering = value;
-    }
-
-    public void setCollisionEnabled(boolean value) {
-        this.collisionEnabled = value;
-    }
-
-    public void setGlowColor(@Nonnull GlowColor glowColor) {
-        this.glowColor = glowColor;
-    }
-
-    // GETTERS
 
     public boolean isShivering() {
         return this.shivering;

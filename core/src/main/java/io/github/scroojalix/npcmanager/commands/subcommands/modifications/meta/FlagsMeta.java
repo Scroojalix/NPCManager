@@ -11,6 +11,7 @@ import org.bukkit.command.CommandSender;
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.SubCommand;
 import io.github.scroojalix.npcmanager.npc.NPCData;
+import io.github.scroojalix.npcmanager.npc.meta.Flag;
 import io.github.scroojalix.npcmanager.npc.meta.GlowColor;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
@@ -29,68 +30,36 @@ public class FlagsMeta extends SubCommand {
     public boolean execute(NPCMain main, CommandSender sender, String[] args) {
         if (args.length < 6) return false;
         NPCData npc = PluginUtils.getNPCDataByName(args[1]);
-        boolean flag = false;
-        if (!args[4].equalsIgnoreCase("glowColor")) {
+
+        Flag flag = Flag.getFlagFromTag(args[4]);
+        if (flag == null) {
+            sender.sendMessage(PluginUtils.format("&c%s is not a valid flag.", args[4]));
+            return false;
+        }
+
+        Object value;
+        if (flag != Flag.GLOW_COLOR) {
             if (args[5].equalsIgnoreCase("true")) {
-                flag = true;
+                value = true;
             } else if (!args[5].equalsIgnoreCase("false")) {
                 sender.sendMessage(ChatColor.RED + "That is not a valid boolean value.");
                 return false;
+            } else {
+                value = false;
+            }
+        } else {
+            try {
+                value = GlowColor.valueOf(args[5]);
+            } catch (IllegalArgumentException e) {
+                sender.sendMessage(ChatColor.RED + "That is not a valid glow color.");
+                return false;
             }
         }
-        
-        boolean successful = false;
-        switch (args[4].toLowerCase()) {
-            case "onfire":
-                npc.getTraits().getMetaInfo().setOnFire(flag);
-                successful = true;
-                break;
-            case "sprinting":
-                npc.getTraits().getMetaInfo().setSprinting(flag);
-                successful = true;
-                break;
-            case "invisible":
-                npc.getTraits().getMetaInfo().setInvisible(flag);
-                successful = true;
-                break;
-            case "glowenabled":
-                npc.getTraits().getMetaInfo().setGlowing(flag);
-                successful = true;
-                break;
-            case "elytraenabled":
-                npc.getTraits().getMetaInfo().setElytraEnabled(flag);
-                successful = true;
-                break;
-            case "shivering":
-                npc.getTraits().getMetaInfo().setShivering(flag);
-                successful = true;
-                break;
-            case "collisionenabled":
-                npc.getTraits().getMetaInfo().setCollisionEnabled(flag);
-                successful = true;
-                break;
+        npc.getTraits().getMetaInfo().setFlag(flag, value);
+        main.npc .updateNPC(npc);
 
-            case "glowcolor":
-                GlowColor color;
-                try {
-                    color = GlowColor.valueOf(args[5]);
-                } catch (IllegalArgumentException e) {
-                    sender.sendMessage(ChatColor.RED + "That is not a valid glow color.");
-                    return false;
-                }
-                npc.getTraits().getMetaInfo().setGlowColor(color);
-                successful = true;
-                break;
-        }
-
-        if (successful) {
-            main.npc.updateNPC(npc);
-            sender.sendMessage(PluginUtils.format("&6Set &f%s &6flag to &f%s", args[4], args[5]));
-            return true;
-        } else {
-            sender.sendMessage(ChatColor.RED + "That is not a valid flag and/or value.");
-            return false;
-        }
+        sender.sendMessage(PluginUtils.format("&6Set &f%s &6flag to &f%s", args[4], args[5]));
+        return true;
     }
 
     @Override
@@ -98,30 +67,22 @@ public class FlagsMeta extends SubCommand {
         List<String> result = new ArrayList<>();
 
         if (args.length == 5) {
-            result.add("onFire");
-            result.add("sprinting");
-            result.add("invisible");
-            result.add("glowEnabled");
-            result.add("elytraEnabled");
-            result.add("shivering");
-            result.add("glowColor");
-            result.add("collisionEnabled");
+            for (Flag flag : Flag.values()) {
+                if (flag.isEnabled()) {
+                    result.add(flag.getCommandTag());
+                }
+            }
         } else if (args.length == 6) {
-            switch(args[4].toLowerCase()) {
-                case "onfire":
-                case "sprinting":
-                case "invisible":
-                case "glowenabled":
-                case "elytraenabled":
-                case "shivering":
-                case "collisionenabled":
-                    result.add("true");
-                    result.add("false");
-                break;
-                case "glowcolor":
-                    result.addAll(Arrays.stream(GlowColor.values())
+
+            Flag flag = Flag.getFlagFromTag(args[4]);
+            if (flag == null) return result;
+            
+            if (flag.getValueClass().equals(Boolean.class)) {
+                result.add("true");
+                result.add("false");
+            } else if (flag.getValueClass().equals(GlowColor.class)) {
+                result.addAll(Arrays.stream(GlowColor.values())
                     .map(f -> f.name()).collect(Collectors.toList()));
-                break;
             }
         }
         return filter(args[args.length - 1], result);
