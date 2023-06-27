@@ -71,6 +71,8 @@ public class NPCContainer {
 
         // FIXME this doesn't set the hand state correctly
         // May need to send a packet along with this
+        // net.minecraft.world.entity.LivingEntity#startUsingItem
+
         // Hand State
         watcher.setObject(
             HandState.getIndex(), byteSerialiser,

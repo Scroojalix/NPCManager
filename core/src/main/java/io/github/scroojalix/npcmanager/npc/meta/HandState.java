@@ -42,6 +42,10 @@ public class HandState implements Serialisable {
         this.isRiptideSpinAttack = isRiptideSpinAttack;
     }
 
+    public boolean isActive() {
+        return active;
+    }
+
     /**
      * Get the index of this field in the data watcher.<p>
      * NOTE: this is not available in 1.8 servers.
@@ -86,6 +90,11 @@ public class HandState implements Serialisable {
         int flag1 = active ? 0x1 : 0;
         int flag2 = hand.ordinal() == 0 ? 0 : 0x2;
         int flag3 = isRiptideSpinAttack ? 0x4 : 0;
-        return (byte)(flag1 | flag2 | flag3);
+
+        byte value = (byte)(flag1 | flag2 | flag3);
+
+        NPCMain.instance.getLogger().info("Hand State Byte Flag: " + value);
+
+        return value;
     }
 }

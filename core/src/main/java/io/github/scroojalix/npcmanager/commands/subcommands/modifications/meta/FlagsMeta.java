@@ -58,7 +58,7 @@ public class FlagsMeta extends SubCommand {
                 successful = true;
                 break;
             case "elytraenabled":
-                npc.getTraits().getMetaInfo().setElytraFlying(flag);
+                npc.getTraits().getMetaInfo().setElytraEnabled(flag);
                 successful = true;
                 break;
             case "shivering":
@@ -66,7 +66,7 @@ public class FlagsMeta extends SubCommand {
                 successful = true;
                 break;
             case "collisionenabled":
-                npc.getTraits().getMetaInfo().setCollision(flag);
+                npc.getTraits().getMetaInfo().setCollisionEnabled(flag);
                 successful = true;
                 break;
 

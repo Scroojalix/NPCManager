@@ -6,7 +6,8 @@ public enum Pose {
     STANDING,
     CROUCHING(EntityPose.CROUCHING),
     SWIMMING(EntityPose.SWIMMING),
-    SLEEPING(EntityPose.SLEEPING);
+    SLEEPING(EntityPose.SLEEPING),
+    SITTING(EntityPose.SITTING);
 
     private final EntityPose protocolValue;
 

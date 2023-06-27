@@ -5,7 +5,9 @@ import javax.annotation.Nonnull;
 import com.comphenix.protocol.wrappers.EnumWrappers.Hand;
 import com.google.gson.annotations.Expose;
 
+import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.storage.misc.Serialisable;
+import io.github.scroojalix.npcmanager.utils.PluginUtils.ServerVersion;
 
 /**
  * Store all metadata for an NPC. Handles per version metadata format.
@@ -25,55 +27,51 @@ public class NPCMetaInfo implements Serialisable {
     private boolean onFire;
     
     /**
-     * This flag is set in {@code pose} for 1.14+ servers<p>
+     * The flag at index 1 is set in {@code pose} for 1.14+ servers<p>
+     * Typically represents the NPC crouching<p>
      * Bitmask = 0x02
      */
-    @Expose
-    private boolean crouching;
 
     /**
-     * This flag is unused in 1.12+ servers.<p>
+     * The flag at index 2 is unused in 1.12+ servers.<p>
+     * Typically represents the NPC sitting<p>
      * Bitmask = 0x04
      */
-    @Expose
-    private boolean sitting;
 
     /**
-     * This flag is valid for all versions
+     * This flag is valid for all versions<p>
      * Bitmask = 0x08
      */
     @Expose
     private boolean sprinting;
 
     /**
-     * This flag is active for versions 1.8 to 1.10.<p>
+     * Flag at index 4 is only used for versions 1.8 to 1.10.<p>
      * For 1.13 servers, it is used to represent swimming.<p>
      * Unused otherwise. Use {@code handState} instead.<p>
      * Bitmask = 0x10
      */
-    @Expose
-    private boolean blocking;
 
     /**
-     * This flag is valid for all versions
+     * This flag is valid for all versions<p>
      * Bitmask = 0x20
      */
     @Expose
     private boolean invisible;
 
     /**
-     * This flag does nothing in 1.8 servers
+     * This flag does nothing in 1.8 servers<p>
      * Bitmask = 0x40
      */
     @Expose
     private boolean glowing;
 
     /**
-     * This flag does nothing in 1.8 servers
+     * This flag does nothing in 1.8 servers<p>
      * Bitmask = 0x80
      */
     @Expose
-    private boolean elytra;
+    private boolean elytraEnabled;
 
     /**
      * This field will only have an affect on 1.14+ servers<p>
@@ -91,6 +89,7 @@ public class NPCMetaInfo implements Serialisable {
 
     /**
      * Contains information on the hand state.<p>
+     * Refer to {@link HandState#getIndex()} for index<p>
      * Only used in 1.9+ servers.
      * @see HandState
      */
@@ -98,15 +97,17 @@ public class NPCMetaInfo implements Serialisable {
     private @Nonnull HandState handState;
 
     /**
-     * Sent as part of the scoreboard team packet
+     * Sent as part of the scoreboard team packet<p>
+     * Has no effect on 1.8 servers
      */
     @Expose
     private @Nonnull GlowColor glowColor;
     /**
-     * Sent as part of the scoreboard team packet
+     * Sent as part of the scoreboard team packet<p>
+     * Has no effect on 1.8 servers
      */
     @Expose
-    private boolean collision;
+    private boolean collisionEnabled;
 
     public NPCMetaInfo() {
         this.pose = Pose.STANDING;
@@ -129,12 +130,40 @@ public class NPCMetaInfo implements Serialisable {
      * @return Entity Base Metadata byte
      */
     public byte getEntityMetaByte() {
-        int fire   = onFire    ? 0x01 : 0;
-        int sprint = sprinting ? 0x08 : 0;
-        int invis  = invisible ? 0x20 : 0;
-        int glow   = glowing   ? 0x40 : 0;
-        int fly    = elytra    ? 0x80 : 0;
-        return (byte) (fire | sprint | invis | glow | fly);
+        int f0,f1,f2,f3,f4,f5,f6,f7;
+        f0 = f1 = f2 = f3 = f4 = f5 = f6 = f7 = 0;
+
+        // Flag 0
+        if (onFire) f0 = 0x01;
+
+        // Flag 1
+        if (pose == Pose.CROUCHING) f1 = 0x02;
+
+        // Flag 2
+        if (pose == Pose.SITTING) f2 = 0x04;
+
+        // Flag 3
+        if (sprinting) f3 = 0x08;
+
+        // Flag 4
+        if ((handState.isActive())
+            || (pose == Pose.SWIMMING && ServerVersion.v1_13_R1.atOrAbove()))
+            f4 = 0x10;
+        
+        // Flag 5
+        if (invisible) f5 = 0x20;
+
+        // Flag 6
+        if (glowing) f6 = 0x40;
+
+        // Flag 7
+        if (elytraEnabled) f7 = 0x80;
+
+        byte value = (byte) (f0 | f1 | f2 | f3 | f4 | f5 | f6 | f7);
+
+        NPCMain.instance.getLogger().info("Entity Meta Byte: "+ value);
+
+        return value;
     }
 
     public HandState getHandState() {
@@ -159,16 +188,16 @@ public class NPCMetaInfo implements Serialisable {
         this.glowing = value;
     }
 
-    public void setElytraFlying(boolean value) {
-        this.elytra = value;
+    public void setElytraEnabled(boolean value) {
+        this.elytraEnabled = value;
     }
 
     public void setShivering(boolean value) {
         this.shivering = value;
     }
 
-    public void setCollision(boolean value) {
-        this.collision = value;
+    public void setCollisionEnabled(boolean value) {
+        this.collisionEnabled = value;
     }
 
     public void setGlowColor(@Nonnull GlowColor glowColor) {
@@ -190,6 +219,6 @@ public class NPCMetaInfo implements Serialisable {
     }
 
     public boolean isCollisionEnabled() {
-        return this.collision;
+        return this.collisionEnabled;
     }
 }
