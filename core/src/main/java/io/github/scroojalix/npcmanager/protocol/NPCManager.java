@@ -189,7 +189,7 @@ public class NPCManager {
 						container.setInteractEvent(InteractionsManager.getInteractEvents().get(interactEvent.getValue()));
 					} else {
 						Messages.printNPCRestoreError(main, data.getName(), 
-						"Error restoring an NPC: Unknown interact event '"+interactEvent.getValue()+"'");
+						new IllegalArgumentException("Error restoring an NPC: Unknown interact event '"+interactEvent.getValue()+"'"));
 					}
 				break;
 			}

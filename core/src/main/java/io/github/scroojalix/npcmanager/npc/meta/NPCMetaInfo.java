@@ -1,7 +1,6 @@
 package io.github.scroojalix.npcmanager.npc.meta;
 
 import java.util.HashSet;
-import java.util.Set;
 
 import javax.annotation.Nonnull;
 
@@ -46,7 +45,7 @@ public class NPCMetaInfo implements Serialisable {
      * @see Flag
      */
     @Expose
-    private Set<Flag> activeFlags;
+    private HashSet<Flag> activeFlags;
 
     /**
      * Initialise a new NPCMetaInfo object. Used when clearing an NPC's meta.

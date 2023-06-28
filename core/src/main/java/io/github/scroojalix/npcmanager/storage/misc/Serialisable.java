@@ -2,6 +2,7 @@ package io.github.scroojalix.npcmanager.storage.misc;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -93,6 +94,8 @@ public abstract interface Serialisable {
 					}
 				} else if (Serialisable.class.isAssignableFrom(type)) {
 					value = deserialise((Map<String, Object>) value, (Class<T>) type);
+				} else if (Collection.class.isAssignableFrom(type)) {
+					value = type.getDeclaredConstructor(Collection.class).newInstance(value);					
 				} else if (type.isEnum()) {
 					Object[] constants = type.getEnumConstants();
 					boolean failed = true;
