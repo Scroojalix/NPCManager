@@ -130,7 +130,7 @@ public class NPCBuilder {
                     }
                 }
             }
-            data.getTraits().setSkinLayers(newLayers);
+            data.getTraits().getMetaInfo().setSkinLayers(newLayers);
         }
         return this;
 	}

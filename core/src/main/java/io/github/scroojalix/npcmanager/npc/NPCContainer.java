@@ -8,7 +8,7 @@ import io.github.scroojalix.npcmanager.npc.interactions.InteractEvent;
 import io.github.scroojalix.npcmanager.npc.meta.Flag;
 import io.github.scroojalix.npcmanager.npc.meta.HandState;
 import io.github.scroojalix.npcmanager.npc.meta.NPCMetaInfo;
-import io.github.scroojalix.npcmanager.npc.skin.SkinLayer;
+import io.github.scroojalix.npcmanager.npc.skin.NPCSkinLayers;
 import io.github.scroojalix.npcmanager.protocol.NPCLoader;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
@@ -81,9 +81,9 @@ public class NPCContainer {
 
         // Active Skin Layers
         watcher.setObject(
-            SkinLayer.getSkinLayersByteIndex(),
+            NPCSkinLayers.getSkinLayersByteIndex(),
             byteSerialiser,
-            npcData.getTraits().getSkinLayersByte());
+            npcData.getTraits().getMetaInfo().getSkinLayersByte());
         
         return watcher;
     }
@@ -102,8 +102,8 @@ public class NPCContainer {
         
         // Set Active Skin Layers
         watcher.setObject(
-            SkinLayer.getSkinLayersByteIndex(),
-            npcData.getTraits().getSkinLayersByte());
+            NPCSkinLayers.getSkinLayersByteIndex(),
+            npcData.getTraits().getMetaInfo().getSkinLayersByte());
             
         return watcher;
     }

@@ -1,4 +1,4 @@
-package io.github.scroojalix.npcmanager.commands.subcommands.modifications;
+package io.github.scroojalix.npcmanager.commands.subcommands.modifications.meta;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -15,13 +15,13 @@ import io.github.scroojalix.npcmanager.npc.skin.NPCSkinLayers;
 import io.github.scroojalix.npcmanager.npc.skin.SkinLayer;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
-public class SkinLayersModification extends SubCommand {
+public class SkinLayersMeta extends SubCommand {
 
-    public SkinLayersModification() {
+    public SkinLayersMeta() {
         super(
             "skinLayers",
             "Customise the visible layers of an NPC's skin.",
-            "/npc modify <npc> skinLayers [--layer <true|false>]...",
+            "/npc modify <npc> metadata skinLayers [--layer <true|false>]...",
             true
         );
     }
@@ -29,26 +29,26 @@ public class SkinLayersModification extends SubCommand {
     @Override
     public boolean execute(NPCMain main, CommandSender sender, String[] args) {
         NPCData data = PluginUtils.getNPCDataByName(args[1]);
-        NPCSkinLayers layers = data.getTraits().getSkinLayers();
-        if (args.length == 3) {
+        NPCSkinLayers layers = data.getTraits().getMetaInfo().getSkinLayers();
+        if (args.length == 4) {
             sender.sendMessage((layers == null ? new NPCSkinLayers() : layers).getCurrentConfiguration());
             return true;
         }
-        if (args[3].equalsIgnoreCase("--reset")) {
-            data.getTraits().setSkinLayers(null);
+        if (args[4].equalsIgnoreCase("--reset")) {
+            data.getTraits().getMetaInfo().setSkinLayers(null);
             main.npc.updateNPC(data);
             sender.sendMessage(ChatColor.GOLD + "Reset skin layers for " + ChatColor.WHITE + data.getName());
             return true;
         }
         LinkedHashMap<String, String> modifications = new LinkedHashMap<String, String>();
-        for (int arg = 4; arg <= args.length; arg += 2) {
+        for (int arg = 5; arg <= args.length; arg += 2) {
             String layer = args[arg - 1];
             if (args.length >= arg + 1) {
                 modifications.put(layer, args[arg]);
             }
         }
         if (!modifications.isEmpty()) {
-            data.getTraits().setSkinLayers(applyModifications(sender, layers, modifications));
+            data.getTraits().getMetaInfo().setSkinLayers(applyModifications(sender, layers, modifications));
             main.npc.updateNPC(data);
         } else {
             sender.sendMessage(ChatColor.RED + "No modifications were made, as the arguments were invalid.");
@@ -60,21 +60,21 @@ public class SkinLayersModification extends SubCommand {
     @Override
     public List<String> onTabComplete(String[] args) {
         ArrayList<String> result = new ArrayList<String>();
-        if (args.length == 4) {
+        if (args.length == 5) {
             result.add("--reset");
         }
-        if (!args[3].equalsIgnoreCase("--reset")) {
-            if (args.length % 2 == 0) {
+        if (!args[4].equalsIgnoreCase("--reset")) {
+            if (args.length % 2 == 1) {
                 for (SkinLayer layer : SkinLayer.values()) {
                     result.add(layer.label);
-                    for (int arg = 3; arg < args.length; arg++) {
+                    for (int arg = 4; arg < args.length; arg++) {
                         if (args[arg].equalsIgnoreCase(layer.label)) {
                             result.remove(layer.label);
                             break;
                         }
                     }
                 }
-            } else if (args.length <= 17) {
+            } else if (args.length <= 18) {
                 result.add("true");
                 result.add("false");
             }

@@ -15,7 +15,6 @@ import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class MetadataModification extends SubCommand {
 
-    //TODO incorporate skinlayers modification into this
     private final ArrayList<SubCommand> subcommands = new ArrayList<>();
 
     public MetadataModification() {
@@ -30,6 +29,7 @@ public class MetadataModification extends SubCommand {
         subcommands.add(new FlagsMeta.AddFlagMeta());
         subcommands.add(new FlagsMeta.RemoveFlagMeta());
         subcommands.add(new GlowColorMeta());
+        subcommands.add(new SkinLayersMeta());
     }
 
     @Override

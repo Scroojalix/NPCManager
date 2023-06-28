@@ -32,7 +32,6 @@ public class ModifyCommand extends SubCommand {
         subcommands.add(new InteractEventModification());
         subcommands.add(new MetadataModification());
         subcommands.add(new RangeModification());
-        subcommands.add(new SkinLayersModification());
         subcommands.add(new SkinModification());
         subcommands.add(new SubtitleModification());
     }

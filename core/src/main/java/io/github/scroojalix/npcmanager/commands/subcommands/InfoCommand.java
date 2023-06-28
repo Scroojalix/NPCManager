@@ -58,7 +58,7 @@ public class InfoCommand extends SubCommand {
                 SkinData skinData = traits.getSkinData();
                 sender.sendMessage(
                         PluginUtils.format("&6Skin Name: &F" + (skinData == null ? null : skinData.getSkinName())));
-                NPCSkinLayers layers = traits.getSkinLayers();
+                NPCSkinLayers layers = traits.getMetaInfo().getSkinLayers();
                 sender.sendMessage(ChatColor.GOLD + "Skin Layers: "
                         + (layers == null ? new NPCSkinLayers() : layers).getCurrentConfiguration());
                 if (sender instanceof Player) {

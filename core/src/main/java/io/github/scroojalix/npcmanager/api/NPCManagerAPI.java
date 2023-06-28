@@ -200,8 +200,8 @@ public class NPCManagerAPI {
 			NPCData data = PluginUtils.getNPCDataByName(name);
 			if (!layers.isEmpty()) {
 				NPCSkinLayers newLayers;
-				if (data.getTraits().getSkinLayers() != null) {
-					newLayers = data.getTraits().getSkinLayers();
+				if (data.getTraits().getMetaInfo().getSkinLayers() != null) {
+					newLayers = data.getTraits().getMetaInfo().getSkinLayers();
 				} else {
 					newLayers = new NPCSkinLayers();
 				}
@@ -232,7 +232,7 @@ public class NPCManagerAPI {
 						}
 					}
 				}
-				data.getTraits().setSkinLayers(newLayers);
+				data.getTraits().getMetaInfo().setSkinLayers(newLayers);
 
 				NPCMain.instance.npc.updateNPC(data);
 			}

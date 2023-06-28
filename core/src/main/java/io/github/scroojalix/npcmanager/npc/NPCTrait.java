@@ -8,7 +8,6 @@ import io.github.scroojalix.npcmanager.npc.equipment.NPCEquipment;
 import io.github.scroojalix.npcmanager.npc.interactions.InteractEventType;
 import io.github.scroojalix.npcmanager.npc.interactions.NPCInteractionData;
 import io.github.scroojalix.npcmanager.npc.meta.NPCMetaInfo;
-import io.github.scroojalix.npcmanager.npc.skin.NPCSkinLayers;
 import io.github.scroojalix.npcmanager.npc.skin.SkinData;
 import io.github.scroojalix.npcmanager.storage.misc.Serialisable;
 
@@ -27,8 +26,6 @@ public class NPCTrait implements Serialisable {
     private boolean headRotation;
     @Expose
     private SkinData skin;
-    @Expose
-    private NPCSkinLayers skinLayers;
     @Expose
     private NPCInteractionData interactEvent;
     @Expose
@@ -116,21 +113,6 @@ public class NPCTrait implements Serialisable {
     
     public void setSkinData(SkinData skinData) {
         this.skin = skinData;
-    }
-
-    public NPCSkinLayers getSkinLayers() {
-        return this.skinLayers;
-    }
-
-    public void setSkinLayers(NPCSkinLayers skinLayers) {
-        this.skinLayers = skinLayers;
-    }
-
-    public Byte getSkinLayersByte() {
-        if (this.skinLayers != null) {
-            return skinLayers.getDisplayedSkinParts();
-        }
-        return 127;
     }
     
     /**

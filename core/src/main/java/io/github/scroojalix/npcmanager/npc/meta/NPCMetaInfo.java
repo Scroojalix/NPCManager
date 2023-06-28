@@ -7,11 +7,14 @@ import javax.annotation.Nonnull;
 import com.comphenix.protocol.wrappers.EnumWrappers.Hand;
 import com.google.gson.annotations.Expose;
 
+import io.github.scroojalix.npcmanager.npc.skin.NPCSkinLayers;
 import io.github.scroojalix.npcmanager.storage.misc.Serialisable;
 import io.github.scroojalix.npcmanager.utils.PluginUtils.ServerVersion;
 
 /**
  * Store all metadata for an NPC. Handles per version metadata format.
+ * All the information stored in this class is used to generate the
+ * Entity Metadata Packet for spawning the NPC.
  * @author Scroojalix
  * @see https://wiki.vg/Entity_metadata
  */
@@ -36,6 +39,7 @@ public class NPCMetaInfo implements Serialisable {
     /**
      * Sent as part of the scoreboard team packet<p>
      * Has no effect on 1.8 servers
+     * TODO move to NPCTrait
      */
     @Expose
     private @Nonnull GlowColor glowColor;
@@ -45,7 +49,14 @@ public class NPCMetaInfo implements Serialisable {
      * @see Flag
      */
     @Expose
-    private HashSet<Flag> activeFlags;
+    private @Nonnull HashSet<Flag> activeFlags;
+
+    /**
+     * Container for the NPC's currently active skin layers
+     * Refer to {@link NPCSkinLayers#getSkinLayersByteIndex()} for index<p>
+     */
+    @Expose
+    private NPCSkinLayers skinLayers;
 
     /**
      * Initialise a new NPCMetaInfo object. Used when clearing an NPC's meta.
@@ -110,6 +121,21 @@ public class NPCMetaInfo implements Serialisable {
         if (hasFlag(Flag.ELYTRA_ENABLED)) f7 = 0x80;
 
         return (byte) (f0 | f1 | f2 | f3 | f4 | f5 | f6 | f7);
+    }
+
+    public NPCSkinLayers getSkinLayers() {
+        return this.skinLayers;
+    }
+
+    public void setSkinLayers(NPCSkinLayers skinLayers) {
+        this.skinLayers = skinLayers;
+    }
+
+    public byte getSkinLayersByte() {
+        if (skinLayers != null) {
+            return skinLayers.getDisplayedSkinParts();
+        }
+        return 127;
     }
 
     public HandState getHandState() {
