@@ -60,7 +60,7 @@ public class JsonStorage implements StorageImplementation.LocalStorage {
             main.npc.spawnNPC(data);
             return true;
         } catch (Exception e) {
-            Messages.printNPCRestoreError(main, file.getName(), e.getMessage());
+            Messages.printNPCRestoreError(main, file.getName(), e);
             return false;
         }
     }

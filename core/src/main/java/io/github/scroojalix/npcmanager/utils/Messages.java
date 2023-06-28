@@ -15,8 +15,11 @@ public class Messages {
     //Other
     public static final String RESTORE_NPCS = "Restoring NPC's...";
 
-    public static void printNPCRestoreError(NPCMain main, String npcName, String reason) {
-        main.getLogger().severe(String.format("Error restoring \"%s\": %s", npcName, reason));
+    public static void printNPCRestoreError(NPCMain main, String npcName, Exception reason) {
+        main.getLogger().severe(String.format("Error restoring \"%s\": %s", npcName, reason.getMessage()));
+        if (Settings.SHOW_DEBUG_MESSAGES.get()) {
+            reason.printStackTrace();
+        }
         main.getLogger().severe("Please resolve this error and then run \"/npc reload\"");
     } 
 

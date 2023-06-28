@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
 import io.github.scroojalix.npcmanager.npc.NPCData;
@@ -21,7 +22,7 @@ public final class JsonParser {
     }
 
     public static @Nullable NPCData fromJson(String name, String json, boolean prettyPrinting) throws Exception {
-		if (json.isEmpty()) return null; // TODO imlement better error messages for empty files
+		if (json.isEmpty()) throw new JsonSyntaxException("File is empty");
 		GsonBuilder builder = new GsonBuilder()
 		.disableHtmlEscaping();
 		if (prettyPrinting) {

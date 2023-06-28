@@ -153,7 +153,7 @@ public class MongoStorage implements StorageImplementation.RemoteStorage {
                     main.npc.spawnNPC(data);
                 }
             } catch (Exception e) {
-                Messages.printNPCRestoreError(main, doc.get("name").toString(), e.getMessage());
+                Messages.printNPCRestoreError(main, doc.get("name").toString(), e);
             }
         }
         return true;

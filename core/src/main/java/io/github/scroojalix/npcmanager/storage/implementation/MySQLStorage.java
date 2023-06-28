@@ -137,7 +137,7 @@ public class MySQLStorage implements StorageImplementation.RemoteStorage {
                         main.npc.spawnNPC(data);
                     }
                 } catch (Exception e) {
-                    Messages.printNPCRestoreError(main, rs.getString(1), e.getMessage());
+                    Messages.printNPCRestoreError(main, rs.getString(1), e);
                 }
             }
             return true;
