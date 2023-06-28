@@ -32,18 +32,11 @@ public class ModifyCommand extends SubCommand {
         subcommands.add(new InteractEventModification());
         subcommands.add(new MetadataModification());
         subcommands.add(new RangeModification());
-        // TODO combine skin and skin layers into one
         subcommands.add(new SkinLayersModification());
         subcommands.add(new SkinModification());
         subcommands.add(new SubtitleModification());
     }
 
-    //TODO add ability to customise pose.
-    //May have to allow multiple hologram lines first and calculate height of holograms dynamically.
-    //Things to allow:
-    //Sneaking
-    //Crawling/swimming
-    //Blocking (if using sword in old version, shield in new version)
     @Override
     public boolean execute(NPCMain main, CommandSender sender, String[] args) {
         if (args.length >= 3) {
