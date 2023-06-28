@@ -2,6 +2,7 @@ package io.github.scroojalix.npcmanager.storage.misc;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -95,7 +96,12 @@ public abstract interface Serialisable {
 				} else if (Serialisable.class.isAssignableFrom(type)) {
 					value = deserialise((Map<String, Object>) value, (Class<T>) type);
 				} else if (Collection.class.isAssignableFrom(type)) {
-					value = type.getDeclaredConstructor(Collection.class).newInstance(value);					
+
+					Class<?> generic = (Class<?>)((ParameterizedType)f.getGenericType()).getActualTypeArguments()[0];
+					if (generic.isEnum()) {
+						value = deserialiseEnumCollection(Collection.class.cast(value), type.asSubclass(Collection.class), generic.asSubclass(Enum.class));
+					}
+
 				} else if (type.isEnum()) {
 					Object[] constants = type.getEnumConstants();
 					boolean failed = true;
@@ -137,4 +143,26 @@ public abstract interface Serialisable {
 		}
 		return object;
     }
+
+	public static <T extends Collection<W>, W extends Enum<?>> T deserialiseEnumCollection(Collection<Object> collection, Class<T> collectionClass, Class<W> genericClass) throws Exception {
+		Constructor<T> constructor = collectionClass.getDeclaredConstructor();
+		T newCollection = constructor.newInstance();
+		Object[] enumConstants = genericClass.getEnumConstants();
+		// Loop through all elements in old collection
+		for (Object value : collection) {
+			// Loop through enum constants
+			boolean successful = false;
+			for (Object constant : enumConstants) {
+				if (value.toString().equals(constant.toString())) {
+					newCollection.add(genericClass.cast(constant));
+					successful = true;
+				}
+			}
+			if (!successful) {
+				throw new IllegalArgumentException("Unknown enum constant "+value+" for type "+genericClass.getName());
+			}
+		}
+		
+		return newCollection;
+	}
 }
