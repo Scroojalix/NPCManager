@@ -14,8 +14,6 @@ import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class FlagsMeta {
 
-    // TODO implement Glow Color flag
-
     public static class AddFlagMeta extends SubCommand {
 
         public AddFlagMeta() {

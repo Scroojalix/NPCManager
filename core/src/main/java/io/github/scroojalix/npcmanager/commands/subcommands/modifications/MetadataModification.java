@@ -9,9 +9,7 @@ import org.bukkit.entity.Player;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.SubCommand;
-import io.github.scroojalix.npcmanager.commands.subcommands.modifications.meta.FlagsMeta;
-import io.github.scroojalix.npcmanager.commands.subcommands.modifications.meta.HandStateMeta;
-import io.github.scroojalix.npcmanager.commands.subcommands.modifications.meta.PoseMeta;
+import io.github.scroojalix.npcmanager.commands.subcommands.modifications.meta.*;
 import io.github.scroojalix.npcmanager.npc.NPCData;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
@@ -31,6 +29,7 @@ public class MetadataModification extends SubCommand {
         subcommands.add(new HandStateMeta());
         subcommands.add(new FlagsMeta.AddFlagMeta());
         subcommands.add(new FlagsMeta.RemoveFlagMeta());
+        subcommands.add(new GlowColorMeta());
     }
 
     @Override
