@@ -39,7 +39,6 @@ public class NPCMetaInfo implements Serialisable {
     /**
      * Sent as part of the scoreboard team packet<p>
      * Has no effect on 1.8 servers
-     * TODO move to NPCTrait
      */
     @Expose
     private @Nonnull GlowColor glowColor;
