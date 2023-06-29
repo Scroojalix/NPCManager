@@ -145,7 +145,7 @@ public class NPCManagerAPI {
 					throw new IllegalArgumentException("The equipment slot '" + slot + "' is invalid.");
 			}
 			if (update) {
-				NPCMain.instance.npc.updateNPC(data);
+				NPCMain.instance.npc.hardResetNPC(data);
 			}
 		} else {
 			throw new IllegalArgumentException(Messages.UNKNOWN_NPC);
@@ -156,7 +156,7 @@ public class NPCManagerAPI {
 		if (PluginUtils.npcExists(name)) {
 			NPCData data = PluginUtils.getNPCDataByName(name);
 			data.getTraits().setDisplayName(newDisplayName);
-			NPCMain.instance.npc.updateNPC(data);
+			NPCMain.instance.npc.hardResetNPC(data);
 		} else {
 			throw new IllegalArgumentException(Messages.UNKNOWN_NPC);
 		}
@@ -166,7 +166,7 @@ public class NPCManagerAPI {
 		if (PluginUtils.npcExists(name)) {
 			NPCData data = PluginUtils.getNPCDataByName(name);
 			data.getTraits().setSubtitle(newSubtitle);
-			NPCMain.instance.npc.updateNPC(data);
+			NPCMain.instance.npc.hardResetNPC(data);
 		} else {
 			throw new IllegalArgumentException(Messages.UNKNOWN_NPC);
 		}
@@ -176,7 +176,7 @@ public class NPCManagerAPI {
 		if (PluginUtils.npcExists(name)) {
 			NPCData data = PluginUtils.getNPCDataByName(name);
 			data.getTraits().setHeadRotation(headRotation);
-			NPCMain.instance.npc.updateNPC(data);
+			NPCMain.instance.npc.hardResetNPC(data);
 		} else {
 			throw new IllegalArgumentException(Messages.UNKNOWN_NPC);
 		}
@@ -189,7 +189,7 @@ public class NPCManagerAPI {
 				throw new IllegalArgumentException("NPC range cannot be set to 0");
 			}
 			data.getTraits().setRange(range);
-			NPCMain.instance.npc.updateNPC(data);
+			NPCMain.instance.npc.hardResetNPC(data);
 		} else {
 			throw new IllegalArgumentException(Messages.UNKNOWN_NPC);
 		}
@@ -234,7 +234,7 @@ public class NPCManagerAPI {
 				}
 				data.getTraits().getMetaInfo().setSkinLayers(newLayers);
 
-				NPCMain.instance.npc.updateNPC(data);
+				NPCMain.instance.npc.hardResetNPC(data);
 			}
 		} else {
 			throw new IllegalArgumentException(Messages.UNKNOWN_NPC);
@@ -252,11 +252,11 @@ public class NPCManagerAPI {
 			NPCData data = PluginUtils.getNPCDataByName(name);
 			if (type == InteractEventType.COMMAND) {
 				data.getTraits().setInteractEvent(type, interaction);
-				NPCMain.instance.npc.updateNPC(data);
+				NPCMain.instance.npc.hardResetNPC(data);
 			} else if (type == InteractEventType.CUSTOM) {
 				if (InteractionsManager.getInteractEvents().containsKey(interaction)) {
 					data.getTraits().setInteractEvent(type, interaction);
-					NPCMain.instance.npc.updateNPC(data);
+					NPCMain.instance.npc.hardResetNPC(data);
 				} else {
 					throw new IllegalArgumentException(
 							"The custom interact event '" + interaction + "' does not exist.");

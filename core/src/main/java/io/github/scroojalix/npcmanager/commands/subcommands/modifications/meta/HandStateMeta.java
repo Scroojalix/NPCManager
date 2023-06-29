@@ -32,19 +32,16 @@ public class HandStateMeta extends SubCommand {
             switch (args[5].toLowerCase()) {
                 case "mainhand":
                 npc.getTraits().getMetaInfo().getHandState().set(true, Hand.MAIN_HAND);
-                main.npc.updateNPC(npc);
                 sender.sendMessage(PluginUtils.format("&6Set the Hand State of &f%s &6to &f%s", npc.getName(), "Mainhand"));
                 return true;
 
                 case "offhand":
                 npc.getTraits().getMetaInfo().getHandState().set(true, Hand.OFF_HAND);
-                main.npc.updateNPC(npc);
                 sender.sendMessage(PluginUtils.format("&6Set the Hand State of &f%s &6to &f%s", npc.getName(), "Offhand"));
                 return true;
 
                 case "none":
                 npc.getTraits().getMetaInfo().getHandState().set(false, Hand.MAIN_HAND);
-                main.npc.updateNPC(npc);
                 sender.sendMessage(PluginUtils.format("&6Set the Hand State of &f%s &6to &f%s", npc.getName(), "None"));
                 return true;
 
@@ -55,12 +52,10 @@ public class HandStateMeta extends SubCommand {
         } else if (args[4].equalsIgnoreCase("isRiptideSpin")) {
             if (args[5].equalsIgnoreCase("true")) {
                 npc.getTraits().getMetaInfo().getHandState().setIsRiptideSpin(true);
-                main.npc.updateNPC(npc);
                 sender.sendMessage(PluginUtils.format("&6Activated Riptide Spin for &f%s", npc.getName()));
                 return true;
             } else if (args[5].equalsIgnoreCase("false")) {
                 npc.getTraits().getMetaInfo().getHandState().setIsRiptideSpin(false);
-                main.npc.updateNPC(npc);
                 sender.sendMessage(PluginUtils.format("&6Deactivated Riptide Spin for &f%s", npc.getName()));
                 return true;
             } else {

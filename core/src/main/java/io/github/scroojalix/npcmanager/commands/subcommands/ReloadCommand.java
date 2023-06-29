@@ -29,7 +29,7 @@ public class ReloadCommand extends SubCommand {
             main.reloadPlugin();
             return true;
         } else if (PluginUtils.npcExists(args[1])) {
-            main.npc.updateNPC(PluginUtils.getNPCDataByName(args[1]));
+            main.npc.hardResetNPC(PluginUtils.getNPCDataByName(args[1]));
             sender.sendMessage(PluginUtils.format("&6Reloaded &f" + args[1]));
             return true;
         } else {

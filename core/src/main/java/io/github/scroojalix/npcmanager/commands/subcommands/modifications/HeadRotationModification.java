@@ -34,7 +34,7 @@ public class HeadRotationModification extends SubCommand {
                 data.getTraits().setHeadRotation(value);
                 sender.sendMessage(
                         PluginUtils.format("&6Set the head rotation of &F" + data.getName() + "&6 to &F" + value));
-                main.npc.updateNPC(data);
+                main.npc.hardResetNPC(data);
                 return true;
             }
         }

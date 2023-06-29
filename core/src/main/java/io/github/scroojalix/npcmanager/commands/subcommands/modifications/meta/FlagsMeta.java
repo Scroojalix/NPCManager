@@ -38,7 +38,6 @@ public class FlagsMeta {
 
             if (!npc.getTraits().getMetaInfo().hasFlag(flag)) {
                 npc.getTraits().getMetaInfo().addFlag(flag);
-                main.npc.updateNPC(npc);
                 sender.sendMessage(PluginUtils.format("&6Added the &f%s &6flag for &f%s", flag.getCommandTag(), npc.getName()));
             } else {
                 sender.sendMessage(PluginUtils.format("&c%s already has the &f%s &6flag", npc.getName(), flag.getCommandTag()));
@@ -86,7 +85,6 @@ public class FlagsMeta {
 
             if (npc.getTraits().getMetaInfo().hasFlag(flag)) {
                 npc.getTraits().getMetaInfo().removeFlag(flag);
-                main.npc.updateNPC(npc);
                 sender.sendMessage(PluginUtils.format("&6Removed the &f%s &6flag for &f%s", flag.getCommandTag(), npc.getName()));
             } else {
                 sender.sendMessage(PluginUtils.format("&c%s does not have the flag %s", npc.getName(), flag.getCommandTag()));

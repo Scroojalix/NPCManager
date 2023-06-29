@@ -34,11 +34,11 @@ public class MetadataModification extends SubCommand {
 
     @Override
     public boolean execute(NPCMain main, CommandSender sender, String[] args) {
+        NPCData npc = PluginUtils.getNPCDataByName(args[1]);
         if (args.length >= 4) {
             if (args[3].equalsIgnoreCase("reset")) {
-                NPCData npc = PluginUtils.getNPCDataByName(args[1]);
                 npc.getTraits().clearMetaInfo();
-                main.npc.updateNPC(npc);
+                main.npc.updateNPCPackets(npc);
                 sender.sendMessage(PluginUtils.format("&6Reset metadata for &f%s", npc.getName()));
                 return true;
             }
@@ -47,6 +47,8 @@ public class MetadataModification extends SubCommand {
                 if (command.consoleCanRun() || sender instanceof Player) {
                     if (!command.execute(main, sender, args)) {
                         sender.sendMessage(ChatColor.RED + "Usage: " + command.getSyntax());
+                    } else {
+                        main.npc.updateNPCPackets(npc);
                     }
                 } else {
                     sender.sendMessage(ChatColor.RED + "Sorry console, but you can't do that.");

@@ -31,7 +31,7 @@ public class SubtitleModification extends SubCommand {
             }
             data.getTraits().setSubtitle(value);
             sender.sendMessage(PluginUtils.format("&6Set the subtitle of &F" + data.getName() + "&6 to &F" + value));
-            main.npc.updateNPC(data);
+            main.npc.hardResetNPC(data);
             return true;
         }
         return false;

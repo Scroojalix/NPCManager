@@ -67,15 +67,24 @@ public class NPCManager {
 	}
 
 	/**
-	 * Updates an NPC with the NPCData {@code data}
+	 * Hard resets an NPC with the NPCData {@code data}
 	 * Also updates the saved value in storage
-	 * 
 	 * @param data The NPCData assigned to an NPC.
 	 */
-	public void updateNPC(NPCData data) {
+	public void hardResetNPC(NPCData data) {
 		main.storage.saveNPC(data);
 		removeNPC(data.getName(), false);
 		spawnNPC(data);
+	}
+
+	/**
+	 * Update an NPC's none vital packets, without completely resetting the NPC.
+	 * @param name the name of the NPC.
+	 */
+	public void updateNPCPackets(NPCData data) {
+		NPCContainer container = NPCs.get(data.getName());
+		container.getLoaderTask().updateExtraPackets();
+		main.storage.saveNPC(container.getNPCData());
 	}
 
 	/**
@@ -110,7 +119,7 @@ public class NPCManager {
 	 */
 	public void moveNPC(NPCData data, Location loc) {
 		data.setLoc(loc);
-		updateNPC(data);
+		hardResetNPC(data);
 	}
 
 	/**

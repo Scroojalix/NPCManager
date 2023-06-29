@@ -177,7 +177,7 @@ public class SkinManager {
 		Bukkit.getScheduler().runTask(NPCMain.instance, new Runnable() {
 			@Override
 			public void run() {
-				NPCMain.instance.npc.updateNPC(data);
+				NPCMain.instance.npc.hardResetNPC(data);
 				if (sender != null) {
 					sender.sendMessage(PluginUtils.format(message));
 				}

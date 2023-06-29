@@ -17,7 +17,6 @@ public class NPCContainer {
     //NPC
     private final NPCData npcData;
     private final PlayerInfoData playerInfo;
-    private final WrappedDataWatcher dataWatcher;
     private final int entityId;
 
     //Interact Event
@@ -36,11 +35,6 @@ public class NPCContainer {
         this.npcData = data;
         this.playerInfo = playerInfo;
         this.entityId = PluginUtils.nextEntityId();
-        if (PluginUtils.ServerVersion.v1_9_R1.atOrAbove()) {
-            this.dataWatcher = generateDataWatcher();
-        } else {
-            this.dataWatcher = generateLegacyDataWatcher();
-        }
     }
 
     /**
@@ -64,10 +58,18 @@ public class NPCContainer {
         }
 
         // Shivering
-        if (metaInfo.hasFlag(Flag.SHIVERING) && PluginUtils.ServerVersion.v1_17_R1.atOrAbove()) {
-            watcher.setObject(7,
-                WrappedDataWatcher.Registry.get(Integer.class),
-                140);
+        if (PluginUtils.ServerVersion.v1_17_R1.atOrAbove()) {
+            if (metaInfo.hasFlag(Flag.SHIVERING)) {
+                watcher.setObject(7,
+                    WrappedDataWatcher.Registry.get(Integer.class),
+                    140);
+            }else {
+                // Need to write a 0 otherwise the NPC won't properly
+                // reload when adjusting the shivering flag.
+                watcher.setObject(7,
+                    WrappedDataWatcher.Registry.get(Integer.class),
+                    0);
+            }
         }
 
         // FIXME this doesn't set the hand state correctly
@@ -123,7 +125,11 @@ public class NPCContainer {
     }
 
     public WrappedDataWatcher getDataWatcher() {
-        return dataWatcher;
+        if  (PluginUtils.ServerVersion.v1_9_R1.atOrAbove()) {
+            return generateDataWatcher();
+        } else {
+            return generateLegacyDataWatcher();
+        }
     }
 
     /**

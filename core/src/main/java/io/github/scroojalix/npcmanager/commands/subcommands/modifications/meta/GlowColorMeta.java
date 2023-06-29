@@ -37,7 +37,6 @@ public class GlowColorMeta extends SubCommand {
         }
 
         npc.getTraits().getMetaInfo().setGlowColor(color);
-        main.npc.updateNPC(npc);
         sender.sendMessage(PluginUtils.format("&6Set Glow Color of &f%s &6to &f%s", npc.getName(), color.getBukkitColor()+color.getColorName()));
 
         if (!npc.getTraits().getMetaInfo().hasFlag(Flag.GLOWING)) {

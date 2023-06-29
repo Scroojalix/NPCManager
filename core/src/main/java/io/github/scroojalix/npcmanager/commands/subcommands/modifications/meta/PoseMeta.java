@@ -38,7 +38,6 @@ public class PoseMeta extends SubCommand {
         }
 
         npc.getTraits().getMetaInfo().setPose(pose);
-        main.npc.updateNPC(npc);
         sender.sendMessage(PluginUtils.format("&6Set pose of &f%s &6to &f%s", npc.getName(), pose));
         return true;
     }

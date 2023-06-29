@@ -32,7 +32,7 @@ public class DisplayNameModification extends SubCommand {
             data.getTraits().setDisplayName(value);
             sender.sendMessage(
                     PluginUtils.format("&6Set the display name of &F" + data.getName() + "&6 to &F" + value));
-            main.npc.updateNPC(data);
+            main.npc.hardResetNPC(data);
             return true;
         }
         return false;

@@ -36,7 +36,6 @@ public class SkinLayersMeta extends SubCommand {
         }
         if (args[4].equalsIgnoreCase("--reset")) {
             data.getTraits().getMetaInfo().setSkinLayers(null);
-            main.npc.updateNPC(data);
             sender.sendMessage(ChatColor.GOLD + "Reset skin layers for " + ChatColor.WHITE + data.getName());
             return true;
         }
@@ -49,7 +48,6 @@ public class SkinLayersMeta extends SubCommand {
         }
         if (!modifications.isEmpty()) {
             data.getTraits().getMetaInfo().setSkinLayers(applyModifications(sender, layers, modifications));
-            main.npc.updateNPC(data);
         } else {
             sender.sendMessage(ChatColor.RED + "No modifications were made, as the arguments were invalid.");
             return false;
