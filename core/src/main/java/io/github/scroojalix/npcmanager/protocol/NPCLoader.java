@@ -195,10 +195,11 @@ public class NPCLoader implements Runnable {
 	}
 
 	public void updateExtraPackets() {
-		// TODO send equipment clear packet
+		LinkedHashSet<PacketContainer> updatePackets = PacketRegistry.NPC_CLEAR_EQUIPMENT.get(npcContainer);
 		generateExtraPackets();
+		updatePackets.addAll(extraPackets);
 		for (Player player : Bukkit.getOnlinePlayers()) {
-			for (PacketContainer packet : extraPackets) {
+			for (PacketContainer packet : updatePackets) {
 				pm.sendServerPacket(player, packet);
 			}
 		}
