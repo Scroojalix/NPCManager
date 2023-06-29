@@ -37,7 +37,6 @@ public class InteractEventModification extends SubCommand {
                     command += " " + args[arg];
                 }
                 data.getTraits().setInteractEvent(InteractEventType.COMMAND, command);
-                // TODO may not need to update the npc completely
                 main.npc.hardResetNPC(data);
                 sender.sendMessage(PluginUtils.format(
                         "&6Set &F" + data.getName() + "'s &6Interact Event to the command &F/" + command));
