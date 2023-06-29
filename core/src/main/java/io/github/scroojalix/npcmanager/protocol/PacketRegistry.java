@@ -277,6 +277,8 @@ public final class PacketRegistry {
             // Collision
             if (!collision) {
                 struct.getStrings().write(1, "never");
+            } else {
+                struct.getStrings().write(1, "always");
             }
 
             // Glowing
@@ -311,8 +313,12 @@ public final class PacketRegistry {
             createTeam.getStrings()
                 .write(0, profileName)
                 .write(teamSettingIndex, "never");
-            if (PluginUtils.ServerVersion.v1_9_R1.atOrAbove() && !collision) {
-                createTeam.getStrings().write(teamSettingIndex + 1, "never");
+            if (PluginUtils.ServerVersion.v1_9_R1.atOrAbove()) {
+                if (!collision) {
+                    createTeam.getStrings().write(teamSettingIndex + 1, "never");
+                } else {
+                    createTeam.getStrings().write(teamSettingIndex + 1, "always");
+                }
             }
 
             // Glowing
