@@ -126,6 +126,13 @@ public class NPCTrait implements Serialisable {
     }
 
     /**
+     * Remove an NPC's equipment
+     */
+    public void removeEquipment() {
+        this.equipment = null;
+    }
+
+    /**
      * @return The interact event of this NPC.
      */
     public NPCInteractionData getInteractEvent() {
