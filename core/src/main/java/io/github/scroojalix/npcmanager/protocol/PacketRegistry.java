@@ -263,8 +263,8 @@ public final class PacketRegistry {
 
         final NPCMetaInfo meta = container.getNPCData().getTraits().getMetaInfo();
         final boolean collision = meta.hasFlag(Flag.COLLISION);
-        final boolean glowing = meta.hasFlag(Flag.GLOWING);
         final GlowColor glowColor = meta.getGlowColor();
+        final boolean glowing = glowColor != GlowColor.NONE;
 
 		if (PluginUtils.ServerVersion.v1_17_R1.atOrAbove()) {
 			PacketContainer createTeam = createPacket(PacketType.Play.Server.SCOREBOARD_TEAM);

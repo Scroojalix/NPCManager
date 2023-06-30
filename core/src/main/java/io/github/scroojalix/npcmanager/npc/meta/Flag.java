@@ -8,7 +8,6 @@ public enum Flag {
     ON_FIRE("onFire"),
     SPRINTING("sprinting"),
     INVISIBLE("invisible"),
-    GLOWING("glowingEnabled", ServerVersion.v1_9_R1),
     ELYTRA_ENABLED("elytraEnabled", ServerVersion.v1_9_R1),
     SHIVERING("shivering", ServerVersion.v1_17_R1),
     COLLISION("collisionEnabled", ServerVersion.v1_9_R1);

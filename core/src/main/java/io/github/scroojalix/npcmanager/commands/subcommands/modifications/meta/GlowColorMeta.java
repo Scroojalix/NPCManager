@@ -38,10 +38,6 @@ public class GlowColorMeta extends SubCommand {
 
         npc.getTraits().getMetaInfo().setGlowColor(color);
         sender.sendMessage(PluginUtils.format("&6Set Glow Color of &f%s &6to &f%s", npc.getName(), color.getBukkitColor()+color.getColorName()));
-
-        if (!npc.getTraits().getMetaInfo().hasFlag(Flag.GLOWING)) {
-            sender.sendMessage(PluginUtils.format("&cAdd the &e%s &cflag to see the effect of this.", Flag.GLOWING.getCommandTag()));
-        }
         
         return true;
     }

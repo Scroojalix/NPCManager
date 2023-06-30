@@ -27,7 +27,8 @@ public enum GlowColor {
     RED(ChatColor.RED, "Red"),
     LIGHT_PURPLE(ChatColor.LIGHT_PURPLE, "LightPurple"),
     YELLOW(ChatColor.YELLOW, "Yellow"),
-    WHITE(ChatColor.WHITE, "White");
+    WHITE(ChatColor.WHITE, "White"),
+    NONE(null, "None");
 
     private final ChatColor bukkitColor;
     private final String colorName;

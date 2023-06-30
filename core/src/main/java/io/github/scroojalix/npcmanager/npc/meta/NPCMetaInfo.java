@@ -63,7 +63,7 @@ public class NPCMetaInfo implements Serialisable {
     public NPCMetaInfo() {
         this.pose = Pose.STANDING;
         this.handState = new HandState(false, Hand.MAIN_HAND, false);
-        this.glowColor = GlowColor.WHITE;
+        this.glowColor = GlowColor.NONE;
         this.activeFlags = new HashSet<>();
     }
 
@@ -114,7 +114,7 @@ public class NPCMetaInfo implements Serialisable {
         if (hasFlag(Flag.INVISIBLE)) f5 = 0x20;
 
         // Flag 6
-        if (hasFlag(Flag.GLOWING)) f6 = 0x40;
+        if (glowColor != GlowColor.NONE) f6 = 0x40;
 
         // Flag 7
         if (hasFlag(Flag.ELYTRA_ENABLED)) f7 = 0x80;
