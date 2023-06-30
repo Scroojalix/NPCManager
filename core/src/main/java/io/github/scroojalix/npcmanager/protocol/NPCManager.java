@@ -76,7 +76,8 @@ public class NPCManager {
 		removeNPC(data.getName(), false);
 		spawnNPC(data);
 	}
-
+	// TODO these two methods should be combined into one.
+	// Will need to rewrite entire NPCLoader.java
 	/**
 	 * Update an NPC's none vital packets, without completely resetting the NPC.
 	 * @param name the name of the NPC.
