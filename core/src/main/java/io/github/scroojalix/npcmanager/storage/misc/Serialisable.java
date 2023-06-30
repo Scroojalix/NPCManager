@@ -16,6 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import com.google.gson.annotations.Expose;
 
 import io.github.scroojalix.npcmanager.NPCMain;
+import io.github.scroojalix.npcmanager.utils.Messages;
 
 public abstract interface Serialisable {
 
@@ -159,7 +160,8 @@ public abstract interface Serialisable {
 				}
 			}
 			if (!successful) {
-				throw new IllegalArgumentException("Unknown enum constant "+value+" for type "+genericClass.getName());
+				Messages.printNPCRestoreError(NPCMain.instance, "[UNKNOWN NPC]",
+				new IllegalArgumentException("Unknown enum constant "+value+" for type "+genericClass.getName()+". Skipping this."));
 			}
 		}
 		
