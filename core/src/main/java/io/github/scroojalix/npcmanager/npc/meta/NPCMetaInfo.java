@@ -29,7 +29,6 @@ public class NPCMetaInfo implements Serialisable {
 
     /**
      * Contains information on the hand state.<p>
-     * Refer to {@link HandState#getIndex()} for index<p>
      * Only used in 1.9+ servers.
      * @see HandState
      */
@@ -38,7 +37,6 @@ public class NPCMetaInfo implements Serialisable {
 
     /**
      * Sent as part of the scoreboard team packet<p>
-     * Refer to {@link MetaColor#getPotionColorIndex()} for index
      */
     @Expose
     private int potionEffectColor;
@@ -59,7 +57,6 @@ public class NPCMetaInfo implements Serialisable {
 
     /**
      * Container for the NPC's currently active skin layers
-     * Refer to {@link NPCSkinLayers#getSkinLayersByteIndex()} for index<p>
      */
     @Expose
     private NPCSkinLayers skinLayers;

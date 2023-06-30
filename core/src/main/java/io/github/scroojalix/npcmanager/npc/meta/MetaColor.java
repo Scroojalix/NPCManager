@@ -4,8 +4,6 @@ import javax.annotation.Nullable;
 
 import org.bukkit.ChatColor;
 
-import io.github.scroojalix.npcmanager.NPCMain;
-
 /**
  * All available colors, and there corresponding Bukkit and hex value.
  * This is done to limit the colours that can be chosen from so the
@@ -62,37 +60,5 @@ public enum MetaColor {
                 return color;
         }
         return null;
-    }
-
-    public static int getPotionColorIndex() {
-        switch(NPCMain.serverVersion) {
-            case v1_8_R2:
-            case v1_8_R3:
-            case v1_9_R1:
-            case v1_9_R2:
-                return 7;
-            case v1_10_R1:
-            case v1_11_R1:
-            case v1_12_R1:
-            case v1_13_R1:
-            case v1_13_R2:
-                return 8;
-            case v1_14_R1:
-            case v1_15_R1:
-            case v1_16_R1:
-            case v1_16_R2:
-            case v1_16_R3:
-                return 9;
-            case v1_17_R1:
-            case v1_18_R1:
-            case v1_18_R2:
-            case v1_19_R1:
-            case v1_19_R2:
-            case v1_19_R3:
-            case v1_20_R1:
-                return 10;
-            default:
-                throw new IllegalArgumentException("That version does not have potion color meta");
-        }
     }
 }

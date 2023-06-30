@@ -7,9 +7,8 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import io.github.scroojalix.npcmanager.npc.interactions.InteractEvent;
 import io.github.scroojalix.npcmanager.npc.meta.Flag;
 import io.github.scroojalix.npcmanager.npc.meta.HandState;
-import io.github.scroojalix.npcmanager.npc.meta.MetaColor;
+import io.github.scroojalix.npcmanager.npc.meta.MetaIndex;
 import io.github.scroojalix.npcmanager.npc.meta.NPCMetaInfo;
-import io.github.scroojalix.npcmanager.npc.skin.NPCSkinLayers;
 import io.github.scroojalix.npcmanager.protocol.NPCLoader;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
@@ -74,7 +73,7 @@ public class NPCContainer {
             }
         }
 
-        int effectIndex = MetaColor.getPotionColorIndex();
+        int effectIndex = MetaIndex.getIndex(MetaIndex.Living.POTION_EFFECT_COLOR);
         watcher.setObject(effectIndex, intSerialiser,
             metaInfo.getPotionEffectColor());
 
@@ -93,7 +92,7 @@ public class NPCContainer {
 
         // Active Skin Layers
         watcher.setObject(
-            NPCSkinLayers.getSkinLayersByteIndex(),
+            MetaIndex.getIndex(MetaIndex.Living.Player.SKIN_PARTS),
             byteSerialiser,
             npcData.getTraits().getMetaInfo().getSkinLayersByte());
         
@@ -112,7 +111,7 @@ public class NPCContainer {
         watcher.setObject(0,
             metaInfo.getEntityMetaByte());
 
-        int effectIndex = MetaColor.getPotionColorIndex();
+        int effectIndex = MetaIndex.getIndex(MetaIndex.Living.POTION_EFFECT_COLOR);
         watcher.setObject(effectIndex,
             metaInfo.getPotionEffectColor());
 
@@ -121,7 +120,7 @@ public class NPCContainer {
         
         // Set Active Skin Layers
         watcher.setObject(
-            NPCSkinLayers.getSkinLayersByteIndex(),
+            MetaIndex.getIndex(MetaIndex.Living.Player.SKIN_PARTS),
             npcData.getTraits().getMetaInfo().getSkinLayersByte());
             
         return watcher;
