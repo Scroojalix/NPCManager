@@ -6,7 +6,6 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 
 import io.github.scroojalix.npcmanager.npc.interactions.InteractEvent;
 import io.github.scroojalix.npcmanager.npc.meta.Flag;
-import io.github.scroojalix.npcmanager.npc.meta.HandState;
 import io.github.scroojalix.npcmanager.npc.meta.MetaIndex;
 import io.github.scroojalix.npcmanager.npc.meta.NPCMetaInfo;
 import io.github.scroojalix.npcmanager.protocol.NPCLoader;
@@ -87,7 +86,7 @@ public class NPCContainer {
 
         // Hand State
         watcher.setObject(
-            HandState.getIndex(), byteSerialiser,
+            MetaIndex.getIndex(MetaIndex.Living.HAND_STATE), byteSerialiser,
             metaInfo.getHandState().getByteFlag());
 
         // Active Skin Layers

@@ -5,7 +5,6 @@ import javax.annotation.Nonnull;
 import com.comphenix.protocol.wrappers.EnumWrappers.Hand;
 import com.google.gson.annotations.Expose;
 
-import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.storage.misc.Serialisable;
 
 /**
@@ -15,7 +14,6 @@ import io.github.scroojalix.npcmanager.storage.misc.Serialisable;
  */
 public class HandState implements Serialisable {
 
-    
     @Expose
     private boolean active;
     @Expose
@@ -44,42 +42,6 @@ public class HandState implements Serialisable {
 
     public boolean isActive() {
         return active;
-    }
-
-    /**
-     * Get the index of this field in the data watcher.<p>
-     * NOTE: this is not available in 1.8 servers.
-     * Instead use {@code blocking} flag in {@see NPCMetaInfo}
-     * @return index of hand state metadata in NPC data watcher.
-     */
-    public static int getIndex() {
-        switch (NPCMain.serverVersion) {
-            case v1_9_R1:
-            case v1_9_R2:
-                return 5;
-            case v1_10_R1:
-            case v1_11_R1:
-            case v1_12_R1:
-            case v1_13_R1:
-            case v1_13_R2:
-                return 6;
-            case v1_14_R1:
-            case v1_15_R1:
-            case v1_16_R1:
-            case v1_16_R2:
-            case v1_16_R3:
-                return 7;
-            case v1_17_R1:
-            case v1_18_R1:
-            case v1_18_R2:
-            case v1_19_R1:
-            case v1_19_R2:
-            case v1_19_R3:
-            case v1_20_R1:
-                return 8;
-            default:
-                throw new IllegalArgumentException("That version does not have hand state meta");
-        }
     }
 
     /**

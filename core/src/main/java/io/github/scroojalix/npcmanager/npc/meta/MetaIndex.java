@@ -47,7 +47,6 @@ public enum MetaIndex implements MetadataType {
 
     public enum Living implements MetadataType {
         HAND_STATE, // Technically added in 1.9 but doesnt change indexes
-        // TODO test if hand state meta can be written too without an error being thrown
         HEALTH,
         POTION_EFFECT_COLOR,
         POTION_EFFECT_AMBIENT,
