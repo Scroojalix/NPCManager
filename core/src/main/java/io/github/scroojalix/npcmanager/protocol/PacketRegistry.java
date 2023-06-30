@@ -24,7 +24,7 @@ import com.comphenix.protocol.wrappers.Pair;
 import io.github.scroojalix.npcmanager.npc.HologramContainer;
 import io.github.scroojalix.npcmanager.npc.NPCContainer;
 import io.github.scroojalix.npcmanager.npc.meta.Flag;
-import io.github.scroojalix.npcmanager.npc.meta.GlowColor;
+import io.github.scroojalix.npcmanager.npc.meta.MetaColor;
 import io.github.scroojalix.npcmanager.npc.meta.NPCMetaInfo;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
@@ -263,8 +263,8 @@ public final class PacketRegistry {
 
         final NPCMetaInfo meta = container.getNPCData().getTraits().getMetaInfo();
         final boolean collision = meta.hasFlag(Flag.COLLISION);
-        final GlowColor glowColor = meta.getGlowColor();
-        final boolean glowing = glowColor != GlowColor.NONE;
+        final MetaColor glowColor = meta.getGlowColor();
+        final boolean glowing = glowColor != MetaColor.NONE;
 
 		if (PluginUtils.ServerVersion.v1_17_R1.atOrAbove()) {
 			PacketContainer createTeam = createPacket(PacketType.Play.Server.SCOREBOARD_TEAM);

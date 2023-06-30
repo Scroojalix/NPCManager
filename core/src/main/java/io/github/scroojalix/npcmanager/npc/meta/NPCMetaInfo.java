@@ -38,10 +38,17 @@ public class NPCMetaInfo implements Serialisable {
 
     /**
      * Sent as part of the scoreboard team packet<p>
+     * Refer to {@link MetaColor#getPotionColorIndex()} for index
+     */
+    @Expose
+    private int potionEffectColor;
+
+    /**
+     * Sent as part of the scoreboard team packet<p>
      * Has no effect on 1.8 servers
      */
     @Expose
-    private @Nonnull GlowColor glowColor;
+    private @Nonnull MetaColor glowColor;
 
     /**
      * List of active flags.
@@ -63,7 +70,7 @@ public class NPCMetaInfo implements Serialisable {
     public NPCMetaInfo() {
         this.pose = Pose.STANDING;
         this.handState = new HandState(false, Hand.MAIN_HAND, false);
-        this.glowColor = GlowColor.NONE;
+        this.glowColor = MetaColor.NONE;
         this.activeFlags = new HashSet<>();
     }
 
@@ -114,7 +121,7 @@ public class NPCMetaInfo implements Serialisable {
         if (hasFlag(Flag.INVISIBLE)) f5 = 0x20;
 
         // Flag 6
-        if (glowColor != GlowColor.NONE) f6 = 0x40;
+        if (glowColor != MetaColor.NONE) f6 = 0x40;
 
         // Flag 7
         if (hasFlag(Flag.ELYTRA_ENABLED)) f7 = 0x80;
@@ -141,11 +148,19 @@ public class NPCMetaInfo implements Serialisable {
         return this.handState;
     }
 
-    public GlowColor getGlowColor() {
+    public int getPotionEffectColor() {
+        return potionEffectColor;
+    }
+
+    public void setPotionEffectColor(int potionEffectColor) {
+        this.potionEffectColor = potionEffectColor;
+    }
+
+    public MetaColor getGlowColor() {
         return glowColor;
     }
 
-    public void setGlowColor(@Nonnull GlowColor glowColor) {
+    public void setGlowColor(@Nonnull MetaColor glowColor) {
         this.glowColor = glowColor;
     }
 

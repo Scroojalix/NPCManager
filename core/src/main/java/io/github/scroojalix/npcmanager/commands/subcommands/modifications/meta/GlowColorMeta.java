@@ -10,8 +10,7 @@ import org.bukkit.command.CommandSender;
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.SubCommand;
 import io.github.scroojalix.npcmanager.npc.NPCData;
-import io.github.scroojalix.npcmanager.npc.meta.Flag;
-import io.github.scroojalix.npcmanager.npc.meta.GlowColor;
+import io.github.scroojalix.npcmanager.npc.meta.MetaColor;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class GlowColorMeta extends SubCommand {
@@ -30,7 +29,7 @@ public class GlowColorMeta extends SubCommand {
         if (args.length < 5) return false;
         NPCData npc = PluginUtils.getNPCDataByName(args[1]);
 
-        GlowColor color = GlowColor.getGlowColorFromName(args[4]);
+        MetaColor color = MetaColor.getMetaColorFromName(args[4]);
         if (color == null) {
             sender.sendMessage(PluginUtils.format("&c%s is not a valid Glow Color.", args[4]));
             return false;
@@ -48,7 +47,7 @@ public class GlowColorMeta extends SubCommand {
 
         if (args.length != 5) return result;
         
-        result.addAll(Arrays.asList(GlowColor.values()).stream()
+        result.addAll(Arrays.asList(MetaColor.values()).stream()
         .map(c -> c.getColorName()).collect(Collectors.toList()));
         
         return result;    }

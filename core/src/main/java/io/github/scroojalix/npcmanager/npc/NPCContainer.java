@@ -7,6 +7,7 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import io.github.scroojalix.npcmanager.npc.interactions.InteractEvent;
 import io.github.scroojalix.npcmanager.npc.meta.Flag;
 import io.github.scroojalix.npcmanager.npc.meta.HandState;
+import io.github.scroojalix.npcmanager.npc.meta.MetaColor;
 import io.github.scroojalix.npcmanager.npc.meta.NPCMetaInfo;
 import io.github.scroojalix.npcmanager.npc.skin.NPCSkinLayers;
 import io.github.scroojalix.npcmanager.protocol.NPCLoader;
@@ -44,6 +45,7 @@ public class NPCContainer {
     private WrappedDataWatcher generateDataWatcher() {
 		final WrappedDataWatcher watcher = new WrappedDataWatcher();
         final WrappedDataWatcher.Serializer byteSerialiser = WrappedDataWatcher.Registry.get(Byte.class);
+        final WrappedDataWatcher.Serializer intSerialiser = WrappedDataWatcher.Registry.get(Integer.class);
         final NPCMetaInfo metaInfo = npcData.getTraits().getMetaInfo();
 
         // Entity Base Metadata
@@ -61,16 +63,24 @@ public class NPCContainer {
         if (PluginUtils.ServerVersion.v1_17_R1.atOrAbove()) {
             if (metaInfo.hasFlag(Flag.SHIVERING)) {
                 watcher.setObject(7,
-                    WrappedDataWatcher.Registry.get(Integer.class),
+                    intSerialiser,
                     140);
             }else {
                 // Need to write a 0 otherwise the NPC won't properly
                 // reload when adjusting the shivering flag.
                 watcher.setObject(7,
-                    WrappedDataWatcher.Registry.get(Integer.class),
+                    intSerialiser,
                     0);
             }
         }
+
+        int effectIndex = MetaColor.getPotionColorIndex();
+        watcher.setObject(effectIndex, intSerialiser,
+            metaInfo.getPotionEffectColor());
+
+        watcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(
+            effectIndex + 1, WrappedDataWatcher.Registry.get(Boolean.class)),
+            metaInfo.hasFlag(Flag.AMBIENT_POTION_EFFECT));
 
         // FIXME this doesn't set the hand state correctly
         // May need to send a packet along with this
@@ -96,11 +106,18 @@ public class NPCContainer {
      */
     private WrappedDataWatcher generateLegacyDataWatcher() {
         final WrappedDataWatcher watcher = new WrappedDataWatcher();
+        final NPCMetaInfo metaInfo = npcData.getTraits().getMetaInfo();
 
         // Metadata Settings
         watcher.setObject(0,
-            npcData.getTraits().getMetaInfo()
-            .getEntityMetaByte());
+            metaInfo.getEntityMetaByte());
+
+        int effectIndex = MetaColor.getPotionColorIndex();
+        watcher.setObject(effectIndex,
+            metaInfo.getPotionEffectColor());
+
+        watcher.setObject(effectIndex + 1,
+            metaInfo.hasFlag(Flag.AMBIENT_POTION_EFFECT));
         
         // Set Active Skin Layers
         watcher.setObject(
