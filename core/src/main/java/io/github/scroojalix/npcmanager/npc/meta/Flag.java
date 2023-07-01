@@ -11,6 +11,7 @@ public enum Flag {
     AMBIENT_POTION_EFFECT("ambientPotionEffect"),
     ELYTRA_ENABLED("elytraEnabled", ServerVersion.v1_9_R1),
     SHIVERING("shivering", ServerVersion.v1_17_R1),
+    RIPTIDE_SPIN("isRiptideSpinAttack", ServerVersion.v1_13_R1),
     COLLISION("collisionEnabled", ServerVersion.v1_9_R1);
 
     private final String tag;

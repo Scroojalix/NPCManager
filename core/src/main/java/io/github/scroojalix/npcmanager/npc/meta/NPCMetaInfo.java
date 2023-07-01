@@ -30,10 +30,9 @@ public class NPCMetaInfo implements Serialisable {
     /**
      * Contains information on the hand state.<p>
      * Only used in 1.9+ servers.
-     * @see HandState
      */
     @Expose
-    private @Nonnull HandState handState;
+    private @Nonnull ActiveHand activeHand;
 
     /**
      * Sent as part of the scoreboard team packet<p>
@@ -66,7 +65,7 @@ public class NPCMetaInfo implements Serialisable {
      */
     public NPCMetaInfo() {
         this.pose = Pose.STANDING;
-        this.handState = new HandState(false, Hand.MAIN_HAND, false);
+        this.activeHand = ActiveHand.NONE;
         this.glowColor = MetaColor.NONE;
         this.activeFlags = new HashSet<>();
     }
@@ -110,7 +109,7 @@ public class NPCMetaInfo implements Serialisable {
         if (hasFlag(Flag.SPRINTING)) f3 = 0x08;
 
         // Flag 4
-        if ((handState.isActive())
+        if ((activeHand != ActiveHand.NONE)
             || (pose == Pose.SWIMMING && ServerVersion.v1_13_R1.atOrAbove()))
             f4 = 0x10;
         
@@ -126,6 +125,17 @@ public class NPCMetaInfo implements Serialisable {
         return (byte) (f0 | f1 | f2 | f3 | f4 | f5 | f6 | f7);
     }
 
+    /**
+     * Get the byte flag for this HandState
+     * @return return byte flag for use in NPC data watcher.
+     */
+    public byte getHandStateFlag() {
+        int flag1 = activeHand != ActiveHand.NONE ? 0x1 : 0;
+        int flag2 = activeHand.getNMSHand() == Hand.MAIN_HAND ? 0 : 0x2;
+        int flag3 = hasFlag(Flag.RIPTIDE_SPIN) ? 0x4 : 0;
+        return (byte)(flag1 | flag2 | flag3);
+    }
+
     public NPCSkinLayers getSkinLayers() {
         return this.skinLayers;
     }
@@ -139,10 +149,6 @@ public class NPCMetaInfo implements Serialisable {
             return skinLayers.getDisplayedSkinParts();
         }
         return 127;
-    }
-
-    public HandState getHandState() {
-        return this.handState;
     }
 
     public int getPotionEffectColor() {

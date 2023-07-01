@@ -87,7 +87,7 @@ public class NPCContainer {
         // Hand State
         watcher.setObject(
             MetaIndex.getIndex(MetaIndex.Living.HAND_STATE), byteSerialiser,
-            metaInfo.getHandState().getByteFlag());
+            metaInfo.getHandStateFlag());
 
         // Active Skin Layers
         watcher.setObject(
