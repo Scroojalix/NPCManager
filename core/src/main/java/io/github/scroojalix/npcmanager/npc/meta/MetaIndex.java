@@ -8,8 +8,6 @@ import io.github.scroojalix.npcmanager.utils.PluginUtils.ServerVersion;
  */
 public enum MetaIndex implements MetadataType {
 
-    // TODO try and reduce boiler plate code to make this more scalable
-
     // Entity Base
     BASE,
     AIR_TICKS,
@@ -33,16 +31,6 @@ public enum MetaIndex implements MetadataType {
     @Override
     public ServerVersion getVersionAdded() {
         return versionAdded;
-    }
-
-    @Override
-    public MetadataType getParent() {
-        return null;
-    }
-
-    @Override
-    public MetadataType[] getChildren() {
-        return values();
     }
 
     public enum Living implements MetadataType {
@@ -74,11 +62,6 @@ public enum MetaIndex implements MetadataType {
             return MetaIndex.POWDERED_SNOW;
         }
 
-        @Override
-        public MetadataType[] getChildren() {
-            return values();
-        }
-
         public static enum Player implements MetadataType {
             ADDITIONAL_HEARTS(ServerVersion.v1_9_R1),
             SCORE(ServerVersion.v1_9_R1),
@@ -106,11 +89,6 @@ public enum MetaIndex implements MetadataType {
             public MetadataType getParent() {
                 return MetaIndex.Living.BED_LOCATION;
             }
-
-            @Override
-            public MetadataType[] getChildren() {
-                return values();
-            }
         }
     
         public static enum ArmorStand implements MetadataType {
@@ -122,33 +100,19 @@ public enum MetaIndex implements MetadataType {
             LEFT_LEG,
             RIGHT_LEG;
 
-            private final ServerVersion versionAdded;
-
-            ArmorStand() {
-                this(ServerVersion.v1_8_R2);
-            }
-
-            ArmorStand(ServerVersion versionAdded) {
-                this.versionAdded = versionAdded;
-            }
-
-            @Override
-            public ServerVersion getVersionAdded() {
-                return versionAdded;
-            }
-
             @Override
             public MetadataType getParent() {
                 return MetaIndex.Living.BED_LOCATION;
             }
-
-            @Override
-            public MetadataType[] getChildren() {
-                return values();
-            }
         }
     }
 
+    /**
+     * Gets the metadata index for a specified Metadata value
+     * @param metaType The metadata index to search for.
+     * {@link MetaIndex} is the base class
+     * @return an integer representing the index of this MetadataType.
+     */
     public static int getIndex(MetadataType metaType) {
         int index = 0;
         
@@ -157,7 +121,7 @@ public enum MetaIndex implements MetadataType {
             index += getIndex(parent) + (parent.getVersionAdded().atOrAbove() ? 1 : 0);
         }
         
-        for (MetadataType value : metaType.getChildren()) {
+        for (MetadataType value : metaType.getClass().getEnumConstants()) {
             if (value == metaType) break;
             if (value.getVersionAdded().atOrAbove()) {
                 index++;

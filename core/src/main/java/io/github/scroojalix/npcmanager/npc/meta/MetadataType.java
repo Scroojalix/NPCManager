@@ -4,24 +4,25 @@ import javax.annotation.Nullable;
 
 import io.github.scroojalix.npcmanager.utils.PluginUtils.ServerVersion;
 
+/**
+ * Must only be implemented by enums.
+ */
 public interface MetadataType {
     
     /**
      * Return the version this metadata flag was added.
      * @return version that this flag was added to Minecraft.
      */
-    ServerVersion getVersionAdded();
+    default ServerVersion getVersionAdded() {
+        return ServerVersion.v1_8_R2;
+    }
 
     /**
      * Return the parent metadata node for this metadata flag.
      * Will return null if this metadata flag does not have a parent.
      * @return the parent metadata flag for this metadata flag.
      */
-    @Nullable MetadataType getParent();
-
-    /**
-     * The children of this metadata sub group.
-     * @return
-     */
-    MetadataType[] getChildren();
+    default @Nullable MetadataType getParent() {
+        return null;
+    }
 }
