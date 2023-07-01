@@ -37,16 +37,16 @@ public class FlagsMeta extends SubCommand {
         if (args[4].equals("add")) {
             if (!npc.getTraits().getMetaInfo().hasFlag(flag)) {
                 npc.getTraits().getMetaInfo().addFlag(flag);
-                sender.sendMessage(PluginUtils.format("&6Added the &f%s &6flag for &f%s", flag.getCommandTag(), npc.getName()));
+                sender.sendMessage(PluginUtils.format("&6Added the &f%s &6flag for &f%s", flag.toString(), npc.getName()));
             } else {
-                sender.sendMessage(PluginUtils.format("&c%s already has the &f%s &6flag", npc.getName(), flag.getCommandTag()));
+                sender.sendMessage(PluginUtils.format("&c%s already has the &f%s &6flag", npc.getName(), flag.toString()));
             }
         } else if (args[4].equals("remove")) {
             if (npc.getTraits().getMetaInfo().hasFlag(flag)) {
                 npc.getTraits().getMetaInfo().removeFlag(flag);
-                sender.sendMessage(PluginUtils.format("&6Removed the &f%s &6flag for &f%s", flag.getCommandTag(), npc.getName()));
+                sender.sendMessage(PluginUtils.format("&6Removed the &f%s &6flag for &f%s", flag.toString(), npc.getName()));
             } else {
-                sender.sendMessage(PluginUtils.format("&c%s does not have the flag %s", npc.getName(), flag.getCommandTag()));
+                sender.sendMessage(PluginUtils.format("&c%s does not have the flag %s", npc.getName(), flag.toString()));
             }            
         } else {
             return false;
@@ -68,13 +68,13 @@ public class FlagsMeta extends SubCommand {
             if (args[4].equalsIgnoreCase("add")) {
                 for (Flag flag : Flag.values()) {
                     if (!meta.hasFlag(flag)) {
-                        result.add(flag.getCommandTag());
+                        result.add(flag.toString());
                     }
                 }
             } else if (args[4].equalsIgnoreCase("remove")) {
                 for (Flag flag : Flag.values()) {
                     if (meta.hasFlag(flag)) {
-                        result.add(flag.getCommandTag());
+                        result.add(flag.toString());
                     }
                 }
             }

@@ -25,10 +25,6 @@ public enum Flag {
         this.minVer = minVer;
     }
 
-    public String getCommandTag() {
-        return tag;
-    }
-
     public boolean isEnabled() {
         return minVer.atOrAbove();
     }
@@ -39,5 +35,10 @@ public enum Flag {
                 return flag;
         }
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return tag;
     }
 }

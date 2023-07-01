@@ -46,10 +46,6 @@ public enum MetaColor {
         return this.bukkitColor;
     }
 
-    public String getColorName() {
-        return colorName;
-    }
-
     public int getHexValue() {
         return hex;
     }
@@ -60,5 +56,10 @@ public enum MetaColor {
                 return color;
         }
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return colorName;
     }
 }

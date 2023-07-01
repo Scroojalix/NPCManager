@@ -107,7 +107,7 @@ public abstract interface Serialisable {
 					Object[] constants = type.getEnumConstants();
 					boolean failed = true;
 					for (Object constant : constants) {
-						if (constant.toString().equals(value)) {
+						if (((Enum<?>)constant).name().equals(value)) {
 							failed = false;
 							value = constant;
 						}
@@ -154,7 +154,7 @@ public abstract interface Serialisable {
 			// Loop through enum constants
 			boolean successful = false;
 			for (Object constant : enumConstants) {
-				if (value.toString().equals(constant.toString())) {
+				if (value.equals(((Enum<?>)constant).name())) {
 					newCollection.add(genericClass.cast(constant));
 					successful = true;
 				}
@@ -167,4 +167,6 @@ public abstract interface Serialisable {
 		
 		return newCollection;
 	}
+
+	// TODO abstract get enum method
 }

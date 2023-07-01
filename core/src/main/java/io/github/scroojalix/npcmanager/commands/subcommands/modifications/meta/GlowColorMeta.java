@@ -36,7 +36,7 @@ public class GlowColorMeta extends SubCommand {
         }
 
         npc.getTraits().getMetaInfo().setGlowColor(color);
-        sender.sendMessage(PluginUtils.format("&6Set Glow Color of &f%s &6to &f%s", npc.getName(), color.getBukkitColor()+color.getColorName()));
+        sender.sendMessage(PluginUtils.format("&6Set Glow Color of &f%s &6to &f%s", npc.getName(), color.getBukkitColor()+color.toString()));
         
         return true;
     }
@@ -48,7 +48,7 @@ public class GlowColorMeta extends SubCommand {
         if (args.length != 5) return result;
         
         result.addAll(Arrays.asList(MetaColor.values()).stream()
-        .map(c -> c.getColorName()).collect(Collectors.toList()));
+        .map(c -> c.toString()).collect(Collectors.toList()));
         
         return result;    }
     
