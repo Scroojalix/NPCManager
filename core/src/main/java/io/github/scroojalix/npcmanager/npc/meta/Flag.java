@@ -1,7 +1,5 @@
 package io.github.scroojalix.npcmanager.npc.meta;
 
-import javax.annotation.Nullable;
-
 import io.github.scroojalix.npcmanager.utils.PluginUtils.ServerVersion;
 
 public enum Flag {
@@ -28,14 +26,6 @@ public enum Flag {
 
     public boolean isEnabled() {
         return minVer.atOrAbove();
-    }
-
-    public static @Nullable Flag getFlagFromTag(String tag) {
-        for (Flag flag : Flag.values()) {
-            if (flag.tag.equalsIgnoreCase(tag))
-                return flag;
-        }
-        return null;
     }
 
     @Override

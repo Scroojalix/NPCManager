@@ -29,7 +29,7 @@ public class GlowColorMeta extends SubCommand {
         if (args.length < 5) return false;
         NPCData npc = PluginUtils.getNPCDataByName(args[1]);
 
-        MetaColor color = MetaColor.getMetaColorFromName(args[4]);
+        MetaColor color = PluginUtils.getEnumFromName(args[4], MetaColor.class);
         if (color == null) {
             sender.sendMessage(PluginUtils.format("&c%s is not a valid Glow Color.", args[4]));
             return false;

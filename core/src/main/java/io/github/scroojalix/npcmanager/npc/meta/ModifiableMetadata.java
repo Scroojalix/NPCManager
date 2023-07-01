@@ -1,7 +1,5 @@
 package io.github.scroojalix.npcmanager.npc.meta;
 
-import javax.annotation.Nullable;
-
 public enum ModifiableMetadata {
 
     POSE("Pose", MetaIndex.POSE, Pose.class),
@@ -32,13 +30,5 @@ public enum ModifiableMetadata {
 
     public Class<?> getValueClass() {
         return valueClass;
-    }
-
-    public static @Nullable ModifiableMetadata getFromTag(String name) {
-        for (ModifiableMetadata meta : values()) {
-            if (meta.name.equalsIgnoreCase(name))
-                return meta;
-        }
-        return null;
     }
 }

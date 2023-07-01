@@ -28,7 +28,7 @@ public class FlagsMeta extends SubCommand {
         if (args.length < 6) return false;
         NPCData npc = PluginUtils.getNPCDataByName(args[1]);
 
-        Flag flag = Flag.getFlagFromTag(args[5]);
+        Flag flag = PluginUtils.getEnumFromName(args[5], Flag.class);
         if (flag == null) {
             sender.sendMessage(PluginUtils.format("&c%s is not a valid flag.", args[4]));
             return false;

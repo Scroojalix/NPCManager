@@ -14,6 +14,8 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nullable;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -236,6 +238,15 @@ public class PluginUtils {
 			e.printStackTrace();
 			return new Random().nextInt() & Integer.MAX_VALUE;
 		}
+	}
+
+	public static @Nullable <T extends Enum<?>> T getEnumFromName(String value, Class<T> enumClass) {
+		for (T o : enumClass.getEnumConstants()) {
+			if (o.name().equals(value) || o.toString().equalsIgnoreCase(value)) {
+				return o;
+			}
+		}
+		return null;
 	}
 
 	// TODO redo this

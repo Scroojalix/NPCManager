@@ -1,7 +1,5 @@
 package io.github.scroojalix.npcmanager.npc.meta;
 
-import javax.annotation.Nullable;
-
 import org.bukkit.ChatColor;
 
 /**
@@ -48,14 +46,6 @@ public enum MetaColor {
 
     public int getHexValue() {
         return hex;
-    }
-
-    public static @Nullable MetaColor getMetaColorFromName(String name) {
-        for (MetaColor color : MetaColor.values()) {
-            if (color.colorName.equalsIgnoreCase(name))
-                return color;
-        }
-        return null;
     }
 
     @Override
