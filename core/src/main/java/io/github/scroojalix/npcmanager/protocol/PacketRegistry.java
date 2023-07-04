@@ -23,9 +23,9 @@ import com.comphenix.protocol.wrappers.Pair;
 
 import io.github.scroojalix.npcmanager.npc.HologramContainer;
 import io.github.scroojalix.npcmanager.npc.NPCContainer;
-import io.github.scroojalix.npcmanager.npc.meta.Flag;
-import io.github.scroojalix.npcmanager.npc.meta.MetaColor;
 import io.github.scroojalix.npcmanager.npc.meta.NPCMetaInfo;
+import io.github.scroojalix.npcmanager.npc.meta.enums.Flag;
+import io.github.scroojalix.npcmanager.npc.meta.enums.MetaColor;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public final class PacketRegistry {

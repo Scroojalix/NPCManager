@@ -7,6 +7,10 @@ import javax.annotation.Nonnull;
 import com.comphenix.protocol.wrappers.EnumWrappers.Hand;
 import com.google.gson.annotations.Expose;
 
+import io.github.scroojalix.npcmanager.npc.meta.enums.ActiveHand;
+import io.github.scroojalix.npcmanager.npc.meta.enums.Flag;
+import io.github.scroojalix.npcmanager.npc.meta.enums.MetaColor;
+import io.github.scroojalix.npcmanager.npc.meta.enums.Pose;
 import io.github.scroojalix.npcmanager.npc.skin.NPCSkinLayers;
 import io.github.scroojalix.npcmanager.storage.misc.Serialisable;
 import io.github.scroojalix.npcmanager.utils.PluginUtils.ServerVersion;
@@ -48,6 +52,19 @@ public class NPCMetaInfo implements Serialisable {
     private @Nonnull MetaColor glowColor;
 
     /**
+     * Number of arrows stuck in NPC.
+     */
+    @Expose
+    private int arrows;
+
+    /**
+     * Number of stingers stuck in NPC.
+     * Since 1.15
+     */
+    @Expose
+    private int stingers;
+
+    /**
      * List of active flags.
      * @see Flag
      */
@@ -70,21 +87,7 @@ public class NPCMetaInfo implements Serialisable {
         this.activeFlags = new HashSet<>();
     }
 
-    /**
-     * Return the currently selected pose for this NPC
-     * @return this NPC's pose.
-     */
-    public Pose getPose() {
-        return this.pose;
-    }
-
-    /**
-     * Set this NPC's pose
-     * @param pose the new pose to set to.
-     */
-    public void setPose(@Nonnull Pose pose) {
-        this.pose = pose;
-    }
+    // Byte getters
 
     /**
      * Get the byte to be stored at index 0 of the NPC's
@@ -136,6 +139,19 @@ public class NPCMetaInfo implements Serialisable {
         return (byte)(flag1 | flag2 | flag3);
     }
 
+    public byte getSkinLayersByte() {
+        if (skinLayers != null) {
+            return skinLayers.getDisplayedSkinParts();
+        }
+        return 127;
+    }
+
+    public <T> void setFieldValue(@Nonnull MetaFields<T> field, @Nonnull T value) {
+        field.setValue(this, value);
+    }
+
+    // GETTERS
+
     public NPCSkinLayers getSkinLayers() {
         return this.skinLayers;
     }
@@ -144,28 +160,53 @@ public class NPCMetaInfo implements Serialisable {
         this.skinLayers = skinLayers;
     }
 
-    public byte getSkinLayersByte() {
-        if (skinLayers != null) {
-            return skinLayers.getDisplayedSkinParts();
-        }
-        return 127;
-    }
-
     public int getPotionEffectColor() {
         return potionEffectColor;
     }
 
-    public void setPotionEffectColor(int potionEffectColor) {
-        this.potionEffectColor = potionEffectColor;
+    /**
+     * Return the currently selected pose for this NPC
+     * @return this NPC's pose.
+     */
+    public Pose getPose() {
+        return this.pose;
     }
 
     public MetaColor getGlowColor() {
         return glowColor;
     }
 
+    // SETTERS
+
+    /**
+     * Set this NPC's pose
+     * @param pose the new pose to set to.
+     */
+    public void setPose(@Nonnull Pose pose) {
+        this.pose = pose;
+    }
+
+    public void setPotionEffectColor(int potionEffectColor) {
+        this.potionEffectColor = potionEffectColor;
+    }
+
     public void setGlowColor(@Nonnull MetaColor glowColor) {
         this.glowColor = glowColor;
     }
+
+    public void setArrows(int arrows) {
+        this.arrows = arrows;
+    }
+
+    public void setStingers(int stingers) {
+        this.stingers = stingers;
+    }
+
+    public void setActiveHand(@Nonnull ActiveHand hand) {
+        this.activeHand = hand;
+    }
+
+    // FLAGS
 
     public void addFlag(Flag flag) {
         this.activeFlags.add(flag);

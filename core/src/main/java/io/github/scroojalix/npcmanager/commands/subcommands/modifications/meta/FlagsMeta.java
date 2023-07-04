@@ -8,8 +8,8 @@ import org.bukkit.command.CommandSender;
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.commands.SubCommand;
 import io.github.scroojalix.npcmanager.npc.NPCData;
-import io.github.scroojalix.npcmanager.npc.meta.Flag;
 import io.github.scroojalix.npcmanager.npc.meta.NPCMetaInfo;
+import io.github.scroojalix.npcmanager.npc.meta.enums.Flag;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class FlagsMeta extends SubCommand {

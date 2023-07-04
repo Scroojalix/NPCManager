@@ -1,4 +1,4 @@
-package io.github.scroojalix.npcmanager.npc.meta;
+package io.github.scroojalix.npcmanager.npc.meta.enums;
 
 import org.bukkit.ChatColor;
 
