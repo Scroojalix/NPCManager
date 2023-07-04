@@ -146,7 +146,7 @@ public class NPCMetaInfo implements Serialisable {
         return 127;
     }
 
-    public <T> void setFieldValue(@Nonnull MetaFields<T> field, @Nonnull T value) {
+    public <T> void setFieldValue(@Nonnull MetaField<T> field, @Nonnull T value) {
         field.setValue(this, value);
     }
 
