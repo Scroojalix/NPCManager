@@ -28,7 +28,7 @@ public class MetadataModification extends SubCommand {
         subcommands.add(new FlagsMeta());
         subcommands.add(new GlowColorMeta());
         subcommands.add(new SkinLayersMeta());
-        subcommands.add(new MiscMeta());
+        subcommands.add(new FieldsMeta());
     }
 
     @Override

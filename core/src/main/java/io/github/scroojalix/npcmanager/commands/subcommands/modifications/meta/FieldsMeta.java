@@ -20,13 +20,13 @@ import io.github.scroojalix.npcmanager.npc.meta.enums.MetaColor;
 import io.github.scroojalix.npcmanager.npc.meta.enums.Pose;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
-public class MiscMeta extends SubCommand {
+public class FieldsMeta extends SubCommand {
 
-    public MiscMeta() {
+    public FieldsMeta() {
         super(
-            "misc",
-            "Modify miscellaneous NPC metadata values",
-            "/npc modify <npc> metadata misc <key> <value>",
+            "fields",
+            "Modify NPC metadata field values",
+            "/npc modify <npc> metadata fields <field> <value>",
             true
         );
     }
