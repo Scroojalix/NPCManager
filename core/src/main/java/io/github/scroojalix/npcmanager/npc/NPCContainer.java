@@ -72,12 +72,10 @@ public class NPCContainer {
             }
         }
 
-        // Potion Effect Colour
         int effectIndex = MetaIndex.getIndex(MetaIndex.Living.POTION_EFFECT_COLOR);
         watcher.setObject(effectIndex, intSerialiser,
             metaInfo.getPotionEffectColor());
 
-        // Ambient Potion Effect
         watcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(
             effectIndex + 1, WrappedDataWatcher.Registry.get(Boolean.class)),
             metaInfo.hasFlag(Flag.AMBIENT_POTION_EFFECT));
@@ -85,22 +83,11 @@ public class NPCContainer {
         // FIXME this doesn't set the hand state correctly
         // May need to send a packet along with this
         // net.minecraft.world.entity.LivingEntity#startUsingItem
+
         // Hand State
         watcher.setObject(
             MetaIndex.getIndex(MetaIndex.Living.HAND_STATE), byteSerialiser,
             metaInfo.getHandStateFlag());
-
-        // Arrows
-        watcher.setObject(
-            MetaIndex.getIndex(MetaIndex.Living.ARROWS), intSerialiser,
-            metaInfo.getArrows());
-
-        // Stingers
-        if (PluginUtils.ServerVersion.v1_15_R1.atOrAbove()) {
-            watcher.setObject(
-                MetaIndex.getIndex(MetaIndex.Living.STINGERS), intSerialiser,
-                metaInfo.getStingers());
-        }
 
         // Active Skin Layers
         watcher.setObject(
@@ -119,23 +106,16 @@ public class NPCContainer {
         final WrappedDataWatcher watcher = new WrappedDataWatcher();
         final NPCMetaInfo metaInfo = npcData.getTraits().getMetaInfo();
 
-        // Base metadata Settings
+        // Metadata Settings
         watcher.setObject(0,
             metaInfo.getEntityMetaByte());
 
-        // Potion Effect Colour
         int effectIndex = MetaIndex.getIndex(MetaIndex.Living.POTION_EFFECT_COLOR);
         watcher.setObject(effectIndex,
             metaInfo.getPotionEffectColor());
 
-        // Ambient Potion Effect
         watcher.setObject(effectIndex + 1,
             metaInfo.hasFlag(Flag.AMBIENT_POTION_EFFECT));
-
-        // Arrows
-        watcher.setObject(
-            MetaIndex.getIndex(MetaIndex.Living.ARROWS),
-            metaInfo.getArrows());
         
         // Set Active Skin Layers
         watcher.setObject(
