@@ -2,6 +2,8 @@ package io.github.scroojalix.npcmanager.commands;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -24,6 +26,16 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 
 public class CommandUtils {
+
+	public static @Nullable Integer toIntNullable(String number) {
+		Integer value = null;
+		try {
+			value = Integer.parseInt(number);
+		} catch (NumberFormatException e) {
+			// Do nothing.
+		}
+		return value;
+	}
 
 	public static boolean npcExists(String name, CommandSender sender) {
 		if (PluginUtils.npcExists(name)) {
