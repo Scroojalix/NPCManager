@@ -176,6 +176,14 @@ public class NPCMetaInfo implements Serialisable {
         return glowColor;
     }
 
+    public int getArrows() {
+        return arrows;
+    }
+
+    public int getStingers() {
+        return stingers;
+    }
+
     // SETTERS
 
     /**
