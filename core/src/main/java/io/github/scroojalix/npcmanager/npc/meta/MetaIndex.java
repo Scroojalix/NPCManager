@@ -6,7 +6,7 @@ import io.github.scroojalix.npcmanager.utils.PluginUtils.ServerVersion;
  * Use this class to get an index for formatting an NPC's Metadata.
  * IMPORTANT: DO NOT CHANGE THE ORDER OF THE ENUM CONSTANTS
  */
-public enum MetaIndex implements MetadataType {
+public enum MetaIndex implements MetaIndexInterface {
 
     // Entity Base
     BASE,
@@ -33,7 +33,7 @@ public enum MetaIndex implements MetadataType {
         return versionAdded;
     }
 
-    public enum Living implements MetadataType {
+    public enum Living implements MetaIndexInterface {
         HAND_STATE, // Technically added in 1.9 but doesnt change indexes
         HEALTH,
         POTION_EFFECT_COLOR,
@@ -58,11 +58,11 @@ public enum MetaIndex implements MetadataType {
         }
 
         @Override
-        public MetadataType getParent() {
+        public MetaIndexInterface getParent() {
             return MetaIndex.POWDERED_SNOW;
         }
 
-        public static enum Player implements MetadataType {
+        public static enum Player implements MetaIndexInterface {
             ADDITIONAL_HEARTS(ServerVersion.v1_9_R1),
             SCORE(ServerVersion.v1_9_R1),
             SKIN_PARTS,
@@ -86,12 +86,12 @@ public enum MetaIndex implements MetadataType {
             }
 
             @Override
-            public MetadataType getParent() {
+            public MetaIndexInterface getParent() {
                 return MetaIndex.Living.BED_LOCATION;
             }
         }
     
-        public static enum ArmorStand implements MetadataType {
+        public static enum ArmorStand implements MetaIndexInterface {
             META,
             HEAD,
             BODY,
@@ -101,7 +101,7 @@ public enum MetaIndex implements MetadataType {
             RIGHT_LEG;
 
             @Override
-            public MetadataType getParent() {
+            public MetaIndexInterface getParent() {
                 return MetaIndex.Living.BED_LOCATION;
             }
         }
@@ -113,15 +113,15 @@ public enum MetaIndex implements MetadataType {
      * {@link MetaIndex} is the base class
      * @return an integer representing the index of this MetadataType.
      */
-    public static int getIndex(MetadataType metaType) {
+    public static int getIndex(MetaIndexInterface metaType) {
         int index = 0;
         
-        MetadataType parent = metaType.getParent();
+        MetaIndexInterface parent = metaType.getParent();
         if (parent != null) {
             index += getIndex(parent) + (parent.getVersionAdded().atOrAbove() ? 1 : 0);
         }
         
-        for (MetadataType value : metaType.getClass().getEnumConstants()) {
+        for (MetaIndexInterface value : metaType.getClass().getEnumConstants()) {
             if (value == metaType) break;
             if (value.getVersionAdded().atOrAbove()) {
                 index++;

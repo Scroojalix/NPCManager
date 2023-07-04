@@ -7,7 +7,7 @@ import io.github.scroojalix.npcmanager.utils.PluginUtils.ServerVersion;
 /**
  * Must only be implemented by enums.
  */
-public interface MetadataType {
+public interface MetaIndexInterface {
     
     /**
      * Return the version this metadata flag was added.
@@ -22,7 +22,7 @@ public interface MetadataType {
      * Will return null if this metadata flag does not have a parent.
      * @return the parent metadata flag for this metadata flag.
      */
-    default @Nullable MetadataType getParent() {
+    default @Nullable MetaIndexInterface getParent() {
         return null;
     }
 }
