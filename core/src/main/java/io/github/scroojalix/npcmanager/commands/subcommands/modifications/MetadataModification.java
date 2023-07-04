@@ -21,12 +21,10 @@ public class MetadataModification extends SubCommand {
         super(
             "metadata",
             "Customise the metadata of an NPC.",
-            "/npc modify <npc> metadata <pose | handState | flags | skinLayers | reset> [args...]",
+            "/npc modify <npc> metadata <fields | flags | skinLayers | reset> [args...]",
             true
         );
-        subcommands.add(new PoseMeta());
         subcommands.add(new FlagsMeta());
-        subcommands.add(new GlowColorMeta());
         subcommands.add(new SkinLayersMeta());
         subcommands.add(new FieldsMeta());
     }
