@@ -18,15 +18,22 @@ public class FlagsMeta extends SubCommand {
         super(
             "flags",
             "Add/remove metadata flags for an NPC.",
-            "/npc modify <npc> metadata flags <add | remove> <flag>",
+            "/npc modify <npc> metadata flags <add | remove | removeAll> [flag]",
             true
         );
     }
 
     @Override
     public boolean execute(NPCMain main, CommandSender sender, String[] args) {
-        if (args.length < 6) return false;
         NPCData npc = PluginUtils.getNPCDataByName(args[1]);
+
+        if (args.length >= 5 && args[4].equalsIgnoreCase("removeAll")) {
+            npc.getTraits().getMetaInfo().removeAllFlags();
+            sender.sendMessage(PluginUtils.format("&6Removed all metadata flags for &f%s", npc.getName()));
+            return true;
+        }
+
+        if (args.length < 6) return false;
 
         Flag flag = PluginUtils.getEnumFromName(args[5], Flag.class);
         if (flag == null) {
@@ -61,6 +68,7 @@ public class FlagsMeta extends SubCommand {
         if (args.length == 5) {
             result.add("add");
             result.add("remove");
+            result.add("removeAll");
         } else if (args.length == 6) {
             if (!PluginUtils.npcExists(args[1])) return result;         
             final NPCMetaInfo meta = PluginUtils.getNPCDataByName(args[1]).getTraits().getMetaInfo();

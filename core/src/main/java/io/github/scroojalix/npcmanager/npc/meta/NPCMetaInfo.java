@@ -236,4 +236,8 @@ public class NPCMetaInfo implements Serialisable {
     public void removeFlag(Flag flag) {
         activeFlags.remove(flag);
     }
+
+    public void removeAllFlags() {
+        activeFlags.clear();
+    }
 }
