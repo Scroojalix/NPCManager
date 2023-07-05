@@ -16,10 +16,10 @@ public abstract class MetaField<T> {
         }
     };
     
-    public static final @Nonnull MetaField<Integer> POTION_COLOR = new MetaField<Integer>("ParticleColor", MetaIndex.Living.POTION_EFFECT_COLOR, int.class) {
+    public static final @Nonnull MetaField<Integer> PARTICLE_COLOR = new MetaField<Integer>("ParticleColor", MetaIndex.Living.POTION_EFFECT_COLOR, int.class) {
         @Override
         public void setValue(@Nonnull NPCMetaInfo info, @Nonnull Integer value) {
-            info.setPotionEffectColor(value);
+            info.setParticleColor(value);
         }
     };
     
@@ -71,7 +71,7 @@ public abstract class MetaField<T> {
 
     public static MetaField<?>[] values() {
         return new MetaField<?>[] {
-            POSE, POTION_COLOR, ARROWS, STINGERS, ACTIVE_HAND, GLOW_COLOR
+            POSE, PARTICLE_COLOR, ARROWS, STINGERS, ACTIVE_HAND, GLOW_COLOR
         };
     }
 

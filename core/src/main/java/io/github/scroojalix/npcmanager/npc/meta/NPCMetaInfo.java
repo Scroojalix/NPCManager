@@ -42,7 +42,7 @@ public class NPCMetaInfo implements Serialisable {
      * Sent as part of the scoreboard team packet<p>
      */
     @Expose
-    private int potionEffectColor;
+    private int particleColor;
 
     /**
      * Sent as part of the scoreboard team packet<p>
@@ -160,8 +160,8 @@ public class NPCMetaInfo implements Serialisable {
         this.skinLayers = skinLayers;
     }
 
-    public int getPotionEffectColor() {
-        return potionEffectColor;
+    public int getParticleColor() {
+        return particleColor;
     }
 
     /**
@@ -186,6 +186,15 @@ public class NPCMetaInfo implements Serialisable {
 
     // SETTERS
 
+    public void resetAllFields() {
+        this.pose = Pose.STANDING;
+        this.activeHand = ActiveHand.NONE;
+        this.particleColor = 0;
+        this.glowColor = MetaColor.NONE;
+        this.arrows = 0;
+        this.stingers = 0;
+    }
+
     /**
      * Set this NPC's pose
      * @param pose the new pose to set to.
@@ -194,8 +203,8 @@ public class NPCMetaInfo implements Serialisable {
         this.pose = pose;
     }
 
-    public void setPotionEffectColor(int potionEffectColor) {
-        this.potionEffectColor = potionEffectColor;
+    public void setParticleColor(int particleColor) {
+        this.particleColor = particleColor;
     }
 
     public void setGlowColor(@Nonnull MetaColor glowColor) {

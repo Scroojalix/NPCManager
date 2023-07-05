@@ -35,8 +35,15 @@ public class FieldsMeta extends SubCommand {
 
     @Override
     public boolean execute(NPCMain main, CommandSender sender, String[] args) {
-        if (args.length < 6) return false;
         NPCMetaInfo npcMeta = PluginUtils.getNPCDataByName(args[1]).getTraits().getMetaInfo();
+        // Reset Metadata Fields
+        if (args.length >= 5 && args[4].equalsIgnoreCase("reset")) {
+            npcMeta.resetAllFields();
+            sender.sendMessage(PluginUtils.format("&6Reset all metadata fields for &f%s", args[1]));
+            return true;
+        }
+
+        if (args.length < 6) return false;
 
         // This if-else statement is messy, but its the best I could come up with
         // whilst retaining the typesafe MetaField#setField implementation.
@@ -48,19 +55,19 @@ public class FieldsMeta extends SubCommand {
             if (pose != null)
             setFieldValue(npcMeta, MetaField.POSE, pose);
 
-        // Potion Effect Color
-        } else if (args[4].equalsIgnoreCase(MetaField.POTION_COLOR.fieldName)) {
+        // Particle Color
+        } else if (args[4].equalsIgnoreCase(MetaField.PARTICLE_COLOR.fieldName)) {
             MetaColor tempColor = PluginUtils.getEnumFromName(args[5], MetaColor.class);
             // Pre-defined Meta Color
             if (tempColor != null) {
-                setFieldValue(npcMeta, MetaField.POTION_COLOR, tempColor.getHexValue(), tempColor.getBukkitColor() + tempColor.toString());
+                setFieldValue(npcMeta, MetaField.PARTICLE_COLOR, tempColor.getHexValue(), tempColor.getBukkitColor() + tempColor.toString());
                 
             // Custom hex color
             } else if (args[5].startsWith("#")) {
                 if (args[5].matches("^#[a-fA-F0-9]{6}$")) {
                     Integer hexColor = Integer.parseInt(args[5].replace("#", ""), 16);
                     String valueString = PluginUtils.format(args[5]) + args[5];
-                    setFieldValue(npcMeta, MetaField.POTION_COLOR, hexColor, valueString);
+                    setFieldValue(npcMeta, MetaField.PARTICLE_COLOR, hexColor, valueString);
                 } else {
                     sender.sendMessage(ChatColor.RED + "That is not a valid hex value");
                     return false;
@@ -113,14 +120,15 @@ public class FieldsMeta extends SubCommand {
         if (args.length == 5) {
             result.addAll(Arrays.stream(MetaField.values())
             .map(f -> f.fieldName).collect(Collectors.toList()));
-        } else if (args.length == 6) {
+            result.add("reset");
+        } else if (args.length == 6 && !args[4].equalsIgnoreCase("reset")) {
             MetaField<?> meta = MetaField.fromName(args[4]);
             if (meta == null) return result;
             if (meta.valueClass.isEnum()) {
                 for (Object o : meta.valueClass.getEnumConstants()) {
                     result.add(o.toString());
                 }
-            } else if (meta.fieldName.equalsIgnoreCase(MetaField.POTION_COLOR.fieldName)) {
+            } else if (meta.fieldName.equalsIgnoreCase(MetaField.PARTICLE_COLOR.fieldName)) {
                 result.addAll(Arrays.stream(MetaColor.values())
                 .map(f -> f.toString()).collect(Collectors.toList()));
                 result.add("#");

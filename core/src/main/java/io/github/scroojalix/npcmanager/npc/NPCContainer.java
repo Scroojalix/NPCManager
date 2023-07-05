@@ -75,7 +75,7 @@ public class NPCContainer {
         // Potion Effect Colour
         int effectIndex = MetaIndex.getIndex(MetaIndex.Living.POTION_EFFECT_COLOR);
         watcher.setObject(effectIndex, intSerialiser,
-            metaInfo.getPotionEffectColor());
+            metaInfo.getParticleColor());
 
         // Ambient Potion Effect
         watcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(
@@ -126,7 +126,7 @@ public class NPCContainer {
         // Potion Effect Colour
         int effectIndex = MetaIndex.getIndex(MetaIndex.Living.POTION_EFFECT_COLOR);
         watcher.setObject(effectIndex,
-            metaInfo.getPotionEffectColor());
+            metaInfo.getParticleColor());
 
         // Ambient Potion Effect
         watcher.setObject(effectIndex + 1,
