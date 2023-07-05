@@ -9,42 +9,42 @@ import io.github.scroojalix.npcmanager.npc.meta.enums.Pose;
 
 public abstract class MetaField<T> {
 
-    public static final @Nonnull MetaField<Pose> POSE = new MetaField<Pose>("Pose", MetaIndex.POSE, Pose.class) {
+    public static final @Nonnull MetaField<Pose> POSE = new MetaField<Pose>("pose", MetaIndex.POSE, Pose.class) {
         @Override
         public void setValue(@Nonnull NPCMetaInfo info, @Nonnull Pose value) {
             info.setPose(value);
         }
     };
     
-    public static final @Nonnull MetaField<Integer> PARTICLE_COLOR = new MetaField<Integer>("ParticleColor", MetaIndex.Living.POTION_EFFECT_COLOR, int.class) {
+    public static final @Nonnull MetaField<Integer> PARTICLE_COLOR = new MetaField<Integer>("particleColor", MetaIndex.Living.POTION_EFFECT_COLOR, int.class) {
         @Override
         public void setValue(@Nonnull NPCMetaInfo info, @Nonnull Integer value) {
             info.setParticleColor(value);
         }
     };
     
-    public static final @Nonnull MetaField<Integer> ARROWS = new MetaField<Integer>("NumOfArrows", MetaIndex.Living.ARROWS, int.class) {
+    public static final @Nonnull MetaField<Integer> ARROWS = new MetaField<Integer>("numOfArrows", MetaIndex.Living.ARROWS, int.class) {
         @Override
         public void setValue(@Nonnull NPCMetaInfo info, @Nonnull Integer value) {
             info.setArrows(value);
         }
     };
     
-    public static final @Nonnull MetaField<Integer> STINGERS = new MetaField<Integer>("NumOfStingers", MetaIndex.Living.STINGERS, int.class) {
+    public static final @Nonnull MetaField<Integer> STINGERS = new MetaField<Integer>("numOfStingers", MetaIndex.Living.STINGERS, int.class) {
         @Override
         public void setValue(@Nonnull NPCMetaInfo info, @Nonnull Integer value) {
             info.setStingers(value);
         }
     };
 
-    public static final @Nonnull MetaField<ActiveHand> ACTIVE_HAND = new MetaField<ActiveHand>("ActiveHand", MetaIndex.Living.HAND_STATE, ActiveHand.class) {
+    public static final @Nonnull MetaField<ActiveHand> ACTIVE_HAND = new MetaField<ActiveHand>("activeHand", MetaIndex.Living.HAND_STATE, ActiveHand.class) {
         @Override
         public void setValue(@Nonnull NPCMetaInfo info, @Nonnull ActiveHand value) {
             info.setActiveHand(value);
         }
     };
     
-    public static final @Nonnull MetaField<MetaColor> GLOW_COLOR = new MetaField<MetaColor>("GlowColor", null, MetaColor.class) {
+    public static final @Nonnull MetaField<MetaColor> GLOW_COLOR = new MetaField<MetaColor>("glowColor", null, MetaColor.class) {
         @Override
         public void setValue(@Nonnull NPCMetaInfo info, @Nonnull MetaColor value) {
             info.setGlowColor(value);
