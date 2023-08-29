@@ -2,23 +2,19 @@ package io.github.scroojalix.npcmanager.npc.interactions;
 
 import org.bukkit.Bukkit;
 
-public class CommandInteraction implements InteractEvent {
+public class CommandInteraction extends InteractEvent {
 
-    private String command;
-    private boolean asConsole;
+    private final String command;
+    private final boolean asConsole;
 
     public String getCommand() {
         return this.command;
     }
 
     public CommandInteraction(String command, boolean asConsole) {
+        super(null);
         this.command = command;
         this.asConsole = asConsole;
-    }
-
-    @Override
-    public String getInteractionName() {
-        return null;
     }
 
     @Override

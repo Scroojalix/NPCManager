@@ -22,11 +22,11 @@ public class InteractionsManager {
 	 * @param plugin The plugin that the {@link InteractEvent} is coming from.
 	 */
 	public static void registerInteraction(InteractEvent interactEvent, Plugin plugin) {
-		if (interactEvent.getInteractionName() == null) {
+		if (interactEvent.getInteractEventName() == null) {
 			NPCMain.instance.getLogger().warning("Could not register interaction from "+plugin.getName()+". It's name is null.");
 			return;
-		} else if (PluginUtils.isAlphanumeric(interactEvent.getInteractionName())) {
-			String name = interactEvent.getInteractionName();
+		} else if (PluginUtils.isAlphanumeric(interactEvent.getInteractEventName())) {
+			String name = interactEvent.getInteractEventName();
 			interactEvents.put(name, interactEvent);
 		} else {
 			NPCMain.instance.getLogger().warning("Could not register interaction from "+plugin.getName()+".It's name is not alphanumeric.");
