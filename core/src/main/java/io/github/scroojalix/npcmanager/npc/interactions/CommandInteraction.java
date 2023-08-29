@@ -1,6 +1,10 @@
 package io.github.scroojalix.npcmanager.npc.interactions;
 
+import java.util.logging.Level;
+
 import org.bukkit.Bukkit;
+
+import io.github.scroojalix.npcmanager.NPCMain;
 
 public class CommandInteraction extends InteractEvent {
 
@@ -19,6 +23,7 @@ public class CommandInteraction extends InteractEvent {
 
     @Override
     public void onInteract(InteractAtNPCEvent event) {
+        NPCMain.instance.sendDebugMessage(Level.INFO, "Executed command: "+command);
         if (asConsole) {
             Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), command);
         } else {
