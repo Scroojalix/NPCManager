@@ -191,8 +191,11 @@ public class NPCManager {
 		if (data.getTraits().getInteractEvent() != null) {
 			NPCInteractionData interactEvent = data.getTraits().getInteractEvent();
 			switch(interactEvent.getType()) {
-				case COMMAND:
-					container.setInteractEvent(new CommandInteraction(interactEvent.getValue()));
+				case PLAYER_COMMAND:
+					container.setInteractEvent(new CommandInteraction(interactEvent.getValue(), false));
+				break;
+				case CONSOLE_COMMAND:
+					container.setInteractEvent(new CommandInteraction(interactEvent.getValue(), true));
 				break;
 				case CUSTOM:
 					if (InteractionsManager.getInteractEvents().containsKey(interactEvent.getValue())) {
@@ -202,6 +205,8 @@ public class NPCManager {
 						new IllegalArgumentException("Error restoring an NPC: Unknown interact event '"+interactEvent.getValue()+"'"));
 					}
 				break;
+				default:
+					main.getLogger().warning("Unknown interact event '" + interactEvent.toString() + "'");
 			}
 		}
 

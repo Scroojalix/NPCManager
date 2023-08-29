@@ -3,6 +3,7 @@ package io.github.scroojalix.npcmanager.commands.subcommands.modifications;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import io.github.scroojalix.npcmanager.NPCMain;
@@ -31,33 +32,53 @@ public class InteractEventModification extends SubCommand {
     public boolean execute(NPCMain main, CommandSender sender, String[] args) {
         NPCData data = PluginUtils.getNPCDataByName(args[1]);
         if (args.length > 3) {
-            if (args[3].equalsIgnoreCase("command") && args.length > 4) {
-                String command = args[4];
-                for (int arg = 5; arg < args.length; arg++) {
-                    command += " " + args[arg];
+            // Parse Interact Event Type
+            InteractEventType type = null;
+            for (InteractEventType interactEventType : InteractEventType.values()) {
+                if (args[3].equalsIgnoreCase(interactEventType.commandString)) {
+                    type = interactEventType;
                 }
-                data.getTraits().setInteractEvent(InteractEventType.COMMAND, command);
-                main.npc.hardResetNPC(data);
-                sender.sendMessage(PluginUtils.format(
-                        "&6Set &F" + data.getName() + "'s &6Interact Event to the command &F/" + command));
-                return true;
-            } else if (args[3].equalsIgnoreCase("custom") && args.length > 4) {
-                if (InteractionsManager.getInteractEvents().containsKey(args[4])) {
-                    data.getTraits().setInteractEvent(InteractEventType.CUSTOM, args[4]);
-                    main.npc.hardResetNPC(data);
-                    sender.sendMessage(PluginUtils
-                            .format("&6Set &F" + data.getName() + "'s &6Interact Event to &F" + args[3]));
-                } else {
-                    sender.sendMessage(
-                            PluginUtils.format("&C'" + args[4] + "' is not a valid Interact Event."));
-                }
-                return true;
-            } else if (args[3].equalsIgnoreCase("none")) {
+            }
+            if (type == null) {
+                sender.sendMessage(ChatColor.RED + "That is not a valid interact event type.");
+                return false;
+            }
+
+            if (type.equals(InteractEventType.NONE)) {
                 data.getTraits().removeInteractEvent();
                 main.npc.hardResetNPC(data);
                 sender.sendMessage(PluginUtils.format("&6Removed the Interact Event for &F" + data.getName()));
                 return true;
             }
+
+            if (args.length == 4) return false;
+
+            if (type.equals(InteractEventType.CONSOLE_COMMAND) || type.equals(InteractEventType.PLAYER_COMMAND)) {
+                // Compile command
+                // TODO do this better, maybe get player to run command after wards.
+                String command = args[4];
+                for (int arg = 5; arg < args.length; arg++) {
+                    command += " " + args[arg];
+                }
+
+                data.getTraits().setInteractEvent(type, command);
+                main.npc.hardResetNPC(data);
+                sender.sendMessage(
+                    PluginUtils.format("&F%s's &6Interact Event set to %s &F/%s",
+                    data.getName(), type.infoPrefix, command));
+            } else {
+                if (InteractionsManager.getInteractEvents().containsKey(args[4])) {
+                    data.getTraits().setInteractEvent(type, args[4]);
+                    main.npc.hardResetNPC(data);
+                    sender.sendMessage(
+                        PluginUtils.format("&F%s's &6Interact Event set to %s &F%s",
+                        data.getName(), type.infoPrefix, args[4]));
+                } else {
+                    sender.sendMessage(
+                        PluginUtils.format("&C'%s' is not a valid Interact Event.", args[4]));
+                }
+            }
+            return true;
         }
         return false;
     }
@@ -66,9 +87,9 @@ public class InteractEventModification extends SubCommand {
     public List<String> onTabComplete(String[] args) {
         List<String> result = new ArrayList<String>();
         if (args.length == 4) {
-            result.add("command");
-            result.add("custom");
-            result.add("none");
+            for (InteractEventType type : InteractEventType.values()) {
+                result.add(type.commandString);
+            }
         } else if (args.length == 5 && args[3].equalsIgnoreCase("custom")) {
             for (String interaction : InteractionsManager.getInteractEvents().keySet()) {
                 result.add(interaction);
