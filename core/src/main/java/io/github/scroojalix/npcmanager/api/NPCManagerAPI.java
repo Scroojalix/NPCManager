@@ -250,19 +250,22 @@ public class NPCManagerAPI {
 	public static void setInteractEvent(String name, InteractEventType type, String interaction) {
 		if (PluginUtils.npcExists(name)) {
 			NPCData data = PluginUtils.getNPCDataByName(name);
-			if (type == InteractEventType.COMMAND) {
+			switch (type) {
+				case PLAYER_COMMAND:
+				case CONSOLE_COMMAND:
 				data.getTraits().setInteractEvent(type, interaction);
-				NPCMain.instance.npc.hardResetNPC(data);
-			} else if (type == InteractEventType.CUSTOM) {
+				break;
+				case CUSTOM:
 				if (InteractionsManager.getInteractEvents().containsKey(interaction)) {
 					data.getTraits().setInteractEvent(type, interaction);
-					NPCMain.instance.npc.hardResetNPC(data);
 				} else {
 					throw new IllegalArgumentException(
-							"The custom interact event '" + interaction + "' does not exist.");
+						"The custom interact event '" + interaction + "' does not exist.");
 				}
-			} else {
-				throw new IllegalArgumentException("The interaction type '" + type + "' is invalid.");
+				break;
+				case NONE:
+				data.getTraits().removeInteractEvent();
+				break;
 			}
 		} else {
 			throw new IllegalArgumentException(Messages.UNKNOWN_NPC);
