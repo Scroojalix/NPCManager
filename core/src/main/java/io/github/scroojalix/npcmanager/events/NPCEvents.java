@@ -19,6 +19,5 @@ public class NPCEvents implements Listener {
 	@EventHandler
 	public void onNPCInteract(InteractAtNPCEvent event) {
 		main.sendDebugMessage(Level.INFO, String.format("%s occurred: %s", event.getEventName(), event.toString()));
-		event.callInteractEventIfDefined();
 	}
 }
