@@ -19,7 +19,7 @@ import com.comphenix.protocol.wrappers.EnumWrappers.EntityUseAction;
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.npc.NPCContainer;
 import io.github.scroojalix.npcmanager.npc.interactions.InteractAtNPCEvent;
-import io.github.scroojalix.npcmanager.npc.interactions.InteractAtNPCEvent.NPCAction;
+import io.github.scroojalix.npcmanager.npc.interactions.NPCAction;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class PacketReader {
