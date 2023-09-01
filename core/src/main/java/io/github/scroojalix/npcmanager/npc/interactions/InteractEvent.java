@@ -1,16 +1,6 @@
 package io.github.scroojalix.npcmanager.npc.interactions;
 
-public abstract class InteractEvent {
-
-	private final String name;
-
-	public InteractEvent(String interactEventName) {
-		this.name = interactEventName;
-	}
-
-	public final String getInteractEventName() {
-		return name;
-	}
+public interface InteractEvent {
 
 	/**
 	 * This method will be called when a player interacts with an NPC with this

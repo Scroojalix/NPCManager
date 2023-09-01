@@ -6,7 +6,7 @@ import org.bukkit.Bukkit;
 
 import io.github.scroojalix.npcmanager.NPCMain;
 
-public class CommandInteraction extends InteractEvent {
+public class CommandInteraction implements InteractEvent {
 
     private final String command;
     private final boolean asConsole;
@@ -16,7 +16,6 @@ public class CommandInteraction extends InteractEvent {
     }
 
     public CommandInteraction(String command, boolean asConsole) {
-        super(null);
         this.command = command;
         this.asConsole = asConsole;
     }
