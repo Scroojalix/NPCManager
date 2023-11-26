@@ -274,7 +274,8 @@ public class PluginUtils {
 		v1_19_R1,	// 17
 		v1_19_R2,	// 18
 		v1_19_R3,	// 19
-		v1_20_R1;	// 20
+		v1_20_R1,	// 20
+		v1_20_R2;	// 21
 
 		private final int versionId;
 
@@ -354,9 +355,8 @@ public class PluginUtils {
 				case v1_19_R2:
 				case v1_19_R3:
 				case v1_20_R1:
-					return 17;
 				default:
-					throw new IllegalArgumentException("Unknown Enum Value for ServerVersion: " + this.toString());
+					return 17;
 			}
 		}
 

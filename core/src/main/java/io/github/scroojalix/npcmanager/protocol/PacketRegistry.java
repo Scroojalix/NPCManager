@@ -59,24 +59,43 @@ public final class PacketRegistry {
     public static final Packet<NPCContainer> NPC_SPAWN = (NPCContainer container) -> {
         Location npcLoc = container.getNPCData().getLoc();
 
-        PacketContainer spawn = createPacket(PacketType.Play.Server.NAMED_ENTITY_SPAWN);
-        spawn.getIntegers().write(0, container.getNPCEntityID());
-        spawn.getUUIDs().write(0, container.getPlayerInfo().getProfileId());
-        if (PluginUtils.ServerVersion.v1_9_R1.atOrAbove()) {
+        // TODO tidy this up a bit
+        if (PluginUtils.ServerVersion.v1_20_R2.atOrAbove()) {
+            PacketContainer spawn = createPacket(PacketType.Play.Server.SPAWN_ENTITY);
+            spawn.getIntegers().write(0, container.getNPCEntityID());
+            spawn.getUUIDs().write(0, container.getPlayerInfo().getProfileId());
+            spawn.getEntityTypeModifier().write(0, EntityType.PLAYER);
             spawn.getDoubles()
-                    .write(0, npcLoc.getX())
-                    .write(1, npcLoc.getY())
-                    .write(2, npcLoc.getZ());
+                .write(0, npcLoc.getX())
+                .write(1, npcLoc.getY())
+                .write(2, npcLoc.getZ());
+            
+            spawn.getBytes()
+                    .write(0, PluginUtils.toByteAngle(npcLoc.getPitch()))
+                    .write(1, PluginUtils.toByteAngle(npcLoc.getYaw()))
+                    .write(2, PluginUtils.toByteAngle(npcLoc.getYaw()));
+
+            return spawn;
         } else {
-            spawn.getIntegers()
-                    .write(1, PluginUtils.get1_8LocInt(npcLoc.getX()))
-                    .write(2, PluginUtils.get1_8LocInt(npcLoc.getY()))
-                    .write(3, PluginUtils.get1_8LocInt(npcLoc.getZ()));
+            PacketContainer spawn = createPacket(PacketType.Play.Server.NAMED_ENTITY_SPAWN);
+            spawn.getIntegers().write(0, container.getNPCEntityID());
+            spawn.getUUIDs().write(0, container.getPlayerInfo().getProfileId());
+            if (PluginUtils.ServerVersion.v1_9_R1.atOrAbove()) {
+                spawn.getDoubles()
+                        .write(0, npcLoc.getX())
+                        .write(1, npcLoc.getY())
+                        .write(2, npcLoc.getZ());
+            } else {
+                spawn.getIntegers()
+                        .write(1, PluginUtils.get1_8LocInt(npcLoc.getX()))
+                        .write(2, PluginUtils.get1_8LocInt(npcLoc.getY()))
+                        .write(3, PluginUtils.get1_8LocInt(npcLoc.getZ()));
+            }
+            spawn.getBytes()
+                    .write(0, PluginUtils.toByteAngle(npcLoc.getYaw()))
+                    .write(1, PluginUtils.toByteAngle(npcLoc.getPitch()));
+            return spawn;
         }
-        spawn.getBytes()
-                .write(0, PluginUtils.toByteAngle(npcLoc.getYaw()))
-                .write(1, PluginUtils.toByteAngle(npcLoc.getPitch()));
-        return spawn;
     };
 
     public static final Packet<NPCContainer> NPC_UPDATE_METADATA = (NPCContainer container) -> {
