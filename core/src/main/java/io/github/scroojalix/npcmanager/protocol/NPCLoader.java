@@ -73,7 +73,12 @@ public class NPCLoader implements Runnable {
 	private void generatePackets() {
 		initPackets.add(PacketRegistry.NPC_ADD_INFO.get(npcContainer));
 		initPackets.add(PacketRegistry.NPC_SPAWN.get(npcContainer));
-		initPackets.addAll(PacketRegistry.NPC_RESET_HEAD_ROTATION.get(npcContainer));
+
+		if (!PluginUtils.ServerVersion.v1_20_R2.atOrAbove()) {
+			initPackets.addAll(PacketRegistry.NPC_RESET_HEAD_ROTATION.get(npcContainer));
+		}
+		
+		// TODO no longer need this for 1.20.2 onwards
 		if (perfectOrientation) {
 			initPackets.add(PacketRegistry.NPC_PLAY_ANIMATION.get(npcContainer));
 		}
