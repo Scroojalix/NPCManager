@@ -109,8 +109,8 @@ public class NPCMain extends JavaPlugin {
 		try {
 			serverVersion = ServerVersion.valueOf(version);
 		} catch(Exception e) {
-			this.getLogger().severe(version + " is not a supported version!");
-			return false;
+			this.getLogger().warning(version + " has not been tested! Proceed with caution.");
+			serverVersion = ServerVersion.values()[ServerVersion.values().length - 1];
 		}
 		sendDebugMessage(Level.INFO, String.format("Running on NMS version %s", serverVersion));
 		return true;
