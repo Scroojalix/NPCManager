@@ -1,19 +1,14 @@
 package io.github.scroojalix.npcmanager.npc;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Location;
 
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
-import com.comphenix.protocol.wrappers.WrappedDataValue;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
-import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 
-import io.github.scroojalix.npcmanager.NPCMain;
+import io.github.scroojalix.npcmanager.npc.meta.MetaIndex;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class HologramContainer {
@@ -64,26 +59,11 @@ public class HologramContainer {
         }
 
         //Set armor stand metadata
-        watcher.setObject(NPCMain.serverVersion.getArmorStandMetaIndex(),
+        watcher.setObject(MetaIndex.getIndex(MetaIndex.Living.ArmorStand.META),
             byteSerializer,
             (byte)(0x01 | 0x08 | 0x10)); //Small | has no base plate | marker
 
         return watcher;
-    }
-
-    public List<WrappedDataValue> getDataWatcherAsList() {
-        final List<WrappedDataValue> wrappedDataValueList = new ArrayList<>();
-		for(final WrappedWatchableObject entry : getDataWatcher().getWatchableObjects()) {
-			if(entry == null) continue;
-
-            final WrappedDataWatcherObject watcherObject = entry.getWatcherObject();
-            wrappedDataValueList.add(
-                new WrappedDataValue(
-                    watcherObject.getIndex(),
-                    watcherObject.getSerializer(),
-                    entry.getRawValue()));
-        }
-        return wrappedDataValueList;
     }
 
     /**
@@ -104,7 +84,7 @@ public class HologramContainer {
         watcher.setObject(3, (byte) 0x1);
 
         //Set armor stand metadata
-        watcher.setObject(NPCMain.serverVersion.getArmorStandMetaIndex(),
+        watcher.setObject(MetaIndex.getIndex(MetaIndex.Living.ArmorStand.META),
                 (byte) (0x01 | 0x08 | 0x10)); //Small | has no base plate | marker
 
         return watcher;

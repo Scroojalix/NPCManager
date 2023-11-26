@@ -3,9 +3,10 @@ package io.github.scroojalix.npcmanager.npc.interactions;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+
 import org.bukkit.plugin.Plugin;
 
-import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class InteractionsManager {
@@ -21,15 +22,12 @@ public class InteractionsManager {
 	 * @param interactEvent The {@link InteractEvent} object to register.
 	 * @param plugin The plugin that the {@link InteractEvent} is coming from.
 	 */
-	public static void registerInteraction(InteractEvent interactEvent, Plugin plugin) {
-		if (interactEvent.getInteractionName() == null) {
-			NPCMain.instance.getLogger().warning("Could not register interaction from "+plugin.getName()+". It's name is null.");
-			return;
-		} else if (PluginUtils.isAlphanumeric(interactEvent.getInteractionName())) {
-			String name = interactEvent.getInteractionName();
+	public static void registerInteraction(@Nonnull String name, @Nonnull Plugin source, @Nonnull InteractEvent interactEvent) {
+		if (PluginUtils.isAlphanumeric(name)) {
 			interactEvents.put(name, interactEvent);
+			source.getLogger().info("Successfully registered interaction: " + name);
 		} else {
-			NPCMain.instance.getLogger().warning("Could not register interaction from "+plugin.getName()+".It's name is not alphanumeric.");
+			source.getLogger().warning("Could not register interaction. Name must be alphanumeric.");
 		}
 	}
 }

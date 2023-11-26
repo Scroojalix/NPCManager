@@ -2,11 +2,8 @@ package io.github.scroojalix.npcmanager.protocol;
 
 import java.security.SecureRandom;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -14,7 +11,6 @@ import org.bukkit.entity.Player;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
@@ -46,16 +42,10 @@ public class NPCManager {
 	private Map<String, NPCContainer> NPCs = new LinkedHashMap<String, NPCContainer>();
 	private ProtocolManager protocolManager;
 	
-	private ProtocolManager pm;
-	private final LinkedHashSet<PacketContainer> scoreboardPackets;
-
 	public NPCManager(NPCMain main) {
 		this.main = main;
 		this.protocolManager = ProtocolLibrary.getProtocolManager();
 		main.sendDebugMessage(Level.INFO, "NPC tab list name length set to " + Settings.NPC_NAME_LENGTH.get());
-
-		pm = ProtocolLibrary.getProtocolManager();
-		scoreboardPackets = new LinkedHashSet<>();
 	}
 
 	/**
@@ -74,20 +64,28 @@ public class NPCManager {
 		if (Settings.FETCH_DEFAULT_SKINS.get()) {
 			SkinManager.setSkinFromUsername(null, data, name, false, true);
 		}
-		updateAndSendScoreboardPackets();
 	}
 
 	/**
-	 * Updates an NPC with the NPCData {@code data}
+	 * Hard resets an NPC with the NPCData {@code data}
 	 * Also updates the saved value in storage
-	 * 
 	 * @param data The NPCData assigned to an NPC.
 	 */
-	public void updateNPC(NPCData data) {
+	public void hardResetNPC(NPCData data) {
 		main.storage.saveNPC(data);
 		removeNPC(data.getName(), false);
 		spawnNPC(data);
-		updateAndSendScoreboardPackets();
+	}
+	// TODO these two methods should be combined into one.
+	// Will need to rewrite entire NPCLoader.java
+	/**
+	 * Update an NPC's none vital packets, without completely resetting the NPC.
+	 * @param name the name of the NPC.
+	 */
+	public void updateNPCPackets(NPCData data) {
+		NPCContainer container = NPCs.get(data.getName());
+		container.getLoaderTask().updateExtraPackets();
+		main.storage.saveNPC(container.getNPCData());
 	}
 
 	/**
@@ -122,7 +120,7 @@ public class NPCManager {
 	 */
 	public void moveNPC(NPCData data, Location loc) {
 		data.setLoc(loc);
-		updateNPC(data);
+		hardResetNPC(data);
 	}
 
 	/**
@@ -133,7 +131,6 @@ public class NPCManager {
 			removeNPCInternal(container, fromStorage);
 		}
 		NPCs.clear();
-		updateScoreboardPackets();
 	}
 
 	/**
@@ -146,7 +143,6 @@ public class NPCManager {
 	public void removeNPC(String npc, boolean fromStorage) {
 		removeNPCInternal(PluginUtils.getNPCContainerByName(npc), fromStorage);
 		NPCs.remove(npc);
-		updateScoreboardPackets();
 	}
 
 	/**
@@ -174,8 +170,6 @@ public class NPCManager {
 	 * @param data The {@link NPCData} to create NMS data from.
 	 */
 	public NPCContainer createNPCData(NPCData data) {
-		NPCContainer container = new NPCContainer(data);
-
 		//NPC
 		NPCTrait traits = data.getTraits();
 		WrappedGameProfile profile = new WrappedGameProfile(data.getUUID(), getRandomNPCName());
@@ -190,23 +184,29 @@ public class NPCManager {
 			EnumWrappers.NativeGameMode.SURVIVAL,
 			WrappedChatComponent.fromText(
 				PluginUtils.format("&8[NPC] "+profile.getName())));
-		container.setPlayerInfo(infoData);
-
+		
+		NPCContainer container = new NPCContainer(data, infoData);
+				
 		//Interact Event
 		if (data.getTraits().getInteractEvent() != null) {
 			NPCInteractionData interactEvent = data.getTraits().getInteractEvent();
 			switch(interactEvent.getType()) {
-				case COMMAND:
-					container.setInteractEvent(new CommandInteraction(interactEvent.getValue()));
+				case PLAYER_COMMAND:
+					container.setInteractEvent(new CommandInteraction(interactEvent.getValue(), false));
+				break;
+				case CONSOLE_COMMAND:
+					container.setInteractEvent(new CommandInteraction(interactEvent.getValue(), true));
 				break;
 				case CUSTOM:
 					if (InteractionsManager.getInteractEvents().containsKey(interactEvent.getValue())) {
 						container.setInteractEvent(InteractionsManager.getInteractEvents().get(interactEvent.getValue()));
 					} else {
 						Messages.printNPCRestoreError(main, data.getName(), 
-						"Error restoring an NPC: Unknown interact event '"+interactEvent.getValue()+"'");
+						new IllegalArgumentException("Error restoring an NPC: Unknown interact event '"+interactEvent.getValue()+"'"));
 					}
 				break;
+				default:
+					main.getLogger().warning("Unknown interact event '" + interactEvent.toString() + "'");
 			}
 		}
 
@@ -244,29 +244,6 @@ public class NPCManager {
 		NPCLoader loader = new NPCLoader(main, container, protocolManager);
 		int taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(main, loader, 0l, 1l);
 		container.setLoaderTask(loader, taskId);
-	}
-
-	private void updateScoreboardPackets() {
-		scoreboardPackets.clear();
-
-		List<String> npcNames = NPCs.values().stream()
-			.map(npc -> npc.getPlayerInfo().getProfile().getName())
-			.collect(Collectors.toList());
-
-		scoreboardPackets.addAll(PacketRegistry.SCOREBOARD_CREATE_AND_ADD.get(npcNames));
-	}
-
-	public void sendScoreboardPackets(Player receiver) {
-		for (PacketContainer packet : scoreboardPackets) {
-			pm.sendServerPacket(receiver, packet);
-		}
-	}
-
-	public void updateAndSendScoreboardPackets() {
-		updateScoreboardPackets();
-		for (Player p : Bukkit.getOnlinePlayers()) {
-			sendScoreboardPackets(p);
-		}
 	}
 
 	/**

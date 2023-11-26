@@ -18,42 +18,24 @@ public class ModifyCommand extends SubCommand {
     private ArrayList<SubCommand> subcommands = new ArrayList<SubCommand>();
 
     public ModifyCommand() {
-        subcommands.add(new EquipmentModification());
-        subcommands.add(new InteractEventModification());
+        super(
+            "modify",
+            "Modifies an NPC.",
+            "/npc modify <npc> <key> [args...]",
+            true
+        );
+
+        // Add modification subcommands
         subcommands.add(new DisplayNameModification());
-        subcommands.add(new SubtitleModification());
+        subcommands.add(new EquipmentModification());
         subcommands.add(new HeadRotationModification());
+        subcommands.add(new InteractEventModification());
+        subcommands.add(new MetadataModification());
         subcommands.add(new RangeModification());
         subcommands.add(new SkinModification());
-        subcommands.add(new SkinLayersModification());
+        subcommands.add(new SubtitleModification());
     }
 
-    @Override
-    public String getName() {
-        return "modify";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Modifies an NPC.";
-    }
-
-    @Override
-    public String getSyntax() {
-        return "/npc modify <npc> <key> [args...]";
-    }
-
-    @Override
-    public boolean consoleCanRun() {
-        return true;
-    }
-
-    //TODO add ability to customise pose.
-    //May have to allow multiple hologram lines first and calculate height of holograms dynamically.
-    //Things to allow:
-    //Sneaking
-    //Crawling/swimming
-    //Blocking (if using sword in old version, shield in new version)
     @Override
     public boolean execute(NPCMain main, CommandSender sender, String[] args) {
         if (args.length >= 3) {
@@ -69,7 +51,7 @@ public class ModifyCommand extends SubCommand {
                         }
                         return true;
                     }
-                } 
+                }
             } else {
                 return false;
             }

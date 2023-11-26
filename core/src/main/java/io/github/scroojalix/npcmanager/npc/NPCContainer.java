@@ -1,16 +1,21 @@
 package io.github.scroojalix.npcmanager.npc;
 
+import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 
+import io.github.scroojalix.npcmanager.npc.interactions.InteractEvent;
+import io.github.scroojalix.npcmanager.npc.meta.MetaIndex;
+import io.github.scroojalix.npcmanager.npc.meta.NPCMetaInfo;
+import io.github.scroojalix.npcmanager.npc.meta.enums.Flag;
 import io.github.scroojalix.npcmanager.protocol.NPCLoader;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
-import io.github.scroojalix.npcmanager.npc.interactions.InteractEvent;
 
 public class NPCContainer {
 
     //NPC
-    private NPCData npcData;
-    private PlayerInfoData playerInfo;
+    private final NPCData npcData;
+    private final PlayerInfoData playerInfo;
     private final int entityId;
 
     //Interact Event
@@ -25,9 +30,119 @@ public class NPCContainer {
     private int loaderTaskId;
     private NPCLoader loaderTask;
 
-    public NPCContainer(NPCData data) {
+    public NPCContainer(NPCData data, PlayerInfoData playerInfo) {
         this.npcData = data;
+        this.playerInfo = playerInfo;
         this.entityId = PluginUtils.nextEntityId();
+    }
+
+    /**
+     * Generate Data Watcher for 1.9+ servers
+     * @return {@code WrappedDataWatcher} for 1.9+ servers.
+     */
+    private WrappedDataWatcher generateDataWatcher() {
+		final WrappedDataWatcher watcher = new WrappedDataWatcher();
+        final WrappedDataWatcher.Serializer byteSerialiser = WrappedDataWatcher.Registry.get(Byte.class);
+        final WrappedDataWatcher.Serializer intSerialiser = WrappedDataWatcher.Registry.get(Integer.class);
+        final NPCMetaInfo metaInfo = npcData.getTraits().getMetaInfo();
+
+        // Entity Base Metadata
+        watcher.setObject(0, byteSerialiser,
+            metaInfo.getEntityMetaByte());
+
+        // Pose
+        if (PluginUtils.ServerVersion.v1_14_R1.atOrAbove()) {
+            watcher.setObject(6,
+                WrappedDataWatcher.Registry.get(EnumWrappers.getEntityPoseClass()),
+                metaInfo.getPose().getNMSValue());
+        }
+
+        // Shivering
+        if (PluginUtils.ServerVersion.v1_17_R1.atOrAbove()) {
+            if (metaInfo.hasFlag(Flag.SHIVERING)) {
+                watcher.setObject(7,
+                    intSerialiser,
+                    140);
+            }else {
+                // Need to write a 0 otherwise the NPC won't properly
+                // reload when adjusting the shivering flag.
+                watcher.setObject(7,
+                    intSerialiser,
+                    0);
+            }
+        }
+
+        // Potion Effect Colour
+        int effectIndex = MetaIndex.getIndex(MetaIndex.Living.POTION_EFFECT_COLOR);
+        watcher.setObject(effectIndex, intSerialiser,
+            metaInfo.getParticleColor());
+
+        // Ambient Potion Effect
+        watcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(
+            effectIndex + 1, WrappedDataWatcher.Registry.get(Boolean.class)),
+            metaInfo.hasFlag(Flag.AMBIENT_POTION_EFFECT));
+
+        // FIXME this doesn't set the hand state correctly
+        // May need to send a packet along with this
+        // net.minecraft.world.entity.LivingEntity#startUsingItem
+        // Hand State
+        watcher.setObject(
+            MetaIndex.getIndex(MetaIndex.Living.HAND_STATE), byteSerialiser,
+            metaInfo.getHandStateFlag());
+
+        // Arrows
+        watcher.setObject(
+            MetaIndex.getIndex(MetaIndex.Living.ARROWS), intSerialiser,
+            metaInfo.getArrows());
+
+        // Stingers
+        if (PluginUtils.ServerVersion.v1_15_R1.atOrAbove()) {
+            watcher.setObject(
+                MetaIndex.getIndex(MetaIndex.Living.STINGERS), intSerialiser,
+                metaInfo.getStingers());
+        }
+
+        // Active Skin Layers
+        watcher.setObject(
+            MetaIndex.getIndex(MetaIndex.Living.Player.SKIN_PARTS),
+            byteSerialiser,
+            npcData.getTraits().getMetaInfo().getSkinLayersByte());
+        
+        return watcher;
+    }
+
+    /**
+     * Generate data watcher used in 1.8 servers.
+     * @return {@code WrappedDataWatcher} for 1.8 servers
+     */
+    private WrappedDataWatcher generateLegacyDataWatcher() {
+        final WrappedDataWatcher watcher = new WrappedDataWatcher();
+        final NPCMetaInfo metaInfo = npcData.getTraits().getMetaInfo();
+
+        // Base metadata Settings
+        watcher.setObject(0,
+            metaInfo.getEntityMetaByte());
+
+        // Potion Effect Colour
+        int effectIndex = MetaIndex.getIndex(MetaIndex.Living.POTION_EFFECT_COLOR);
+        watcher.setObject(effectIndex,
+            metaInfo.getParticleColor());
+
+        // Ambient Potion Effect
+        watcher.setObject(effectIndex + 1,
+            metaInfo.hasFlag(Flag.AMBIENT_POTION_EFFECT));
+
+        // Arrows
+        watcher.setObject(
+            MetaIndex.getIndex(MetaIndex.Living.ARROWS),
+            metaInfo.getArrows());
+        
+        // Set Active Skin Layers
+        watcher.setObject(
+            MetaIndex.getIndex(MetaIndex.Living.Player.SKIN_PARTS),
+            npcData.getTraits().getMetaInfo().getSkinLayersByte());
+            
+        return watcher;
     }
 
     // NPC
@@ -40,16 +155,16 @@ public class NPCContainer {
         return this.npcData;
     }
 
-    public void setNPCData(NPCData npcData) {
-        this.npcData = npcData;
-    }
-
     public PlayerInfoData getPlayerInfo() {
         return this.playerInfo;
     }
 
-    public void setPlayerInfo(PlayerInfoData playerInfo) {
-        this.playerInfo = playerInfo;
+    public WrappedDataWatcher getDataWatcher() {
+        if  (PluginUtils.ServerVersion.v1_9_R1.atOrAbove()) {
+            return generateDataWatcher();
+        } else {
+            return generateLegacyDataWatcher();
+        }
     }
 
     /**

@@ -12,32 +12,18 @@ import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class HeadRotationModification extends SubCommand {
 
-    @Override
-    public String getName() {
-        return "hasHeadRotation";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Should the NPC look at nearby players.";
-    }
-
-    @Override
-    public String getSyntax() {
-        return "/npc modify <npc> hasHeadRotation <true|false>";
-    }
-
-    @Override
-    public boolean consoleCanRun() {
-        return true;
+    public HeadRotationModification() {
+        super(
+            "hasHeadRotation",
+            "Should the NPC look at nearby players.",
+            "/npc modify <npc> hasHeadRotation <true|false>",
+            true
+        );
     }
 
     // TODO add extra headrotation option
     // none | perplayer | global
     // also add per NPC headrotation range/reset
-    //
-    // Also modify SubCommand.java to have final fields, rather than abstract functions
-    // https://stackoverflow.com/questions/2211002/why-not-abstract-fields
 
     @Override
     public boolean execute(NPCMain main, CommandSender sender, String[] args) {
@@ -48,7 +34,7 @@ public class HeadRotationModification extends SubCommand {
                 data.getTraits().setHeadRotation(value);
                 sender.sendMessage(
                         PluginUtils.format("&6Set the head rotation of &F" + data.getName() + "&6 to &F" + value));
-                main.npc.updateNPC(data);
+                main.npc.hardResetNPC(data);
                 return true;
             }
         }

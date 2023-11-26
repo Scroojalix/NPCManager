@@ -14,24 +14,13 @@ import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class CreateCommand extends SubCommand {
 
-    @Override
-    public String getName() {
-        return "create";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Creates an NPC at your location.";
-    }
-
-    @Override
-    public String getSyntax() {
-        return "/npc create <name> [--doNotStore]";
-    }
-
-    @Override
-    public boolean consoleCanRun() {
-        return false;
+    public CreateCommand() {
+        super(
+            "create",
+            "Creates an NPC at your location.",
+            "/npc create <name> [--doNotStore]",
+            false
+        );
     }
 
     @Override

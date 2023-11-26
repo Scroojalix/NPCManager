@@ -12,24 +12,13 @@ import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class DisplayNameModification extends SubCommand {
 
-    @Override
-    public String getName() {
-        return "displayName";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Customise the display name of the NPC.";
-    }
-
-    @Override
-    public String getSyntax() {
-        return "/npc modify <npc> displayName <text>";
-    }
-
-    @Override
-    public boolean consoleCanRun() {
-        return true;
+    public DisplayNameModification() {
+        super(
+            "displayName",
+            "Customise the display name of the NPC.",
+            "/npc modify <npc> displayName <text>",
+            true
+        );
     }
 
     @Override
@@ -43,7 +32,7 @@ public class DisplayNameModification extends SubCommand {
             data.getTraits().setDisplayName(value);
             sender.sendMessage(
                     PluginUtils.format("&6Set the display name of &F" + data.getName() + "&6 to &F" + value));
-            main.npc.updateNPC(data);
+            main.npc.hardResetNPC(data);
             return true;
         }
         return false;

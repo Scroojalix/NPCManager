@@ -1,25 +1,33 @@
 package io.github.scroojalix.npcmanager.npc.interactions;
 
+import java.util.logging.Level;
+
+import org.bukkit.Bukkit;
+
+import io.github.scroojalix.npcmanager.NPCMain;
+
 public class CommandInteraction implements InteractEvent {
 
-    private String command;
+    private final String command;
+    private final boolean asConsole;
 
     public String getCommand() {
         return this.command;
     }
 
-    public CommandInteraction(String command) {
+    public CommandInteraction(String command, boolean asConsole) {
         this.command = command;
-    }
-
-    @Override
-    public String getInteractionName() {
-        return null;
+        this.asConsole = asConsole;
     }
 
     @Override
     public void onInteract(InteractAtNPCEvent event) {
-        event.getPlayer().performCommand(command);
+        NPCMain.instance.sendDebugMessage(Level.INFO, "Executed command: "+command);
+        if (asConsole) {
+            Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), command);
+        } else {
+            event.getPlayer().performCommand(command);
+        }
     }
     
 }

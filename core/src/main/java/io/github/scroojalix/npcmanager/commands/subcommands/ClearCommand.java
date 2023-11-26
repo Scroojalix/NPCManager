@@ -13,29 +13,23 @@ import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class ClearCommand extends SubCommand {
 
-    @Override
-    public String getName() {
-        return "clear";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Removes all NPC's on the server.";
-    }
-
-    @Override
-    public String getSyntax() {
-        return "/npc clear";
-    }
-
-    @Override
-    public boolean consoleCanRun() {
-        return true;
+    public ClearCommand() {
+        super(
+            "clear",
+            "Removes all NPC's on the server.",
+            "/npc clear confirm",
+            true
+        );
     }
 
     @Override
     public boolean execute(NPCMain main, CommandSender sender, String[] args) {
-        if (!PluginUtils.noNPCs()) {
+        if (args.length == 1) {
+            sender.sendMessage(ChatColor.RED + "Are you sure you wish to do this? Type "
+                + ChatColor.YELLOW + "/npc clear confirm");
+            return true;
+        }
+        if (!PluginUtils.noNPCs() && args[1].equalsIgnoreCase("confirm")) {
             main.npc.removeAllNPCs(true);
             sender.sendMessage(PluginUtils.format("&6Removed all NPC's."));
         } else {

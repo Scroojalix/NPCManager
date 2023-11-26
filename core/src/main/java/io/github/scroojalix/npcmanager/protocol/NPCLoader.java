@@ -24,7 +24,9 @@ public class NPCLoader implements Runnable {
 
 	private HashMap<Player, Integer> loadedForPlayers = new HashMap<Player, Integer>();
 	private HashSet<Player> outsideHeadRotationRange = new HashSet<Player>();
-	private LinkedHashSet<PacketContainer> loadPackets = new LinkedHashSet<PacketContainer>();
+
+	private LinkedHashSet<PacketContainer> initPackets = new LinkedHashSet<PacketContainer>();
+	private LinkedHashSet<PacketContainer> extraPackets = new LinkedHashSet<PacketContainer>();
 
 	private final double range;
 	private final boolean hasHeadRotation;
@@ -69,30 +71,42 @@ public class NPCLoader implements Runnable {
 	 * Generate all packets required to spawn an NPC, and store them in a LinkedHashSet.
 	 */
 	private void generatePackets() {
-		loadPackets.add(PacketRegistry.NPC_ADD_INFO.get(npcContainer));
-		loadPackets.add(PacketRegistry.NPC_SPAWN.get(npcContainer));
-		loadPackets.add(PacketRegistry.NPC_UPDATE_METADATA.get(npcContainer));
+		initPackets.add(PacketRegistry.NPC_ADD_INFO.get(npcContainer));
+		initPackets.add(PacketRegistry.NPC_SPAWN.get(npcContainer));
 
 		if (!PluginUtils.ServerVersion.v1_20_R2.atOrAbove()) {
-			loadPackets.addAll(PacketRegistry.NPC_RESET_HEAD_ROTATION.get(npcContainer));
+			initPackets.addAll(PacketRegistry.NPC_RESET_HEAD_ROTATION.get(npcContainer));
 		}
 		
 		// TODO no longer need this for 1.20.2 onwards
 		if (perfectOrientation) {
-			loadPackets.add(PacketRegistry.NPC_PLAY_ANIMATION.get(npcContainer));
+			initPackets.add(PacketRegistry.NPC_PLAY_ANIMATION.get(npcContainer));
 		}
 
 		//Holograms
 		if (npcContainer.isNameHoloEnabled()) {
-			loadPackets.addAll(PacketRegistry.HOLOGRAM_CREATE.get(npcContainer.getNameHolo()));
+			initPackets.addAll(PacketRegistry.HOLOGRAM_CREATE.get(npcContainer.getNameHolo()));
 		}
 		if (npcContainer.isSubtitleHoloEnabled()) {
-			loadPackets.addAll(PacketRegistry.HOLOGRAM_CREATE.get(npcContainer.getSubtitleHolo()));
+			initPackets.addAll(PacketRegistry.HOLOGRAM_CREATE.get(npcContainer.getSubtitleHolo()));
 		}
+
+		// Extra packets
+		generateExtraPackets();
+	}
+
+	private void generateExtraPackets() {
+		extraPackets.clear();
+
+		// Metadata
+		extraPackets.add(PacketRegistry.NPC_UPDATE_METADATA.get(npcContainer));
+		
+		//Scoreboards
+		extraPackets.addAll(PacketRegistry.SCOREBOARD_CREATE_AND_ADD.get(npcContainer));
 
 		//Equipment
 		if (npcContainer.getNPCData().getTraits().getEquipment(false) != null) {
-			loadPackets.addAll(PacketRegistry.NPC_SET_EQUIPMENT.get(npcContainer));
+			extraPackets.addAll(PacketRegistry.NPC_SET_EQUIPMENT.get(npcContainer));
 		}
 	}
 
@@ -167,7 +181,10 @@ public class NPCLoader implements Runnable {
 	 * @param player The player to send packets to.
 	 */
 	private void sendLoadPackets(Player player) {
-		for (PacketContainer container : loadPackets) {
+		for (PacketContainer container : initPackets) {
+			pm.sendServerPacket(player, container);
+		}
+		for (PacketContainer container : extraPackets) {
 			pm.sendServerPacket(player, container);
 		}
 		if (removeInfoEnabled) {
@@ -179,6 +196,17 @@ public class NPCLoader implements Runnable {
 			}, npcRemoveDelay));
 		} else {
 			loadedForPlayers.put(player, 0);
+		}
+	}
+
+	public void updateExtraPackets() {
+		LinkedHashSet<PacketContainer> updatePackets = PacketRegistry.NPC_CLEAR_EQUIPMENT.get(npcContainer);
+		generateExtraPackets();
+		updatePackets.addAll(extraPackets);
+		for (Player player : Bukkit.getOnlinePlayers()) {
+			for (PacketContainer packet : updatePackets) {
+				pm.sendServerPacket(player, packet);
+			}
 		}
 	}
 

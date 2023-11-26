@@ -125,7 +125,6 @@ public class Storage {
                     main.sendDebugMessage(Level.INFO, "Restoring NPC's from temp storage...");
                     restoreTempNPCs();
                 }
-                main.npc.updateAndSendScoreboardPackets();
             });
         } else {
             LocalStorage storage = (LocalStorage) implementation;
@@ -143,7 +142,6 @@ public class Storage {
                     }
                 }
             }
-            main.npc.updateAndSendScoreboardPackets();
         }
     }
 
@@ -157,6 +155,7 @@ public class Storage {
 					try {
 						String json = new String(Files.readAllBytes(Paths.get(current.getPath())));
 						NPCData data = JsonParser.fromJson(current.getName().replace(".json", ""), json, true);
+                        if (data == null) continue;
                         String name = data.getName();
                         if (name == null) continue;
                         boolean restore = true;

@@ -14,24 +14,13 @@ import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class SkinModification extends SubCommand {
 
-    @Override
-    public String getName() {
-        return "skin";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Customise the NPC's skin.";
-    }
-
-    @Override
-    public String getSyntax() {
-        return "/npc modify <npc> skin <type> [value] [options]";
-    }
-
-    @Override
-    public boolean consoleCanRun() {
-        return true;
+    public SkinModification() {
+        super(
+            "skin",
+            "Customise the NPC's skin.",
+            "/npc modify <npc> skin <type> [value] [options]",
+            true
+        );
     }
 
     @Override
@@ -51,7 +40,7 @@ public class SkinModification extends SubCommand {
                             }
                         }
                     }
-                    data.getTraits().setSkinLayers(null);
+                    data.getTraits().getMetaInfo().setSkinLayers(null);
                     SkinManager.setSkinFromURL(sender, data, args[4], slimModel);
                     return true;
                 }
@@ -69,7 +58,7 @@ public class SkinModification extends SubCommand {
                                 }
                             }
                         }
-                        data.getTraits().setSkinLayers(null);
+                        data.getTraits().getMetaInfo().setSkinLayers(null);
                         SkinManager.setSkinFromUsername(sender, data, args[4], keepLatest);
                         return true;
                     } else {
@@ -78,8 +67,8 @@ public class SkinModification extends SubCommand {
                 }
             } else if (args[3].equalsIgnoreCase("default")) {
                 data.getTraits().setSkinData(null);
-                data.getTraits().setSkinLayers(null);
-                main.npc.updateNPC(data);
+                data.getTraits().getMetaInfo().setSkinLayers(null);
+                main.npc.hardResetNPC(data);
                 sender.sendMessage(PluginUtils.format("&6Reset the skin of &F" + data.getName()));
                 return true;
             }

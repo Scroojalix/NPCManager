@@ -7,6 +7,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
@@ -15,15 +16,16 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.InternalStructure;
 import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.utility.MinecraftReflection;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
 import com.comphenix.protocol.wrappers.Pair;
-import com.comphenix.protocol.wrappers.WrappedDataValue;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 
-import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.npc.HologramContainer;
 import io.github.scroojalix.npcmanager.npc.NPCContainer;
+import io.github.scroojalix.npcmanager.npc.meta.NPCMetaInfo;
+import io.github.scroojalix.npcmanager.npc.meta.enums.Flag;
+import io.github.scroojalix.npcmanager.npc.meta.enums.MetaColor;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public final class PacketRegistry {
@@ -103,27 +105,11 @@ public final class PacketRegistry {
         meta.getIntegers().write(0, container.getNPCEntityID());
 
         if (PluginUtils.ServerVersion.v1_19_R2.atOrAbove()) {
-            final List<WrappedDataValue> wrappedDataValueList = new ArrayList<>();
-            wrappedDataValueList.add(new WrappedDataValue(
-                    NPCMain.serverVersion.getSkinLayersByteIndex(),
-                    WrappedDataWatcher.Registry.get(Byte.class),
-                    container.getNPCData().getTraits().getSkinLayersByte()));
-
-            meta.getDataValueCollectionModifier().write(0, wrappedDataValueList);
+            meta.getDataValueCollectionModifier().write(0, 
+                PluginUtils.getDataWatcherAsList(container.getDataWatcher()));
         } else {
-            WrappedDataWatcher watcher = new WrappedDataWatcher();
-            if (PluginUtils.ServerVersion.v1_9_R1.atOrAbove()) {
-                watcher.setObject(
-                        NPCMain.serverVersion.getSkinLayersByteIndex(),
-                        WrappedDataWatcher.Registry.get(Byte.class),
-                        container.getNPCData().getTraits().getSkinLayersByte());
-            } else {
-                watcher.setObject(
-                        NPCMain.serverVersion.getSkinLayersByteIndex(),
-                        container.getNPCData().getTraits().getSkinLayersByte());
-            }
-
-            meta.getWatchableCollectionModifier().write(0, watcher.getWatchableObjects());
+            meta.getWatchableCollectionModifier().write(0, 
+                container.getDataWatcher().getWatchableObjects());
         }
         return meta;
     };
@@ -182,7 +168,7 @@ public final class PacketRegistry {
             PacketContainer hologramData = createPacket(PacketType.Play.Server.ENTITY_METADATA);
             hologramData.getIntegers().write(0, holo.getID());
             if (PluginUtils.ServerVersion.v1_19_R2.atOrAbove()) {
-                hologramData.getDataValueCollectionModifier().write(0, holo.getDataWatcherAsList());
+                hologramData.getDataValueCollectionModifier().write(0, PluginUtils.getDataWatcherAsList(holo.getDataWatcher()));
             } else {
                 hologramData.getWatchableCollectionModifier().write(0, holo.getDataWatcher().getWatchableObjects());
             }
@@ -251,31 +237,91 @@ public final class PacketRegistry {
         return packets;
     };
 
-    public static final PacketList<List<String>> SCOREBOARD_CREATE_AND_ADD = (List<String> npcNames) -> {
+    public static final PacketList<NPCContainer> NPC_CLEAR_EQUIPMENT = (NPCContainer container) -> {
+        final List<Pair<ItemSlot, ItemStack>> equipmentList = new ArrayList<Pair<ItemSlot, ItemStack>>();
+
+        for (ItemSlot slot : ItemSlot.values()) {
+            equipmentList.add(new Pair<ItemSlot, ItemStack>(slot, null));
+        }
+
+        final LinkedHashSet<PacketContainer> packets = new LinkedHashSet<>();
+        if (PluginUtils.ServerVersion.v1_16_R1.atOrAbove()) {
+            PacketContainer equipmentPacket = createPacket(PacketType.Play.Server.ENTITY_EQUIPMENT);
+            equipmentPacket.getIntegers().write(0, container.getNPCEntityID());
+            equipmentPacket.getSlotStackPairLists().write(0, equipmentList);
+            packets.add(equipmentPacket);
+        } else {
+            for (Pair<ItemSlot, ItemStack> pair : equipmentList) {
+                PacketContainer equipmentPacket = createPacket(PacketType.Play.Server.ENTITY_EQUIPMENT);
+                equipmentPacket.getIntegers().write(0, container.getNPCEntityID());
+                if (PluginUtils.ServerVersion.v1_9_R1.atOrAbove()) {
+                    equipmentPacket.getItemSlots().write(0, pair.getFirst());
+                } else {
+                    int equipmentSlot;
+                    switch (pair.getFirst()) {
+                        case MAINHAND: equipmentSlot = 0; break;
+                        case FEET: equipmentSlot = 1; break;
+                        case LEGS: equipmentSlot = 2; break;
+                        case CHEST: equipmentSlot = 3; break;
+                        case HEAD: equipmentSlot = 4; break;
+                        default: continue;
+                    }
+                    equipmentPacket.getIntegers().write(1, equipmentSlot);
+                }
+                equipmentPacket.getItemModifier().write(0, pair.getSecond());
+                packets.add(equipmentPacket);
+            }
+        }
+        return packets;
+    };
+
+    public static final PacketList<NPCContainer> SCOREBOARD_CREATE_AND_ADD = (NPCContainer container) -> {
         final LinkedHashSet<PacketContainer> scoreboardPackets = new LinkedHashSet<>();
-        
+        final String profileName = container.getPlayerInfo().getProfile().getName();
+        final List<String> nameAsList = Collections.singletonList(profileName);
+
+        final NPCMetaInfo meta = container.getNPCData().getTraits().getMetaInfo();
+        final boolean collision = meta.hasFlag(Flag.COLLISION);
+        final MetaColor glowColor = meta.getGlowColor();
+        final boolean glowing = glowColor != MetaColor.NONE;
+
 		if (PluginUtils.ServerVersion.v1_17_R1.atOrAbove()) {
 			PacketContainer createTeam = createPacket(PacketType.Play.Server.SCOREBOARD_TEAM);
-			createTeam.getStrings().write(0, PluginUtils.NPC_SCOREBOARD_TEAM_NAME);
+			createTeam.getStrings().write(0, profileName);
 			InternalStructure struct = createTeam.getOptionalStructures().read(0).get();
-			struct.getStrings()
-				.write(0, "never")  // Visibility
-				.write(1, "never"); // Collision
+
+            // Name Tag Visibility
+			struct.getStrings().write(0, "never");
+
+            // Collision
+            if (!collision) {
+                struct.getStrings().write(1, "never");
+            } else {
+                struct.getStrings().write(1, "always");
+            }
+
+            // Glowing
+            if (glowing) {
+                struct.getEnumModifier(ChatColor.class, 
+                    MinecraftReflection.getMinecraftClass("EnumChatFormat"))
+                    .write(0, glowColor.getBukkitColor());
+            }
+
 			createTeam.getOptionalStructures().write(0, Optional.of(struct));
 
 			if (PluginUtils.ServerVersion.v1_18_R1.atOrAbove()) {
 				// Above 1.18, only one packet is needed, which includes
 				// the team settings and NPC names in one.
-				createTeam.getModifier().write(2, npcNames);
+				createTeam.getModifier().write(2, nameAsList);
 				scoreboardPackets.add(createTeam);
 			} else {
 				// For 1.17 servers, two packets are necessary, with
 				// team settings and NPC names in separate packets.
 				scoreboardPackets.add(createTeam);
 				PacketContainer addNPCsToTeam = createPacket(PacketType.Play.Server.SCOREBOARD_TEAM);
-				addNPCsToTeam.getStrings().write(0, PluginUtils.NPC_SCOREBOARD_TEAM_NAME);
+				addNPCsToTeam.getStrings().write(0, profileName);
 				addNPCsToTeam.getIntegers().write(0, 3); // Set packet mode to MODIFY_TEAM
-				addNPCsToTeam.getModifier().write(2, npcNames);
+				addNPCsToTeam.getModifier().write(2, nameAsList);
 				scoreboardPackets.add(addNPCsToTeam);
 			}
 		} else {
@@ -284,19 +330,35 @@ public final class PacketRegistry {
             PacketContainer createTeam = createPacket(PacketType.Play.Server.SCOREBOARD_TEAM);
             int teamSettingIndex = PluginUtils.ServerVersion.v1_13_R1.atOrAbove() ? 1 : 4;
             createTeam.getStrings()
-                .write(0, PluginUtils.NPC_SCOREBOARD_TEAM_NAME)
+                .write(0, profileName)
                 .write(teamSettingIndex, "never");
             if (PluginUtils.ServerVersion.v1_9_R1.atOrAbove()) {
-                createTeam.getStrings().write(teamSettingIndex + 1, "never");
+                if (!collision) {
+                    createTeam.getStrings().write(teamSettingIndex + 1, "never");
+                } else {
+                    createTeam.getStrings().write(teamSettingIndex + 1, "always");
+                }
             }
+
+            // Glowing
+            if (glowing) {
+                if (PluginUtils.ServerVersion.v1_13_R1.atOrAbove()) {
+                    createTeam.getEnumModifier(ChatColor.class, 
+                        MinecraftReflection.getMinecraftClass("EnumChatFormat"))
+                        .write(0, glowColor.getBukkitColor());
+                } else {
+                    createTeam.getIntegers().write(0, glowColor.ordinal());
+                }
+            }
+
             scoreboardPackets.add(createTeam);
 
             PacketContainer addNPCsToTeam = createPacket(PacketType.Play.Server.SCOREBOARD_TEAM);
-            addNPCsToTeam.getStrings().write(0, PluginUtils.NPC_SCOREBOARD_TEAM_NAME);
+            addNPCsToTeam.getStrings().write(0, profileName);
             int teamPacketModeIndex = PluginUtils.ServerVersion.v1_13_R1.atOrAbove() ? 0 : 1;
             addNPCsToTeam.getIntegers().write(teamPacketModeIndex, 3);
             addNPCsToTeam.getModifier().write(PluginUtils.ServerVersion.v1_9_R1.atOrAbove() ? 7 : 6,
-                npcNames);
+                nameAsList);
             scoreboardPackets.add(addNPCsToTeam);
 		}
 

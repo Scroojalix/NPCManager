@@ -2,6 +2,8 @@ package io.github.scroojalix.npcmanager.storage.misc;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -14,6 +16,8 @@ import org.bukkit.inventory.ItemStack;
 import com.google.gson.annotations.Expose;
 
 import io.github.scroojalix.npcmanager.NPCMain;
+import io.github.scroojalix.npcmanager.utils.Messages;
+import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public abstract interface Serialisable {
 
@@ -93,16 +97,16 @@ public abstract interface Serialisable {
 					}
 				} else if (Serialisable.class.isAssignableFrom(type)) {
 					value = deserialise((Map<String, Object>) value, (Class<T>) type);
-				} else if (type.isEnum()) {
-					Object[] constants = type.getEnumConstants();
-					boolean failed = true;
-					for (Object constant : constants) {
-						if (constant.toString().equals(value)) {
-							failed = false;
-							value = constant;
-						}
+				} else if (Collection.class.isAssignableFrom(type)) {
+
+					Class<?> generic = (Class<?>)((ParameterizedType)f.getGenericType()).getActualTypeArguments()[0];
+					if (generic.isEnum()) {
+						value = deserialiseEnumCollection(Collection.class.cast(value), type.asSubclass(Collection.class), generic.asSubclass(Enum.class));
 					}
-					if (failed) {
+
+				} else if (type.isEnum()) {
+					value = PluginUtils.getEnumFromName((String)value, type.asSubclass(Enum.class));
+					if (value == null) {
 						throw new IllegalArgumentException("Invalid enum constant "+value+" for type "+type.getName());
 					}
 				} else if (type.isPrimitive() && Number.class.isAssignableFrom(value.getClass())) {
@@ -134,4 +138,21 @@ public abstract interface Serialisable {
 		}
 		return object;
     }
+
+	public static <T extends Collection<W>, W extends Enum<?>> T deserialiseEnumCollection(Collection<Object> oldCollection, Class<T> collectionClass, Class<W> enumClass) throws Exception {
+		Constructor<T> constructor = collectionClass.getDeclaredConstructor();
+		T newCollection = constructor.newInstance();
+		// Loop through all elements in old collection
+		for (Object value : oldCollection) {
+			Object newValue = PluginUtils.getEnumFromName((String)value, enumClass);
+			if (newValue != null) {
+				newCollection.add(enumClass.cast(newValue));
+			} else {
+				Messages.printNPCRestoreError(NPCMain.instance, "[UNKNOWN NPC]",
+				new IllegalArgumentException("Unknown enum constant "+value+" for type "+enumClass.getName()+". Skipping this."));
+			}
+		}
+		
+		return newCollection;
+	}
 }

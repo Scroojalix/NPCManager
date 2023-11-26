@@ -13,24 +13,13 @@ import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class RangeModification extends SubCommand {
 
-    @Override
-    public String getName() {
-        return "range";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Customise the NPC's range.";
-    }
-
-    @Override
-    public String getSyntax() {
-        return "/npc modify <npc> range <value>";
-    }
-
-    @Override
-    public boolean consoleCanRun() {
-        return true;
+    public RangeModification() {
+        super(
+            "range",
+            "Customise the NPC's range.",
+            "/npc modify <npc> range <value>",
+            true
+        );
     }
 
     @Override
@@ -45,7 +34,7 @@ public class RangeModification extends SubCommand {
                 }
                 data.getTraits().setRange(value);
                 sender.sendMessage(PluginUtils.format("&6Set the range of &F" + data.getName() + "&6 to &F" + value));
-                main.npc.updateNPC(data);
+                main.npc.hardResetNPC(data);
                 return true;
             } catch (NumberFormatException e) {
                 sender.sendMessage(ChatColor.RED + "'" + args[3] + "' is not a number.");

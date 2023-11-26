@@ -15,24 +15,13 @@ import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class RenameCommand extends SubCommand {
 
-    @Override
-    public String getName() {
-        return "rename";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Rename an NPC.";
-    }
-
-    @Override
-    public String getSyntax() {
-        return "/npc rename <npc> <name>";
-    }
-
-    @Override
-    public boolean consoleCanRun() {
-        return true;
+    public RenameCommand() {
+        super(
+            "rename",
+            "Rename an NPC.",
+            "/npc rename <npc> <name>",
+            true
+        );
     }
 
     @Override

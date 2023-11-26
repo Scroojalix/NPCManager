@@ -19,7 +19,7 @@ import com.comphenix.protocol.wrappers.EnumWrappers.EntityUseAction;
 import io.github.scroojalix.npcmanager.NPCMain;
 import io.github.scroojalix.npcmanager.npc.NPCContainer;
 import io.github.scroojalix.npcmanager.npc.interactions.InteractAtNPCEvent;
-import io.github.scroojalix.npcmanager.npc.interactions.InteractAtNPCEvent.NPCAction;
+import io.github.scroojalix.npcmanager.npc.interactions.NPCAction;
 import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class PacketReader {
@@ -80,13 +80,25 @@ public class PacketReader {
 		if (recentInteractors.contains(p.getUniqueId())) return;
 		switch(action) {
 			case ATTACK: // Left Click
-			Bukkit.getScheduler().scheduleSyncDelayedTask(main, () -> {	
-				Bukkit.getPluginManager().callEvent(new InteractAtNPCEvent(p, data, NPCAction.get(true, secondary)));
+			Bukkit.getScheduler().scheduleSyncDelayedTask(main, () -> {
+				InteractAtNPCEvent event = new InteractAtNPCEvent(p, data.getNPCData(), NPCAction.get(true, secondary));
+				Bukkit.getPluginManager().callEvent(event);
+				if (!event.isCancelled()) {
+					if (data.getInteractEvent() != null) {
+						data.getInteractEvent().onInteract(event);
+					}
+				}
 			});
 			break;
 			case INTERACT_AT: // Right Click
 			Bukkit.getScheduler().scheduleSyncDelayedTask(main, () -> {
-				Bukkit.getPluginManager().callEvent(new InteractAtNPCEvent(p, data, NPCAction.get(false, secondary)));
+				InteractAtNPCEvent event = new InteractAtNPCEvent(p, data.getNPCData(), NPCAction.get(false, secondary));
+				Bukkit.getPluginManager().callEvent(event);
+				if (!event.isCancelled()) {
+					if (data.getInteractEvent() != null) {
+						data.getInteractEvent().onInteract(event);
+					}
+				}
 			});
 			recentInteractors.add(p.getUniqueId());
 			Bukkit.getScheduler().runTaskLater(main, new Runnable() {

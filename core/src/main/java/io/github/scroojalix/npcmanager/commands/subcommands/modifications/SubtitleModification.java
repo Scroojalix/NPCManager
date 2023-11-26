@@ -12,24 +12,13 @@ import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class SubtitleModification extends SubCommand {
 
-    @Override
-    public String getName() {
-        return "subtitle";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Customise the subtitle of the NPC.";
-    }
-
-    @Override
-    public String getSyntax() {
-        return "/npc modify <npc> subtitle <text>";
-    }
-
-    @Override
-    public boolean consoleCanRun() {
-        return true;
+    public SubtitleModification() {
+        super(
+            "subtitle",
+            "Customise the subtitle of the NPC.",
+            "/npc modify <npc> subtitle <text>",
+            true
+        );
     }
 
     @Override
@@ -42,7 +31,7 @@ public class SubtitleModification extends SubCommand {
             }
             data.getTraits().setSubtitle(value);
             sender.sendMessage(PluginUtils.format("&6Set the subtitle of &F" + data.getName() + "&6 to &F" + value));
-            main.npc.updateNPC(data);
+            main.npc.hardResetNPC(data);
             return true;
         }
         return false;

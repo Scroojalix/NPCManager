@@ -19,24 +19,13 @@ import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class InfoCommand extends SubCommand {
 
-    @Override
-    public String getName() {
-        return "info";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Provides info on an NPC.";
-    }
-
-    @Override
-    public String getSyntax() {
-        return "/npc info <npc> [page]";
-    }
-
-    @Override
-    public boolean consoleCanRun() {
-        return true;
+    public InfoCommand() {
+        super(
+            "info",
+            "Provides info on an NPC.",
+            "/npc info <npc> [page]",
+            true
+        );
     }
 
     @Override
@@ -69,7 +58,7 @@ public class InfoCommand extends SubCommand {
                 SkinData skinData = traits.getSkinData();
                 sender.sendMessage(
                         PluginUtils.format("&6Skin Name: &F" + (skinData == null ? null : skinData.getSkinName())));
-                NPCSkinLayers layers = traits.getSkinLayers();
+                NPCSkinLayers layers = traits.getMetaInfo().getSkinLayers();
                 sender.sendMessage(ChatColor.GOLD + "Skin Layers: "
                         + (layers == null ? new NPCSkinLayers() : layers).getCurrentConfiguration());
                 if (sender instanceof Player) {

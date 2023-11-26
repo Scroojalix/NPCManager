@@ -6,32 +6,19 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 import io.github.scroojalix.npcmanager.npc.NPCData;
-import io.github.scroojalix.npcmanager.npc.NPCContainer;
 
 public class InteractAtNPCEvent extends Event implements Cancellable{
 
 	private final Player player;
-	private final NPCContainer container;
 	private final NPCData data;
 	private final NPCAction action;
 	private boolean isCancelled;
 	private static final HandlerList HANDLERS = new HandlerList();
 	
-	public InteractAtNPCEvent(Player player, NPCContainer container, NPCAction action) {
+	public InteractAtNPCEvent(Player player, NPCData data, NPCAction action) {
 		this.player = player;
-		this.container = container;
-		this.data = container.getNPCData();
+		this.data = data;
 		this.action = action;
-	}
-
-	/**
-	 * Calls the interact event defined for the NPC if it is defined.
-	 * If it is not defined, nothing happens.
-	 */
-	public void callInteractEventIfDefined() {
-		if (container.getInteractEvent() != null) {
-			container.getInteractEvent().onInteract(this);
-		}
 	}
 	
 	/**
@@ -83,30 +70,5 @@ public class InteractAtNPCEvent extends Event implements Cancellable{
 			data.getName(),
 			action.toString()
 		);
-	}
-
-	/**
-	 * Enum containing the types of interactions involved in an {@link InteractAtNPCEvent}
-	 */
-	public enum NPCAction {
-		LEFT_CLICK,
-		RIGHT_CLICK,
-		SECONDARY_LEFT_CLICK,
-		SECONDARY_RIGHT_CLICK;
-
-		public static NPCAction get(boolean isLeft, Boolean secondary) {
-			if (secondary == null || !secondary.booleanValue()) {
-				return isLeft ? LEFT_CLICK : RIGHT_CLICK;
-			}
-			return isLeft ? SECONDARY_LEFT_CLICK : SECONDARY_RIGHT_CLICK;
-		}
-
-		public boolean isLeftClick() {
-			return this == LEFT_CLICK || this == SECONDARY_LEFT_CLICK;
-		}
-
-		public boolean isRightClick() {
-			return this == RIGHT_CLICK || this == SECONDARY_RIGHT_CLICK;
-		}
 	}
 }

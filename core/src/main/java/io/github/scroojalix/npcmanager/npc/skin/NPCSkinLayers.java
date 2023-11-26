@@ -1,10 +1,10 @@
 package io.github.scroojalix.npcmanager.npc.skin;
 
+import org.bukkit.ChatColor;
+
 import com.google.gson.annotations.Expose;
 
 import io.github.scroojalix.npcmanager.storage.misc.Serialisable;
-
-import org.bukkit.ChatColor;
 
 public class NPCSkinLayers implements Serialisable {
 
@@ -44,7 +44,7 @@ public class NPCSkinLayers implements Serialisable {
         return builder.toString();
     }
 
-    public Byte getDisplayedSkinParts() {
+    public byte getDisplayedSkinParts() {
         byte bitSize = 1;
         byte result = 0;
         boolean[] bools = getBoolArray();

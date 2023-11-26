@@ -14,24 +14,13 @@ import io.github.scroojalix.npcmanager.utils.PluginUtils;
 
 public class ListCommand extends SubCommand {
 
-    @Override
-    public String getName() {
-        return "list";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Prints a detailed list of all NPC's.";
-    }
-
-    @Override
-    public String getSyntax() {
-        return "/npc list [page]";
-    }
-
-    @Override
-    public boolean consoleCanRun() {
-        return true;
+    public ListCommand() {
+        super(
+            "list",
+            "Prints a detailed list of all NPC's.",
+            "/npc list [page]",
+            true
+        );
     }
 
     @Override

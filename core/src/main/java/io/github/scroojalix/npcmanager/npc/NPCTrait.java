@@ -1,11 +1,13 @@
 package io.github.scroojalix.npcmanager.npc;
 
+import javax.annotation.Nonnull;
+
 import com.google.gson.annotations.Expose;
 
 import io.github.scroojalix.npcmanager.npc.equipment.NPCEquipment;
 import io.github.scroojalix.npcmanager.npc.interactions.InteractEventType;
 import io.github.scroojalix.npcmanager.npc.interactions.NPCInteractionData;
-import io.github.scroojalix.npcmanager.npc.skin.NPCSkinLayers;
+import io.github.scroojalix.npcmanager.npc.meta.NPCMetaInfo;
 import io.github.scroojalix.npcmanager.npc.skin.SkinData;
 import io.github.scroojalix.npcmanager.storage.misc.Serialisable;
 
@@ -25,19 +27,22 @@ public class NPCTrait implements Serialisable {
     @Expose
     private SkinData skin;
     @Expose
-    private NPCSkinLayers skinLayers;
-
-    @Expose
     private NPCInteractionData interactEvent;
     @Expose
     private NPCEquipment equipment;
+    @Expose
+    private @Nonnull NPCMetaInfo metaInfo;
     
-    NPCTrait() {}
+    NPCTrait() {
+        //TODO do this for all fields & remove setters
+        this.metaInfo = new NPCMetaInfo();
+    }
 
     public NPCTrait(String displayName, int range, boolean headRotation) {
         this.displayName = displayName;
         this.range = range;
         this.headRotation = headRotation;
+        this.metaInfo = new NPCMetaInfo();
     }
 
     /**
@@ -109,21 +114,6 @@ public class NPCTrait implements Serialisable {
     public void setSkinData(SkinData skinData) {
         this.skin = skinData;
     }
-
-    public NPCSkinLayers getSkinLayers() {
-        return this.skinLayers;
-    }
-
-    public void setSkinLayers(NPCSkinLayers skinLayers) {
-        this.skinLayers = skinLayers;
-    }
-
-    public Byte getSkinLayersByte() {
-        if (this.skinLayers != null) {
-            return skinLayers.getDisplayedSkinParts();
-        }
-        return 127;
-    }
     
     /**
      * Gets the equipment that the NPC has, meaning armor, main hand and off hand items.
@@ -133,6 +123,13 @@ public class NPCTrait implements Serialisable {
         if (equipment == null && modification)
             equipment = new NPCEquipment();
         return equipment;
+    }
+
+    /**
+     * Remove an NPC's equipment
+     */
+    public void removeEquipment() {
+        this.equipment = null;
     }
 
     /**
@@ -152,5 +149,13 @@ public class NPCTrait implements Serialisable {
 
     public void removeInteractEvent() {
         this.interactEvent = null;
+    }
+
+    public @Nonnull NPCMetaInfo getMetaInfo() {
+        return metaInfo;
+    }
+
+    public void clearMetaInfo() {
+        this.metaInfo = new NPCMetaInfo();
     }
 }

@@ -30,14 +30,22 @@ public class NPCBuilder {
     }
 
     public NPCBuilder setInteractEvent(InteractEventType type, String interaction) {
-        if (type == InteractEventType.COMMAND) {
+        switch (type) {
+            case PLAYER_COMMAND:
+            case CONSOLE_COMMAND:
             data.getTraits().setInteractEvent(type, interaction);
-        } else if (type == InteractEventType.CUSTOM) {
+            break;
+            case CUSTOM:
             if (InteractionsManager.getInteractEvents().containsKey(interaction)) {
                 data.getTraits().setInteractEvent(type, interaction);
             } else {
                 NPCMain.instance.sendDebugMessage(Level.WARNING, "Could not set the interact event of "+data.getName()+". The interact event '"+interaction+"' does not exist.");
             }
+
+            break;
+            case NONE:
+            data.getTraits().removeInteractEvent();
+            break;
         }
         return this;
 	}
@@ -130,7 +138,7 @@ public class NPCBuilder {
                     }
                 }
             }
-            data.getTraits().setSkinLayers(newLayers);
+            data.getTraits().getMetaInfo().setSkinLayers(newLayers);
         }
         return this;
 	}

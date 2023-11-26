@@ -61,7 +61,7 @@ public class TomlStorage implements StorageImplementation.LocalStorage {
                 main.npc.spawnNPC(data);
             return true;
         } catch (Exception e) {
-            Messages.printNPCRestoreError(main, current.getName(), e.getMessage());
+            Messages.printNPCRestoreError(main, current.getName(), e);
         }
         return false;
     }
